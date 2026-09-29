@@ -1,0 +1,22 @@
+cad_decide4: THEORY
+%----------------------------------------------------------------------------
+% decide4 is correct: decw3_correct for three quantifiers, decq3_correct
+% otherwise (which is decw_correct for two and decide2's theorem for the rest).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad_decide4_def, cad_decide3, cad3
+
+  qs, os: VAR list[bool]
+  F: VAR list[list[mpoly]]
+  Psi: VAR [SV -> bool]
+  phi: VAR BF
+
+  rev3: LEMMA length(qs) = 3 IMPLIES
+    reverse(qs) = (: car(cdr(cdr(qs))), car(cdr(qs)), car(qs) :)
+
+  decq4_correct: THEOREM decq4(qs, F, Psi)`ok IMPLIES
+    (decq4(qs, F, Psi)`val IFF sem(reverse(qs), F, Psi, null))
+
+  decide4_correct: THEOREM decide4(reverse(os), F, phi)`ok IMPLIES
+    (decide4(reverse(os), F, phi)`val IFF fsem(os, F, phi, null))
+END cad_decide4

@@ -1,0 +1,106 @@
+poly_rolle: THEORY
+%----------------------------------------------------------------------------
+% A conjunction of strict inequalities with no equation (Phase 3).
+%
+% If every polynomial of a list is positive at some point, and the list is not
+% positive far to the right or far to the left, then the point lies in a
+% bounded interval whose endpoints are roots of the product and which contains
+% no root of the product; Rolle's theorem gives a critical point of the
+% product inside it, and there the whole list is still positive.  So
+%     EXISTS x: every q in Q: q(x, ys) > 0
+% is decided by the two leading-coefficient conditions of poly_farinf and one
+% question of the form EXISTS x: W'(x) = 0 AND every q: q(x) > 0, which is
+% what tarski_many decides.  This is the last shape the phase needs.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING poly_farinf, reals@bounded_reals[real]
+
+  l, l1, l2: VAR list[mpoly]
+  Q: VAR list[list[mpoly]]
+  ys: VAR list[real]
+  x, y, z, a, b, c, x0: VAR real
+
+  %% a polynomial with no root between two points keeps its sign
+  keep_pos_one: LEMMA
+    (FORALL (z: real): ((x <= z AND z <= y) OR (y <= z AND z <= x))
+                       IMPLIES pf(l, ys)(z) /= 0)
+    AND pf(l, ys)(x) > 0 IMPLIES pf(l, ys)(y) > 0
+
+  %% the normalized product at a point
+  pf_lmn_at: LEMMA lok(l1, ys) AND lok(l2, ys) IMPLIES
+    pf(lmn(l1, l2, ys), ys)(x) = pf(l1, ys)(x) * pf(l2, ys)(x)
+
+  %% the product of a list of coefficient lists, normalized at ys
+  qprod(Q, ys): RECURSIVE list[mpoly] =
+    IF null?(Q) THEN one_list ELSE lmn(car(Q), qprod(cdr(Q), ys), ys) ENDIF
+  MEASURE length(Q)
+  qprod_null: LEMMA qprod(null[list[mpoly]], ys) = one_list
+  qprod_cons: LEMMA qprod(cons(l, Q), ys) = lmn(l, qprod(Q, ys), ys)
+
+  allok(Q, ys): bool = every(LAMBDA (u: list[mpoly]): lok(u, ys))(Q)
+  allok_null: LEMMA allok(null[list[mpoly]], ys)
+  allok_cons: LEMMA allok(cons(l, Q), ys) IFF (lok(l, ys) AND allok(Q, ys))
+  qprod_ok: LEMMA allok(Q, ys) IMPLIES lok(qprod(Q, ys), ys)
+  qprod_val: LEMMA allok(Q, ys) IMPLIES
+    (pf(qprod(Q, ys), ys)(x) /= 0 IFF
+     every(LAMBDA (u: list[mpoly]): pf(u, ys)(x) /= 0)(Q))
+  qprod_pos: LEMMA allok(Q, ys) AND allpf(Q, ys, x) IMPLIES
+    pf(qprod(Q, ys), ys)(x) > 0
+
+  %% and so does the whole conjunction
+  keep_pos: LEMMA
+    (FORALL (z: real): ((x <= z AND z <= y) OR (y <= z AND z <= x))
+                       IMPLIES pf(qprod(Q, ys), ys)(z) /= 0)
+    AND allok(Q, ys) AND allpf(Q, ys, x) IMPLIES allpf(Q, ys, y)
+  %% the roots of a polynomial on each side of a point
+  Aset(l, ys, x0): set[real] = {y: real | y <= x0 AND pf(l, ys)(y) = 0}
+  Bset(l, ys, x0): set[real] = {y: real | y >= x0 AND pf(l, ys)(y) = 0}
+  Aset_ub: LEMMA upper_bound(<=)(x0, Aset(l, ys, x0))
+  Bset_lb: LEMMA lower_bound(<=)(x0, Bset(l, ys, x0))
+  Aset_bound: LEMMA above_bounded(Aset(l, ys, x0))
+  Bset_bound: LEMMA below_bounded(Bset(l, ys, x0))
+
+  %% the nearest root below: it is a root, it is not above the point, and
+  %% there is no root between the two
+  sup_le: LEMMA nonempty?(Aset(l, ys, x0)) IMPLIES sup(Aset(l, ys, x0)) <= x0
+  sup_zero: LEMMA nonempty?(Aset(l, ys, x0)) IMPLIES
+    pf(l, ys)(sup(Aset(l, ys, x0))) = 0
+  sup_none: LEMMA nonempty?(Aset(l, ys, x0)) AND
+    y > sup(Aset(l, ys, x0)) AND y <= x0 IMPLIES pf(l, ys)(y) /= 0
+
+  %% and the nearest root above
+  inf_ge: LEMMA nonempty?(Bset(l, ys, x0)) IMPLIES inf(Bset(l, ys, x0)) >= x0
+  inf_zero: LEMMA nonempty?(Bset(l, ys, x0)) IMPLIES
+    pf(l, ys)(inf(Bset(l, ys, x0))) = 0
+  inf_none: LEMMA nonempty?(Bset(l, ys, x0)) AND
+    y < inf(Bset(l, ys, x0)) AND y >= x0 IMPLIES pf(l, ys)(y) /= 0
+  %% the converse of poly_farinf's bounds, for a whole list
+  far_right_list_inv: LEMMA (FORALL (y: real): y >= x0 IMPLIES allpf(Q, ys, y))
+    AND allok(Q, ys) IMPLIES posinf(Q, ys)
+  far_left_list_inv: LEMMA (FORALL (y: real): y <= x0 IMPLIES allpf(Q, ys, y))
+    AND allok(Q, ys) IMPLIES neginf(Q, ys)
+
+  %% no root of the product below the point: then the conjunction holds on the
+  %% whole ray and the left-hand leading coefficients decide it
+  ineq_left: LEMMA allok(Q, ys) AND allpf(Q, ys, x0) AND
+    NOT nonempty?(Aset(qprod(Q, ys), ys, x0)) IMPLIES neginf(Q, ys)
+  ineq_right: LEMMA allok(Q, ys) AND allpf(Q, ys, x0) AND
+    NOT nonempty?(Bset(qprod(Q, ys), ys, x0)) IMPLIES posinf(Q, ys)
+
+  %% roots on both sides: Rolle gives a critical point of the product between
+  %% the nearest two, and the conjunction still holds there
+  ineq_mid: LEMMA allok(Q, ys) AND allpf(Q, ys, x0) AND
+    nonempty?(Aset(qprod(Q, ys), ys, x0)) AND
+    nonempty?(Bset(qprod(Q, ys), ys, x0))
+    IMPLIES (EXISTS (c: real): pf(lderiv(qprod(Q, ys)), ys)(c) = 0 AND
+                               allpf(Q, ys, c))
+
+  %% the reduction: a conjunction of strict inequalities holds somewhere
+  %% exactly when it holds far to the right, or far to the left, or at a
+  %% critical point of the product
+  ineq_exists: THEOREM allok(Q, ys) IMPLIES
+    ((EXISTS (x: real): allpf(Q, ys, x))
+     IFF (posinf(Q, ys) OR neginf(Q, ys) OR
+          (EXISTS (c: real): pf(lderiv(qprod(Q, ys)), ys)(c) = 0 AND
+                             allpf(Q, ys, c))))
+END poly_rolle

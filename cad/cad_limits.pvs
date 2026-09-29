@@ -1,0 +1,116 @@
+cad_limits: THEORY
+%----------------------------------------------------------------------------
+% Harder problems for (cad), graded by number of variables and degree, to
+% see where the decision stops being quick.  Each comment says whether the
+% sentence is TRUE or FALSE; [brackets] give what (cad) did on 2026-09-28
+% (Apple M-series laptop, 90-120 s limit).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad_decide5, mpoly_embed
+
+  %% ---- one variable, rising degree ------------------------------------------------
+  %% x^2 (x^4 - 3x^2 + 3) with a factor that never vanishes -- TRUE
+  %% [proved 4.1 s]
+  u_deg6: LEMMA FORALL (x: real): x^6 - 3*x^4 + 3*x^2 > 0 OR x = 0
+  %% (x^2 - 1)^4 + 1 expanded -- TRUE
+  %% [proved 1.0 s]
+  u_deg8: LEMMA FORALL (x: real): x^8 - 4*x^6 + 6*x^4 - 4*x^2 + 2 > 0
+  %% Chebyshev T5 exceeds 1 beyond 1 -- TRUE
+  %% [proved 1.2 s]
+  u_cheb5: LEMMA FORALL (x: real): x > 1 IMPLIES 16*x^5 - 20*x^3 + 5*x > 1
+  %% Wilkinson's (x-1)(x-2)...(x-8), expanded: negative on (1, 2) -- TRUE
+  %% [proved 1.8 s]
+  u_wilk8: LEMMA FORALL (x: real): 1 < x AND x < 2 IMPLIES
+    x^8 - 36*x^7 + 546*x^6 - 4536*x^5 + 22449*x^4 - 67284*x^3 + 118124*x^2 - 109584*x + 40320 < 0
+  %% ... does it take the value -1000?  No: its lowest dips are about -641
+  %% (near 1.31 and 7.69) -- FALSE (the comment first said TRUE; (cad) caught it)
+  %% [FALSE, 0.4 s]
+  u_wilk8_val: LEMMA EXISTS (x: real):
+    x^8 - 36*x^7 + 546*x^6 - 4536*x^5 + 22449*x^4 - 67284*x^3 + 118124*x^2 - 109584*x + 40320 = -1000
+
+  %% ---- two variables ------------------------------------------------------------------
+  %% the Motzkin polynomial: nonnegative but not a sum of squares -- TRUE
+  %% [proved 1.6 s]
+  b_motzkin: LEMMA FORALL (x: real): FORALL (y: real): x^4*y^2 + x^2*y^4 - 3*x^2*y^2 + 1 >= 0
+  %% ... and its zeros exist (x = y = 1) -- TRUE
+  %% [proved 0.5 s]
+  b_motzkin_zero: LEMMA EXISTS (x: real): EXISTS (y: real): x^4*y^2 + x^2*y^4 - 3*x^2*y^2 + 1 = 0
+  %% a cubic in y with parameter x always has a root -- TRUE
+  %% [proved 1.0 s]
+  b_cubic: LEMMA FORALL (x: real): EXISTS (y: real): y^3 + x*y + 1 = 0
+  %% y^4 + a y + 1 <= 0 is not always solvable (a = 0) -- FALSE
+  %% [FALSE, 0.3 s]
+  b_quartic: LEMMA FORALL (a: real): EXISTS (y: real): y^4 + a*y + 1 <= 0
+  %% on the open unit disc x^3 + y^3 stays below 1 -- TRUE
+  %% [proved 1.5 s]
+  b_disc_cubes: LEMMA FORALL (x: real): FORALL (y: real): x^2 + y^2 < 1 IMPLIES x^3 + y^3 < 1
+  %% the folium of Descartes has a point with both coordinates above 1 -- TRUE
+  %% [proved 0.5 s]
+  b_folium: LEMMA EXISTS (x: real): EXISTS (y: real): x^3 + y^3 = 3*x*y AND x > 1 AND y > 1
+  %% the lemniscate lies in the disc of radius sqrt 2 -- TRUE
+  %% [proved 1.5 s]
+  b_lemniscate: LEMMA FORALL (x: real): FORALL (y: real):
+    (x^2 + y^2)^2 = 2*(x^2 - y^2) IMPLIES x^2 + y^2 <= 2
+
+  %% ---- three variables ----------------------------------------------------------------
+  %% [proved 1.3 s]
+  c_cyclic: LEMMA FORALL (x: real): FORALL (y: real): FORALL (z: real):
+    x^2 + y^2 + z^2 >= x*y + y*z + z*x
+  %% AM-GM for three -- TRUE
+  %% [not done in 120 s]
+  c_amgm3: LEMMA FORALL (x: real): FORALL (y: real): FORALL (z: real):
+    x >= 0 AND y >= 0 AND z >= 0 IMPLIES x^3 + y^3 + z^3 >= 3*x*y*z
+  %% Schur's inequality (t = 1) -- TRUE
+  %% [not done in 120 s]
+  c_schur: LEMMA FORALL (x: real): FORALL (y: real): FORALL (z: real):
+    x >= 0 AND y >= 0 AND z >= 0 IMPLIES
+    x*(x - y)*(x - z) + y*(y - x)*(y - z) + z*(z - x)*(z - y) >= 0
+  %% a root of x^2 + bx + c forces b^2 >= 4c -- TRUE
+  %% [proved 1.6 s]
+  c_quad_nec: LEMMA FORALL (b: real): FORALL (c: real): FORALL (x: real):
+    x^2 + b*x + c = 0 IMPLIES b^2 >= 4*c
+  %% ... and b^2 >= 4c gives a root -- TRUE
+  %% [proved 1.6 s]
+  c_quad_suf: LEMMA FORALL (b: real): FORALL (c: real): EXISTS (x: real):
+    b^2 >= 4*c IMPLIES x^2 + b*x + c = 0
+  %% every depressed cubic has a root -- TRUE
+  %% [proved 1.2 s]
+  c_cubic_root: LEMMA FORALL (p: real): FORALL (q: real): EXISTS (x: real): x^3 + p*x + q = 0
+  %% x + y + z reaches 1.7 on the unit sphere (max sqrt 3 = 1.732...) -- TRUE
+  %% [proved 12 s (a witness is found)]
+  c_sphere_in: LEMMA EXISTS (x: real): EXISTS (y: real): EXISTS (z: real):
+    x^2 + y^2 + z^2 = 1 AND x + y + z = 17/10
+  %% ... but not 1.74 -- FALSE
+  %% [not done in 120 s]
+  c_sphere_out: LEMMA EXISTS (x: real): EXISTS (y: real): EXISTS (z: real):
+    x^2 + y^2 + z^2 = 1 AND x + y + z = 174/100
+
+  %% ---- four variables -----------------------------------------------------------------
+  %% Cauchy-Schwarz in the plane -- TRUE
+  %% [not done in 120 s]
+  d_cs2: LEMMA FORALL (a: real): FORALL (b: real): FORALL (c: real): FORALL (d: real):
+    (a*c + b*d)^2 <= (a^2 + b^2)*(c^2 + d^2)
+  %% a root of a x^2 + b x + c forces b^2 >= 4ac -- TRUE
+  %% [proved 2.1 s]
+  d_quad_nec: LEMMA FORALL (a: real): FORALL (b: real): FORALL (c: real): FORALL (x: real):
+    a*x^2 + b*x + c = 0 IMPLIES b^2 >= 4*a*c
+  %% ... and for a /= 0, b^2 >= 4ac gives a root -- TRUE
+  %% [proved 2.6 s]
+  d_quad_suf: LEMMA FORALL (a: real): FORALL (b: real): FORALL (c: real): EXISTS (x: real):
+    a /= 0 AND b^2 >= 4*a*c IMPLIES a*x^2 + b*x + c = 0
+  %% u^2 + v^2 = a, u v = b gives a >= 2b -- TRUE
+  %% [not done in 120 s]
+  d_two_squares: LEMMA FORALL (a: real): FORALL (b: real): FORALL (u: real): FORALL (v: real):
+    u*u + v*v = a AND u*v = b IMPLIES a >= 2*b
+  %% AM-GM for four, degree 4 -- TRUE
+  %% [not done in 120 s]
+  d_amgm4: LEMMA FORALL (w: real): FORALL (x: real): FORALL (y: real): FORALL (z: real):
+    w >= 0 AND x >= 0 AND y >= 0 AND z >= 0 IMPLIES w^4 + x^4 + y^4 + z^4 >= 4*w*x*y*z
+
+  %% ---- six variables ------------------------------------------------------------------
+  %% Cauchy-Schwarz in space -- TRUE
+  %% [not done in 120 s]
+  e_cs3: LEMMA FORALL (a: real): FORALL (b: real): FORALL (c: real):
+    FORALL (x: real): FORALL (y: real): FORALL (z: real):
+    (a*x + b*y + c*z)^2 <= (a^2 + b^2 + c^2)*(x^2 + y^2 + z^2)
+END cad_limits

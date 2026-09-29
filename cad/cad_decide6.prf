@@ -1,0 +1,27 @@
+(|cad_decide6|
+ (|decide6_correct| 0
+  (|decide6_correct-0| "" 3999556430
+   ("" (SKEEP)
+    (("" (EXPAND "decide6")
+      (("" (LEMMA "decide5_correct")
+        (("" (INST -1 "F" "os" "phi")
+          (("" (LEMMA "decide_correct_os")
+            (("" (INST -1 "F" "os" "phi")
+              (("" (LIFT-IF) (("" (GROUND) NIL NIL)) NIL)) NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|decide6_correct-1| NIL 3999556430 ("" (POSTPONE) NIL NIL)
+   ((|decide5_correct| FORMULA-DECL NIL |cad_decide5| NIL)
+    (|decide_correct_os| FORMULA-DECL NIL |cad_decide| NIL)
+    (BF TYPE-DECL NIL |bform| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|decide6| CONST-DECL "bool" |cad_decide6_def| NIL))
+   SHOSTAK)))
+

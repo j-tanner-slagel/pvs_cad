@@ -1,0 +1,44 @@
+qe_symbolic: THEORY
+%----------------------------------------------------------------------------
+% Quantifier elimination with symbolic parameters, run by the strategy
+% (Phase 3).
+%
+% qe-exists on a formula whose coefficients mention parameters evaluates the
+% pruned decision tree qdecide of qe_tree and adds one fact per branch,
+%     <sign conditions on the parameters> IMPLIES <the formula or its negation>,
+% each proved from qe_branch.  The statements below are closed by those facts
+% and arithmetic: the conflict-detection question of the paper with the
+% protected radius D left symbolic, and a parametric universal statement.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING qe_ctx, mpoly_embed
+
+  %% a root above a parameter: x - a = 0 AND x > 0 has a solution iff a > 0
+  s1: LEMMA FORALL (a: real): a > 0 IMPLIES EXISTS (x: real): x - a = 0 AND x > 0
+  s2: LEMMA FORALL (a: real): a <= 0 IMPLIES NOT EXISTS (x: real): x - a = 0 AND x > 0
+
+  %% a positive number has a positive square root
+  s3: LEMMA FORALL (a: real): a > 0 IMPLIES EXISTS (x: real): x^2 - a = 0 AND x > 0
+
+  %% a quadratic with a parametric middle coefficient is positive everywhere
+  %% exactly when its discriminant is negative
+  s4: LEMMA FORALL (b: real): b^2 < 4 IMPLIES FORALL (x: real): x^2 + b*x + 1 > 0
+
+  %% the conflict question with the radius symbolic: an aircraft at (5, 0)
+  %% with relative velocity (-1, 1/2), lookahead 10, protected radius D; the
+  %% closest approach is at t = 4 at squared distance 5
+  %% the closest-approach question with no time window: the relative
+  %% distance drops below D at some moment exactly when D^2 > 5
+  cw1: LEMMA FORALL (D: real): D^2 > 5 IMPLIES
+    EXISTS (t: real): (5 - t)^2 + (t/2)^2 < D^2
+  cw2: LEMMA FORALL (D: real): D^2 <= 5 IMPLIES
+    NOT EXISTS (t: real): (5 - t)^2 + (t/2)^2 < D^2
+
+  %% The same question with the lookahead window, 0 <= t <= 10, is where
+  %% branching QE stops being practical: with three or four conditions the
+  %% recursion builds eight or sixteen nested chains whose remainders carry
+  %% coefficients of degree thirty and more in D, and no variant of
+  %%   EXISTS t: 0 <= t AND t <= 10 AND (5 - t)^2 + (t/2)^2 < D^2
+  %% (open window, closed window, window as t * (10 - t) > 0) finished in
+  %% 25 to 47 minutes.  They are not stated here; see PROGRESS.md.
+END qe_symbolic

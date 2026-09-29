@@ -1,0 +1,54 @@
+mwalk: THEORY
+%----------------------------------------------------------------------------
+% The walk of a level near a point, every coordinate moving
+% (FINISH_PLAN 3i, stage N3).
+%
+% At vs0 the effective family G = zf(F, vs0) has a certificate, so there are
+% separators Y that pass wok? and avoid every chain (wok_exist, avall?).  At a
+% point vs1 near vs0 whose oracle agrees with vs0's on the reads wrs(F, vs0):
+%   the intrinsic reads agree by hypothesis, the entry reads are nonzero at
+%   vs0 (wnz_pz) and so keep their signs (msg_mpers); together that is
+%   wagree? (wagree_near), and the walk at vs1 is the walk at vs0.
+%   fib_mlocal   the fibre set of F over vs1 is that over vs0 (walk_same,
+%                then the identically-zero members by fib_zfeq): the base of
+%                the tower induction
+%   near_cells   the separators still pass, the gaps are the same, the sign
+%                vector of F at every separator is the same, and at a gap
+%                that holds a root at both points the sign vector at the
+%                root is the same (the section vector is read by the walk,
+%                sec_svec)
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING mpar, zfam
+
+  F, G: VAR list[list[mpoly]]
+  vs0, vs1: VAR list[real]
+  Y: VAR list[rat]
+  y0, lo, hi: VAR rat
+  beta0, beta1: VAR real
+  v: VAR SV
+  d: VAR posreal
+
+  wagree_near: LEMMA avall?(G, vs0, Y) IMPLIES
+    EXISTS d: FORALL vs1: near?(vs1, vs0, d) AND agree(msg(vs0), msg(vs1), wi_rd(G, msg(vs0)))
+      IMPLIES wagree?(G, msg(vs0), msg(vs1), Y)
+
+  %% the base of the tower induction: the fibre set is locally constant
+  fib_mlocal: THEOREM certz?(F, vs0) IMPLIES
+    EXISTS d: FORALL vs1: near?(vs1, vs0, d) AND agree(msg(vs0), msg(vs1), wrs(F, vs0))
+      IMPLIES FORALL v: fib(F, vs1)(v) IFF fib(F, vs0)(v)
+
+  %% the cells of the walk near vs0
+  wrs_wi: LEMMA agree(msg(vs0), msg(vs1), wrs(F, vs0)) IMPLIES
+    agree(msg(vs0), msg(vs1), wi_rd(zf(F, vs0), msg(vs0))) AND agree(msg(vs0), msg(vs1), crd(F))
+
+  near_cells: THEOREM wok?(zf(F, vs0), msg(vs0), Y) AND avall?(zf(F, vs0), vs0, Y) IMPLIES
+    EXISTS d: FORALL vs1: near?(vs1, vs0, d) AND agree(msg(vs0), msg(vs1), wrs(F, vs0)) IMPLIES
+      zf(F, vs1) = zf(F, vs0) AND wok?(zf(F, vs0), msg(vs1), Y)
+      AND (FORALL y0: member(y0, Y) IMPLIES svec(F, cons(y0, vs1)) = svec(F, cons(y0, vs0)))
+      AND (FORALL lo, hi: member(lo, Y) AND member(hi, Y) IMPLIES
+             (gap?(zf(F, vs0), msg(vs1), lo, hi) IFF gap?(zf(F, vs0), msg(vs0), lo, hi)))
+      AND (FORALL lo, hi, beta0, beta1: member(lo, Y) AND member(hi, Y)
+             AND gapf?(zf(F, vs0), vs0, lo, hi, beta0) AND gapf?(zf(F, vs0), vs1, lo, hi, beta1)
+             IMPLIES svec(F, cons(beta1, vs1)) = svec(F, cons(beta0, vs0)))
+END mwalk

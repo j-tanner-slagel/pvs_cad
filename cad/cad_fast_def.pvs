@@ -1,0 +1,66 @@
+cad_fast_def: THEORY
+%----------------------------------------------------------------------------
+% The fast two-quantifier decision (FINISH_PLAN stage S4, executable part).
+%
+% decide2 of cad_lift closes the projection under EVERY polynomial its 3^|F|
+% lifting consults (43 sectors on ex_line, 48 s).  This decision keeps the
+% same outer shape -- sectors of a family of polynomials in the parameter, a
+% fold over the sectors -- and changes the two expensive parts:
+%
+%   the lifting   svs_w, the walk over rational separators (walk_def):
+%                 polynomial in |F|, no 3^|F| enumeration
+%   the family    the projection closed under the walk's INTRINSIC reads
+%                 only (walk_rd: wi_rd).  They contain no separator, there
+%                 are few of them, and on ex_line they add nothing: the
+%                 sectors are the projection's own.
+%
+% icert? is the runtime certificate: at every sector the walk's separators
+% pass wok_w, and on every open sector each intrinsic read keeps its sign.
+% cad_fast proves that the certificate implies the answer.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING walk_rd
+
+  F, P: VAR list[list[mpoly]]
+  s: VAR Sect
+  ss: VAR list[Sect]
+  fuel: VAR nat
+  Psi: VAR [SV -> bool]
+
+  ireads(F, s): list[mpoly] = dedup1(wi_rd(F, asgS(s)))
+
+  ibads(F, ss): RECURSIVE list[list[mpoly]] =
+    IF null?(ss) THEN null[list[mpoly]]
+    ELSIF at?(car(ss)) THEN ibads(F, cdr(ss))
+    ELSE append(badl(car(ss), ireads(F, car(ss))), ibads(F, cdr(ss)))
+    ENDIF
+  MEASURE length(ss)
+
+  iclos(fuel, F, P): RECURSIVE list[list[mpoly]] =
+    IF fuel = 0 THEN P
+    ELSE LET B = ibads(F, sects(rts(P))) IN
+         IF null?(B) THEN P
+         ELSE LET P2 = addnew(P, B) IN
+              IF length(P2) = length(P) THEN P ELSE iclos(fuel - 1, F, P2) ENDIF
+         ENDIF
+    ENDIF
+  MEASURE fuel
+
+  icert1?(F, s): bool =
+    wok_w(F, asgS(s)) AND
+    (at?(s) OR every(LAMBDA (c: mpoly): inv_chk(cpl(c), s))(ireads(F, s)))
+
+  icert?(F, ss): RECURSIVE bool =
+    IF null?(ss) THEN TRUE ELSE icert1?(F, car(ss)) AND icert?(F, cdr(ss)) ENDIF
+  MEASURE length(ss)
+
+  decw(q1: bool, q: bool, F, Psi): [# ok: bool, val: bool #] =
+    LET Q = iclos(cfuel, F, proj(F)), ss = sects(rts(Q)) IN
+    (# ok  := gaps_ok(rts(Q)) AND icert?(F, ss),
+       val := qfoldS(q1, ss, LAMBDA s: qfold(q, svs_w(F, asgS(s)), Psi)) #)
+
+  %% the number of root sectors, for measurements
+  nroot(F): nat = length(rts(iclos(cfuel, F, proj(F))))
+
+  icert_mem: LEMMA FORALL ss: icert?(F, ss) AND member(s, ss) IMPLIES icert1?(F, s)
+END cad_fast_def

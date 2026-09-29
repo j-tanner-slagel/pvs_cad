@@ -1,0 +1,53 @@
+(|many_tree|
+ (|snormps_TCC1| 0
+  (|snormps_TCC1-1| NIL 3998320000 ("" (subtype-tcc) NIL NIL) NIL SHOSTAK))
+ (|snormps_TCC2| 0
+  (|snormps_TCC2-1| NIL 3998320000 ("" (termination-tcc) NIL NIL) NIL SHOSTAK))
+ (|snormps_null| 0
+  (|snormps_null-1| NIL 3998320000 ("" (then (expand "snormps") (propax)) NIL NIL) NIL SHOSTAK))
+ (|snormps_cons| 0
+  (|snormps_cons-1| NIL 3998320000 ("" (then (expand "snormps" 1 1) (assert)) NIL NIL) NIL SHOSTAK))
+ (|slofs_null| 0
+  (|slofs_null-1| NIL 3998320000 ("" (then (expand "slofs") (expand "map") (propax)) NIL NIL) NIL SHOSTAK))
+ (|slofs_cons| 0
+  (|slofs_cons-1| NIL 3998320000 ("" (then (expand "slofs" 1 1) (expand "map" 1 1) (expand "slofs") (propax)) NIL NIL) NIL SHOSTAK))
+ (|select_snormps| 0
+  (|select_snormps-1| NIL 3998320000 ("" (spread (induct "Q")
+ ((then (skeep) (rewrite "snormps_null") (rewrite "select_leaf") (rewrite "slofs_null"))
+  (then (skeep) (label "ih" -1) (skeep) (inst "ih" "ys") (rewrite "snormps_cons") (rewrite "slofs_cons")
+        (rewrite "select_bbind") (rewrite "select_bmap") (rewrite "snormp_sel") (replace "ih") (propax)))) NIL NIL) NIL SHOSTAK))
+ (|slists_slofs| 0
+  (|slists_slofs-1| NIL 3998320000 ("" (spread (induct "Q")
+ ((then (skeep) (rewrite "slofs_null") (rewrite "nlists_null") (expand "slists") (expand "map") (propax))
+  (then (skeep) (label "ih" -1) (skeep) (inst "ih" "ys") (rewrite "slofs_cons") (rewrite "nlists_cons")
+        (expand "slists" 1 1) (expand "map" 1 1) (expand "slists" "ih") (replace "ih") (rewrite "sl_of_slist") (propax)))) NIL NIL) NIL SHOSTAK))
+ (|ex_nlists| 0
+  (|ex_nlists-1| NIL 3998320000 ("" (then (skeep) (split) (flatten) (skolem -1 "x") (flatten) (inst 1 "x") (rewrite "allgt_nlists") (ground)) NIL NIL) NIL SHOSTAK))
+ (|one_list_len| 0
+  (|one_list_len-1| NIL 3998320000 ("" (then (expand "one_list") (expand "length") (expand "length") (assert)) NIL NIL) NIL SHOSTAK))
+ (|mcount_sound| 0
+  (|mcount_sound-1| NIL 3998320000 ("" (then (skeep) (expand "mcount") (rewrite "select_bmap")
+  (lemma "select_mtree") (inst -1 "slists(ps)" "k" "l0" "one_list" "ys") (replace -1) (hide -1)
+  (lemma "many_exists" ("k" "k" "l0" "l0" "Q" "slists(ps)" "ys" "ys"))
+  (lemma "mok_at") (inst -1 "slists(ps)" "k" "l0" "one_list" "ys")
+  (lemma "one_list_ok" ("ys" "ys"))
+  (lemma "one_list_len")
+  (expand "allgt")
+  (ground)) NIL NIL) NIL SHOSTAK))
+ (|mcore_sound| 0
+  (|mcore_sound-1| NIL 3998320000 ("" (then (skeep) (expand "mcore") (rewrite "select_bbind")
+  (lemma "select_snormps") (inst -1 "Q" "ys") (replace -1) (hide -1)
+  (lift-if)
+  (spread (case "allcons(slists(slofs(Q, ys)))")
+   ((then (assert)
+      (lemma "mcount_sound" ("k" "k" "l0" "l0" "ps" "slofs(Q, ys)" "ys" "ys"))
+      (lemma "allok_nlists") (inst -1 "Q" "ys")
+      (lemma "mlen_nlists") (inst -1 "Q" "ys")
+      (lemma "ex_nlists" ("l0" "l0" "Q" "Q" "ys" "ys"))
+      (lemma "slists_slofs") (inst -1 "Q" "ys") (replace -1)
+      (ground))
+    (then (assert) (rewrite "select_leaf") (split 2) (flatten) (skosimp*)
+      (lemma "slists_slofs") (inst -1 "Q" "ys") (replace -1)
+      (lemma "allgt_nlists") (inst -1 "Q" "x!1" "ys")
+      (lemma "allgt_allcons") (inst -1 "nlists(Q, ys)" "x!1" "ys")
+      (ground))))) NIL NIL) NIL SHOSTAK)))

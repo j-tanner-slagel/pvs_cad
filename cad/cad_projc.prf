@@ -1,0 +1,83 @@
+(|cad_projc|
+ (|chain_TCC1| 0
+  (|chain_TCC1-1| NIL 3998610434 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|nat_min| APPLICATION-JUDGEMENT "{k: nat | k <= i AND k <= j}" |real_defs|
+     NIL)
+    (|jtop| CONST-DECL "nat" |cad_projc| NIL)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|even_times_int_is_even| APPLICATION-JUDGEMENT "even_int" |integers| NIL)
+    (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL))
+   NIL
+   (|chain| SUBTYPE "jtop(f, g)"
+    "{j: naturalnumbers.nat | reals.<=(number_fields.*(2, j), (number_fields.+)(prem_arr.dg(cad_projc.f), prem_arr.dg(cad_projc.g)))}"
+    (30 40 30 50))))
+ (|projcr_TCC1| 0
+  (|projcr_TCC1-1| NIL 3998610434 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|live?| CONST-DECL "bool" |cad_proj| NIL)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
+   NIL
+   (|projcr| SUBTYPE "G" "(list_adt[list_adt[mpoly_adt.mpoly].list].cons?)"
+    (41 33 41 34))))
+ (|projcr_TCC2| 0
+  (|projcr_TCC2-1| NIL 3998610434 ("" (TERMINATION-TCC) NIL NIL)
+   ((|live?| CONST-DECL "bool" |cad_proj| NIL)
+    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL))
+   NIL
+   (|projcr| TERMINATION "projcr(f, cdr[list[mpoly]](G))"
+    #A((3) BASE-CHAR . "NIL") (42 45 42 62))))
+ (|projcr_TCC3| 0
+  (|projcr_TCC3-1| NIL 3998610434 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|live?| CONST-DECL "bool" |cad_proj| NIL)) NIL
+   (|projcr| SUBTYPE "G" "(list_adt[list_adt[mpoly_adt.mpoly].list].cons?)"
+    (43 23 43 24))))
+ (|projcr_TCC4| 0
+  (|projcr_TCC4-1| NIL 3998610434 ("" (TERMINATION-TCC) NIL NIL)
+   ((|live?| CONST-DECL "bool" |cad_proj| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL))
+   NIL
+   (|projcr| TERMINATION "projcr(f, cdr[list[mpoly]](G))"
+    #A((3) BASE-CHAR . "NIL") (43 9 43 26))))
+ (|projc_TCC1| 0
+  (|projc_TCC1-1| NIL 3998610434 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|projc| SUBTYPE "F" "(list_adt[list_adt[mpoly_adt.mpoly].list].cons?)"
+    (49 27 49 28))))
+ (|projc_TCC2| 0
+  (|projc_TCC2-1| NIL 3998610434 ("" (TERMINATION-TCC) NIL NIL)
+   ((|length| DEF-DECL "nat" |list_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
+   NIL
+   (|projc| TERMINATION "projc(cdr[list[mpoly]](F))" #A((3) BASE-CHAR . "NIL")
+    (49 63 49 76))))
+ (|projc_null| 0
+  (|projc_null-0| "" 3998610458
+   ("" (EXPAND "projc") (("" (PROPAX) NIL NIL)) NIL)
+   ((|projc| DEF-DECL "list[list[mpoly]]" |cad_projc| NIL)) SHOSTAK)))
+

@@ -1,0 +1,88 @@
+tarski_many: THEORY
+%----------------------------------------------------------------------------
+% A conjunction of any number of sign conditions, symbolically (Phase 3).
+%
+% mts(k, l0, Q, g, ys) is the recursion of tarski_multi carried out on
+% coefficient lists: at the empty list of conditions it is the Tarski query
+% tq of the chains, and each condition q in Q replaces the multiplier g by
+% the two multipliers q g and q^2 g, so a list of m conditions costs 2^m
+% chains.  mts_val says it computes 2^m times the restricted query T of
+% tarski_multi, and many_exists reads the decision off it:
+%     EXISTS x: p(x, ys) = 0 AND every q in Q: q(x, ys) > 0
+% holds exactly when mts with the multiplier 1 is positive.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING tarski_multi, tarski_two
+
+  l, l0, l1, l2, g: VAR list[mpoly]
+  Q: VAR list[list[mpoly]]
+  ys: VAR list[real]
+  k, i: VAR nat
+  x: VAR real
+
+  %% the polynomial functions of a list of coefficient lists
+  pfs(Q, ys): list[[real -> real]] =
+    map(LAMBDA (l: list[mpoly]): pf(l, ys), Q)
+  pfs_null: LEMMA pfs(null[list[mpoly]], ys) = null[[real -> real]]
+  pfs_cons: LEMMA pfs(cons(l, Q), ys) = cons(pf(l, ys), pfs(Q, ys))
+  len_cons2: LEMMA length(cons(l, Q)) = 1 + length(Q)
+  two_expt: LEMMA 2 ^ (i + 1) = 2 * 2 ^ i
+  two_pos: LEMMA 2 ^ i > 0
+  allpos_pfs: LEMMA allpos(pfs(Q, ys), x) IFF
+    every(LAMBDA (l: list[mpoly]): meval(mpol(l))(cons(x, ys)) > 0)(Q)
+
+  %% the function of a list is the polynomial of its array, and the
+  %% normalized product denotes the product
+  pf_arr: LEMMA pf(l, ys) = polynomial(earr(l, ys), dg(l))
+  pf_lmn: LEMMA lok(l1, ys) AND lok(l2, ys) IMPLIES
+    pf(lmn(l1, l2, ys), ys) = mulf(pf(l1, ys), pf(l2, ys))
+
+  %% the constant one as a coefficient list
+  one_list: list[mpoly] = (: mconst(1) :)
+  pf_one: LEMMA pf(one_list, ys) = LAMBDA (r: real): 1
+  one_list_ok: LEMMA lok(one_list, ys)
+
+  %% the recursion and the conditions it needs
+  mts(k, l0, Q, g, ys): RECURSIVE int =
+    IF null?(Q) THEN tq(k, l0, g, ys)
+    ELSE mts(k, l0, cdr(Q), lmn(car(Q), g, ys), ys) +
+         mts(k, l0, cdr(Q), lmn(car(Q), lmn(car(Q), g, ys), ys), ys)
+    ENDIF
+  MEASURE length(Q)
+
+  mok(k, l0, Q, g, ys): RECURSIVE bool =
+    IF null?(Q) THEN tok(k, l0, g, ys)
+    ELSE lok(car(Q), ys) AND lok(g, ys) AND
+         mok(k, l0, cdr(Q), lmn(car(Q), g, ys), ys) AND
+         mok(k, l0, cdr(Q), lmn(car(Q), lmn(car(Q), g, ys), ys), ys)
+    ENDIF
+  MEASURE length(Q)
+
+  mts_null: LEMMA mts(k, l0, null[list[mpoly]], g, ys) = tq(k, l0, g, ys)
+  mts_cons: LEMMA mts(k, l0, cons(l, Q), g, ys) =
+    mts(k, l0, Q, lmn(l, g, ys), ys) +
+    mts(k, l0, Q, lmn(l, lmn(l, g, ys), ys), ys)
+  mok_null: LEMMA mok(k, l0, null[list[mpoly]], g, ys) IFF tok(k, l0, g, ys)
+  mok_cons: LEMMA mok(k, l0, cons(l, Q), g, ys) IFF
+    (lok(car(cons(l, Q)), ys) AND lok(g, ys) AND
+     mok(k, l0, Q, lmn(l, g, ys), ys) AND
+     mok(k, l0, Q, lmn(l, lmn(l, g, ys), ys), ys))
+
+  %% what the recursion computes
+  mts_val: THEOREM FORALL (Q: list[list[mpoly]]):
+    FORALL (k: nat, l0, g: list[mpoly], ys: list[real]):
+      lok(l0, ys) AND mok(k, l0, Q, g, ys) IMPLIES
+      mts(k, l0, Q, g, ys) =
+      2 ^ length(Q) * T(earr(l0, ys), dg(l0), pfs(Q, ys), pf(g, ys))
+
+  %% the sign of the recursion is the sign of the restricted query
+  mts_sign: LEMMA lok(l0, ys) AND mok(k, l0, Q, one_list, ys) IMPLIES
+    (mts(k, l0, Q, one_list, ys) > 0 IFF
+     T(earr(l0, ys), dg(l0), pfs(Q, ys), LAMBDA (r: real): 1) > 0)
+
+  %% and the decision
+  many_exists: THEOREM lok(l0, ys) AND mok(k, l0, Q, one_list, ys) IMPLIES
+    ((EXISTS (x: real): meval(mpol(l0))(cons(x, ys)) = 0 AND
+       every(LAMBDA (l: list[mpoly]): meval(mpol(l))(cons(x, ys)) > 0)(Q))
+     IFF mts(k, l0, Q, one_list, ys) > 0)
+END tarski_many

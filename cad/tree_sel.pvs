@@ -1,0 +1,64 @@
+tree_sel[T: TYPE]: THEORY
+%----------------------------------------------------------------------------
+% Selecting a branch tree by a sign vector (Phase 5).
+%
+% tconds lists the condition polynomials of a tree. sel_by walks the tree
+% using, at each node, the sign recorded in a vector v for the condition
+% (looked up by its position in the family F, the condition viewed as a
+% coefficient list through as_list). When v is the sign vector of F at ys
+% and every condition of the tree is in F, sel_by agrees with select at ys:
+% that is how the lifting of a level uses the sign vector of the level below
+% instead of a valuation.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING branch_tree[T], sign_vec, structures@more_list_props[mpoly]
+
+  t, t1, t2, t3: VAR btree[T]
+  c: VAR mpoly
+  F: VAR list[list[mpoly]]
+  v: VAR list[Sign3]
+  ys: VAR list[real]
+  val: VAR T
+
+  tconds(t): RECURSIVE list[mpoly] =
+    CASES t OF
+      bleaf(val): null[mpoly],
+      bnode(c, n, z, p): cons(c, append(tconds(n), append(tconds(z), tconds(p))))
+    ENDCASES
+  MEASURE t BY <<
+
+  tconds_leaf: LEMMA tconds(bleaf(val)) = null[mpoly]
+  tconds_node: LEMMA tconds(bnode(c, t1, t2, t3)) =
+    cons(c, append(tconds(t1), append(tconds(t2), tconds(t3))))
+
+  sgn_of(F, v, c): Sign3 =
+    IF pos(F, as_list(c)) < length(v) THEN nth(v, pos(F, as_list(c))) ELSE 0 ENDIF
+
+  sel_by(t, F, v): RECURSIVE T =
+    CASES t OF
+      bleaf(val): val,
+      bnode(c, n, z, p):
+        IF sgn_of(F, v, c) = 0 THEN sel_by(z, F, v)
+        ELSIF sgn_of(F, v, c) = 1 THEN sel_by(p, F, v)
+        ELSE sel_by(n, F, v)
+        ENDIF
+    ENDCASES
+  MEASURE t BY <<
+
+  sel_by_leaf: LEMMA sel_by(bleaf(val), F, v) = val
+  sel_by_node: LEMMA sel_by(bnode(c, t1, t2, t3), F, v) =
+    IF sgn_of(F, v, c) = 0 THEN sel_by(t2, F, v)
+    ELSIF sgn_of(F, v, c) = 1 THEN sel_by(t3, F, v)
+    ELSE sel_by(t1, F, v)
+    ENDIF
+
+  sgn_of_at: LEMMA member(as_list(c), F) IMPLIES sgn_of(F, svec(F, ys), c) = msign(c, ys)
+
+  %% every condition of the tree is in the family, as a coefficient list
+  sub(t, F): bool = FORALL c: member(c, tconds(t)) IMPLIES member(as_list(c), F)
+  sub_leaf: LEMMA sub(bleaf(val), F)
+  sub_node: LEMMA sub(bnode(c, t1, t2, t3), F) IFF
+    (member(as_list(c), F) AND sub(t1, F) AND sub(t2, F) AND sub(t3, F))
+
+  sel_by_sel: THEOREM sub(t, F) IMPLIES sel_by(t, F, svec(F, ys)) = select(t, ys)
+END tree_sel

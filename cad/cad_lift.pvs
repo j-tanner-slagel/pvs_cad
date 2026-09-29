@@ -1,0 +1,345 @@
+cad_lift: THEORY
+%----------------------------------------------------------------------------
+% The cylindrical decision, evaluated per cell (Phase 6).
+%
+% cad_decide builds, for a family F of level m + 1, the branch tree svs(F)
+% over the parameters and takes its conditions as the family of level m.
+% Here the tree is never built. A cell of level m is a sign vector tau of a
+% family P of level m; the vectors F realizes over that cell are
+% svs_sg(F, sgv(P, tau)) (sg_svs), the sign function that answers from tau.
+% That is right when P holds everything svs_sg reads at tau (closed?), and
+% clos(fuel, av, F, P) adds the reads until it does, av being the
+% function that lists the cells of level m. lv(m) is that function for
+% every level: at level 0 the one vector of the constants, at level 1 the
+% root-isolation decomposition svs1 (cell1), above that the union over the
+% cells of the closed family below. decq2 folds the quantifiers over the
+% cells exactly as decq does. good?(m, P) says every closure met was
+% completed within its fuel; the theorems are relative to it, and the
+% procedure reports it (decide2`ok).
+%
+% Correctness is pointwise: lv_sound, every point of R^m has its vector of
+% P among lv(m)(P); lv_complete, every listed vector is the vector of some
+% point; then sem_peel2/decq2_correct follow the proof of cad_decide.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING sg_svs, alg_sign2, svs_pt, cad_decide, map_member[mpoly, list[mpoly]],
+      structures@more_list_props[list[mpoly]]
+
+  F, P: VAR list[list[mpoly]]
+  R: VAR list[mpoly]
+  Rs: VAR list[list[mpoly]]
+  tau, v: VAR SV
+  sg: VAR SG
+  ys: VAR list[real]
+  x: VAR real
+  m, fuel: VAR nat
+  c: VAR mpoly
+  l: VAR list[mpoly]
+  av: VAR [list[list[mpoly]] -> SVL]
+  Psi: VAR [SV -> bool]
+  q: VAR bool
+  qs, os, r: VAR list[bool]
+  phi: VAR BF
+
+  %% the sign function of a cell (sgnq_of: sgn_of with the decidable equality)
+  sgnq_sgn: LEMMA sgnq_of(P, tau, c) = sgn_of(P, tau, c)
+  sgv(P, tau): SG = LAMBDA c: sgnq_of(P, tau, c)
+  sub_list(R, P): bool = FORALL c: member(c, R) IMPLIES member(as_list(c), P)
+  sgv_at: LEMMA sub_list(R, P) IMPLIES agree(sgv(P, svec(P, ys)), msg(ys), R)
+
+  %% membership with the equality at the concrete type (the ground evaluator
+  %% cannot compare lists of different lengths through the generic member)
+  memb(l, P): RECURSIVE bool =
+    IF null?(P) THEN FALSE ELSIF leq(car(P), l) THEN TRUE ELSE memb(l, cdr(P)) ENDIF
+  MEASURE length(P)
+  memb_member: LEMMA FORALL P: memb(l, P) IFF member(l, P)
+
+  %% the same at the coefficient level, and the deduplication of a read
+  %% list: the reads of a cell repeat the same projection polynomials many
+  %% times (measured: 412 reads, 35 distinct at a rational sample; 188 and
+  %% 12 at a root), and every use of a read list is through membership
+  %% (agree, every), so checking each distinct polynomial once is the same
+  %% computation with the repetitions removed
+  pz: VAR mpoly
+  Rz: VAR list[mpoly]
+  PMz: VAR [mpoly -> bool]
+  memb1(pz, Rz): RECURSIVE bool =
+    IF null?(Rz) THEN FALSE ELSIF meq(car(Rz), pz) THEN TRUE ELSE memb1(pz, cdr(Rz)) ENDIF
+  MEASURE length(Rz)
+  memb1_member: LEMMA FORALL Rz: memb1(pz, Rz) IFF member(pz, Rz)
+  dedup1(Rz): RECURSIVE list[mpoly] =
+    IF null?(Rz) THEN null[mpoly]
+    ELSIF memb1(car(Rz), cdr(Rz)) THEN dedup1(cdr(Rz))
+    ELSE cons(car(Rz), dedup1(cdr(Rz)))
+    ENDIF
+  MEASURE length(Rz)
+  dedup1_member: LEMMA FORALL Rz: member(pz, dedup1(Rz)) IFF member(pz, Rz)
+  every_cons_m: LEMMA every(PMz)(cons(pz, Rz)) IFF (PMz(pz) AND every(PMz)(Rz))
+  %% renamed: cad_decide already declares every_mem over sign vectors, and the
+  %% duplicate name made that one unresolvable in qfold_msg/qfold_cell/qfold_svs1
+  every_mem_m: LEMMA FORALL Rz: every(PMz)(Rz) AND member(pz, Rz) IMPLIES PMz(pz)
+  dedup1_every: LEMMA FORALL Rz: every(PMz)(dedup1(Rz)) IFF every(PMz)(Rz)
+  addnew(P, Rs): RECURSIVE list[list[mpoly]] =
+    IF null?(Rs) THEN P
+    ELSIF memb(car(Rs), P) THEN addnew(P, cdr(Rs))
+    ELSE addnew(append(P, (: car(Rs) :)), cdr(Rs))
+    ENDIF
+  MEASURE length(Rs)
+  addnew_member: LEMMA FORALL Rs: member(l, addnew(P, Rs)) IFF (member(l, P) OR member(l, Rs))
+  agree_dedup1: LEMMA FORALL (s1, s2: SG): agree(s1, s2, dedup1(R)) IFF agree(s1, s2, R)
+
+  %% the reads of the family at every cell, as coefficient lists
+  reads_at(F, P, tau): list[list[mpoly]] =
+    addnew(null[list[mpoly]], map(as_list)(svs_srd(sfuel(F), F, sgv(P, tau))))
+  new_reads(F, P, (cs: SVL)): RECURSIVE list[list[mpoly]] =
+    IF null?(cs) THEN null[list[mpoly]]
+    ELSE append(reads_at(F, P, car(cs)), new_reads(F, P, cdr(cs)))
+    ENDIF
+  MEASURE length(cs)
+  closed?(av, F, P): bool =
+    every(LAMBDA (l: list[mpoly]): memb(l, P))(new_reads(F, P, av(P)))
+
+  %% at level 1 the reads are taken exactly, at the sample points of the
+  %% cells (asg(a) is the sign function of the point value(a)), so that only
+  %% genuine projection polynomials enter the family; at the other levels
+  %% they are computed from the vectors, the unknown signs answered 0, which
+  %% closure corrects round by round. Neither choice affects correctness:
+  %% closed? is the specification, and it is checked on the result.
+  a: VAR Alg
+  %% a rational sample (rat_alg) is evaluated directly, an isolated root by alg_sign
+  ratpt?(a): bool = length(a`p) = 2 AND nth(a`p, 1) = 1
+  ratval(a | ratpt?(a)): rat = -nth(a`p, 0)
+  asg(a): SG = IF ratpt?(a) THEN msg((: ratval(a) :)) ELSE LAMBDA c: alg_sign(a, pl(as_list(c))) ENDIF
+  new_reads1(F, (smp: list[Alg])): RECURSIVE list[list[mpoly]] =
+    IF null?(smp) THEN null[list[mpoly]]
+    ELSE append(map(as_list)(svs_srd(sfuel(F), F, asg(car(smp)))), new_reads1(F, cdr(smp)))
+    ENDIF
+  MEASURE length(smp)
+  %% As in clos1: the reads of the round are computed once (the old form
+  %% called closed? and then new_reads, evaluating every read of every cell
+  %% twice) and the recursion stops as soon as a round adds nothing. The old
+  %% exit test was closed? while progress was made by addnew, so a round
+  %% that produced only known polynomials spun through the whole fuel.
+  clos(fuel, m, av, F, P): RECURSIVE list[list[mpoly]] =
+    IF fuel = 0 THEN P
+    ELSE LET R = IF m = 1 THEN new_reads1(F, samples(sortu(allroots(P))))
+                 ELSE new_reads(F, P, av(P)) ENDIF,
+             P2 = addnew(P, R) IN
+         IF length(P2) = length(P) THEN P ELSE clos(fuel - 1, m, av, F, P2) ENDIF
+    ENDIF
+  MEASURE fuel
+
+  %% level 2 by sectors (sect_inv): a cell of a level-1 family is a sector
+  %% with its sample; a read keeps its sign on the sector when inv_chk says
+  %% so, and only the reads that fail the check are added to the family
+  cpl(c): Polylist = pl(as_list(c))
+  cpl_eval: LEMMA polylist(cpl(c))(x) = meval(c)((: x :))
+  s: VAR Sect
+  ss: VAR list[Sect]
+  %% the sign function of a sector: at a root by alg_sign, elsewhere the
+  %% sample is rational and the polynomials are evaluated directly
+  sval(s | NOT at?(s)): rat =
+    CASES s OF below(h): h`lb - 1, mid(l, h): gap(l, h), above(l): l`ub + 1, whole: 0 ELSE 0 ENDCASES
+  asgS(s): SG = IF at?(s) THEN LAMBDA c: alg_sign2(pt(s), cpl(c)) ELSE msg((: sval(s) :)) ENDIF
+  sval_sample: LEMMA NOT at?(s) IMPLIES value(sample(s)) = sval(s)
+  asgS_msg: LEMMA asgS(s) = msg((: value(sample(s)) :))
+  reads1(F, s): list[mpoly] = dedup1(svs_srd(sfuel(F), F, asgS(s)))
+  sect_inv?(F, s): bool = at?(s) OR every(LAMBDA c: inv_chk(cpl(c), s))(reads1(F, s))
+  all_inv?(F, ss): RECURSIVE bool =
+    IF null?(ss) THEN TRUE ELSE sect_inv?(F, car(ss)) AND all_inv?(F, cdr(ss)) ENDIF
+  MEASURE length(ss)
+  all_inv_mem: LEMMA FORALL ss: all_inv?(F, ss) AND member(s, ss) IMPLIES sect_inv?(F, s)
+  rts(P): list[Alg] = sortu(allroots(P))
+  inv1?(F, P): bool = all_inv?(F, sects(rts(P)))
+  badl(s, R): RECURSIVE list[list[mpoly]] =
+    IF null?(R) THEN null[list[mpoly]]
+    ELSIF inv_chk(cpl(car(R)), s) THEN badl(s, cdr(R))
+    ELSE cons(as_list(car(R)), badl(s, cdr(R)))
+    ENDIF
+  MEASURE length(R)
+  bads(F, ss): RECURSIVE list[list[mpoly]] =
+    IF null?(ss) THEN null[list[mpoly]]
+    ELSIF at?(car(ss)) THEN bads(F, cdr(ss))
+    ELSE append(badl(car(ss), reads1(F, car(ss))), bads(F, cdr(ss)))
+    ENDIF
+  MEASURE length(ss)
+
+  %% inv_chk is unconditionally TRUE at a root sector (the at arm of its
+  %% CASES), so the reads of such a sector are never used: badl discards
+  %% every one of them and sect_inv? holds whatever they are. Both are
+  %% therefore skipped above rather than evaluating reads1, which at a root
+  %% runs the algebraic sign function once per raw read.
+  inv_chk_at: LEMMA at?(s) IMPLIES inv_chk(cpl(c), s)
+  sample_at: LEMMA at?(s) IMPLIES sample(s) = pt(s)
+  badl_at: LEMMA at?(s) IMPLIES FORALL R: badl(s, R) = null[list[mpoly]]
+  sect_inv_at: LEMMA at?(s) IMPLIES sect_inv?(F, s)
+  %% One round computes the failing reads once (the old form called inv1?
+  %% and then bads, evaluating every read of every sector twice) and stops
+  %% as soon as a round adds nothing new. Before this guard a round that
+  %% produced only polynomials already present left inv1? false and the
+  %% recursion spun through all of cfuel repeating identical work.
+  clos1(fuel, F, P): RECURSIVE list[list[mpoly]] =
+    IF fuel = 0 THEN P
+    ELSE LET B = bads(F, sects(rts(P))) IN
+         IF null?(B) THEN P
+         ELSE LET P2 = addnew(P, B) IN
+              IF length(P2) = length(P) THEN P ELSE clos1(fuel - 1, F, P2) ENDIF
+         ENDIF
+    ENDIF
+  MEASURE fuel
+  %% The per-sector vector list.  rsc_sg of sg_svs branches three ways on every
+  %% family member, so svs_sg costs 3^|F|; from level 2 the decision hands the
+  %% accumulated projection family down (measured on ex_three: 10 members, then
+  %% 40) and that is fatal.  At a sector whose sample is RATIONAL the same set
+  %% of vectors - svs_sg_sound and svs_sg_complete characterize it as exactly
+  %% { svec(F, cons(x, ys)) : x real } - is computable by isolating roots, in
+  %% time polynomial in the family: that is svs_pt.  At a root sector the
+  %% sample is algebraic, the coefficients are not rational and Sturm does not
+  %% apply, so those keep the enumeration (and measured cheaper anyway: 10476
+  %% reads against 190411 at a rational sector).
+  svsec(F, s): SVL = IF at?(s) THEN svs_sg(sfuel(F), F, asgS(s))
+                     ELSE svs_pt(F, (: sval(s) :)) ENDIF
+
+  pts_ok(F, ss): RECURSIVE bool =
+    IF null?(ss) THEN TRUE
+    ELSIF at?(car(ss)) THEN pts_ok(F, cdr(ss))
+    ELSE svs_ptok(F, (: sval(car(ss)) :)) AND pts_ok(F, cdr(ss))
+    ENDIF
+  MEASURE length(ss)
+  %% ss quantified FIRST and explicitly: with F and s left as free VARs, PVS
+  %% merges all three into one binding, skeep consumes them and induct on ss
+  %% reports a bare "No change".
+  pts_ok_mem: LEMMA FORALL ss, F, s: pts_ok(F, ss) AND member(s, ss) AND NOT at?(s)
+    IMPLIES svs_ptok(F, (: sval(s) :))
+
+  %% qfold is every/some, so two lists with the same members fold alike
+  vs1, vs2: VAR SVL
+  qfold_same: LEMMA (FORALL v: member(v, vs1) IFF member(v, vs2)) IMPLIES
+    (qfold(q, vs1, Psi) IFF qfold(q, vs2, Psi))
+
+
+  over1(F, ss): RECURSIVE SVL =
+    IF null?(ss) THEN null[SV]
+    ELSE append(svs_sg(sfuel(F), F, asgS(car(ss))), over1(F, cdr(ss)))
+    ENDIF
+  MEASURE length(ss)
+  Phi: VAR [Sect -> bool]
+  qfoldS(q, ss, Phi): bool = IF q THEN every(Phi)(ss) ELSE some(Phi)(ss) ENDIF
+
+
+  %% the vectors over the cells of the level below
+  over(F, P, (cs: SVL)): RECURSIVE SVL =
+    IF null?(cs) THEN null[SV]
+    ELSE append(svs_sg(sfuel(F), F, sgv(P, car(cs))), over(F, P, cdr(cs)))
+    ENDIF
+  MEASURE length(cs)
+
+  %% the cells of every level
+  cfuel: nat = 64
+  lv(m): RECURSIVE [list[list[mpoly]] -> SVL] =
+    IF m = 0 THEN LAMBDA P: (: svec(P, null[real]) :)
+    ELSIF m = 1 THEN LAMBDA P: svs1(P)
+    ELSIF m = 2 THEN LAMBDA P: LET Q = clos1(cfuel, P, null[list[mpoly]]) IN over1(P, sects(rts(Q)))
+    ELSE LAMBDA P: LET Q = clos(cfuel, m - 1, lv(m - 1), P, null[list[mpoly]]) IN
+                   over(P, Q, lv(m - 1)(Q))
+    ENDIF
+  MEASURE m
+
+  %% every closure met was completed
+  good?(m, P): RECURSIVE bool =
+    IF m = 0 THEN TRUE
+    ELSIF m = 1 THEN svs1ok(P)
+    ELSIF m = 2 THEN LET Q = clos1(cfuel, P, null[list[mpoly]]) IN inv1?(P, Q) AND gaps_ok(rts(Q))
+    ELSE LET Q = clos(cfuel, m - 1, lv(m - 1), P, null[list[mpoly]]) IN
+         closed?(lv(m - 1), P, Q) AND good?(m - 1, Q)
+    ENDIF
+  MEASURE m
+
+  %% membership in the union over the cells
+  cs: VAR SVL
+  k: VAR nat
+  over_mem: LEMMA FORALL cs: member(tau, cs) AND member(v, svs_sg(sfuel(F), F, sgv(P, tau)))
+    IMPLIES member(v, over(F, P, cs))
+  over_mem_inv: LEMMA FORALL cs: member(v, over(F, P, cs)) IMPLIES
+    EXISTS tau: member(tau, cs) AND member(v, svs_sg(sfuel(F), F, sgv(P, tau)))
+
+  %% a closed family holds every read at every cell, so the cell's sign
+  %% function agrees with the point's on the reads and the vectors coincide
+  new_reads_mem: LEMMA FORALL cs: member(tau, cs) AND member(l, reads_at(F, P, tau))
+    IMPLIES member(l, new_reads(F, P, cs))
+  closed_sub: LEMMA closed?(av, F, P) AND member(tau, av(P)) IMPLIES
+    sub_list(svs_srd(sfuel(F), F, sgv(P, tau)), P)
+  cell_eq: LEMMA sub_list(svs_srd(k, F, sgv(P, svec(P, ys))), P) IMPLIES
+    svs_sg(k, F, sgv(P, svec(P, ys))) = svs_sg(k, F, msg(ys))
+
+  %% the vectors over a cell of a sound, complete and closed level
+  lsound?(m, P): bool = FORALL ys: length(ys) = m IMPLIES member(svec(P, ys), lv(m)(P))
+  lcomplete?(m, P): bool = FORALL v: member(v, lv(m)(P)) IMPLIES EXISTS ys: length(ys) = m AND v = svec(P, ys)
+  cell_sound: LEMMA lsound?(m, P) AND closed?(lv(m), F, P) AND length(ys) = m IMPLIES
+    member(svec(F, cons(x, ys)), svs_sg(sfuel(F), F, sgv(P, svec(P, ys))))
+  cell_complete: LEMMA lsound?(m, P) AND closed?(lv(m), F, P) AND length(ys) = m AND
+    member(v, svs_sg(sfuel(F), F, sgv(P, svec(P, ys)))) IMPLIES EXISTS x: v = svec(F, cons(x, ys))
+
+  %% the points of R^m
+  pts(m): set[list[real]] = {ys | length(ys) = m}
+  len0: LEMMA FORALL ys: length(ys) = 0 IMPLIES ys = null[real]
+  len_cons: LEMMA FORALL ys: length(ys) = m + 1 IMPLIES cons?(ys) AND length(cdr(ys)) = m
+  len1: LEMMA FORALL ys: length(ys) = 1 IMPLIES ys = (: car(ys) :)
+  len_split: LEMMA FORALL ys: length(ys) = m + 1 IMPLIES
+    EXISTS (x, (ys1: list[real])): ys = cons(x, ys1) AND length(ys1) = m
+
+  %% level 2: the vectors over a sector are those at its sample
+  reads_agree: LEMMA inv1?(F, P) AND gaps_ok(rts(P)) AND member(s, sects(rts(P))) AND in?(s, x) IMPLIES
+    agree(asgS(s), msg((: x :)), reads1(F, s))
+  cell2_eq: LEMMA inv1?(F, P) AND gaps_ok(rts(P)) AND member(s, sects(rts(P))) AND in?(s, x) IMPLIES
+    svs_sg(sfuel(F), F, msg((: x :))) = svs_sg(sfuel(F), F, asgS(s))
+  over1_mem: LEMMA FORALL ss: member(s, ss) AND member(v, svs_sg(sfuel(F), F, asgS(s)))
+    IMPLIES member(v, over1(F, ss))
+  over1_mem_inv: LEMMA FORALL ss: member(v, over1(F, ss)) IMPLIES
+    EXISTS s: member(s, ss) AND member(v, svs_sg(sfuel(F), F, asgS(s)))
+  qfold_msg: LEMMA qfold(q, svs_sg(sfuel(F), F, msg(ys)), Psi) IFF sem((: q :), F, Psi, ys)
+  everyS_mem: LEMMA FORALL ss: every(Phi)(ss) AND member(s, ss) IMPLIES Phi(s)
+  everyS_all: LEMMA FORALL ss: (FORALL s: member(s, ss) IMPLIES Phi(s)) IMPLIES every(Phi)(ss)
+  someS_mem: LEMMA FORALL ss: some(Phi)(ss) IMPLIES EXISTS s: member(s, ss) AND Phi(s)
+  someS_intro: LEMMA FORALL ss: member(s, ss) AND Phi(s) IMPLIES some(Phi)(ss)
+  q1: VAR bool
+  qfoldS_sem: LEMMA inv1?(F, P) AND gaps_ok(rts(P)) IMPLIES
+    (qfoldS(q1, sects(rts(P)), LAMBDA s: qfold(q, svs_sg(sfuel(F), F, asgS(s)), Psi)) IFF
+     sem((: q1, q :), F, Psi, null))
+
+  lv_sound: THEOREM FORALL m: FORALL P: good?(m, P) IMPLIES lsound?(m, P)
+  lv_complete: THEOREM FORALL m: FORALL P: good?(m, P) IMPLIES lcomplete?(m, P)
+
+  %% one quantifier over a cell, and over the bottom level
+  qfold_cell: LEMMA lsound?(m, P) AND closed?(lv(m), F, P) AND length(ys) = m IMPLIES
+    (qfold(q, svs_sg(sfuel(F), F, sgv(P, svec(P, ys))), Psi) IFF sem((: q :), F, Psi, ys))
+  qfold_svs1: LEMMA svs1ok(F) IMPLIES (qfold(q, svs1(F), Psi) IFF sem((: q :), F, Psi, null))
+  sem_peel2: LEMMA FORALL os: FORALL ys: closed?(lv(m), F, P) AND good?(m, P) AND
+    length(os) + length(ys) = m IMPLIES
+    (sem(os, P, LAMBDA tau: qfold(q, svs_sg(sfuel(F), F, sgv(P, tau)), Psi), ys) IFF
+     sem(append(os, (: q :)), F, Psi, ys))
+
+  %% the decision
+  decq2(qs, F, Psi): RECURSIVE [# ok: bool, val: bool #] =
+    CASES qs OF
+      null: (# ok := TRUE, val := Psi(svec(F, null[real])) #),
+      cons(q, r):
+        IF null?(r) THEN (# ok := svs1ok(F), val := qfold(q, svs1(F), Psi) #)
+        ELSIF null?(cdr(r)) THEN
+          LET Q = clos1(cfuel, F, null[list[mpoly]]), ss = sects(rts(Q)) IN
+          (# ok := inv1?(F, Q) AND gaps_ok(rts(Q)),
+             val := qfoldS(car(r), ss, LAMBDA s: qfold(q, svs_sg(sfuel(F), F, asgS(s)), Psi)) #)
+        ELSE LET m = length(r), Q = clos(cfuel, m, lv(m), F, null[list[mpoly]]) IN
+             LET d = decq2(r, Q, LAMBDA tau: qfold(q, svs_sg(sfuel(F), F, sgv(Q, tau)), Psi)) IN
+             (# ok := closed?(lv(m), F, Q) AND good?(m, Q) AND d`ok, val := d`val #)
+        ENDIF
+    ENDCASES
+  MEASURE length(qs)
+
+  decq2_correct: THEOREM FORALL qs: FORALL F, Psi:
+    decq2(qs, F, Psi)`ok IMPLIES (decq2(qs, F, Psi)`val IFF sem(reverse(qs), F, Psi, null))
+
+  decide2(qs, F, phi): [# ok: bool, val: bool #] = decq2(qs, F, LAMBDA v: bfsv(phi, v))
+  decide2_correct: THEOREM decide2(reverse(os), F, phi)`ok IMPLIES
+    (decide2(reverse(os), F, phi)`val IFF fsem(os, F, phi, null))
+END cad_lift

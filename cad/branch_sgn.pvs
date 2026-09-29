@@ -1,0 +1,88 @@
+branch_sgn: THEORY
+%----------------------------------------------------------------------------
+% The sequence with the sign of every leading coefficient (Phase 3).
+%
+% The number of real roots of a polynomial is the difference of the sign
+% changes of the Sturm chain at minus and at plus infinity, and those signs
+% are the signs of the leading coefficients of the chain (Sturm@sturm's
+% sturm_unbounded).  On a branch of the symbolic construction every one of
+% those signs is already decided: each element of the chain came out of the
+% degree branching, which is a case split on the sign of its last
+% coefficient.  This theory records that sign in the leaf, so the count is a
+% function of the data the leaf carries and needs no further branching.
+%
+% snormp is the degree branching returning the list together with the sign,
+% prsp is the sequence built from it, and select_prsp says the branch taken at
+% ys carries exactly the chain of branch_prs with each element paired with the
+% sign of its leading coefficient at ys.
+%
+% snormp prunes as it builds: a leading coefficient that is a constant
+% (mpoly_cst, after mnorm) is not a case on the parameters, so the child its sign selects
+% is taken directly and no node is made for it.  Since every node of every
+% tree in the library comes from snormp, the trees never contain a constant
+% node, and the ground evaluator only ever builds the branches that are a
+% case analysis of the parameters --- which is what makes the parametric
+% decisions of qe_tree feasible: built unpruned and pruned afterwards
+% (btree_prune) the same trees are exponential in the fuel.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING chain_sturm, mpoly_cst
+
+  SL: TYPE = [# slist: list[mpoly], ssign: Sign3 #]
+
+  IMPORTING branch_tree[SL], branch_tree[list[SL]],
+            branch_map[SL, list[SL]], branch_map[list[SL], list[SL]]
+
+  l, l1, l2: VAR list[mpoly]
+  p: VAR mpoly
+  ys: VAR list[real]
+  k: VAR nat
+  p1, p2: VAR SL
+
+  %% a list paired with the sign of its leading coefficient at ys
+  sl_of(l, ys): SL = (# slist := l, ssign := sign3(meval(llast(l))(ys)) #)
+  sl_of_slist: LEMMA sl_of(l, ys)`slist = l
+  sl_of_null: LEMMA sl_of(null[mpoly], ys) = (# slist := null[mpoly], ssign := 0 #)
+
+  %% the degree branching, recording the sign it decided.  The leading
+  %% coefficient is put in normal form first, so a coefficient that denotes a
+  %% constant (a list of zeros, say) is recognized as one and decided here
+  %% rather than branched on, and the conditions a tree carries are normal
+  snormp(l): RECURSIVE btree[SL] =
+    IF null?(l) THEN bleaf((# slist := null[mpoly], ssign := 0 #))
+    ELSIF mcst?(mnorm(llast(l)))
+    THEN IF cst_val(mnorm(llast(l))) = 0 THEN snormp(lbut(l))
+         ELSIF cst_val(mnorm(llast(l))) > 0 THEN bleaf((# slist := l, ssign := 1 #))
+         ELSE bleaf((# slist := l, ssign := -1 #))
+         ENDIF
+    ELSE bnode(mnorm(llast(l)), bleaf((# slist := l, ssign := -1 #)), snormp(lbut(l)),
+               bleaf((# slist := l, ssign := 1 #)))
+    ENDIF
+  MEASURE length(l)
+
+  snormp_null: LEMMA null?(l) IMPLIES snormp(l) = bleaf((# slist := null[mpoly], ssign := 0 #))
+  snormp_cons: LEMMA cons?(l) AND NOT mcst?(mnorm(llast(l))) IMPLIES snormp(l) =
+    bnode(mnorm(llast(l)), bleaf((# slist := l, ssign := -1 #)), snormp(lbut(l)),
+          bleaf((# slist := l, ssign := 1 #)))
+  snormp_cst: LEMMA cons?(l) AND mcst?(mnorm(llast(l))) IMPLIES snormp(l) =
+    IF cst_val(mnorm(llast(l))) = 0 THEN snormp(lbut(l))
+    ELSIF cst_val(mnorm(llast(l))) > 0 THEN bleaf((# slist := l, ssign := 1 #))
+    ELSE bleaf((# slist := l, ssign := -1 #))
+    ENDIF
+  %% the sign of a normalized polynomial is the sign of the polynomial
+  msign_mnorm: LEMMA branch_tree[SL].msign(mnorm(p), ys) = branch_tree[SL].msign(p, ys)
+  snormp_sel: THEOREM select(snormp(l), ys) = sl_of(select(snorm(l), ys), ys)
+
+  %% the sequence, each element with its sign
+  prsp(k, p1, p2): RECURSIVE btree[list[SL]] =
+    IF cons?(p2`slist) AND k > 0
+    THEN bbind(snormp(sstep(p1`slist, p2`slist)),
+               LAMBDA (p3: SL): bmap(LAMBDA (cs: list[SL]): cons(p2, cs), prsp(k - 1, p2, p3)))
+    ELSE bleaf((: (# slist := null[mpoly], ssign := 0 #) :))
+    ENDIF
+  MEASURE k
+
+  select_prsp: THEOREM p2 = sl_of(p2`slist, ys) IMPLIES
+    select(prsp(k, p1, p2), ys) =
+      map(LAMBDA (l: list[mpoly]): sl_of(l, ys), rchain(k, p1`slist, p2`slist, ys))
+END branch_sgn

@@ -1,0 +1,89 @@
+quad_sign: THEORY
+%----------------------------------------------------------------------------
+% Groundwork for psc_det? at degree <= 2 (Stage C/E of item 1).
+%
+% This file holds what is PROVED: completing the square, the perfect-square
+% identity and the extremum bounds it gives, the beyond-roots witness, and
+% the characterisation of when ZERO is realized.  The three-way set
+% characterisation (which strict signs are realized, and hence that the set
+% is a function of the sign data) is the remaining piece and lives in
+% quad_set.pvs -- it wants one small directional lemma per case rather than
+% one ten-branch IFF, which is what made the first attempt grind.
+%
+% This is the first case of Stage C/E's general theorem, and it is not a
+% detour: EVERY member of all four worked examples has degree <= 2 in the
+% main variable, so this case is what makes their fast decision proved. The
+% general theorem needs subresultant sign determination; at degree <= 2 the
+% discriminant alone does it, and `disc` is already a projc member, so
+% sect_svec supplies the hypothesis along a sector for free.
+%
+%   a /= 0, discr > 0  : { +, 0, - }        both roots, sign changes twice
+%   a /= 0, discr = 0  : { sign(a), 0 }     double root, no crossing
+%   a /= 0, discr < 0  : { sign(a) }        no real root
+%   a  = 0, b /= 0     : { +, 0, - }        linear, onto
+%   a  = 0, b  = 0     : { sign(c) }        constant
+%
+% The a = 0 rows are why the hypothesis must include sign3(a) and sign3(b) and
+% not only the discriminant: a = b = 0 gives discr = 0, the same discriminant
+% sign as a genuine double root, but a completely different set.
+%
+% NASALib's reals@quadratic supplies solvable_quadratic, not_solvable_quadratic
+% and quadratic_aux, so no sqrt reasoning is done by hand here.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING reals@quadratic, reals@sign3
+
+  a, b, c, a2, b2, c2, y, t: VAR real
+  s: VAR Sign3
+
+  qv(a, b, c)(y): real = a * sq(y) + b * y + c
+
+  %% the set of signs the quadratic actually takes
+  qset(a, b, c)(s): bool = EXISTS y: sign3(qv(a, b, c)(y)) = s
+
+  %% completing the square, in the form the witnesses below need
+  qv_shift: LEMMA a /= 0 IMPLIES
+    qv(a, b, c)(-b / (2 * a) + t) = a * sq(t) - discr(a, b, c) / (4 * a)
+
+  %% -discr/(4a) is the extremum: the minimum when a > 0, the maximum when
+  %% a < 0, attained at the vertex t = 0.  These are what decide the strict
+  %% signs: above the minimum a > 0 is unbounded, while for a < 0 nothing
+  %% exceeds the maximum.
+  %% stated without division, as a perfect square: this is completing the
+  %% square with the denominator cleared, and it holds for EVERY a
+  %% a /= 0 is required because NASALib's discr is declared on nonzero_real;
+  %% without it the TCC is FORALL a: a /= 0, which is false. Every use below
+  %% has a > 0 or a < 0, so the hypothesis costs nothing.
+  qv_square: LEMMA a /= 0 IMPLIES 4 * a * qv(a, b, c)(y) + discr(a, b, c)
+    = (2 * a * y + b) * (2 * a * y + b)
+  %% NOTE: the undivided inequality is the SAME for either sign of a --
+  %% 4a*qv + discr is a square, so 4a*qv >= -discr always. Only the DIVIDED
+  %% form flips, because dividing by 4a reverses when a < 0. Stating the
+  %% undivided version with <= for a < 0 is simply false, which the prover
+  %% caught.
+  qv_sq_ge: LEMMA a /= 0 IMPLIES 4 * a * qv(a, b, c)(y) + discr(a, b, c) >= 0
+  qv_min: LEMMA a > 0 IMPLIES qv(a, b, c)(y) >= -discr(a, b, c) / (4 * a)
+  qv_max: LEMMA a < 0 IMPLIES qv(a, b, c)(y) <= -discr(a, b, c) / (4 * a)
+
+  %% A point beyond both roots is positive when a > 0, negative when a < 0:
+  %% quadratic_aux factors qv = a*(y - x1)*(y - x2), so at max(x1,x2) + 1 both
+  %% factors are positive and only the sign of a is left.  This replaces an
+  %% earlier witness of the form -b/(2a) + 1 + |discr|/(4a^2), which forced a
+  %% quartic inequality (a^4 > 0 from a > 0 is nonlinear and PVS would not
+  %% take it) and cost far more than the geometry deserved.
+  bey(a: nonzero_real, b, (c | discr(a, b, c) >= 0)): real =
+    max(x1(a, b, c), x2(a, b, c)) + 1
+
+  qv_bey: LEMMA a /= 0 AND discr(a, b, c) >= 0 IMPLIES
+    qv(a, b, c)(bey(a, b, c)) = a * (bey(a, b, c) - x1(a, b, c))
+                                  * (bey(a, b, c) - x2(a, b, c))
+  bey_gt: LEMMA a /= 0 AND discr(a, b, c) >= 0 IMPLIES
+    bey(a, b, c) - x1(a, b, c) > 0 AND bey(a, b, c) - x2(a, b, c) > 0
+
+  %% zero is realized exactly when a root exists
+  qset_zero: LEMMA qset(a, b, c)(0) IFF
+    ((a /= 0 AND discr(a, b, c) >= 0)
+     OR (a = 0 AND b /= 0)
+     OR (a = 0 AND b = 0 AND c = 0))
+
+END quad_sign

@@ -1,0 +1,78 @@
+sign_tree: THEORY
+%----------------------------------------------------------------------------
+% The sign condition as a branch tree (Phase 3).
+%
+% sdec(k, l0, q) is a tree of sign conditions on the parameters whose leaves
+% are TRUE or FALSE, and sdec_sound says the leaf the parameters select answers
+%     EXISTS x: p(x, ys) = 0 AND q(x, ys) > 0.
+% The tree normalizes the polynomial and the query, builds the two chains the
+% two Tarski queries need (for q and for q^2), and compares the sum of the
+% queries read off the leaves with zero.  Each normalization is a three-way
+% branch on a sign, so the tree is where the case analysis lives; the leaf
+% carries the signs of all the leading coefficients, which is everything the
+% counts need.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING tarski_dec, pos_dec
+
+  l0, q, g: VAR list[mpoly]
+  ys: VAR list[real]
+  k: VAR nat
+  x: VAR real
+  s: VAR list[SL]
+
+  %% the query read off a sign-annotated chain
+  tqf(s): int = nsc_lo_n(s, mm(s)) - nsc_hi_n(s, mm(s))
+
+  slof_tchain: LEMMA slof(tchain(k, l0, g, ys), ys) =
+    cons(sl_of(l0, ys),
+         map(LAMBDA (l: list[mpoly]): sl_of(l, ys), rchain(k, l0, tsnd(g, l0, ys), ys)))
+  tq_tqf: LEMMA tq(k, l0, g, ys) = tqf(slof(tchain(k, l0, g, ys), ys))
+
+  %% one chain as a tree: the second element branches, the rest is prsp
+  p0: VAR SL
+  ctree(k, p0, g): btree[list[SL]] =
+    bbind(snormp(lmul(g, lderiv(p0`slist))), LAMBDA (p1: SL):
+      bmap(LAMBDA (cs: list[SL]): cons(p0, cs), prsp(k, p0, p1)))
+  select_ctree: LEMMA p0 = sl_of(p0`slist, ys) IMPLIES
+    select(ctree(k, p0, g), ys) = slof(tchain(k, p0`slist, g, ys), ys)
+  %% the same with the hypothesis discharged, so it can be used as a rewrite
+  select_ctree_at: LEMMA select(ctree(k, sl_of(l0, ys), g), ys) =
+    slof(tchain(k, l0, g, ys), ys)
+
+  %% the two chains and the comparison, once the degrees of the polynomial and
+  %% of the query are decided.  It is separate from sdec so that a caller that
+  %% has already branched on those degrees does not branch on them again.
+  pq: VAR SL
+  score(k, p0, pq): btree[bool] =
+    bbind(snormp(lmul(pq`slist, pq`slist)), LAMBDA (pq2: SL):
+      bbind(ctree(k, p0, pq`slist), LAMBDA (cs1: list[SL]):
+        bmap(LAMBDA (cs2: list[SL]): tqf(cs1) + tqf(cs2) > 0,
+             ctree(k, p0, pq2`slist))))
+
+  %% the answer score gives when both degrees are already decided
+  score_at: LEMMA select(score(k, sl_of(l0, ys), sl_of(q, ys)), ys) =
+    (tq(k, l0, gsq(q, ys), ys) + tq(k, l0, q, ys) > 0)
+
+  %% the decision tree: normalize, build the two chains, compare
+  sdec(k, l0, q): btree[bool] =
+    bbind(snormp(l0), LAMBDA (p0: SL):
+      bbind(snormp(q), LAMBDA (pq: SL): score(k, p0, pq)))
+
+  select_sdec: LEMMA select(sdec(k, l0, q), ys) =
+    (tq(k, select(snorm(l0), ys), select(snorm(q), ys), ys) +
+     tq(k, select(snorm(l0), ys), gsq(select(snorm(q), ys), ys), ys) > 0)
+
+  %% normalizing the polynomial and the query does not change the question
+  snorm_ex2: LEMMA
+    (EXISTS (x: real): meval(mpol(select(snorm(l0), ys)))(cons(x, ys)) = 0 AND
+                       meval(mpol(select(snorm(q), ys)))(cons(x, ys)) > 0)
+    IFF
+    (EXISTS (x: real): meval(mpol(l0))(cons(x, ys)) = 0 AND
+                       meval(mpol(q))(cons(x, ys)) > 0)
+
+  sdec_sound: THEOREM
+    tok2(k, select(snorm(l0), ys), select(snorm(q), ys), ys) IMPLIES
+    (select(sdec(k, l0, q), ys) IFF
+     (EXISTS (x: real): meval(mpol(l0))(cons(x, ys)) = 0 AND meval(mpol(q))(cons(x, ys)) > 0))
+END sign_tree

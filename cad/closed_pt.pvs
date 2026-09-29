@@ -1,0 +1,56 @@
+closed_pt: THEORY
+%----------------------------------------------------------------------------
+% "The inner walk's intrinsic reads are members of the level's family" holds at
+% EVERY point over a sector once it holds over the sample (FINISH_PLAN S5d,
+% claim B, first half).
+%
+% rdin?(F, P, ys1) depends on the point ys1 only through the sign vector of P
+% there: the reads are members of P, so two points with the same sign vector
+% on P have oracles that agree on the reads, and wi_det / cert_det move both
+% the read list and the walk's conditions (rdin_vec).  S4's fib_const for the
+% family P says the SET of sign vectors of P over cons(x, xs) is that over the
+% sample, so every point over x has a twin over the sample with the same sign
+% vector (cl_transfer).  No correspondence between cells is needed.
+%
+% cl_cells: the executable certificate in2ok? gives CL? over the sample.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cover
+
+  F, P: VAR list[list[mpoly]]
+  g: VAR list[mpoly]
+  r: VAR mpoly
+  ys, ys1, ys2, xs: VAR list[real]
+  x, q, y, beta: VAR real
+  y0, lo, hi: VAR rat
+  S: VAR [real -> bool]
+  sg, sg1, sg2: VAR SG
+
+  svec_mem: LEMMA svec(P, ys1) = svec(P, ys2) AND member(g, P) IMPLIES
+    sign3(meval(mpol(g))(ys1)) = sign3(meval(mpol(g))(ys2))
+
+  rdin?(F, P, ys1): bool =
+    cert?(F, msg(ys1)) AND
+    FORALL r: member(r, wi_rd(F, msg(ys1))) IMPLIES member(as_list(r), P)
+
+  rdin_agree: LEMMA rdin?(F, P, ys1) AND svec(P, ys1) = svec(P, ys2)
+    IMPLIES agree(msg(ys1), msg(ys2), wi_rd(F, msg(ys1)))
+  rdin_vec: LEMMA rdin?(F, P, ys1) AND svec(P, ys1) = svec(P, ys2)
+    IMPLIES rdin?(F, P, ys2) AND wi_rd(F, msg(ys2)) = wi_rd(F, msg(ys1))
+
+  CL?(F, P, ys): bool = FORALL y: rdin?(F, P, cons(y, ys))
+
+  cl_transfer: THEOREM conv?(S) AND inv?(P, S, q, xs) AND cert?(P, msg(cons(q, xs)))
+    AND S(q) AND S(x) AND CL?(F, P, cons(q, xs))
+    IMPLIES CL?(F, P, cons(x, xs))
+
+  %% ---- over the sample, from the executable certificate ---------------------------
+  wok_cert: LEMMA FORALL (Z: list[rat]): wok?(F, sg, Z) IMPLIES cert?(F, sg)
+  rdin_pt: LEMMA ptok?(F, msg(ys), P, y0) IMPLIES rdin?(F, P, cons(y0, ys))
+  rdin_sec: LEMMA lvl?(P, ys, lo, hi, beta) AND secok?(F, msg(ys), P, lo, hi)
+    IMPLIES rdin?(F, P, cons(beta, ys))
+  rf_svec: LEMMA rootfree?(P, ys, y0, y) IMPLIES svec(P, cons(y0, ys)) = svec(P, cons(y, ys))
+
+  cl_cells: THEOREM FORALL (Y: list[rat]): wok?(P, msg(ys), Y) AND cellok?(F, P, msg(ys), Y)
+    IMPLIES CL?(F, P, ys)
+END closed_pt

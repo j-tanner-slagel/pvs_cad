@@ -1,0 +1,72 @@
+clos_ok: THEORY
+%----------------------------------------------------------------------------
+% At a fixpoint of the tower closure the closure check passes at every cell
+% of every level (COMPLETENESS_PLAN C7, part 4).
+%
+% cells_o lists the cells a level's walk visits, the ones cellsf_o and
+% cellsr_o visit: a check that holds at every listed cell passes cellsf_o
+% (cellsf_every), and the reads cellsr_o merges contain each listed cell's
+% reads (cellsr_has).  At a fixpoint (tower_univ's fixp?) one more round
+% adds nothing, so the reads it would add are members already (zipadd_zsub);
+% these are the reads of the level below at every cell, so cellok_o holds at
+% every cell of every level (clk?, fixp_clk).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING tower_univ
+
+  u: VAR nat
+  TW, TR, T1, T2, T3: VAR Tower
+  TB: VAR list[CT]
+  od, od2: VAR OD
+  tb: VAR CT
+  P: VAR list[list[mpoly]]
+  Y: VAR list[rat]
+  f: VAR [OD -> bool]
+  fr: VAR [OD -> Tower]
+  R: VAR list[mpoly]
+  c: VAR mpoly
+
+  %% ---- the cells of a walk ------------------------------------------------------------------
+  cells_o(P, od, tb, Y): RECURSIVE list[OD] =
+    IF null?(Y) THEN null[OD]
+    ELSE cons(opt(od, car(Y)),
+              IF null?(cdr(Y)) THEN null[OD]
+              ELSIF gap_t(P, od, car(Y), car(cdr(Y)), tb)
+                THEN cons(osec(od, P, car(Y), car(cdr(Y))), cells_o(P, od, tb, cdr(Y)))
+              ELSE cells_o(P, od, tb, cdr(Y)) ENDIF)
+    ENDIF
+  MEASURE length(Y)
+  cellsf_every: LEMMA FORALL Y: (FORALL od2: member(od2, cells_o(P, od, tb, Y)) IMPLIES f(od2))
+    IMPLIES every(LAMBDA (b: bool): b)(cellsf_o(f, P, od, tb, Y))
+
+  %% ---- level-wise containment ------------------------------------------------------------------
+  %% on the levels both towers have
+  zsub?(T1, T2): RECURSIVE bool =
+    null?(T1) OR null?(T2) OR (sub?(car(T1), car(T2)) AND zsub?(cdr(T1), cdr(T2)))
+  MEASURE length(T1)
+  tsub_zsub: LEMMA FORALL T1: FORALL T2, T3: tsub?(T1, T2) AND zsub?(T2, T3) IMPLIES zsub?(T1, T3)
+  tsub_refl: LEMMA FORALL T1: tsub?(T1, T1)
+  tsub_trans: LEMMA FORALL T1: FORALL T2, T3: tsub?(T1, T2) AND tsub?(T2, T3) IMPLIES tsub?(T1, T3)
+  zipapp_l: LEMMA FORALL T1: FORALL T2: tsub?(T1, zipapp(T1, T2))
+  zipapp_r: LEMMA FORALL T1: FORALL T2: tsub?(T2, zipapp(T1, T2))
+  cellsr_has: LEMMA FORALL Y: member(od2, cells_o(P, od, tb, Y)) IMPLIES
+    tsub?(fr(od2), cellsr_o(fr, P, od, tb, Y))
+
+  %% ---- at a fixpoint the reads are members ------------------------------------------------------
+  zipadd_zsub: LEMMA FORALL TW: FORALL TR: tsize(zipadd(TW, TR)) = tsize(TW) IMPLIES zsub?(TR, TW)
+  clok_sub: LEMMA FORALL R: (FORALL c: member(c, R) IMPLIES member(as_list(rd_norm(c)), P))
+    IMPLIES clok?(P, map(rd_norm)(R))
+  tables_len: LEMMA FORALL TW: FORALL od: length(tables(u, TW, od)) = length(TW)
+
+  %% the closure half of okn_o: cellok_o at every cell of every level
+  clk?(u, TW, TB, od): RECURSIVE bool =
+    IF null?(TW) OR null?(TB) OR null?(cdr(TW)) THEN TRUE
+    ELSE cons?(cdr(TB)) AND
+      (FORALL od2: member(od2, cells_o(feff(car(TW), od), od, car(TB), seps_t(u, feff(car(TW), od), od, car(TB))))
+         IMPLIES cellok_o(car(cdr(TW)), car(TW), od2, car(cdr(TB))) AND clk?(u, cdr(TW), cdr(TB), od2))
+    ENDIF
+  MEASURE length(TW)
+  zsub_clk: LEMMA FORALL TW: FORALL TB, od: length(TB) = length(TW) AND zsub?(treads_o(u, TW, TB, od), TW)
+    IMPLIES clk?(u, TW, TB, od)
+  fixp_clk: THEOREM fixp?(u, TW, od) IMPLIES clk?(u, TW, tables(u, TW, od), od)
+END clos_ok

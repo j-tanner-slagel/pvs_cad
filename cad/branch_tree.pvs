@@ -1,0 +1,120 @@
+branch_tree[T: TYPE]: THEORY
+%----------------------------------------------------------------------------
+% Semantics of sign-condition branch trees (Phase 3).
+%
+% select(t, ys) follows the signs of the node polynomials at the valuation ys
+% down to a leaf. branches(t) lists every leaf together with the sign
+% conditions on the path that reaches it. The two theorems say that the list
+% is exhaustive and unambiguous: at any ys some listed branch has all its
+% conditions satisfied, and every satisfied branch carries the selected value.
+% So the disjunction over branches(t) is a correct case analysis of the
+% parameters, which is what makes a branch tree a quantifier-free answer.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING btree[T], mpoly_def, reals@sign3
+
+  t, t1, t2: VAR btree[T]
+  ys: VAR list[real]
+  c: VAR mpoly
+  v: VAR T
+
+  %% the sign of a polynomial at a valuation of the parameters
+  msign(c, ys): Sign3 = sign3(meval(c)(ys))
+
+  %% the branch taken at ys
+  select(t, ys): RECURSIVE T =
+    CASES t OF
+      bleaf(v): v,
+      bnode(c, n, z, p):
+        IF msign(c, ys) = 0 THEN select(z, ys)
+        ELSIF msign(c, ys) = 1 THEN select(p, ys)
+        ELSE select(n, ys) ENDIF
+    ENDCASES
+  MEASURE t BY <<
+
+  select_leaf: LEMMA select(bleaf(v), ys) = v
+  select_node: LEMMA select(bnode(c, t1, t2, t), ys) =
+    IF msign(c, ys) = 0 THEN select(t2, ys)
+    ELSIF msign(c, ys) = 1 THEN select(t, ys)
+    ELSE select(t1, ys) ENDIF
+
+  %% a sign condition on one polynomial, and a conjunction of them
+  SignCond: TYPE = [# cpol: mpoly, csign: Sign3 #]
+  cd: VAR SignCond
+  cl, cl1, cl2: VAR list[SignCond]
+
+  neg(c): SignCond = (# cpol := c, csign := -1 #)
+  zer(c): SignCond = (# cpol := c, csign := 0 #)
+  pos(c): SignCond = (# cpol := c, csign := 1 #)
+
+  cond_holds(cd, ys): bool = msign(cd`cpol, ys) = cd`csign
+  conds_hold(cl, ys): bool = every(LAMBDA (d: SignCond): cond_holds(d, ys))(cl)
+
+  conds_hold_null: LEMMA conds_hold(null, ys)
+  conds_hold_cons: LEMMA conds_hold(cons(cd, cl), ys) IFF (cond_holds(cd, ys) AND conds_hold(cl, ys))
+  conds_hold_head: LEMMA conds_hold(cons(cd, cl), ys) IMPLIES cond_holds(cd, ys)
+  conds_hold_tail: LEMMA conds_hold(cons(cd, cl), ys) IMPLIES conds_hold(cl, ys)
+
+  %% the leaves with the conditions that reach them
+  Branch: TYPE = [# bconds: list[SignCond], bres: T #]
+  IMPORTING structures@list2set_props[Branch]
+  b: VAR Branch
+  bl: VAR list[Branch]
+
+  prefix(cd, b): Branch = (# bconds := cons(cd, b`bconds), bres := b`bres #)
+
+  add_cond(cd, bl): RECURSIVE list[Branch] =
+    CASES bl OF
+      null: null,
+      cons(x, r): cons(prefix(cd, x), add_cond(cd, r))
+    ENDCASES
+  MEASURE length(bl)
+
+  branches(t): RECURSIVE list[Branch] =
+    CASES t OF
+      bleaf(v): (: (# bconds := null[SignCond], bres := v #) :),
+      bnode(c, n, z, p):
+        append(add_cond(neg(c), branches(n)),
+               append(add_cond(zer(c), branches(z)),
+                      add_cond(pos(c), branches(p))))
+    ENDCASES
+  MEASURE t BY <<
+
+  branches_leaf: LEMMA branches(bleaf(v)) = (: (# bconds := null[SignCond], bres := v #) :)
+  branches_node: LEMMA branches(bnode(c, t1, t2, t)) =
+    append(add_cond(neg(c), branches(t1)),
+           append(add_cond(zer(c), branches(t2)),
+                  add_cond(pos(c), branches(t))))
+
+  %% prefixing a condition onto every branch of a list
+  add_cond_mem: LEMMA member(b, bl) IMPLIES member(prefix(cd, b), add_cond(cd, bl))
+  add_cond_inv: LEMMA member(b, add_cond(cd, bl)) IMPLIES
+    EXISTS (x: Branch): member(x, bl) AND b = prefix(cd, x)
+
+  %% prefixing a branch of a subtree gives a branch of the node
+  mem_branch_neg: LEMMA member(b, branches(t1)) IMPLIES member(prefix(neg(c), b), branches(bnode(c, t1, t2, t)))
+  mem_branch_zer: LEMMA member(b, branches(t2)) IMPLIES member(prefix(zer(c), b), branches(bnode(c, t1, t2, t)))
+  mem_branch_pos: LEMMA member(b, branches(t)) IMPLIES member(prefix(pos(c), b), branches(bnode(c, t1, t2, t)))
+
+  %% and every branch of a node arises that way
+  branches_node_inv: LEMMA member(b, branches(bnode(c, t1, t2, t))) IMPLIES
+    (EXISTS (x: Branch): member(x, branches(t1)) AND b = prefix(neg(c), x)) OR
+    (EXISTS (x: Branch): member(x, branches(t2)) AND b = prefix(zer(c), x)) OR
+    (EXISTS (x: Branch): member(x, branches(t)) AND b = prefix(pos(c), x))
+
+  %% one step of the existence proof, per sign of the node polynomial
+  hasbranch(t, ys): bool =
+    EXISTS b: member(b, branches(t)) AND conds_hold(b`bconds, ys) AND b`bres = select(t, ys)
+
+  step_neg: LEMMA msign(c, ys) = -1 AND hasbranch(t1, ys) IMPLIES hasbranch(bnode(c, t1, t2, t), ys)
+  step_zer: LEMMA msign(c, ys) = 0 AND hasbranch(t2, ys) IMPLIES hasbranch(bnode(c, t1, t2, t), ys)
+  step_pos: LEMMA msign(c, ys) = 1 AND hasbranch(t, ys) IMPLIES hasbranch(bnode(c, t1, t2, t), ys)
+
+  %% the two properties that make branches(t) a case analysis
+  branch_exists: THEOREM hasbranch(t, ys)
+  branch_sound: THEOREM member(b, branches(t)) AND conds_hold(b`bconds, ys) IMPLIES b`bres = select(t, ys)
+
+  %% consequence: a property holding at every leaf holds at every valuation
+  P: VAR pred[T]
+  branch_forall: LEMMA (FORALL b: member(b, branches(t)) IMPLIES P(b`bres)) IMPLIES P(select(t, ys))
+END branch_tree

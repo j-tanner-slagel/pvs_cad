@@ -1,0 +1,236 @@
+(|towern_od|
+ (|secp_n_TCC1| 0
+  (|secp_n_TCC1-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|secp_n| SUBTYPE "G" "(list_adt[list_adt[mpoly_adt.mpoly].list].cons?)"
+    (46 27 46 28))))
+ (|secp_n_TCC2| 0
+  (|secp_n_TCC2-0| "" 3999479008
+   ("" (SKEEP)
+    (("" (ASSERT)
+      (("" (HIDE 2) (("" (EXPAND "length" 2 2) (("" (ASSERT) NIL NIL)) NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK
+   (|secp_n| TERMINATION "secp_n(P, rys, cdr[list[mpoly]](G), lo, hi)"
+    #A((3) BASE-CHAR . "NIL") (50 9 50 39)))
+  (|secp_n_TCC2-1| NIL 3999478989 ("" (TERMINATION-TCC) NIL NIL)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
+   NIL
+   (|secp_n| TERMINATION "secp_n(P, rys, cdr[list[mpoly]](G), lo, hi)"
+    #A((3) BASE-CHAR . "NIL") (50 9 50 39))))
+ (|ird_t_TCC1| 0
+  (|ird_t_TCC1-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|ird_t| SUBTYPE "tb" "(list_adt[CE].cons?)" (71 14 71 16))))
+ (|ird_t_TCC2| 0
+  (|ird_t_TCC2-1| NIL 3999478989 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+   (|ird_t| TERMINATION "ird_t(k, sg, f, cdr[CE](tb))"
+    #A((3) BASE-CHAR . "NIL") (73 9 73 33))))
+ (|mi_rd_t_TCC1| 0
+  (|mi_rd_t_TCC1-1| NIL 3999478989 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+   (|mi_rd_t| TERMINATION "mi_rd_t(F, od, cdr[list[mpoly]](G), tb)"
+    #A((3) BASE-CHAR . "NIL") (81 16 81 42))))
+ (|tables_TCC1| 0
+  (|tables_TCC1-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|tables| SUBTYPE "TW"
+    "(list_adt[list_adt[list_adt[mpoly_adt.mpoly].list].list].cons?)"
+    (129 31 129 33))))
+ (|tables_TCC2| 0
+  (|tables_TCC2-0| "" 3999479014
+   ("" (SKEEP*)
+    (("" (EXPAND "seps_t") (("" (LIFT-IF) (("" (ASSERT) NIL NIL)) NIL)) NIL))
+    NIL)
+   NIL SHOSTAK
+   (|tables| SUBTYPE "seps_t(P, od, tb)" "(list_adt[real].cons?)"
+    (130 51 130 68)))
+  (|tables_TCC2-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|seps_t| CONST-DECL "list[rat]" |walk_od| NIL))
+   NIL
+   (|tables| SUBTYPE "seps_t(P, od, tb)" "(list_adt[real].cons?)"
+    (130 51 130 68))))
+ (|tables_TCC3| 0
+  (|tables_TCC3-1| NIL 3999478989 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+   (|tables| TERMINATION
+    "tables(cdr[list[list[mpoly]]](TW), opt(od, car[real](seps_t(P, od, tb))))"
+    #A((3) BASE-CHAR . "NIL") (130 23 130 71))))
+ (|tables_TCC4| 0
+  (|tables_TCC4-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|tables| SUBTYPE "TW"
+    "(list_adt[list_adt[list_adt[mpoly_adt.mpoly].list].list].cons?)"
+    (128 26 128 28))))
+ (|ins0_TCC1| 0
+  (|ins0_TCC1-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|ins0| SUBTYPE "v" "(list_adt[real].cons?)" (138 18 138 19))))
+ (|cellsf_o_TCC1| 0
+  (|cellsf_o_TCC1-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|cellsf_o| SUBTYPE "Y" "(list_adt[real].cons?)" (147 19 147 20))))
+ (|cellsf_o_TCC2| 0
+  (|cellsf_o_TCC2-1| NIL 3999478989 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+   (|cellsf_o| TERMINATION "cellsf_o(f, P, od, tb, cdr[rat](Y))"
+    #A((3) BASE-CHAR . "NIL") (148 22 148 52))))
+ (|cellsf_o_TCC3| 0
+  (|cellsf_o_TCC3-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|cellsf_o| SUBTYPE "cdr[real](Y)" "(list_adt[real].cons?)"
+    (149 45 149 51))))
+ (|cellsf_o_TCC4| 0
+  (|cellsf_o_TCC4-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|cellsf_o| SUBTYPE "Y" "(list_adt[real].cons?)" (146 32 146 33))))
+ (|innern_o_TCC1| 0
+  (|innern_o_TCC1-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|innern_o| SUBTYPE "qs" "(list_adt[bool].cons?)" (158 40 158 42))))
+ (|innern_o_TCC2| 0
+  (|innern_o_TCC2-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|innern_o| SUBTYPE "TB" "(list_adt[CT].cons?)" (158 68 158 70))))
+ (|innern_o_TCC3| 0
+  (|innern_o_TCC3-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|innern_o| SUBTYPE "qs" "(list_adt[bool].cons?)" (160 19 160 21))))
+ (|innern_o_TCC4| 0
+  (|innern_o_TCC4-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|innern_o| SUBTYPE "TB" "(list_adt[CT].cons?)" (160 82 160 84))))
+ (|innern_o_TCC5| 0
+  (|innern_o_TCC5-1| NIL 3999478989 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+   (|innern_o| TERMINATION
+    "innern_o(cdr[bool](qs), cdr[list[list[mpoly]]](TW), cdr[CT](TB), Psi, od2)"
+    #A((3) BASE-CHAR . "NIL") (160 51 160 96))))
+ (|okqs_TCC1| 0
+  (|okqs_TCC1-0| "" 3999479021
+   ("" (SKEEP)
+    (("" (REPLACE -1) (("" (EXPAND "<<") (("" (PROPAX) NIL NIL)) NIL)) NIL))
+    NIL)
+   NIL SHOSTAK
+   (|okqs| TERMINATION "okqs(od1, dedup1(qs_rd(osg(od1), P, lo, hi, R)))"
+    #A((3) BASE-CHAR . "NIL") (185 24 185 72)))
+  (|okqs_TCC1-1| NIL 3999478989 ("" (TERMINATION-TCC) NIL NIL)
+   ((<< ADT-DEF-DECL "(strict_well_founded?[OD])" |walk_od| NIL)) NIL
+   (|okqs| TERMINATION "okqs(od1, dedup1(qs_rd(osg(od1), P, lo, hi, R)))"
+    #A((3) BASE-CHAR . "NIL") (185 24 185 72))))
+ (|okqs_TCC2| 0
+  (|okqs_TCC2-1| NIL 3999478989 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+   (|okqs| TERMINATION "okqs(od1, dedup1(sub1_rd(R, y0)))"
+    #A((3) BASE-CHAR . "NIL") (186 34 186 67))))
+ (|okn_o_TCC1| 0
+  (|okn_o_TCC1-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|okn_o| SUBTYPE "TB" "(list_adt[CT].cons?)" (203 33 203 35))))
+ (|okn_o_TCC2| 0
+  (|okn_o_TCC2-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|okn_o| SUBTYPE "cdr[list[list[mpoly]]](TW)"
+    "(list_adt[list_adt[list_adt[mpoly_adt.mpoly].list].list].cons?)"
+    (206 45 206 52))))
+ (|okn_o_TCC3| 0
+  (|okn_o_TCC3-2| "" 3999479034
+   ("" (SKEEP*)
+    (("" (HIDE-ALL-BUT (1 4))
+      (("" (EXPAND "length" 2 2) (("" (ASSERT) NIL NIL)) NIL)) NIL))
+    NIL)
+   NIL SHOSTAK
+   (|okn_o| TERMINATION "okn_o(cdr[list[list[mpoly]]](TW), cdr[CT](TB), od2)"
+    #A((3) BASE-CHAR . "NIL") (209 78 209 106)))
+  (|okn_o_TCC3-0| "" 3999479030
+   ("" (SKEEP)
+    (("" (SKEEP)
+      (("" (SKEEP)
+        (("" (HIDE-ALL-BUT 1) (("" (ASSERT) (("" (POSTPONE) NIL NIL)) NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK
+   (|okn_o| TERMINATION "okn_o(cdr[list[list[mpoly]]](TW), cdr[CT](TB), od2)"
+    #A((3) BASE-CHAR . "NIL") (209 78 209 106)))
+  (|okn_o_TCC3-1| NIL 3999478989 ("" (TERMINATION-TCC) NIL NIL)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL))
+   NIL
+   (|okn_o| TERMINATION "okn_o(cdr[list[list[mpoly]]](TW), cdr[CT](TB), od2)"
+    #A((3) BASE-CHAR . "NIL") (209 78 209 106))))
+ (|cellsr_o_TCC1| 0
+  (|cellsr_o_TCC1-1| NIL 3999478989 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+   (|cellsr_o| TERMINATION "cellsr_o(fr, P, od, tb, cdr[rat](Y))"
+    #A((3) BASE-CHAR . "NIL") (219 22 219 53))))
+ (|cellsr_o_TCC2| 0
+  (|cellsr_o_TCC2-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|cellsr_o| SUBTYPE "cdr[real](Y)" "(list_adt[real].cons?)"
+    (220 47 220 53))))
+ (|treads_o_TCC1| 0
+  (|treads_o_TCC1-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|treads_o| SUBTYPE "cdr[list[list[mpoly]]](TW)"
+    "(list_adt[list_adt[list_adt[mpoly_adt.mpoly].list].list].cons?)"
+    (230 44 230 51))))
+ (|treads_o_TCC2| 0
+  (|treads_o_TCC2-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|treads_o| SUBTYPE "cdr[CT](TB)" "(list_adt[CT].cons?)" (230 78 230 85))))
+ (|treads_o_TCC3| 0
+  (|treads_o_TCC3-1| NIL 3999478989 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+   (|treads_o| TERMINATION
+    "treads_o(cdr[list[list[mpoly]]](TW), cdr[CT](TB), od2)"
+    #A((3) BASE-CHAR . "NIL") (231 105 231 136))))
+ (|tclos_o_TCC1| 0
+  (|tclos_o_TCC1-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|tclos_o| SUBTYPE "fuel - 1" "nat" (239 55 239 63))))
+ (|tclos_o_TCC2| 0
+  (|tclos_o_TCC2-1| NIL 3999478989 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+   (|tclos_o| TERMINATION "tclos_o(fuel - 1, T2, od)" #A((3) BASE-CHAR . "NIL")
+    (239 47 239 72))))
+ (|nbads_o_TCC1| 0
+  (|nbads_o_TCC1-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|nbads_o| SUBTYPE "ss" "(list_adt[sect_inv.Sect].cons?)" (253 18 253 20))))
+ (|nbads_o_TCC2| 0
+  (|nbads_o_TCC2-1| NIL 3999478989 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+   (|nbads_o| TERMINATION "nbads_o(k, F, cdr[Sect](ss))"
+    #A((3) BASE-CHAR . "NIL") (253 28 253 50))))
+ (|nbads_o_TCC3| 0
+  (|nbads_o_TCC3-1| NIL 3999478989 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+   (|nbads_o| TERMINATION "nbads_o(k, F, cdr[Sect](ss))"
+    #A((3) BASE-CHAR . "NIL") (254 78 254 100))))
+ (|nclos_o_TCC1| 0
+  (|nclos_o_TCC1-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|nclos_o| SUBTYPE "fuel - 1" "nat" (262 60 262 68))))
+ (|nclos_o_TCC2| 0
+  (|nclos_o_TCC2-1| NIL 3999478989 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+   (|nclos_o| TERMINATION "nclos_o(fuel - 1, k, F, Q2)"
+    #A((3) BASE-CHAR . "NIL") (262 52 262 79))))
+ (|sectsok_o_TCC1| 0
+  (|sectsok_o_TCC1-0| "" 3999479041
+   ("" (SKEEP)
+    (("" (ASSERT) (("" (EXPAND "length" 2 2) (("" (ASSERT) NIL NIL)) NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK
+   (|sectsok_o| TERMINATION "sectsok_o(k, F, cdr[Sect](ss))"
+    #A((3) BASE-CHAR . "NIL") (274 60 274 84)))
+  (|sectsok_o_TCC1-1| NIL 3999478989 ("" (TERMINATION-TCC) NIL NIL)
+   ((|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL))
+   NIL
+   (|sectsok_o| TERMINATION "sectsok_o(k, F, cdr[Sect](ss))"
+    #A((3) BASE-CHAR . "NIL") (274 60 274 84))))
+ (|decn_o_TCC1| 0
+  (|decn_o_TCC1-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|decn_o| SUBTYPE "qs" "(list_adt[bool].cons?)" (279 30 279 32)))))
+

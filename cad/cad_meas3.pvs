@@ -1,0 +1,40 @@
+cad_meas3: THEORY
+%----------------------------------------------------------------------------
+% SCRATCH: what does Collins' larger operator cost?  The projection route's
+% advantage was 1 root sector against the read closure's 21, and a bigger
+% operator means more roots below.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad_projc, cad_meas
+
+  F: VAR list[list[mpoly]]
+
+  nm(F):  nat = length(proj(F))          % McCallum members
+  nc2(F): nat = length(projc(F))         % Collins members
+  rm(F):  nat = length(rts(proj(F)))     % McCallum roots below
+  rc(F):  nat = length(rts(projc(F)))    % Collins roots below
+
+  m_line: nat = nm(f_line)
+  c_line: nat = nc2(f_line)
+  rm_line: nat = rm(f_line)
+  rc_line: nat = rc(f_line)
+  m_three: nat = nm(f_three)
+  c_three: nat = nc2(f_three)
+  rm_three: nat = rm(f_three)
+  rc_three: nat = rc(f_three)
+
+  %%-------------------------------------------------------------------------
+  %% RESULT.  Collins' operator is barely larger, and -- what actually matters
+  %% -- it adds NO roots below, so the sector count is unchanged and the whole
+  %% speed advantage survives the move to the correct operator:
+  %%
+  %%             members (McC -> Collins)   roots below (McC -> Collins)
+  %%   ex_line          8 -> 10                     1 -> 1
+  %%   ex_three         7 ->  8                     1 -> 1
+  %%
+  %% The higher psc contribute constants or non-vanishing polynomials here, so
+  %% they cost nothing in sectors. Contrast the read closure: 21 roots below.
+  %%-------------------------------------------------------------------------
+  collins_cost: LEMMA m_line = 8 AND c_line = 10 AND rm_line = 1 AND rc_line = 1 AND
+                      m_three = 7 AND c_three = 8 AND rm_three = 1 AND rc_three = 1
+END cad_meas3

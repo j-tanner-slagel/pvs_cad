@@ -1,0 +1,99 @@
+alg_lift: THEORY
+%----------------------------------------------------------------------------
+% Lifting over a sector whose sample point is ALGEBRAIC (item A, steps A2-A3).
+%
+% svs_pt is the polynomial-time lifting and is typed on list[rat], so it
+% cannot represent an algebraic coordinate at all; that is why every Bath
+% problem answers ok = FALSE.  This theory does the same job at an algebraic
+% coordinate alpha, and it does it WITHOUT arithmetic in Q(alpha):
+%
+%   CANDIDATE ROOTS stay over Q.  cand(a, f) is Res_x(p, f) for p the defining
+%     polynomial of alpha -- a RATIONAL polynomial in y whose roots include
+%     every y with f(y, alpha) = 0.  It is a SUPERSET, and the superset never
+%     needs filtering: a candidate that is no member's root simply subdivides
+%     a sector into two sectors carrying the same sign vector, which refines
+%     the decomposition rather than corrupting it.
+%
+%   SIGNS AT RATIONAL y are alg_sign2.  asgn(a, f, y0) is the sign of the
+%     rational univariate f(y0, .) at alpha, which alg_sign2 already decides
+%     and alg_sign2_sign already proves.  This is where mswap is needed.
+%
+%   SIGNS AT A SECTION are a SIGN CHANGE, not a zero test.  Testing
+%     f(beta, alpha) = 0 at an algebraic beta is the two-algebraic-coordinate
+%     zero test that forces Q(alpha).  Under aok? -- lc and disc nonvanishing
+%     at alpha -- every root of f(., alpha) is SIMPLE, so f changes sign at
+%     each one, and a member is zero at a candidate exactly when its signs at
+%     the two rational neighbours disagree.  secv reads that off.
+%
+% aok? is the runtime check, and where it fails the caller reports ok = FALSE
+% rather than guessing -- the same discipline rsv already follows.
+%
+% SCOPE: ONE algebraic coordinate.  At three variables the level-3 lifting
+% sits over a level-2 section whose coordinate is itself algebraic, and that
+% needs A-II (see ITEMA_PLAN.md).  This is 2-variable-complete.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING mpoly_swap, cad_lift, sylvester
+
+  a: VAR Alg
+  f: VAR list[mpoly]
+  F: VAR list[list[mpoly]]
+  y0: VAR rat
+  s: VAR Sect
+  ss: VAR list[Sect]
+  u, v: VAR SV
+
+  %% ---- candidate roots, over Q --------------------------------------
+  defp(a): list[mpoly] = map(mconst)(a`p)
+  cand(a, f): Polylist = partial_eval(res(defp(a), mswap(f)), null[rat])
+
+  candr(a, f): list[Alg] =
+    IF deg(cand(a, f)) > 0 THEN rootsc(cand(a, f)) ELSE null[Alg] ENDIF
+
+  acands(a, F): RECURSIVE list[Alg] =
+    IF null?(F) THEN null[Alg]
+    ELSE append(candr(a, car(F)), acands(a, cdr(F)))
+    ENDIF
+  MEASURE length(F)
+
+  %% ---- signs ---------------------------------------------------------
+  %% the sign of member f at the point (y = y0, x = value(a))
+  asgn(a, f, y0): Sign3 = alg_sign2(a, partial_eval(mpol(mswap(f)), (: y0 :)))
+
+  avec(a, F, y0): SV = map(LAMBDA (g: list[mpoly]): asgn(a, g, y0))(F)
+
+  %% a member is zero at a candidate exactly where its two sides disagree
+  secv(u, v): RECURSIVE SV =
+    IF null?(u) OR null?(v) THEN null[Sign3]
+    ELSE cons(IF car(u) = car(v) THEN car(u) ELSE 0 ENDIF, secv(cdr(u), cdr(v)))
+    ENDIF
+  MEASURE length(u)
+
+  %% sects alternates open, section, open, ..., section, open
+  rv(s): rat = IF at?(s) THEN 0 ELSE sval(s) ENDIF
+
+  awalk(a, F, ss): RECURSIVE SVL =
+    IF null?(ss) THEN null[SV]
+    ELSIF null?(cdr(ss)) OR null?(cdr(cdr(ss))) THEN (: avec(a, F, rv(car(ss))) :)
+    ELSE LET u = avec(a, F, rv(car(ss))), w = cdr(cdr(ss))
+         IN cons(u, cons(secv(u, avec(a, F, rv(car(w)))), awalk(a, F, w)))
+    ENDIF
+  MEASURE length(ss)
+
+  %% THE LIFTING
+  svs_alg(F, a): SVL = awalk(a, F, sects(sortu(acands(a, F))))
+
+  %% ---- the runtime check ---------------------------------------------
+  aok1(a, f): bool =
+    LET d = dg(f) IN
+    IF d = 0 THEN TRUE
+    ELSE alg_sign2(a, cpl(nth(f, d))) /= 0
+         AND (d = 1 OR alg_sign2(a, cpl(disc(f))) /= 0)
+         AND deg(cand(a, f)) > 0
+    ENDIF
+
+  aok?(a, F): RECURSIVE bool =
+    IF null?(F) THEN TRUE ELSE aok1(a, car(F)) AND aok?(a, cdr(F)) ENDIF
+  MEASURE length(F)
+
+END alg_lift

@@ -1,0 +1,519 @@
+(|decn_complete|
+ (|badl_null| 0
+  (|badl_null-2| "" 3999603453
+   ("" (INDUCT "R")
+    (("1" (SKEEP) (("1" (EXPAND "every") (("1" (PROPAX) NIL NIL)) NIL)) NIL)
+     ("2" (SKOLEM 1 ("c0" "R0"))
+      (("2" (FLATTEN)
+        (("2" (SKEEP)
+          (("2" (INST -1 "s")
+            (("2" (EXPAND "badl" -2)
+              (("2" (EXPAND "every" 1)
+                (("2" (CASE "inv_chk(cpl(c0), s)")
+                  (("1" (ASSERT)
+                    (("1" (SPLIT -2)
+                      (("1" (PROPAX) NIL NIL) ("2" (PROPAX) NIL NIL)) NIL))
+                    NIL)
+                   ("2" (ASSERT) NIL NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|badl_null-0| "" 3999603445
+   ("" (INDUCT "R")
+    (("1" (SKEEP) (("1" (EXPAND "every") (("1" (PROPAX) NIL NIL)) NIL)) NIL)
+     ("2" (SKOLEM 1 ("c0" "R0"))
+      (("2" (FLATTEN)
+        (("2" (SKEEP)
+          (("2" (INST -1 "s")
+            (("2" (EXPAND "badl" -2)
+              (("2" (EXPAND "every" 1)
+                (("2" (CASE "inv_chk(cpl(c0), s)")
+                  (("1" (ASSERT) (("1" (POSTPONE) NIL NIL)) NIL)
+                   ("2" (ASSERT) NIL NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|badl_null-1| NIL 3999603445 ("" (POSTPONE) NIL NIL)
+   ((|list| TYPE-DECL NIL |list_adt| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|Sect| TYPE-DECL NIL |sect_inv| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|badl| DEF-DECL "list[list[mpoly]]" |cad_lift| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
+    (|inv_chk| CONST-DECL "bool" |sect_inv| NIL)
+    (|cpl| CONST-DECL "Polylist" |cad_lift| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
+   SHOSTAK))
+ (|nbads_null| 0
+  (|nbads_null-0| "" 3999603468
+   ("" (INDUCT "ss")
+    (("1" (SKEEP) (("1" (EXPAND "member") (("1" (PROPAX) NIL NIL)) NIL)) NIL)
+     ("2" (SKOLEM 1 ("s0" "ss0"))
+      (("2" (FLATTEN)
+        (("2" (SKEEP)
+          (("2" (INST -1 "T0" "s" "u")
+            (("2" (EXPAND "nbads_o" -2)
+              (("2" (EXPAND "member" -3)
+                (("2" (CASE "at?(s0)")
+                  (("1" (ASSERT) (("1" (ASSERT) NIL NIL)) NIL)
+                   ("2" (ASSERT)
+                    (("2"
+                      (USE "badl_null" :SUBST
+                           ("s" "s0" "R"
+                            "topreads(lvln_o(u, T0, s0), odS(s0))"))
+                      (("2" (REWRITE "null_append[list[mpoly]]" -2)
+                        (("2" (FLATTEN) (("2" (ASSERT) NIL NIL)) NIL)) NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|nbads_null-1| NIL 3999603462 ("" (POSTPONE) NIL NIL)
+   ((|list| TYPE-DECL NIL |list_adt| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|Tower| TYPE-EQ-DECL NIL |towern_def| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|nbads_o| DEF-DECL "list[list[mpoly]]" |towern_od| NIL)
+    (|member| DEF-DECL "bool" |list_props| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|at?| ADT-RECOGNIZER-DECL "[Sect -> boolean]" |sect_inv| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
+    (|inv_chk| CONST-DECL "bool" |sect_inv| NIL)
+    (|cpl| CONST-DECL "Polylist" |cad_lift| NIL)
+    (OD TYPE-DECL NIL |walk_od| NIL)
+    (|topreads| CONST-DECL "list[mpoly]" |towern_od| NIL)
+    (|lvln_o| CONST-DECL "Tower" |towern_od| NIL)
+    (|odS| CONST-DECL "OD" |towern_od| NIL)
+    (|Sect| TYPE-DECL NIL |sect_inv| NIL)
+    (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
+    (|badl_null| FORMULA-DECL NIL |decn_complete| NIL)
+    (|badl| DEF-DECL "list[list[mpoly]]" |cad_lift| NIL)
+    (|null_append| FORMULA-DECL NIL |more_list_props| |structures|))
+   SHOSTAK))
+ (|tw0_cons| 0
+  (|tw0_cons-0| "" 3999603446
+   ("" (SKEEP)
+    (("" (EXPAND "tw0") (("" (LIFT-IF) (("" (GROUND) NIL NIL)) NIL)) NIL)) NIL)
+   NIL SHOSTAK)
+  (|tw0_cons-1| NIL 3999603446 ("" (POSTPONE) NIL NIL)
+   ((|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|tw0| DEF-DECL "Tower" |towern_def| NIL))
+   SHOSTAK))
+ (|decn_ev| 0
+  (|decn_ev-0| "" 3999603570
+   ("" (SKEEP)
+    (("" (USE "tw0_cons" :SUBST ("k" "length(cdr(qs))" "F" "F"))
+      ((""
+        (USE "nclos_evc_fuel" :SUBST
+             ("T0" "tw0(length(cdr(qs)), F)" "Q0"
+              "proj(topf(tw0(length(cdr(qs)), F)))"))
+        (("" (ASSERT)
+          ((""
+            (USE "evc_lim[list[list[mpoly]]]" :SUBST
+                 ("f"
+                  "LAMBDA (u: nat): nclos_o(u, cfuel + u, tw0(length(cdr(qs)), F), proj(topf(tw0(length(cdr(qs)), F))))"))
+            (("" (ASSERT)
+              (("" (EXPAND "ev?" -1)
+                (("" (SKOLEM -1 "N1")
+                  (("" (NAME-REPLACE "TZ" "tw0(length(cdr(qs)), F)")
+                    ((""
+                      (NAME-REPLACE "QS"
+                       "lim(LAMBDA (u: nat): nclos_o(u, u + cfuel, TZ, proj(topf(TZ))))"
+                       :HIDE? NIL)
+                      ((""
+                        (USE "ev_list[Sect]" :SUBST
+                             ("L" "sects(rts(QS))" "P"
+                              "LAMBDA (s: Sect): LAMBDA (w: nat): okn_o(w, lvln_o(w, TZ, s), tables(w, lvln_o(w, TZ, s), odS(s)), odS(s))"))
+                        (("" (SPLIT -1)
+                          (("1" (EXPAND "ev?" -1)
+                            (("1" (SKOLEM -1 "N2")
+                              (("1" (EXPAND "ev?" 1)
+                                (("1"
+                                  (INST 1
+                                   "max(max(N1, N2), max(tbnd(TZ), length(rwall(tul(TZ))) + 1))")
+                                  (("1" (SKOLEM 1 "v")
+                                    (("1" (FLATTEN)
+                                      (("1" (ASSERT)
+                                        (("1"
+                                          (CASE
+                                              "qinv?(TZ, proj(topf(TZ)), proj(topf(TZ)))")
+                                          (("1" (INST -2 "v")
+                                            (("1" (INST -4 "v")
+                                              (("1" (ASSERT)
+                                                (("1" (LEMMA "nclos_fix")
+                                                  (("1"
+                                                    (INST -1 "proj(topf(TZ))"
+                                                     "TZ" "v" "cfuel + v"
+                                                     "proj(topf(TZ))")
+                                                    (("1" (EXPAND "cfuel" -1)
+                                                      (("1" (ASSERT)
+                                                        (("1"
+                                                          (EXPAND "cfuel" -5)
+                                                          (("1" (REPLACE -5 -1)
+                                                            (("1"
+                                                              (EXPAND "decn_o"
+                                                                      1)
+                                                              (("1" (ASSERT)
+                                                                (("1"
+                                                                  (REVEAL -)
+                                                                  (("1"
+                                                                    (HIDE -1)
+                                                                    (("1"
+                                                                      (REPLACE
+                                                                       -3 1)
+                                                                      (("1"
+                                                                        (EXPAND
+                                                                         "cfuel"
+                                                                         1)
+                                                                        (("1"
+                                                                          (REPLACE
+                                                                           -8
+                                                                           1)
+                                                                          (("1"
+                                                                            (SPLIT
+                                                                             1)
+                                                                            (("1"
+                                                                              (USE
+                                                                               "gaps_ok_incr"
+                                                                               :SUBST
+                                                                               ("rs"
+                                                                                "rts(QS)"))
+                                                                              (("1"
+                                                                                (EXPAND
+                                                                                 "rts")
+                                                                                (("1"
+                                                                                  (USE
+                                                                                   "sortu_incr"
+                                                                                   :SUBST
+                                                                                   ("rs"
+                                                                                    "allroots(QS)"))
+                                                                                  (("1"
+                                                                                    (ASSERT)
+                                                                                    NIL
+                                                                                    NIL))
+                                                                                  NIL))
+                                                                                NIL))
+                                                                              NIL)
+                                                                             ("2"
+                                                                              (USE
+                                                                               "every_map_all"
+                                                                               :SUBST
+                                                                               ("ss"
+                                                                                "sects(rts(QS))"
+                                                                                "pr"
+                                                                                "scok?(v)"
+                                                                                "g"
+                                                                                "LAMBDA (s: Sect): scof(v, TZ, s)"))
+                                                                              (("2"
+                                                                                (SPLIT
+                                                                                 -1)
+                                                                                (("1"
+                                                                                  (PROPAX)
+                                                                                  NIL
+                                                                                  NIL)
+                                                                                 ("2"
+                                                                                  (SKOLEM
+                                                                                   1
+                                                                                   "s1")
+                                                                                  (("2"
+                                                                                    (FLATTEN)
+                                                                                    (("2"
+                                                                                      (EXPAND
+                                                                                       "scok?"
+                                                                                       1)
+                                                                                      (("2"
+                                                                                        (EXPAND
+                                                                                         "scof"
+                                                                                         1)
+                                                                                        (("2"
+                                                                                          (INST
+                                                                                           -7
+                                                                                           "s1")
+                                                                                          (("2"
+                                                                                            (ASSERT)
+                                                                                            (("2"
+                                                                                              (SPLIT
+                                                                                               1)
+                                                                                              (("1"
+                                                                                                (PROPAX)
+                                                                                                NIL
+                                                                                                NIL)
+                                                                                               ("2"
+                                                                                                (FLATTEN)
+                                                                                                (("2"
+                                                                                                  (USE
+                                                                                                   "nbads_null"
+                                                                                                   :SUBST
+                                                                                                   ("ss"
+                                                                                                    "sects(rts(QS))"
+                                                                                                    "u"
+                                                                                                    "v"
+                                                                                                    "T0"
+                                                                                                    "TZ"
+                                                                                                    "s"
+                                                                                                    "s1"))
+                                                                                                  (("2"
+                                                                                                    (ASSERT)
+                                                                                                    NIL
+                                                                                                    NIL))
+                                                                                                  NIL))
+                                                                                                NIL))
+                                                                                              NIL))
+                                                                                            NIL))
+                                                                                          NIL))
+                                                                                        NIL))
+                                                                                      NIL))
+                                                                                    NIL))
+                                                                                  NIL))
+                                                                                NIL))
+                                                                              NIL))
+                                                                            NIL))
+                                                                          NIL))
+                                                                        NIL))
+                                                                      NIL))
+                                                                    NIL))
+                                                                  NIL))
+                                                                NIL))
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL))
+                                                      NIL))
+                                                    NIL))
+                                                  NIL))
+                                                NIL))
+                                              NIL))
+                                            NIL)
+                                           ("2" (HIDE 2)
+                                            (("2" (EXPAND "qinv?")
+                                              (("2"
+                                                (INST 1 "null[list[mpoly]]")
+                                                (("2" (REWRITE "append_null")
+                                                  (("2" (EXPAND "nd?")
+                                                    (("2" (EXPAND "sub?")
+                                                      (("2" (EXPAND "member")
+                                                        (("2" (PROPAX) NIL
+                                                          NIL))
+                                                        NIL))
+                                                      NIL))
+                                                    NIL))
+                                                  NIL))
+                                                NIL))
+                                              NIL))
+                                            NIL))
+                                          NIL))
+                                        NIL))
+                                      NIL))
+                                    NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL)
+                           ("2" (SKOLEM 1 "t1")
+                            (("2" (FLATTEN)
+                              (("2" (USE "okn_ev" :SUBST ("T0" "TZ" "s" "t1"))
+                                (("2" (ASSERT) NIL NIL)) NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|decn_ev-1| NIL 3999603482 ("" (POSTPONE) NIL NIL)
+   ((|nclos_evc_fuel| FORMULA-DECL NIL |clos_ev| NIL)
+    (|proj| DEF-DECL "list[list[mpoly]]" |cad_proj| NIL)
+    (|Tower| TYPE-EQ-DECL NIL |towern_def| NIL)
+    (|topf| CONST-DECL "list[list[mpoly]]" |towern_def| NIL)
+    (|tw0| DEF-DECL "Tower" |towern_def| NIL)
+    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|evc_lim| FORMULA-DECL NIL |ev_nat| NIL)
+    (|nclos_o| DEF-DECL "list[list[mpoly]]" |towern_od| NIL)
+    (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
+    (+ CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
+    (|cfuel| CONST-DECL "nat" |cad_lift| NIL)
+    (|ev?| CONST-DECL "bool" |ev_pred| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|append_null| FORMULA-DECL NIL |list_props| NIL)
+    (|sub?| CONST-DECL "bool" |tower_univ| NIL)
+    (|member| DEF-DECL "bool" |list_props| NIL)
+    (|nd?| DEF-DECL "bool" |tower_univ| NIL)
+    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
+    (|decn_o| CONST-DECL "[# ok: bool, val: bool #]" |towern_od| NIL)
+    (|gaps_ok_incr| FORMULA-DECL NIL |cell1| NIL)
+    (|allroots| DEF-DECL "list[Alg]" |cell1| NIL)
+    (|sortu_incr| FORMULA-DECL NIL |cell1| NIL)
+    (|scok?| CONST-DECL "bool" |towern_od| NIL)
+    (|scof| CONST-DECL "SC" |towern_od| NIL)
+    (SC TYPE-EQ-DECL NIL |towern_od| NIL)
+    (|every_map_all| FORMULA-DECL NIL |decn_ok| NIL)
+    (|nbads_null| FORMULA-DECL NIL |decn_complete| NIL)
+    (|nclos_fix| FORMULA-DECL NIL |nclos_ok| NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|qinv?| CONST-DECL "bool" |nclos_ok| NIL)
+    (|nonneg_rat_max| APPLICATION-JUDGEMENT
+     "{s: nonneg_rat | s >= q AND s >= r}" |real_defs| NIL)
+    (|nat_max| APPLICATION-JUDGEMENT "{k: nat | i <= k AND j <= k}" |real_defs|
+     NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|max| CONST-DECL "{p: real | p >= m AND p >= n}" |real_defs| NIL)
+    (|tbnd| DEF-DECL "nat" |tower_univ| NIL)
+    (|rwall| CONST-DECL "list[list[mpoly]]" |tower_univ| NIL)
+    (|tul| DEF-DECL "list[list[mpoly]]" |tower_univ| NIL)
+    (|okn_ev| FORMULA-DECL NIL |clos_ev| NIL)
+    (|Sect| TYPE-DECL NIL |sect_inv| NIL)
+    (|rts| CONST-DECL "list[Alg]" |cad_lift| NIL)
+    (|sects| CONST-DECL "list[Sect]" |sect_inv| NIL)
+    (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|alg?| CONST-DECL "bool" |alg_def| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|odS| CONST-DECL "OD" |towern_od| NIL)
+    (|tables| DEF-DECL "list[CT]" |towern_od| NIL)
+    (|lvln_o| CONST-DECL "Tower" |towern_od| NIL)
+    (|okn_o| DEF-DECL "bool" |towern_od| NIL) (OD TYPE-DECL NIL |walk_od| NIL)
+    (CT TYPE-EQ-DECL NIL |walk_od| NIL) (CE TYPE-EQ-DECL NIL |walk_od| NIL)
+    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|pred| TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|ev_list| FORMULA-DECL NIL |ev_nat| NIL)
+    (|lim| CONST-DECL "T" |ev_nat| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (|cdr| ADT-ACCESSOR-DECL "[(cons?) -> list]" |list_adt| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|tw0_cons| FORMULA-DECL NIL |decn_complete| NIL))
+   SHOSTAK))
+ (|decn_complete| 0
+  (|decn_complete-0| "" 3999603576
+   ("" (SKEEP)
+    (("" (USE "decn_ev")
+      (("" (ASSERT)
+        (("" (EXPAND "ev?")
+          (("" (SKOLEM -1 "N1")
+            (("" (INST 1 "N1")
+              (("" (INST -1 "N1") (("" (ASSERT) NIL NIL)) NIL)) NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|decn_complete-1| NIL 3999603575 ("" (POSTPONE) NIL NIL)
+   ((|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|ev?| CONST-DECL "bool" |ev_pred| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|decn_ev| FORMULA-DECL NIL |decn_complete| NIL))
+   SHOSTAK)))
+

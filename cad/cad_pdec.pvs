@@ -1,0 +1,155 @@
+cad_pdec: THEORY
+%----------------------------------------------------------------------------
+% The projection decision at any number of levels (Phase 6, plan item D).
+%
+% cad_meas's route3 was hand-built for exactly three quantifiers.  This is the
+% general form.  Two ingredients:
+%
+%   tower(m, F) = (: proj^m(F), ..., proj(F), F :), outermost family first.
+%     Each proj is computed once, not once per node.
+%
+%   dec(tw, qs, rs, Psi) folds the outermost quantifier over the sectors of
+%     the outermost family specialized at the coordinates chosen so far,
+%     prepending each sector's sample to rs, and at the innermost level hands
+%     the fibre to svs_pt -- which is polynomial in the family, where svs_sg
+%     is 3^|F|.
+%
+% qs is OUTERMOST-FIRST here (decq2's qs is innermost-first; reverse it).
+%
+% Sample points: a section coordinate is algebraic in general and svs_pt needs
+% a computable rational.  alg? demands lb < ub STRICTLY, so an exact rational
+% is never signalled by a collapsed isolating interval; rat_alg(r) encodes r
+% as the linear polynomial x - r, so a sample is exactly rational precisely
+% when its defining polynomial is linear, and the root is then -c0/c1 exactly.
+% okpts checks that over every sector the fold actually visits, so okpts =
+% TRUE means no approximation entered anywhere.
+%
+% CORRECTNESS IS NOT CLAIMED HERE.  That the projection's sectors are cells
+% over which the fibre is invariant is delineability, Phase 6's remaining
+% mathematics (see PHASE6_PLAN.md item B: it is REQUIRED, not optional --
+% cost is #root_sectors x 3^|F|, and only delineability licenses the small
+% projection family).  What IS established is that this route decides
+% ex_line, ex_circle, ex_disc and ex_three correctly and 3-55x faster
+% (cad_meas: routes_agree, three_works, controls).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad_proj
+
+  F, P: VAR list[list[mpoly]]
+  TW: VAR list[list[list[mpoly]]]
+  qs: VAR list[bool]
+  rs: VAR list[rat]
+  sc: VAR Sect
+  ss: VAR list[Sect]
+  Psi: VAR [SV -> bool]
+  q: VAR bool
+  phi: VAR BF
+  m: VAR nat
+
+  %% ---- exact rational samples ----------------------------------------
+  cf(a: Alg, (i: nat)): rat = IF i < length(a`p) THEN nth(a`p, i) ELSE 0 ENDIF
+  lin?(a: Alg): bool = length(a`p) = 2 AND cf(a, 1) /= 0
+
+  %% lin? is exact but too weak on its own: ex_line's projection carries
+  %% (x-1)^2, whose root 1 IS rational while the defining polynomial is
+  %% quadratic.  So also search the isolating interval by bisection -- a
+  %% midpoint that evaluates to zero PROVES it is the root (rroot_exact), so
+  %% every rational this returns is exact, never approximate.  Still only
+  %% sufficient: a root like 1/3 is never a bisection midpoint, and a
+  %% genuinely irrational one never is either.  Those need item E.
+  rfk: nat = 30
+  rroot(a: Alg, (k: nat)): RECURSIVE list[rat] =
+    IF polylist(a`p)(mid(a)) = 0 THEN (: mid(a) :)
+    ELSIF k = 0 THEN null[rat]
+    ELSE rroot(refine(a), k - 1)
+    ENDIF
+  MEASURE k
+
+  %% the rational sample of a sector, when one is available exactly
+  rsamp(a: Alg): list[rat] =
+    IF lin?(a) THEN (: -cf(a, 0) / cf(a, 1) :) ELSE rroot(a, rfk) ENDIF
+
+  ratsamp?(sc): bool = IF at?(sc) THEN cons?(rsamp(pt(sc))) ELSE TRUE ENDIF
+  rsv(sc): rat =
+    IF at?(sc) THEN (IF cons?(rsamp(pt(sc))) THEN car(rsamp(pt(sc))) ELSE 0 ENDIF)
+    ELSE sval(sc) ENDIF
+
+  allrat(ss): RECURSIVE bool =
+    IF null?(ss) THEN TRUE ELSE ratsamp?(car(ss)) AND allrat(cdr(ss)) ENDIF
+  MEASURE length(ss)
+
+  %% a returned midpoint really is the root: this is what makes rsv exact.
+  %% Being a root is not enough -- it must be THE root of this isolating
+  %% interval, so rroot_in places it in [lb, ub] and value_char identifies it.
+  rroot_exact: LEMMA FORALL (k: nat), (a: Alg): cons?(rroot(a, k))
+    IMPLIES polylist(a`p)(car(rroot(a, k))) = 0
+  rroot_in: LEMMA FORALL (k: nat), (a: Alg): cons?(rroot(a, k))
+    IMPLIES a`lb <= car(rroot(a, k)) AND car(rroot(a, k)) <= a`ub
+  lin_root: LEMMA FORALL (a: Alg): lin?(a) IMPLIES value(a) = -cf(a, 0) / cf(a, 1)
+  rsamp_value: LEMMA FORALL (a: Alg): cons?(rsamp(a)) IMPLIES value(a) = car(rsamp(a))
+  rsv_exact: LEMMA ratsamp?(sc) IMPLIES value(sample(sc)) = rsv(sc)
+
+  %% ---- the projection tower ------------------------------------------
+  tower(m, F): RECURSIVE list[list[list[mpoly]]] =
+    IF m = 0 THEN (: F :) ELSE append(tower(m - 1, proj(F)), (: F :)) ENDIF
+  MEASURE m
+
+  tower_length: LEMMA FORALL m, F: length(tower(m, F)) = m + 1
+  tower_last:   LEMMA FORALL m, F: nth(tower(m, F), m) = F
+
+  %% ---- the decision ---------------------------------------------------
+  %% the sectors of one level, over the coordinates chosen so far
+  lsects(P, rs): list[Sect] = sects(rts(evalF(P, rs)))
+
+  dec(TW, qs, rs, Psi): RECURSIVE bool =
+    IF null?(TW) OR null?(qs) THEN FALSE
+    ELSIF null?(cdr(TW)) OR null?(cdr(qs)) THEN
+      qfold(car(qs), svs_pt(car(TW), rs), Psi)
+    ELSE qfoldS(car(qs), lsects(car(TW), rs),
+                LAMBDA sc: dec(cdr(TW), cdr(qs), cons(rsv(sc), rs), Psi))
+    ENDIF
+  MEASURE length(qs)
+
+  %% every sample point the fold visits is exactly a rational
+  okpts(TW, qs, rs): RECURSIVE bool =
+    IF null?(TW) OR null?(qs) THEN TRUE
+    ELSIF null?(cdr(TW)) OR null?(cdr(qs)) THEN TRUE
+    ELSE LET ss = lsects(car(TW), rs) IN
+         allrat(ss) AND
+         every(LAMBDA sc: okpts(cdr(TW), cdr(qs), cons(rsv(sc), rs)))(ss)
+    ENDIF
+  MEASURE length(qs)
+
+  %% the entry point: qs outermost-first, |qs| quantifiers over |qs| variables
+  pdecide(F, (qs: (cons?[bool])), Psi): [# ok: bool, val: bool #] =
+    LET TW = tower(length(qs) - 1, F) IN
+    (# ok  := okpts(TW, qs, null[rat]),
+       val := dec(TW, qs, null[rat], Psi) #)
+  %% cad_lift's decq2, with proj in place of clos1/clos and svsec's hybrid
+  %% lifting in place of svs_sg at level 2.  No ok flag: correctness rests on
+  %% delineability (cad_delin's delin?), not on a read closure completing.
+  %% qs is innermost-first here, as decq2's is.
+
+  pdecq(qs, F, Psi): RECURSIVE bool =
+    CASES qs OF
+      null: Psi(svec(F, null[real])),
+      cons(q, r):
+        IF null?(r) THEN qfold(q, svs1(F), Psi)
+        ELSIF null?(cdr(r)) THEN
+          LET Q = proj(F) IN
+          qfoldS(car(r), sects(rts(Q)), LAMBDA (sd: Sect): qfold(q, svsec(F, sd), Psi))
+        ELSE LET Q = proj(F) IN
+             pdecq(r, Q, LAMBDA (tau: SV): qfold(q, svs_sg(sfuel(F), F, sgv(Q, tau)), Psi))
+        ENDIF
+    ENDCASES
+  MEASURE length(qs)
+
+  %% the bform entry point for the hybrid, for a strategy to call
+  pdecqf(F, qs, phi): bool = pdecq(qs, F, LAMBDA (v: SV): bfsv(phi, v))
+
+  %% the entry point taking a bform, mirroring cad_decide's decide2 so a
+  %% strategy can reuse the formula-to-family translation it already has
+  pdecidef(F, (qs: (cons?[bool])), phi): [# ok: bool, val: bool #] =
+    pdecide(F, qs, LAMBDA (v: SV): bfsv(phi, v))
+
+END cad_pdec

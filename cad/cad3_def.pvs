@@ -1,0 +1,54 @@
+cad3_def: THEORY
+%----------------------------------------------------------------------------
+% The three-quantifier decision, executable part (FINISH_PLAN stage S5c/d).
+%
+% Per sector s of the outermost variable, with oracle asgS(s):
+%   the level below is inner2 of tower_def (its family P_s is proj(F) closed
+%   under the innermost walk's intrinsic reads at every cell);
+%   the certificate is in2ok? at the sample (claim A makes the value right
+%   there) and the S4 certificate icert1? for the family P_s on the sector
+%   (claim B carries the value to every point of the sector).
+% The sectors come from proj(proj(F)) closed under the intrinsic reads of the
+% walk over P_s -- the same closure as cad_fast_def, one level up.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING tower_def
+
+  F, Q: VAR list[list[mpoly]]
+  s: VAR Sect
+  ss: VAR list[Sect]
+  fuel: VAR nat
+  Psi: VAR [SV -> bool]
+
+  lvl2(F, s): list[list[mpoly]] = yclos(cfuel, F, asgS(s), proj(F))
+
+  xbads(F, ss): RECURSIVE list[list[mpoly]] =
+    IF null?(ss) THEN null[list[mpoly]]
+    ELSIF at?(car(ss)) THEN xbads(F, cdr(ss))
+    ELSE append(badl(car(ss), ireads(lvl2(F, car(ss)), car(ss))), xbads(F, cdr(ss)))
+    ENDIF
+  MEASURE length(ss)
+
+  xclos(fuel, F, Q): RECURSIVE list[list[mpoly]] =
+    IF fuel = 0 THEN Q
+    ELSE LET B = xbads(F, sects(rts(Q))) IN
+         IF null?(B) THEN Q
+         ELSE LET Q2 = addnew(Q, B) IN
+              IF length(Q2) = length(Q) THEN Q ELSE xclos(fuel - 1, F, Q2) ENDIF
+         ENDIF
+    ENDIF
+  MEASURE fuel
+
+  xcert1?(F, s): bool = in2ok?(F, asgS(s)) AND icert1?(lvl2(F, s), s)
+
+  xcert?(F, ss): RECURSIVE bool =
+    IF null?(ss) THEN TRUE ELSE xcert1?(F, car(ss)) AND xcert?(F, cdr(ss)) ENDIF
+  MEASURE length(ss)
+
+  decw3(q1: bool, q2: bool, q3: bool, F, Psi): [# ok: bool, val: bool #] =
+    LET Q = xclos(cfuel, F, proj(proj(F))), ss = sects(rts(Q)) IN
+    (# ok  := gaps_ok(rts(Q)) AND xcert?(F, ss),
+       val := qfoldS(q1, ss, LAMBDA s: inner2(q2, q3, F, Psi, asgS(s))) #)
+
+  nroot3(F): nat = length(rts(xclos(cfuel, F, proj(proj(F)))))
+END cad3_def

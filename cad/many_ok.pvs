@@ -1,0 +1,65 @@
+many_ok: THEORY
+%----------------------------------------------------------------------------
+% When the many-condition Tarski recursion is well formed (Phase 3).
+%
+% many_exists of tarski_many needs mok, a condition on the valuation: every
+% chain the recursion builds must start from a polynomial of positive degree
+% with a nonvanishing leading coefficient, and the fuel must cover every
+% multiplier.  mok_at reduces that to what a branch of the tree knows --- the
+% polynomial has degree at least one, it and every condition have a
+% nonvanishing leading coefficient --- and to a bound on the fuel that is
+% syntactic: the multipliers are products of the conditions, each condition
+% entering at most twice, so length(p) + length(g) + mlen(Q) terms suffice.
+%
+% The second half is about normalizing the conditions: normalization does not
+% change their values (allgt_nlists) and does not lengthen them
+% (mlen_nlists), a normalized list that is not empty has a nonvanishing
+% leading coefficient (allok_nlists), and a condition that normalizes to
+% nothing is the zero polynomial and so is nowhere positive (allgt_cons).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING qe_conj
+
+  l, l0, g: VAR list[mpoly]
+  Q, L: VAR list[list[mpoly]]
+  ys: VAR list[real]
+  k: VAR nat
+  x: VAR real
+
+  %% twice the lengths of the conditions: a bound on how much the longest
+  %% multiplier of the recursion grows
+  mlen(Q): RECURSIVE nat =
+    IF null?(Q) THEN 0 ELSE 2 * length(car(Q)) + mlen(cdr(Q)) ENDIF
+  MEASURE length(Q)
+  mlen_null: LEMMA mlen(null[list[mpoly]]) = 0
+  mlen_cons: LEMMA mlen(cons(l, Q)) = 2 * length(l) + mlen(Q)
+
+  %% the recursion is well formed on every branch that decided the degrees
+  mok_at: THEOREM FORALL (Q: list[list[mpoly]]):
+    FORALL (k: nat, l0, g: list[mpoly], ys: list[real]):
+      length(l0) >= 2 AND lok(l0, ys) AND lok(g, ys) AND allok(Q, ys) AND
+      length(l0) + length(g) + mlen(Q) <= k
+      IMPLIES mok(k, l0, Q, g, ys)
+
+  %% the conditions normalized at the valuation
+  nlists(Q, ys): list[list[mpoly]] =
+    map(LAMBDA (l: list[mpoly]): select(snorm(l), ys), Q)
+  nlists_null: LEMMA nlists(null[list[mpoly]], ys) = null[list[mpoly]]
+  nlists_cons: LEMMA nlists(cons(l, Q), ys) = cons(select(snorm(l), ys), nlists(Q, ys))
+
+  allgt_cons: LEMMA allgt(cons(l, Q), ys, x) IFF
+    (meval(mpol(l))(cons(x, ys)) > 0 AND allgt(Q, ys, x))
+  allcons(L): bool = every(LAMBDA (l: list[mpoly]): cons?(l))(L)
+  allcons_cons: LEMMA allcons(cons(l, L)) IFF (cons?(l) AND allcons(L))
+
+  mlen_nlists: LEMMA FORALL (Q: list[list[mpoly]]): FORALL (ys: list[real]):
+    mlen(nlists(Q, ys)) <= mlen(Q)
+  allgt_nlists: LEMMA FORALL (Q: list[list[mpoly]]): FORALL (x: real, ys: list[real]):
+    allgt(nlists(Q, ys), ys, x) IFF allgt(Q, ys, x)
+  allok_nlists: LEMMA FORALL (Q: list[list[mpoly]]): FORALL (ys: list[real]):
+    allcons(nlists(Q, ys)) IMPLIES allok(nlists(Q, ys), ys)
+
+  %% a condition that is the empty list is the zero polynomial
+  allgt_allcons: LEMMA FORALL (L: list[list[mpoly]]): FORALL (x: real, ys: list[real]):
+    allgt(L, ys, x) IMPLIES allcons(L)
+END many_ok

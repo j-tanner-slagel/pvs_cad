@@ -1,0 +1,33 @@
+tower_sem: THEORY
+%----------------------------------------------------------------------------
+% A tower's truth is constant on a sector, at every height
+% (FINISH_PLAN 3i, stage N6).
+%
+% tower_all: CBh, LCh and CTh hold at every height n >= 1, by strong
+% induction: CTh(n) from CBh below n (ct_step), LCh(n) from LCh(n - 1) and
+% CBh(n - 1) (lc_step; lc_base at one), CBh(n) from LCh(n) and CTh(n)
+% (cb_step).  tower_cb and tower_ct are the forms the decision's proof
+% uses: the n inner quantifiers have one truth value on an outer sector, and
+% the closure certified at the sample holds at every point of it.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING tlc
+
+  TW: VAR Tower
+  qs: VAR list[bool]
+  Psi: VAR [SV -> bool]
+  S: VAR [real -> bool]
+  q, a, b, x: VAR real
+  xs: VAR list[real]
+  n: VAR nat
+
+  tower_all: THEOREM FORALL n: n >= 1 IMPLIES CBh(n) AND LCh(n) AND CTh(n)
+
+  tower_cb: THEOREM cons?(TW) AND length(qs) = length(TW) AND conv?(S)
+    AND S(q) AND S(a) AND S(b) AND invz?(car(TW), S, q, xs) AND CLF(TW, cons(q, xs))
+    IMPLIES (sem(qs, tlast(TW), Psi, cons(a, xs)) IFF sem(qs, tlast(TW), Psi, cons(b, xs)))
+
+  tower_ct: THEOREM cons?(TW) AND conv?(S) AND S(q) AND S(x)
+    AND invz?(car(TW), S, q, xs) AND CLF(TW, cons(q, xs))
+    IMPLIES CLF(TW, cons(x, xs))
+END tower_sem

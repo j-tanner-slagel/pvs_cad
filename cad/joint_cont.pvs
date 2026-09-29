@@ -1,0 +1,46 @@
+joint_cont: THEORY
+%----------------------------------------------------------------------------
+% A polynomial keeps its sign near a point of the plane of its first two
+% variables (FINISH_PLAN stage S5d, claim B: the entry reads at a SECTION).
+%
+% sign_pers moves one coordinate.  At a section the point (beta(x), x) moves
+% in both, so the entry reads of the inner walk need joint continuity:
+%
+%   unif        for |y| <= B the value at (y, x) is uniformly close to the
+%               value at (y, x0) when x is close to x0 -- Horner induction on
+%               the coefficient list, each coefficient continuous in x
+%   joint_sign  a polynomial nonzero at (y0, x0) has the same sign at every
+%               (y, x) with |y - y0| < eta and |x - x0| < d
+%   joint_pers  the same for a finite list, as agreement of the oracles
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING sign_pers
+
+  u: VAR mpoly
+  l: VAR list[mpoly]
+  R: VAR list[mpoly]
+  xs: VAR list[real]
+  x, x0, y, y0: VAR real
+
+  %% continuity in the first coordinate, epsilon-delta
+  mev_cont: LEMMA FORALL (e: posreal): EXISTS (d: posreal): FORALL x:
+    abs(x - x0) < d IMPLIES abs(meval(u)(cons(x, xs)) - meval(u)(cons(x0, xs))) < e
+
+  unif: LEMMA FORALL l: FORALL (B, e: posreal): EXISTS (d: posreal): FORALL x, y:
+    abs(x - x0) < d AND abs(y) <= B IMPLIES
+      abs(meval(mpol(l))(cons(y, cons(x, xs))) - meval(mpol(l))(cons(y, cons(x0, xs)))) < e
+
+  joint_sign: LEMMA meval(u)(cons(y0, cons(x0, xs))) /= 0 IMPLIES
+    EXISTS (eta, d: posreal): FORALL x, y: abs(x - x0) < d AND abs(y - y0) < eta IMPLIES
+      sign3(meval(u)(cons(y, cons(x, xs)))) = sign3(meval(u)(cons(y0, cons(x0, xs))))
+
+  %% nonzero at the point, or zero everywhere (the null entry of a chain)
+  jz1?(u, y0, x0, xs): bool = meval(u)(cons(y0, cons(x0, xs))) /= 0 OR
+    FORALL x, y: meval(u)(cons(y, cons(x, xs))) = 0
+  jz?(R, y0, x0, xs): bool = FORALL u: member(u, R) IMPLIES jz1?(u, y0, x0, xs)
+  jz_cons: LEMMA jz?(cons(u, R), y0, x0, xs) IFF (jz1?(u, y0, x0, xs) AND jz?(R, y0, x0, xs))
+
+  joint_pers: THEOREM FORALL R: jz?(R, y0, x0, xs) IMPLIES
+    EXISTS (eta, d: posreal): FORALL x, y: abs(x - x0) < d AND abs(y - y0) < eta IMPLIES
+      agree(msg(cons(y, cons(x, xs))), msg(cons(y0, cons(x0, xs))), R)
+END joint_cont

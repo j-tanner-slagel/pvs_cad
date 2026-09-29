@@ -1,0 +1,44 @@
+sgn_prune: THEORY
+%----------------------------------------------------------------------------
+% The sign-condition tree with its decided branches removed (Phase 3).
+%
+% gdec is correct but large: the symbolic construction asks for the sign of
+% every coefficient it produces, and almost all of them are numbers.  For
+% x^2 - 1 and x, branches(gdec(9, ...)) has 48827 entries, all but one of them
+% with contradictory conditions.  sdecide is the same tree with every node
+% whose coefficient is a number replaced by the child that number selects, so
+% for a problem with no parameters it is a single leaf, and in general it lists
+% only the branches that really are a case analysis of the parameters.  It is
+% the same decision: select_prune says the branch the parameters take is
+% unchanged.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING sgn_dec, btree_prune[bool]
+
+  l0, q: VAR list[mpoly]
+  ys: VAR list[real]
+  k: VAR nat
+  x: VAR real
+
+  sdecide(k, l0, q): btree[bool] = prune(gdec(k, l0, q))
+
+  select_sdecide: LEMMA select(sdecide(k, l0, q), ys) = select(gdec(k, l0, q), ys)
+
+  sdecide_sound: THEOREM length(l0) + 3 * length(q) <= k IMPLIES
+    (select(sdecide(k, l0, q), ys) IFF
+     (EXISTS (x: real): meval(mpol(l0))(cons(x, ys)) = 0 AND
+                        meval(mpol(q))(cons(x, ys)) > 0))
+
+  %% what the strategies use
+  b: VAR branch_tree[bool].Branch
+  psign_branch: THEOREM length(l0) + 3 * length(q) <= k AND
+    member(b, branches(sdecide(k, l0, q))) AND b`bres AND
+    branch_tree[bool].conds_hold(b`bconds, ys)
+    IMPLIES EXISTS (x: real): meval(mpol(l0))(cons(x, ys)) = 0 AND
+                              meval(mpol(q))(cons(x, ys)) > 0
+  pnosign_branch: THEOREM length(l0) + 3 * length(q) <= k AND
+    member(b, branches(sdecide(k, l0, q))) AND NOT b`bres AND
+    branch_tree[bool].conds_hold(b`bconds, ys)
+    IMPLIES FORALL (x: real): NOT (meval(mpol(l0))(cons(x, ys)) = 0 AND
+                                   meval(mpol(q))(cons(x, ys)) > 0)
+END sgn_prune

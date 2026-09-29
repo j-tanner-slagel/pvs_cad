@@ -1,0 +1,29 @@
+cad_meas5: THEORY
+%----------------------------------------------------------------------------
+% SCRATCH, and the cheapest question in the project: is COLLINS' projection
+% read-closed enough?
+%
+% svs_det is already proved: sign functions agreeing on svs_srd give the same
+% svs_sg, and svs_sg_sound/complete say svs_sg IS the fibre set.  So if
+% inv1?(F, projc(F)) holds, psc_det? follows from machinery already proved and
+% item 1 collapses.  inv1? was measured FALSE for McCallum's proj; projc adds
+% the higher psc, which are exactly the coefficients of the remainder
+% sequence the reads come from.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad_projc, cad_meas
+
+  F: VAR list[list[mpoly]]
+
+  okc_line:   bool = inv1?(f_line,   projc(f_line))
+  okc_circle: bool = inv1?(f_circle, projc(f_circle))
+  okc_disc:   bool = inv1?(f_disc,   projc(f_disc))
+  okm_line:   bool = inv1?(f_line,   proj(f_line))
+
+  %% how many reads are there, against how many members projc supplies
+  nrd_c: nat = length(reads1(f_line, car(sects(rts(projc(f_line))))))
+  nmem_c: nat = length(projc(f_line))
+  nrts_c: nat = length(rts(projc(f_line)))
+
+  ctx5: LEMMA nmem_c >= 0
+END cad_meas5

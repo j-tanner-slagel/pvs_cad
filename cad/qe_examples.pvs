@@ -1,0 +1,57 @@
+qe_examples: THEORY
+%----------------------------------------------------------------------------
+% What the branching decision procedure can do (Phase 3).
+%
+% Each example is a ground instance of qdec: the decision tree of a symbolic
+% polynomial, evaluated at a valuation of the parameters by the PVS ground
+% evaluator.  The first family is x^2 + y, which has a real root exactly when
+% y <= 0; the second is a*x + b, where the leading coefficient may vanish and
+% the degree branching is what decides; the third is the quadratic
+% x^2 + b*x + c, whose discriminant condition the sign counting reproduces.
+% The last pair is the payoff: a statement about the reals proved by running
+% the tree.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING pos_dec
+
+  x: VAR real
+
+  %% x^2 + y, with y the only parameter
+  P1: list[mpoly] = (: mvar(1), mconst(0), mconst(1) :)
+  e1: LEMMA NOT select(qdec(3, P1), (: 1 :))
+  e2: LEMMA select(qdec(3, P1), (: -1 :))
+  e3: LEMMA select(qdec(3, P1), (: 0 :))
+
+  %% a*x + b, with a and b the parameters: the degree branching decides
+  P2: list[mpoly] = (: mvar(2), mvar(1) :)
+  e4: LEMMA select(qdec(2, P2), (: 2, 3 :))
+  e5: LEMMA NOT select(qdec(2, P2), (: 0, 3 :))
+  e6: LEMMA select(qdec(2, P2), (: 0, 0 :))
+
+  %% x^2 + b*x + c, with b and c the parameters
+  P3: list[mpoly] = (: mvar(2), mvar(1), mconst(1) :)
+  e7: LEMMA NOT select(qdec(3, P3), (: 0, 1 :))
+  e8: LEMMA select(qdec(3, P3), (: 2, 1 :))
+  e9: LEMMA select(qdec(3, P3), (: 0, -1 :))
+
+  %% a fact about the reals, decided by the tree
+  P4: list[mpoly] = (: mconst(1), mconst(0), mconst(1) :)
+  e10: LEMMA meval(mpol(P4))(cons(x, null)) = x^2 + 1
+  e11: LEMMA NOT (EXISTS (x: real): x^2 + 1 = 0)
+  %% positivity: x^2 + b*x + c > 0 everywhere exactly when b^2 < 4c
+  p1: LEMMA select(pdec(3, P3), (: 0, 1 :))
+  p2: LEMMA NOT select(pdec(3, P3), (: 2, 1 :))
+  p3: LEMMA NOT select(pdec(3, P3), (: 0, -1 :))
+  p4: LEMMA select(pdec(3, P3), (: 1, 1 :))
+  p5: LEMMA NOT select(pdec(3, P3), (: 3, 1 :))
+
+  %% positivity of a polynomial whose leading coefficient is a parameter:
+  %% a*x^2 + 1 > 0 everywhere iff a >= 0
+  P5: list[mpoly] = (: mconst(1), mconst(0), mvar(1) :)
+  p6: LEMMA select(pdec(3, P5), (: 1 :))
+  p7: LEMMA NOT select(pdec(3, P5), (: -1 :))
+  p8: LEMMA select(pdec(3, P5), (: 0 :))
+
+  %% a fact about the reals, decided by the tree
+  p9: LEMMA FORALL (x: real): x^2 + 1 > 0
+END qe_examples

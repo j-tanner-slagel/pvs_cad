@@ -1,0 +1,1392 @@
+(|cells_local|
+ (|ctx_cl| 0
+  (|ctx_cl-0| "" 3999016091
+   ("" (SKEEP)
+    (("" (EXPAND "ctx?")
+      (("" (FLATTEN)
+        ((""
+          (USE "cl_transfer" :SUBST
+               ("S" "S" "P" "P" "q" "q" "xs" "xs" "x" "x0" "F" "F"))
+          (("" (ASSERT) NIL NIL)) NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|ctx?| CONST-DECL "bool" |cells_local| NIL)
+    (|cl_transfer| FORMULA-DECL NIL |closed_pt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
+   SHOSTAK))
+ (|sep_local| 0
+  (|sep_local-0| "" 3999016114
+   ("" (SKEEP)
+    ((""
+      (USE "ctx_cl" :SUBST
+           ("F" "F" "P" "P" "S" "S" "q" "q" "xs" "xs" "x0" "x0"))
+      (("" (ASSERT)
+        (("" (EXPAND "CL?")
+          (("" (INST -1 "y0")
+            ((""
+              (USE "pt_local" :SUBST
+                   ("F" "F" "P" "P" "beta0" "y0" "x0" "x0" "xs" "xs"))
+              (("" (ASSERT)
+                (("" (SKOLEM -1 ("eta" "d"))
+                  (("" (INST 1 "d")
+                    (("" (SKEEP)
+                      (("" (INST -1 "x" "y0")
+                        (("" (EXPAND "abs" -1 2)
+                          (("" (ASSERT)
+                            (("" (EXPAND "Tx")
+                              (("" (EXPAND "T")
+                                ((""
+                                  (USE "sem1_fibs" :SUBST
+                                       ("F" "F" "ys1" "cons(y0, cons(x, xs))"
+                                        "ys2" "cons(y0, cons(x0, xs))" "q" "q3"
+                                        "Psi" "Psi"))
+                                  (("" (ASSERT)
+                                    (("" (SPLIT -1)
+                                      (("1" (PROPAX) NIL NIL)
+                                       ("2" (PROPAX) NIL NIL))
+                                      NIL))
+                                    NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|ctx_cl| FORMULA-DECL NIL |cells_local| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (CL? CONST-DECL "bool" |closed_pt| NIL)
+    (|pt_local| FORMULA-DECL NIL |pt_local| NIL)
+    (|abs| CONST-DECL "{n: nonneg_real | n >= m AND n >= -m}" |real_defs| NIL)
+    (|Tx| CONST-DECL "bool" |cells_local| NIL)
+    (|sem1_fibs| FORMULA-DECL NIL |level_ok| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
+    (T CONST-DECL "bool" |level_ok| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|nonneg_real| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (> CONST-DECL "bool" |reals| NIL)
+    (|posreal| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|real_minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL))
+   SHOSTAK))
+ (|gap_local| 0
+  (|gap_local-0| "" 3999016156
+   ("" (SKEEP)
+    ((""
+      (USE "ctx_cl" :SUBST
+           ("F" "F" "P" "P" "S" "S" "q" "q" "xs" "xs" "x0" "x0"))
+      (("" (ASSERT)
+        (("" (EXPAND "CL?")
+          (("" (INST -1 "beta0")
+            ((""
+              (USE "pt_local" :SUBST
+                   ("F" "F" "P" "P" "beta0" "beta0" "x0" "x0" "xs" "xs"))
+              (("" (ASSERT)
+                (("" (SKOLEM -1 ("eta" "d1"))
+                  (("" (LEMMA "root_near")
+                    ((""
+                      (INST -1 "P" "S" "beta0" "eta" "hi" "lo" "q" "x0" "xs")
+                      (("" (EXPAND "lev?")
+                        (("" (EXPAND "ctx?" -4)
+                          (("" (EXPAND "lvl?" -6)
+                            (("" (FLATTEN)
+                              (("" (ASSERT)
+                                (("" (SKOLEM -1 "d2")
+                                  (("" (INST 1 "min(d1, d2)")
+                                    (("" (SKEEP)
+                                      (("" (INST -1 "x" "beta")
+                                        (("" (INST -2 "x" "beta")
+                                          (("" (ASSERT)
+                                            (("" (EXPAND "lvl?" -17)
+                                              (("" (FLATTEN)
+                                                (("" (ASSERT)
+                                                  ((""
+                                                    (USE "sec_svec" :SUBST
+                                                         ("F" "P" "ys"
+                                                          "cons(x, xs)" "lo"
+                                                          "lo" "hi" "hi" "beta"
+                                                          "beta"))
+                                                    ((""
+                                                      (USE "sec_svec" :SUBST
+                                                           ("F" "P" "ys"
+                                                            "cons(x0, xs)" "lo"
+                                                            "lo" "hi" "hi"
+                                                            "beta" "beta0"))
+                                                      (("" (ASSERT)
+                                                        (("" (EXPAND "Tx")
+                                                          (("" (EXPAND "T")
+                                                            ((""
+                                                              (USE "sem1_fibs"
+                                                                   :SUBST
+                                                                   ("F" "F"
+                                                                    "ys1"
+                                                                    "cons(beta, cons(x, xs))"
+                                                                    "ys2"
+                                                                    "cons(beta0, cons(x0, xs))"
+                                                                    "q" "q3"
+                                                                    "Psi"
+                                                                    "Psi"))
+                                                              (("" (ASSERT)
+                                                                (("" (SPLIT -1)
+                                                                  (("1"
+                                                                    (PROPAX)
+                                                                    NIL NIL)
+                                                                   ("2"
+                                                                    (PROPAX)
+                                                                    NIL NIL))
+                                                                  NIL))
+                                                                NIL))
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL))
+                                                      NIL))
+                                                    NIL))
+                                                  NIL))
+                                                NIL))
+                                              NIL))
+                                            NIL))
+                                          NIL))
+                                        NIL))
+                                      NIL))
+                                    NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|ctx_cl| FORMULA-DECL NIL |cells_local| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (CL? CONST-DECL "bool" |closed_pt| NIL)
+    (|pt_local| FORMULA-DECL NIL |pt_local| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|nonneg_real| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (> CONST-DECL "bool" |reals| NIL)
+    (|posreal| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|ctx?| CONST-DECL "bool" |cells_local| NIL)
+    (|Tx| CONST-DECL "bool" |cells_local| NIL)
+    (|sem1_fibs| FORMULA-DECL NIL |level_ok| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL) (T CONST-DECL "bool" |level_ok| NIL)
+    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|sec_svec| FORMULA-DECL NIL |walk_ok| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL)
+    (<= CONST-DECL "bool" |reals| NIL)
+    (|posreal_min| APPLICATION-JUDGEMENT "{z: posreal | z <= x AND z <= y}"
+     |real_defs| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lvl?| CONST-DECL "bool" |cell_ok| NIL)
+    (|lev?| CONST-DECL "bool" |root_cont| NIL)
+    (|root_near| FORMULA-DECL NIL |root_cont| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|real_minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL))
+   SHOSTAK))
+ (|cells_local| 0
+  (|cells_local-2| "" 3999016494
+   ("" (SKEEP)
+    ((""
+      (USE "pwalk_local" :SUBST
+           ("P" "P" "S" "S" "q" "q" "xs" "xs" "x0" "x0" "Y" "Y"))
+      (("" (EXPAND "ctx?" -2)
+        (("" (FLATTEN)
+          (("" (ASSERT)
+            (("" (SKOLEM -1 "dA")
+              (("" (INDUCT "Y2")
+                (("1" (FLATTEN)
+                  (("1" (INST 1 "dA")
+                    (("1" (SKEEP)
+                      (("1" (ASSERT)
+                        (("1" (EXPAND "cells_eq?")
+                          (("1" (EXPAND "member")
+                            (("1" (EXPAND "adj?")
+                              (("1" (INST -4 "x") (("1" (ASSERT) NIL NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL)
+                 ("2" (SKOLEM 1 ("r1" "Y3"))
+                  (("2" (FLATTEN)
+                    (("2"
+                      (USE "sub_cdr" :SUBST ("Y2" "cons[rat](r1, Y3)" "Y" "Y"))
+                      (("2" (ASSERT)
+                        (("2" (FLATTEN)
+                          (("2" (ASSERT)
+                            (("2" (SKOLEM -3 "d3")
+                              (("2" (LEMMA "sep_local")
+                                (("2"
+                                  (INST -1 "F" "P" "Psi" "S" "q" "q3" "x0" "xs"
+                                   "r1")
+                                  (("2" (EXPAND "ctx?" -1)
+                                    (("2" (ASSERT)
+                                      (("2" (SKOLEM -1 "d1")
+                                        (("2"
+                                          (CASE
+                                              "cons?(Y3) AND EXISTS (b0: real): lvl?(P, cons(x0, xs), r1, car(Y3), b0)")
+                                          (("1" (FLATTEN)
+                                            (("1" (SKOLEM -2 "bs")
+                                              (("1" (LEMMA "gap_local")
+                                                (("1"
+                                                  (INST -1 "F" "P" "Psi" "S"
+                                                   "bs" "car(Y3)" "r1" "q" "q3"
+                                                   "x0" "xs")
+                                                  (("1" (EXPAND "ctx?" -1)
+                                                    (("1" (EXPAND "lvl?" -3)
+                                                      (("1" (FLATTEN)
+                                                        (("1" (ASSERT)
+                                                          (("1"
+                                                            (EXPAND "lvl?" -1)
+                                                            (("1" (ASSERT)
+                                                              (("1"
+                                                                (SKOLEM -1
+                                                                 "d2")
+                                                                (("1"
+                                                                  (INST 1
+                                                                   "min(d3, min(d1, d2))")
+                                                                  (("1" (SKEEP)
+                                                                    (("1"
+                                                                      (INST -11
+                                                                       "x")
+                                                                      (("1"
+                                                                        (INST
+                                                                         -8
+                                                                         "x")
+                                                                        (("1"
+                                                                          (CASE
+                                                                              "abs(x - x0) < d3 AND abs(x - x0) < d1 AND abs(x - x0) < d2")
+                                                                          (("1"
+                                                                            (FLATTEN)
+                                                                            (("1"
+                                                                              (ASSERT)
+                                                                              (("1"
+                                                                                (FLATTEN)
+                                                                                (("1"
+                                                                                  (ASSERT)
+                                                                                  (("1"
+                                                                                    (USE
+                                                                                     "wa_mem"
+                                                                                     :SUBST
+                                                                                     ("F"
+                                                                                      "P"
+                                                                                      "sg1"
+                                                                                      "msg(cons(x0, xs))"
+                                                                                      "sg2"
+                                                                                      "msg(cons(x, xs))"
+                                                                                      "Y"
+                                                                                      "Y"))
+                                                                                    (("1"
+                                                                                      (ASSERT)
+                                                                                      (("1"
+                                                                                        (FLATTEN)
+                                                                                        (("1"
+                                                                                          (USE
+                                                                                           "vec_det"
+                                                                                           :SUBST
+                                                                                           ("F"
+                                                                                            "P"
+                                                                                            "sg1"
+                                                                                            "msg(cons(x0, xs))"
+                                                                                            "sg2"
+                                                                                            "msg(cons(x, xs))"
+                                                                                            "Y"
+                                                                                            "Y"
+                                                                                            "y0"
+                                                                                            "r1"))
+                                                                                          (("1"
+                                                                                            (ASSERT)
+                                                                                            (("1"
+                                                                                              (LEMMA
+                                                                                               "vec_svec")
+                                                                                              (("1"
+                                                                                                (ASSERT)
+                                                                                                (("1"
+                                                                                                  (INST-CP
+                                                                                                   -1
+                                                                                                   "r1"
+                                                                                                   "cons(x, xs)"
+                                                                                                   "P")
+                                                                                                  (("1"
+                                                                                                    (INST
+                                                                                                     -1
+                                                                                                     "r1"
+                                                                                                     "cons(x0, xs)"
+                                                                                                     "P")
+                                                                                                    (("1"
+                                                                                                      (REPLACE
+                                                                                                       -1
+                                                                                                       -3)
+                                                                                                      (("1"
+                                                                                                        (REPLACE
+                                                                                                         -2
+                                                                                                         -3)
+                                                                                                        (("1"
+                                                                                                          (HIDE
+                                                                                                           -1
+                                                                                                           -2)
+                                                                                                          (("1"
+                                                                                                            (ASSERT)
+                                                                                                            (("1"
+                                                                                                              (EXPAND
+                                                                                                               "cells_eq?"
+                                                                                                               1)
+                                                                                                              (("1"
+                                                                                                                (FLATTEN)
+                                                                                                                (("1"
+                                                                                                                  (EXPAND
+                                                                                                                   "cells_eq?"
+                                                                                                                   -19)
+                                                                                                                  (("1"
+                                                                                                                    (FLATTEN)
+                                                                                                                    (("1"
+                                                                                                                      (SPLIT
+                                                                                                                       1)
+                                                                                                                      (("1"
+                                                                                                                        (SKEEP)
+                                                                                                                        (("1"
+                                                                                                                          (EXPAND
+                                                                                                                           "member"
+                                                                                                                           -1)
+                                                                                                                          (("1"
+                                                                                                                            (SPLIT
+                                                                                                                             -1)
+                                                                                                                            (("1"
+                                                                                                                              (REPLACE
+                                                                                                                               -1)
+                                                                                                                              (("1"
+                                                                                                                                (GROUND)
+                                                                                                                                NIL
+                                                                                                                                NIL))
+                                                                                                                              NIL)
+                                                                                                                             ("2"
+                                                                                                                              (INST
+                                                                                                                               -20
+                                                                                                                               "y0")
+                                                                                                                              (("2"
+                                                                                                                                (ASSERT)
+                                                                                                                                (("2"
+                                                                                                                                  (HIDE
+                                                                                                                                   -15
+                                                                                                                                   -16)
+                                                                                                                                  (("2"
+                                                                                                                                    (GROUND)
+                                                                                                                                    NIL
+                                                                                                                                    NIL))
+                                                                                                                                  NIL))
+                                                                                                                                NIL))
+                                                                                                                              NIL))
+                                                                                                                            NIL))
+                                                                                                                          NIL))
+                                                                                                                        NIL)
+                                                                                                                       ("2"
+                                                                                                                        (SKEEP)
+                                                                                                                        (("2"
+                                                                                                                          (EXPAND
+                                                                                                                           "adj?"
+                                                                                                                           -1)
+                                                                                                                          (("2"
+                                                                                                                            (ASSERT)
+                                                                                                                            (("2"
+                                                                                                                              (SPLIT
+                                                                                                                               -1)
+                                                                                                                              (("1"
+                                                                                                                                (FLATTEN)
+                                                                                                                                (("1"
+                                                                                                                                  (REPLACE
+                                                                                                                                   -1
+                                                                                                                                   :DIR
+                                                                                                                                   RL)
+                                                                                                                                  (("1"
+                                                                                                                                    (REPLACE
+                                                                                                                                     -2
+                                                                                                                                     :DIR
+                                                                                                                                     RL)
+                                                                                                                                    (("1"
+                                                                                                                                      (HIDE
+                                                                                                                                       -1
+                                                                                                                                       -2)
+                                                                                                                                      (("1"
+                                                                                                                                        (EXPAND
+                                                                                                                                         "sub?"
+                                                                                                                                         -18)
+                                                                                                                                        (("1"
+                                                                                                                                          (INST
+                                                                                                                                           -18
+                                                                                                                                           "car(Y3)")
+                                                                                                                                          (("1"
+                                                                                                                                            (EXPAND
+                                                                                                                                             "member"
+                                                                                                                                             -18
+                                                                                                                                             1)
+                                                                                                                                            (("1"
+                                                                                                                                              (ASSERT)
+                                                                                                                                              (("1"
+                                                                                                                                                (USE
+                                                                                                                                                 "wa_mem"
+                                                                                                                                                 :SUBST
+                                                                                                                                                 ("F"
+                                                                                                                                                  "P"
+                                                                                                                                                  "sg1"
+                                                                                                                                                  "msg(cons(x0, xs))"
+                                                                                                                                                  "sg2"
+                                                                                                                                                  "msg(cons(x, xs))"
+                                                                                                                                                  "Y"
+                                                                                                                                                  "Y"))
+                                                                                                                                                (("1"
+                                                                                                                                                  (ASSERT)
+                                                                                                                                                  (("1"
+                                                                                                                                                    (USE
+                                                                                                                                                     "sec_det"
+                                                                                                                                                     :SUBST
+                                                                                                                                                     ("F"
+                                                                                                                                                      "P"
+                                                                                                                                                      "sg1"
+                                                                                                                                                      "msg(cons(x0, xs))"
+                                                                                                                                                      "sg2"
+                                                                                                                                                      "msg(cons(x, xs))"
+                                                                                                                                                      "Y"
+                                                                                                                                                      "Y"
+                                                                                                                                                      "lo"
+                                                                                                                                                      "r1"
+                                                                                                                                                      "hi"
+                                                                                                                                                      "car(Y3)"))
+                                                                                                                                                    (("1"
+                                                                                                                                                      (ASSERT)
+                                                                                                                                                      (("1"
+                                                                                                                                                        (ASSERT)
+                                                                                                                                                        (("1"
+                                                                                                                                                          (CASE
+                                                                                                                                                              "beta0 = bs")
+                                                                                                                                                          (("1"
+                                                                                                                                                            (REPLACE
+                                                                                                                                                             -1)
+                                                                                                                                                            (("1"
+                                                                                                                                                              (ASSERT)
+                                                                                                                                                              (("1"
+                                                                                                                                                                (INST
+                                                                                                                                                                 -11
+                                                                                                                                                                 "x"
+                                                                                                                                                                 "beta")
+                                                                                                                                                                (("1"
+                                                                                                                                                                  (ASSERT)
+                                                                                                                                                                  (("1"
+                                                                                                                                                                    (EXPAND
+                                                                                                                                                                     "lvl?"
+                                                                                                                                                                     -3)
+                                                                                                                                                                    (("1"
+                                                                                                                                                                      (FLATTEN)
+                                                                                                                                                                      (("1"
+                                                                                                                                                                        (ASSERT)
+                                                                                                                                                                        NIL
+                                                                                                                                                                        NIL))
+                                                                                                                                                                      NIL))
+                                                                                                                                                                    NIL))
+                                                                                                                                                                  NIL))
+                                                                                                                                                                NIL))
+                                                                                                                                                              NIL))
+                                                                                                                                                            NIL)
+                                                                                                                                                           ("2"
+                                                                                                                                                            (HIDE-ALL-BUT
+                                                                                                                                                             (-4
+                                                                                                                                                              -17
+                                                                                                                                                              1))
+                                                                                                                                                            (("2"
+                                                                                                                                                              (EXPAND
+                                                                                                                                                               "lvl?")
+                                                                                                                                                              (("2"
+                                                                                                                                                                (EXPAND
+                                                                                                                                                                 "gapf?")
+                                                                                                                                                                (("2"
+                                                                                                                                                                  (FLATTEN)
+                                                                                                                                                                  (("2"
+                                                                                                                                                                    (INST
+                                                                                                                                                                     -4
+                                                                                                                                                                     "bs")
+                                                                                                                                                                    (("2"
+                                                                                                                                                                      (ASSERT)
+                                                                                                                                                                      NIL
+                                                                                                                                                                      NIL))
+                                                                                                                                                                    NIL))
+                                                                                                                                                                  NIL))
+                                                                                                                                                                NIL))
+                                                                                                                                                              NIL))
+                                                                                                                                                            NIL))
+                                                                                                                                                          NIL))
+                                                                                                                                                        NIL))
+                                                                                                                                                      NIL))
+                                                                                                                                                    NIL))
+                                                                                                                                                  NIL))
+                                                                                                                                                NIL))
+                                                                                                                                              NIL))
+                                                                                                                                            NIL))
+                                                                                                                                          NIL))
+                                                                                                                                        NIL))
+                                                                                                                                      NIL))
+                                                                                                                                    NIL))
+                                                                                                                                  NIL))
+                                                                                                                                NIL)
+                                                                                                                               ("2"
+                                                                                                                                (INST
+                                                                                                                                 -23
+                                                                                                                                 "lo"
+                                                                                                                                 "hi"
+                                                                                                                                 "beta"
+                                                                                                                                 "beta0")
+                                                                                                                                (("2"
+                                                                                                                                  (ASSERT)
+                                                                                                                                  NIL
+                                                                                                                                  NIL))
+                                                                                                                                NIL))
+                                                                                                                              NIL))
+                                                                                                                            NIL))
+                                                                                                                          NIL))
+                                                                                                                        NIL))
+                                                                                                                      NIL))
+                                                                                                                    NIL))
+                                                                                                                  NIL))
+                                                                                                                NIL))
+                                                                                                              NIL))
+                                                                                                            NIL))
+                                                                                                          NIL))
+                                                                                                        NIL))
+                                                                                                      NIL))
+                                                                                                    NIL))
+                                                                                                  NIL))
+                                                                                                NIL))
+                                                                                              NIL))
+                                                                                            NIL))
+                                                                                          NIL))
+                                                                                        NIL))
+                                                                                      NIL))
+                                                                                    NIL))
+                                                                                  NIL))
+                                                                                NIL))
+                                                                              NIL))
+                                                                            NIL)
+                                                                           ("2"
+                                                                            (EXPAND
+                                                                             "min")
+                                                                            (("2"
+                                                                              (LIFT-IF)
+                                                                              (("2"
+                                                                                (LIFT-IF)
+                                                                                (("2"
+                                                                                  (GROUND)
+                                                                                  (("1"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("1"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("2"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("2"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("3"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("3"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("4"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("4"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("5"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("5"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("6"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("6"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("7"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("7"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("8"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("8"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("9"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("9"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("10"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("10"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("11"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("11"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("12"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("12"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("13"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("13"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("14"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("14"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("15"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("15"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("16"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("16"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("17"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("17"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("18"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("18"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("19"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("19"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("20"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("20"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("21"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("21"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("22"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("22"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("23"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("23"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("24"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("24"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("25"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("25"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("26"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("26"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("27"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("27"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("28"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("28"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("29"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("29"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("30"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("30"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("31"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("31"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("32"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("32"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("33"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("33"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("34"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("34"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("35"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("35"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("36"
+                                                                                    (LIFT-IF
+                                                                                     -1)
+                                                                                    (("36"
+                                                                                      (GROUND)
+                                                                                      NIL
+                                                                                      NIL))
+                                                                                    NIL))
+                                                                                  NIL))
+                                                                                NIL))
+                                                                              NIL))
+                                                                            NIL))
+                                                                          NIL))
+                                                                        NIL))
+                                                                      NIL))
+                                                                    NIL))
+                                                                  NIL))
+                                                                NIL))
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL))
+                                                      NIL))
+                                                    NIL))
+                                                  NIL))
+                                                NIL))
+                                              NIL))
+                                            NIL)
+                                           ("2" (INST 2 "min(d3, d1)")
+                                            (("2" (GROUND)
+                                              (("1" (SKEEP)
+                                                (("1" (INST - "x")
+                                                  (("1" (INST - "x")
+                                                    (("1"
+                                                      (CASE
+                                                          "abs(x - x0) < d3 AND abs(x - x0) < d1")
+                                                      (("1" (FLATTEN)
+                                                        (("1" (ASSERT)
+                                                          (("1" (FLATTEN)
+                                                            (("1" (ASSERT)
+                                                              (("1"
+                                                                (USE "wa_mem"
+                                                                     :SUBST
+                                                                     ("F" "P"
+                                                                      "sg1"
+                                                                      "msg(cons(x0, xs))"
+                                                                      "sg2"
+                                                                      "msg(cons(x, xs))"
+                                                                      "Y" "Y"))
+                                                                (("1" (ASSERT)
+                                                                  (("1"
+                                                                    (FLATTEN)
+                                                                    (("1"
+                                                                      (USE
+                                                                       "vec_det"
+                                                                       :SUBST
+                                                                       ("F" "P"
+                                                                        "sg1"
+                                                                        "msg(cons(x0, xs))"
+                                                                        "sg2"
+                                                                        "msg(cons(x, xs))"
+                                                                        "Y" "Y"
+                                                                        "y0"
+                                                                        "r1"))
+                                                                      (("1"
+                                                                        (ASSERT)
+                                                                        (("1"
+                                                                          (LEMMA
+                                                                           "vec_svec")
+                                                                          (("1"
+                                                                            (INST-CP
+                                                                             -1
+                                                                             "r1"
+                                                                             "cons(x, xs)"
+                                                                             "P")
+                                                                            (("1"
+                                                                              (INST
+                                                                               -1
+                                                                               "r1"
+                                                                               "cons(x0, xs)"
+                                                                               "P")
+                                                                              (("1"
+                                                                                (REPLACE
+                                                                                 -1
+                                                                                 -3)
+                                                                                (("1"
+                                                                                  (REPLACE
+                                                                                   -2
+                                                                                   -3)
+                                                                                  (("1"
+                                                                                    (HIDE
+                                                                                     -1
+                                                                                     -2)
+                                                                                    (("1"
+                                                                                      (ASSERT)
+                                                                                      (("1"
+                                                                                        (EXPAND
+                                                                                         "cells_eq?"
+                                                                                         2)
+                                                                                        (("1"
+                                                                                          (EXPAND
+                                                                                           "cells_eq?"
+                                                                                           -10)
+                                                                                          (("1"
+                                                                                            (FLATTEN)
+                                                                                            (("1"
+                                                                                              (SPLIT
+                                                                                               2)
+                                                                                              (("1"
+                                                                                                (SKEEP)
+                                                                                                (("1"
+                                                                                                  (EXPAND
+                                                                                                   "member"
+                                                                                                   -1)
+                                                                                                  (("1"
+                                                                                                    (SPLIT
+                                                                                                     -1)
+                                                                                                    (("1"
+                                                                                                      (REPLACE
+                                                                                                       -1)
+                                                                                                      (("1"
+                                                                                                        (GROUND)
+                                                                                                        NIL
+                                                                                                        NIL))
+                                                                                                      NIL)
+                                                                                                     ("2"
+                                                                                                      (ASSERT)
+                                                                                                      NIL
+                                                                                                      NIL))
+                                                                                                    NIL))
+                                                                                                  NIL))
+                                                                                                NIL)
+                                                                                               ("2"
+                                                                                                (SKEEP)
+                                                                                                (("2"
+                                                                                                  (EXPAND
+                                                                                                   "adj?"
+                                                                                                   -1)
+                                                                                                  (("2"
+                                                                                                    (PROPAX)
+                                                                                                    NIL
+                                                                                                    NIL))
+                                                                                                  NIL))
+                                                                                                NIL))
+                                                                                              NIL))
+                                                                                            NIL))
+                                                                                          NIL))
+                                                                                        NIL))
+                                                                                      NIL))
+                                                                                    NIL))
+                                                                                  NIL))
+                                                                                NIL))
+                                                                              NIL))
+                                                                            NIL))
+                                                                          NIL))
+                                                                        NIL))
+                                                                      NIL))
+                                                                    NIL))
+                                                                  NIL))
+                                                                NIL))
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL)
+                                                       ("2" (EXPAND "min")
+                                                        (("2" (LIFT-IF)
+                                                          (("2" (GROUND) NIL
+                                                            NIL))
+                                                          NIL))
+                                                        NIL))
+                                                      NIL))
+                                                    NIL))
+                                                  NIL))
+                                                NIL)
+                                               ("2" (SKEEP)
+                                                (("2" (INST - "x")
+                                                  (("2" (INST - "x")
+                                                    (("2"
+                                                      (CASE
+                                                          "abs(x - x0) < d3 AND abs(x - x0) < d1")
+                                                      (("1" (FLATTEN)
+                                                        (("1" (ASSERT)
+                                                          (("1" (FLATTEN)
+                                                            (("1" (ASSERT)
+                                                              (("1"
+                                                                (USE "wa_mem"
+                                                                     :SUBST
+                                                                     ("F" "P"
+                                                                      "sg1"
+                                                                      "msg(cons(x0, xs))"
+                                                                      "sg2"
+                                                                      "msg(cons(x, xs))"
+                                                                      "Y" "Y"))
+                                                                (("1" (ASSERT)
+                                                                  (("1"
+                                                                    (FLATTEN)
+                                                                    (("1"
+                                                                      (USE
+                                                                       "vec_det"
+                                                                       :SUBST
+                                                                       ("F" "P"
+                                                                        "sg1"
+                                                                        "msg(cons(x0, xs))"
+                                                                        "sg2"
+                                                                        "msg(cons(x, xs))"
+                                                                        "Y" "Y"
+                                                                        "y0"
+                                                                        "r1"))
+                                                                      (("1"
+                                                                        (ASSERT)
+                                                                        (("1"
+                                                                          (LEMMA
+                                                                           "vec_svec")
+                                                                          (("1"
+                                                                            (INST-CP
+                                                                             -1
+                                                                             "r1"
+                                                                             "cons(x, xs)"
+                                                                             "P")
+                                                                            (("1"
+                                                                              (INST
+                                                                               -1
+                                                                               "r1"
+                                                                               "cons(x0, xs)"
+                                                                               "P")
+                                                                              (("1"
+                                                                                (REPLACE
+                                                                                 -1
+                                                                                 -3)
+                                                                                (("1"
+                                                                                  (REPLACE
+                                                                                   -2
+                                                                                   -3)
+                                                                                  (("1"
+                                                                                    (HIDE
+                                                                                     -1
+                                                                                     -2)
+                                                                                    (("1"
+                                                                                      (ASSERT)
+                                                                                      (("1"
+                                                                                        (EXPAND
+                                                                                         "cells_eq?"
+                                                                                         2)
+                                                                                        (("1"
+                                                                                          (EXPAND
+                                                                                           "cells_eq?"
+                                                                                           -10)
+                                                                                          (("1"
+                                                                                            (FLATTEN)
+                                                                                            (("1"
+                                                                                              (SPLIT
+                                                                                               2)
+                                                                                              (("1"
+                                                                                                (SKEEP)
+                                                                                                (("1"
+                                                                                                  (EXPAND
+                                                                                                   "member"
+                                                                                                   -1)
+                                                                                                  (("1"
+                                                                                                    (SPLIT
+                                                                                                     -1)
+                                                                                                    (("1"
+                                                                                                      (REPLACE
+                                                                                                       -1)
+                                                                                                      (("1"
+                                                                                                        (GROUND)
+                                                                                                        NIL
+                                                                                                        NIL))
+                                                                                                      NIL)
+                                                                                                     ("2"
+                                                                                                      (ASSERT)
+                                                                                                      (("2"
+                                                                                                        (INST
+                                                                                                         -12
+                                                                                                         "y0")
+                                                                                                        (("2"
+                                                                                                          (ASSERT)
+                                                                                                          NIL
+                                                                                                          NIL))
+                                                                                                        NIL))
+                                                                                                      NIL))
+                                                                                                    NIL))
+                                                                                                  NIL))
+                                                                                                NIL)
+                                                                                               ("2"
+                                                                                                (SKEEP)
+                                                                                                (("2"
+                                                                                                  (EXPAND
+                                                                                                   "adj?"
+                                                                                                   -1)
+                                                                                                  (("2"
+                                                                                                    (FLATTEN)
+                                                                                                    (("2"
+                                                                                                      (SPLIT
+                                                                                                       -2)
+                                                                                                      (("1"
+                                                                                                        (FLATTEN)
+                                                                                                        (("1"
+                                                                                                          (REPLACE
+                                                                                                           -1
+                                                                                                           :DIR
+                                                                                                           RL)
+                                                                                                          (("1"
+                                                                                                            (REPLACE
+                                                                                                             -2
+                                                                                                             :DIR
+                                                                                                             RL)
+                                                                                                            (("1"
+                                                                                                              (INST
+                                                                                                               2
+                                                                                                               "beta0")
+                                                                                                              NIL
+                                                                                                              NIL))
+                                                                                                            NIL))
+                                                                                                          NIL))
+                                                                                                        NIL)
+                                                                                                       ("2"
+                                                                                                        (INST
+                                                                                                         -16
+                                                                                                         "lo"
+                                                                                                         "hi"
+                                                                                                         "beta"
+                                                                                                         "beta0")
+                                                                                                        (("2"
+                                                                                                          (ASSERT)
+                                                                                                          NIL
+                                                                                                          NIL))
+                                                                                                        NIL))
+                                                                                                      NIL))
+                                                                                                    NIL))
+                                                                                                  NIL))
+                                                                                                NIL))
+                                                                                              NIL))
+                                                                                            NIL))
+                                                                                          NIL))
+                                                                                        NIL))
+                                                                                      NIL))
+                                                                                    NIL))
+                                                                                  NIL))
+                                                                                NIL))
+                                                                              NIL))
+                                                                            NIL))
+                                                                          NIL))
+                                                                        NIL))
+                                                                      NIL))
+                                                                    NIL))
+                                                                  NIL))
+                                                                NIL))
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL)
+                                                       ("2" (EXPAND "min")
+                                                        (("2" (LIFT-IF)
+                                                          (("2" (GROUND) NIL
+                                                            NIL))
+                                                          NIL))
+                                                        NIL))
+                                                      NIL))
+                                                    NIL))
+                                                  NIL))
+                                                NIL))
+                                              NIL))
+                                            NIL))
+                                          NIL))
+                                        NIL))
+                                      NIL))
+                                    NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|pwalk_local| FORMULA-DECL NIL |pt_local| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|sub_cdr| FORMULA-DECL NIL |walk_rd| NIL)
+    (|car| ADT-ACCESSOR-DECL "[(cons?) -> T]" |list_adt| NIL)
+    (|lvl?| CONST-DECL "bool" |cell_ok| NIL)
+    (|posreal_min| APPLICATION-JUDGEMENT "{z: posreal | z <= x AND z <= y}"
+     |real_defs| NIL)
+    (<= CONST-DECL "bool" |reals| NIL)
+    (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL)
+    (|vec_det| FORMULA-DECL NIL |walk_rd| NIL)
+    (|vec_svec| FORMULA-DECL NIL |walk_ok| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|gapf?| CONST-DECL "bool" |walk_ok| NIL)
+    (|sec_det| FORMULA-DECL NIL |walk_rd| NIL)
+    (|wa_mem| FORMULA-DECL NIL |walk_rd| NIL)
+    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|gap_local| FORMULA-DECL NIL |cells_local| NIL)
+    (|sep_local| FORMULA-DECL NIL |cells_local| NIL)
+    (|adj?| DEF-DECL "bool" |cover| NIL)
+    (|member| DEF-DECL "bool" |list_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
+    (|cells_eq?| CONST-DECL "bool" |cells_local| NIL)
+    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|msg| CONST-DECL "SG" |sg_norm| NIL)
+    (|wagree?| CONST-DECL "bool" |walk_rd| NIL)
+    (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
+    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (- CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
+    (|abs| CONST-DECL "{n: nonneg_real | n >= m AND n >= -m}" |real_defs| NIL)
+    (- CONST-DECL "[numfield -> numfield]" |number_fields| NIL)
+    (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
+    (< CONST-DECL "bool" |reals| NIL)
+    (|posreal| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (> CONST-DECL "bool" |reals| NIL)
+    (|nonneg_real| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (>= CONST-DECL "bool" |reals| NIL) (|sub?| CONST-DECL "bool" |walk_rd| NIL)
+    (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|ctx?| CONST-DECL "bool" |cells_local| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|real_minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL))
+   SHOSTAK)))
+

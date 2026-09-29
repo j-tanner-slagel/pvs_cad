@@ -1,0 +1,1688 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper, margin=0.85in, top=0.9in, bottom=0.95in, headsep=16pt]{geometry}
+\usepackage{libertinus}
+\usepackage[scale=0.82]{sourcecodepro}
+\usepackage[table]{xcolor}
+\usepackage{fvextra, booktabs, longtable, enumitem, titlesec, fancyhdr, microtype}
+\usepackage[most]{tcolorbox}
+\usepackage{needspace}
+\usepackage[hidelinks]{hyperref}
+
+% J.T.S. palette
+\definecolor{ink}{HTML}{1E2B24}
+\definecolor{muted}{HTML}{56645B}
+\definecolor{accent}{HTML}{2B5E8C}
+\definecolor{accentsoft}{HTML}{DCE6EF}
+\definecolor{moss}{HTML}{4F6E4C}
+\definecolor{mosssoft}{HTML}{E1EADC}
+\definecolor{sand}{HTML}{CDBF9E}
+\definecolor{surfalt}{HTML}{E7EDE3}
+\definecolor{panel}{HTML}{F7F9F5}
+\definecolor{rulec}{HTML}{D2DACD}
+\definecolor{warn}{HTML}{8A6410}
+\color{ink}
+
+% transcript markup (used inside Verbatim with commandchars \«»)
+\newcommand\Rl[1]{\textcolor{accent}{\textbf{#1}}}
+\newcommand\Ms[1]{\textcolor{moss}{\textbf{#1}}}
+\newcommand\Bd[1]{\textcolor{warn}{\textbf{#1}}}
+\newcommand\Qd[1]{\colorbox{mosssoft}{\textcolor{moss}{\textbf{#1}}}}
+\newcommand\Dm[1]{\textcolor{muted}{#1}}
+\newcommand\Lb[1]{\textcolor{muted}{#1}}
+\newcommand\Ts[1]{\textcolor{muted}{#1}}
+\newcommand\Sh[1]{\textcolor{accent}{#1}}
+\newcommand\Kw[1]{\textcolor{accent}{\textbf{#1}}}
+
+\fvset{fontsize=\footnotesize, breaklines, breakindent=2.5em,
+  breaksymbolleft={\tiny\textcolor{sand}{\ensuremath{\hookrightarrow}}}}
+
+\newtcolorbox{termbox}{breakable, enhanced, colback=panel, colframe=rulec, boxrule=0.4pt,
+  borderline west={2.2pt}{0pt}{sand}, arc=2pt, left=7pt, right=5pt, top=4pt, bottom=4pt,
+  before skip=6pt, after skip=10pt}
+
+\newcommand\cmdtag[1]{\colorbox{accentsoft}{\textcolor{accent}{\ttfamily\bfseries #1}}}
+
+% headings
+\titleformat{\section}{\sffamily\Large\bfseries\color{ink}}{}{0pt}{}[\vspace{2pt}{\color{sand}\titlerule[0.8pt]}]
+\titlespacing*{\section}{0pt}{22pt}{10pt}
+\titleformat{\subsection}{\sffamily\large\bfseries\color{ink}}{}{0pt}{}
+\titlespacing*{\subsection}{0pt}{16pt}{6pt}
+
+% one example: title, lemma name, shape, time
+\newcommand\example[4]{%
+  \par\addvspace{14pt}\needspace{8\baselineskip}%
+  \noindent{\sffamily\large\bfseries #1}\hfill{\ttfamily\small\color{muted}#2}\par\nopagebreak[4]\vspace{2pt}%
+  \noindent{\sffamily\small\color{muted}#3 \quad·\quad #4}\par\nopagebreak[4]\vspace{4pt}\noindent\ignorespaces}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand\headrulewidth{0pt}
+\fancyhead[L]{\sffamily\small\color{muted}(cad) proof traces}
+\fancyhead[R]{\sffamily\small\color{muted}\thepage}
+
+\setlength\parindent{0pt}
+\setlength\emergencystretch{3em}
+\newcommand\code[1]{\mbox{\texttt{#1}}}
+\setlength\parskip{5pt}
+
+\begin{document}
+\thispagestyle{empty}
+\begin{flushleft}
+{\sffamily\small\bfseries\color{moss}\MakeUppercase{pvs\_cad \quad·\quad PVS 8.1 \quad·\quad 28 September 2026}}\par\vspace{8pt}
+{\fontsize{28}{34}\selectfont\bfseries What (cad) and (cad *) look like in the prover}\par\vspace{10pt}
+{\large\color{muted} Proof traces of verified cylindrical algebraic decision in PVS: the sequent as PVS prints it, the command,
+the strategy's messages, and the result, for twenty-one examples, plus the full step-by-step view of three proofs.}
+\end{flushleft}
+\vspace{6pt}
+
+\section{Reading the traces}
+Each example is a real PVS session on the pvs\_cad library, fed from a script to \texttt{pvs -raw} and captured as printed.
+The typed commands are put back after each \texttt{Rule?} prompt (a scripted session does not echo them), and
+library-loading messages are cut. Nothing else is changed.
+
+\begin{description}[leftmargin=1.2em, style=nextline, itemsep=4pt]
+\item[The sequent] Formulas above the turnstile \texttt{|-------} are hypotheses (antecedents), numbered $-1, -2, \dots$;
+formulas below it are goals (consequents), numbered $1, 2, \dots$. The sequent claims: if every hypothesis holds, at least one goal holds.
+Braces \texttt{\{1\}} mark a formula that is new or changed by the last step; brackets \texttt{[1]} mark one carried over.
+Names such as \texttt{!CDG\_1} or \texttt{cadsf\_465} after a number are labels the strategies attach, so that they never refer to a formula by position.
+\item[\texttt{(cad)}] decides one closed formula: a prefix of \texttt{FORALL}/\texttt{EXISTS} over real variables,
+then any Boolean combination of polynomial comparisons. A true goal is proved; a false hypothesis closes the goal; otherwise the formula stays, labelled \texttt{cad}, with a message saying TRUE or FALSE.
+\item[\texttt{(cad *)}] works on the whole sequent. It keeps every formula it can use, turns other real terms (\texttt{sqrt(x)}, \texttt{f(x)}, \texttt{length(l)}) into unknown reals,
+forms $\forall\,\text{unknowns}\colon (\bigwedge\text{hypotheses}) \Rightarrow (\bigvee\text{goals})$, and decides that with (cad).
+\item[What is trusted] Every step is checked by PVS. What remains to trust is the specification (that the semantics \texttt{fsem} and the theorem statements say what is intended) and PVS itself: its kernel, and its ground evaluator running \texttt{decide5}, the executable decision procedure, whose soundness (\texttt{decide5\_correct}) and completeness (\texttt{decide5\_decides}) are proved in the library.
+\end{description}
+
+\clearpage
+\section{The examples}
+Times are PVS's own report (real time) for the whole proof, on an M-series Mac, all in one session.
+
+{\small
+\begin{longtable}{@{}l p{0.37\textwidth} l r l@{}}
+\toprule
+\textsf{\small Lemma} & \textsf{\small What it says} & \textsf{\small Shape} & \textsf{\small Time} & \textsf{\small Result}\\
+\midrule
+\endhead
+\multicolumn{5}{@{}l}{\cmdtag{(cad)}}\\[2pt]
+\texttt{d\_meet} & A circle meets a parabola & $\exists\exists$, degree 2 & 3.8\,s & \textcolor{moss}{proved}\\
+\texttt{b\_motzkin} & The Motzkin polynomial is nonnegative & $\forall\forall$, degree 6 & 1.1\,s & \textcolor{moss}{proved}\\
+\texttt{b\_folium} & The folium of Descartes reaches past $(1,1)$ & $\exists\exists$, degree 3 & 0.09\,s & \textcolor{moss}{proved}\\
+\texttt{b\_lemniscate} & The lemniscate fits in the disc of radius $\sqrt2$ & $\forall\forall$, degree 4 & 1.1\,s & \textcolor{moss}{proved}\\
+\texttt{c\_cubic\_root} & Every depressed cubic has a real root & $\forall\forall\exists$, degree 3 & 0.76\,s & \textcolor{moss}{proved}\\
+\texttt{d\_quad\_suf} & The quadratic formula, as an existence theorem & $\forall\forall\forall\exists$, degree 3 & 2.1\,s & \textcolor{moss}{proved}\\
+\texttt{h\_wilk20} & Wilkinson's polynomial of degree 20 & $\forall$, degree 20 & 2.9\,s & \textcolor{moss}{proved}\\
+\texttt{h\_cheb10} & Chebyshev $T_{10}$ stays in $[-1,1]$ & $\forall$, degree 10 & 2.0\,s & \textcolor{moss}{proved}\\
+\texttt{g\_mignotte1} & A root located to within $10^{-5}$ & $\exists$, degree 10 & 1.3\,s & \textcolor{moss}{proved}\\
+\texttt{m\_quad\_signs} & The sign chart of $x^2 - 5x + 6$ & $\forall$, degree 2 & 1.6\,s & \textcolor{moss}{proved}\\
+\texttt{c\_sphere\_in} & $x+y+z$ reaches $1.7$ on the unit sphere & $\exists\exists\exists$, degree 2 & 11.6\,s & \textcolor{moss}{proved}\\
+\texttt{t\_forall\_exists\_forall} & Three alternating quantifiers & $\forall\exists\forall$, degree 4 & 22.9\,s & \textcolor{moss}{proved}\\
+\texttt{d\_no\_inverse} & Not every real has an inverse & $\forall\exists$ hypothesis & 0.54\,s & \textcolor{moss}{proved}\\
+\texttt{u\_wilk8\_val} & A false claim is reported, not proved & $\exists$, degree 8 & 0.23\,s & \textcolor{warn}{FALSE}\\
+\addlinespace
+\multicolumn{5}{@{}l}{\cmdtag{(cad *)}}\\[2pt]
+\texttt{s\_disc} & No real root means a negative discriminant & quantified hypothesis & 1.3\,s & \textcolor{moss}{proved}\\
+\texttt{s\_sqrt} & \texttt{sqrt(x)} becomes an unknown real & abstraction & 2.6\,s & \textcolor{moss}{proved}\\
+\texttt{s\_fun} & An uninterpreted function, and a formula it cannot use & abstraction, skipping & 1.8\,s & \textcolor{moss}{proved}\\
+\texttt{s\_alt\_hyp} & Alternation inside a hypothesis & $\forall\exists$ hypothesis & 1.5\,s & \textcolor{moss}{proved}\\
+\texttt{s\_mix} & Everything at once & abstraction, skipping & 1.2\,s & \textcolor{moss}{proved}\\
+\texttt{s\_skip} & Formulas it has to skip & skipping & 0.79\,s & \textcolor{moss}{proved}\\
+\texttt{n\_false} & A false sequent is left alone & FALSE & 0.26\,s & \textcolor{warn}{FALSE}\\
+\bottomrule
+\end{longtable}}
+
+\section{(cad): one closed formula}
+Each lemma is proved by typing \texttt{(cad)} at the first prompt. The strategy prints one line,
+\emph{Deciding 1 by cylindrical decision, witness first}, and PVS prints Q.E.D.\ when the proof is complete.
+The lines about \texttt{length} rewriting come from PVS's simplifier inside the strategy.
+\example{A circle meets a parabola}{d\_meet}{$\exists\exists$, degree 2}{3.8\,s}
+The meeting points have $x^2 = (\sqrt5-1)/2$, which is irrational, so there is no simple rational witness. The full cylindrical decision answers anyway: it computes with exact real algebraic numbers.
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  d_meet: \Kw«LEMMA» \Kw«EXISTS» (x: real): \Kw«EXISTS» (y: real): x^2 + y^2 = 1 \Kw«AND» y = x^2
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«d_meet :»
+
+\Ts«  |-------»
+\Lb«{1}»   EXISTS (x: real): EXISTS (y: real): x ^ 2 + y ^ 2 = 1 AND y = x ^ 2
+
+\Rl«Rule? (cad)»
+\Dm«length_singleton rewrites»
+\Dm«  length[list[mpoly]]»
+\Dm«      ((: (: mpol((: mconst(0), mconst(0), mconst(-1) :)), mconst(1) :) :))»
+\Dm«  to 1»
+\Ms«Deciding 1 by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 3.794 secs.»
+\Dm«Real time = 3.797 secs.»
+\end{Verbatim}
+\end{termbox}
+\example{The Motzkin polynomial is nonnegative}{b\_motzkin}{$\forall\forall$, degree 6}{1.1\,s}
+The classic polynomial that is nonnegative everywhere but is \emph{not} a sum of squares, so sum-of-squares certificates cannot prove it. A cylindrical decision needs no certificate of that kind.
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  b_motzkin: \Kw«LEMMA» \Kw«FORALL» (x: real): \Kw«FORALL» (y: real): x^4*y^2 + x^2*y^4 - 3*x^2*y^2 + 1 >= 0
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«b_motzkin :»
+
+\Ts«  |-------»
+\Lb«{1}»   FORALL (x: real):
+        FORALL (y: real):
+          x ^ 4 * y ^ 2 + x ^ 2 * y ^ 4 - 3 * x ^ 2 * y ^ 2 + 1 >= 0
+
+\Rl«Rule? (cad)»
+\Dm«length_null rewrites length[list[mpoly]]((: :))»
+\Dm«  to 0»
+\Ms«Deciding 1 by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 1.134 secs.»
+\Dm«Real time = 1.135 secs.»
+\end{Verbatim}
+\end{termbox}
+\example{The folium of Descartes reaches past $(1,1)$}{b\_folium}{$\exists\exists$, degree 3}{0.09\,s}
+(cad) looks for a witness before deciding. A model search finds $x = y = 3/2$ and the proof is one instantiation, in 0.09\,s. Section~\ref{sec:inside} shows the steps.
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  b_folium: \Kw«LEMMA» \Kw«EXISTS» (x: real): \Kw«EXISTS» (y: real): x^3 + y^3 = 3*x*y \Kw«AND» x > 1 \Kw«AND» y > 1
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«b_folium :»
+
+\Ts«  |-------»
+\Lb«{1}»   EXISTS (x: real):
+        EXISTS (y: real): x ^ 3 + y ^ 3 = 3 * x * y AND x > 1 AND y > 1
+
+\Rl«Rule? (cad)»
+\Ms«Deciding 1 by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 0.09 secs.»
+\Dm«Real time = 0.09 secs.»
+\end{Verbatim}
+\end{termbox}
+\example{The lemniscate fits in the disc of radius $\sqrt2$}{b\_lemniscate}{$\forall\forall$, degree 4}{1.1\,s}
+An implication between two quartic conditions in two variables.
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  b_lemniscate: \Kw«LEMMA» \Kw«FORALL» (x: real): \Kw«FORALL» (y: real):
+    (x^2 + y^2)^2 = 2*(x^2 - y^2) \Kw«IMPLIES» x^2 + y^2 <= 2
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«b_lemniscate :»
+
+\Ts«  |-------»
+\Lb«{1}»   FORALL (x: real):
+        FORALL (y: real):
+          (x ^ 2 + y ^ 2) ^ 2 = 2 * (x ^ 2 - y ^ 2) IMPLIES
+           x ^ 2 + y ^ 2 <= 2
+
+\Rl«Rule? (cad)»
+\Dm«length_singleton rewrites»
+\Dm«  length[list[mpoly]]»
+\Dm«      ((: (: mpol((: mconst(-2), mconst(0), mconst(1) :)), mconst(0),»
+\Dm«             mconst(1) :) :))»
+\Dm«  to 1»
+\Ms«Deciding 1 by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 1.10 secs.»
+\Dm«Real time = 1.101 secs.»
+\end{Verbatim}
+\end{termbox}
+\example{Every depressed cubic has a real root}{c\_cubic\_root}{$\forall\forall\exists$, degree 3}{0.76\,s}
+Alternating quantifiers over a family of polynomials: for all coefficients $p, q$ there is an $x$.
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  c_cubic_root: \Kw«LEMMA» \Kw«FORALL» (p: real): \Kw«FORALL» (q: real): \Kw«EXISTS» (x: real): x^3 + p*x + q = 0
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«c_cubic_root :»
+
+\Ts«  |-------»
+\Lb«{1}»   FORALL (p: real):
+        FORALL (q: real): EXISTS (x: real): x ^ 3 + p * x + q = 0
+
+\Rl«Rule? (cad)»
+\Dm«length_null rewrites length[list[mpoly]]((: :))»
+\Dm«  to 0»
+\Ms«Deciding 1 by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 0.76 secs.»
+\Dm«Real time = 0.76 secs.»
+\end{Verbatim}
+\end{termbox}
+\example{The quadratic formula, as an existence theorem}{d\_quad\_suf}{$\forall\forall\forall\exists$, degree 3}{2.1\,s}
+Four variables: for every $a \neq 0$, $b$, $c$ with $b^2 \ge 4ac$ there is a root. No formula for the root is given; the decision establishes that one exists.
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  d_quad_suf: \Kw«LEMMA» \Kw«FORALL» (a: real): \Kw«FORALL» (b: real): \Kw«FORALL» (c: real): \Kw«EXISTS» (x: real):
+    a /= 0 \Kw«AND» b^2 >= 4*a*c \Kw«IMPLIES» a*x^2 + b*x + c = 0
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«d_quad_suf :»
+
+\Ts«  |-------»
+\Lb«{1}»   FORALL (a: real):
+        FORALL (b: real):
+          FORALL (c: real):
+            EXISTS (x: real):
+              a /= 0 AND b ^ 2 >= 4 * a * c IMPLIES
+               a * x ^ 2 + b * x + c = 0
+
+\Rl«Rule? (cad)»
+\Dm«length_singleton rewrites»
+\Dm«  length[list[mpoly]]»
+\Dm«      ((: (: mpol((: mconst(0), mconst(1) :)),»
+\Dm«             mpol((: mpol((: mconst(0), mconst(1) :)) :)),»
+\Dm«             mpol((: mpol((: mpol((: mconst(0), mconst(1) :)) :)) :)) :) :))»
+\Dm«  to 1»
+\Ms«Deciding 1 by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 2.108 secs.»
+\Dm«Real time = 2.109 secs.»
+\end{Verbatim}
+\end{termbox}
+\example{Wilkinson's polynomial of degree 20}{h\_wilk20}{$\forall$, degree 20}{2.9\,s}
+$(x-1)(x-2)\cdots(x-20)$ expanded, with coefficients up to $2.4\times10^{18}$. The arithmetic is exact rational arithmetic, so the famously ill-conditioned roots cause no trouble.
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  h_wilk20: \Kw«LEMMA» \Kw«FORALL» (x: real): x < 1 \Kw«IMPLIES» x^20 - 210*x^19 + 20615*x^18 - 1256850*x^17 + 53327946*x^16 - 1672280820*x^15 + 40171771630*x^14 - 756111184500*x^13 + 11310276995381*x^12 - 135585182899530*x^11 + 1307535010540395*x^10 - 10142299865511450*x^9 + 63030812099294896*x^8 - 311333643161390640*x^7 + 1206647803780373360*x^6 - 3599979517947607200*x^5 + 8037811822645051776*x^4 - 12870931245150988800*x^3 + 13803759753640704000*x^2 - 8752948036761600000*x + 2432902008176640000 > 0
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«h_wilk20 :»
+
+\Ts«  |-------»
+\Lb«{1}»   FORALL (x: real):
+        x < 1 IMPLIES
+         x ^ 20 - 210 * x ^ 19 + 20615 * x ^ 18 - 1256850 * x ^ 17 +
+          53327946 * x ^ 16
+          - 1672280820 * x ^ 15
+          + 40171771630 * x ^ 14
+          - 756111184500 * x ^ 13
+          + 11310276995381 * x ^ 12
+          - 135585182899530 * x ^ 11
+          + 1307535010540395 * x ^ 10
+          - 10142299865511450 * x ^ 9
+          + 63030812099294896 * x ^ 8
+          - 311333643161390640 * x ^ 7
+          + 1206647803780373360 * x ^ 6
+          - 3599979517947607200 * x ^ 5
+          + 8037811822645051776 * x ^ 4
+          - 12870931245150988800 * x ^ 3
+          + 13803759753640704000 * x ^ 2
+          - 8752948036761600000 * x
+          + 2432902008176640000
+          > 0
+
+\Rl«Rule? (cad)»
+\Dm«length_singleton rewrites»
+\Dm«  length[list[mpoly]]»
+\Dm«      ((: (: mconst(2432902008176640000), mconst(-8752948036761600000),»
+\Dm«             mconst(13803759753640704000), mconst(-12870931245150988800),»
+\Dm«             mconst(8037811822645051776), mconst(-3599979517947607200),»
+\Dm«             mconst(1206647803780373360), mconst(-311333643161390640),»
+\Dm«             mconst(63030812099294896), mconst(-10142299865511450),»
+\Dm«             mconst(1307535010540395), mconst(-135585182899530),»
+\Dm«             mconst(11310276995381), mconst(-756111184500),»
+\Dm«             mconst(40171771630), mconst(-1672280820), mconst(53327946),»
+\Dm«             mconst(-1256850), mconst(20615), mconst(-210), mconst(1) :) :))»
+\Dm«  to 1»
+\Ms«Deciding 1 by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 2.938 secs.»
+\Dm«Real time = 2.94 secs.»
+\end{Verbatim}
+\end{termbox}
+\example{Chebyshev $T_{10}$ stays in $[-1,1]$}{h\_cheb10}{$\forall$, degree 10}{2.0\,s}
+Two bounds joined by AND in the conclusion, on a polynomial that touches $\pm1$ eleven times in the interval.
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  h_cheb10: \Kw«LEMMA» \Kw«FORALL» (x: real): -1 <= x \Kw«AND» x <= 1 \Kw«IMPLIES» (512*x^10 - 1280*x^8 + 1120*x^6 - 400*x^4 + 50*x^2 - 1 <= 1 \Kw«AND» 512*x^10 - 1280*x^8 + 1120*x^6 - 400*x^4 + 50*x^2 - 1 >= -1)
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«h_cheb10 :»
+
+\Ts«  |-------»
+\Lb«{1}»   FORALL (x: real):
+        -1 <= x AND x <= 1 IMPLIES
+         (512 * x ^ 10 - 1280 * x ^ 8 + 1120 * x ^ 6 - 400 * x ^ 4 +
+           50 * x ^ 2
+           - 1
+           <= 1
+           AND
+           512 * x ^ 10 - 1280 * x ^ 8 + 1120 * x ^ 6 - 400 * x ^ 4 +
+            50 * x ^ 2
+            - 1
+            >= -1)
+
+\Rl«Rule? (cad)»
+\Dm«length_singleton rewrites»
+\Dm«  length[list[mpoly]]»
+\Dm«      ((: (: mconst(0), mconst(0), mconst(50), mconst(0), mconst(-400),»
+\Dm«             mconst(0), mconst(1120), mconst(0), mconst(-1280), mconst(0),»
+\Dm«             mconst(512) :) :))»
+\Dm«  to 1»
+\Ms«Deciding 1 by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 2.023 secs.»
+\Dm«Real time = 2.025 secs.»
+\end{Verbatim}
+\end{termbox}
+\example{A root located to within $10^{-5}$}{g\_mignotte1}{$\exists$, degree 10}{1.3\,s}
+$x^{10} = 2(100x-1)^2$ has a root in $(0.00999,\,0.01)$, a window $10^{-5}$ wide. Polynomials of this Mignotte type have roots packed very close together.
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  g_mignotte1: \Kw«LEMMA» \Kw«EXISTS» (x: real): 999/100000 < x \Kw«AND» x < 1/100 \Kw«AND» x^10 = 2*(100*x - 1)^2
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«g_mignotte1 :»
+
+\Ts«  |-------»
+\Lb«{1}»   EXISTS (x: real):
+        999 / 100000 < x AND x < 1 / 100 AND x ^ 10 = 2 * (100 * x - 1) ^ 2
+
+\Rl«Rule? (cad)»
+\Dm«length_singleton rewrites»
+\Dm«  length[list[mpoly]]»
+\Dm«      ((: (: mconst(-2), mconst(400), mconst(-20000), mconst(0), mconst(0),»
+\Dm«             mconst(0), mconst(0), mconst(0), mconst(0), mconst(0),»
+\Dm«             mconst(1) :) :))»
+\Dm«  to 1»
+\Ms«Deciding 1 by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 1.256 secs.»
+\Dm«Real time = 1.256 secs.»
+\end{Verbatim}
+\end{termbox}
+\example{The sign chart of $x^2 - 5x + 6$}{m\_quad\_signs}{$\forall$, degree 2}{1.6\,s}
+Three clauses joined by AND, with IMPLIES, OR and IFF inside: a whole sign table stated as one formula.
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  m_quad_signs: \Kw«LEMMA» \Kw«FORALL» (x: real): (x^2 - 5*x + 6 < 0 \Kw«IMPLIES» (2 < x \Kw«AND» x < 3)) \Kw«AND» (x^2 - 5*x + 6 > 0 \Kw«IMPLIES» (x < 2 \Kw«OR» x > 3)) \Kw«AND» (x^2 - 5*x + 6 = 0 \Kw«IFF» (x = 2 \Kw«OR» x = 3))
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«m_quad_signs :»
+
+\Ts«  |-------»
+\Lb«{1}»   FORALL (x: real):
+        (x ^ 2 - 5 * x + 6 < 0 IMPLIES (2 < x AND x < 3)) AND
+         (x ^ 2 - 5 * x + 6 > 0 IMPLIES (x < 2 OR x > 3)) AND
+          (x ^ 2 - 5 * x + 6 = 0 IFF (x = 2 OR x = 3))
+
+\Rl«Rule? (cad)»
+\Dm«length_singleton rewrites»
+\Dm«  length[list[mpoly]]((: (: mconst(-2), mconst(1) :) :))»
+\Dm«  to 1»
+\Ms«Deciding 1 by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 1.561 secs.»
+\Dm«Real time = 1.563 secs.»
+\end{Verbatim}
+\end{termbox}
+\example{$x+y+z$ reaches $1.7$ on the unit sphere}{c\_sphere\_in}{$\exists\exists\exists$, degree 2}{11.6\,s}
+The full decision is slow on this one, so (cad) fixes one coordinate to a small constant, decides the smaller sentence, and closes the goal by instantiation. The maximum is $\sqrt3 \approx 1.732$.
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  c_sphere_in: \Kw«LEMMA» \Kw«EXISTS» (x: real): \Kw«EXISTS» (y: real): \Kw«EXISTS» (z: real):
+    x^2 + y^2 + z^2 = 1 \Kw«AND» x + y + z = 17/10
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«c_sphere_in :»
+
+\Ts«  |-------»
+\Lb«{1}»   EXISTS (x: real):
+        EXISTS (y: real):
+          EXISTS (z: real):
+            x ^ 2 + y ^ 2 + z ^ 2 = 1 AND x + y + z = 17 / 10
+
+\Rl«Rule? (cad)»
+\Dm«length_singleton rewrites»
+\Dm«  length[list[mpoly]]»
+\Dm«      ((: (: mpol((: mconst(-6/5), mconst(1) :)), mconst(1) :) :))»
+\Dm«  to 1»
+\Ms«Deciding 1 by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 11.577 secs.»
+\Dm«Real time = 11.586 secs.»
+\end{Verbatim}
+\end{termbox}
+\example{Three alternating quantifiers}{t\_forall\_exists\_forall}{$\forall\exists\forall$, degree 4}{22.9\,s}
+For every $x$ there is a $y$ with $z^4 + yz^2 + y \ge x$ for every $z$. The slowest example here.
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  t_forall_exists_forall: \Kw«LEMMA» \Kw«FORALL» (x: real): \Kw«EXISTS» (y: real): \Kw«FORALL» (z: real): z^4 + y*z^2 + y >= x
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«t_forall_exists_forall :»
+
+\Ts«  |-------»
+\Lb«{1}»   FORALL (x: real):
+        EXISTS (y: real): FORALL (z: real): z ^ 4 + y * z ^ 2 + y >= x
+
+\Rl«Rule? (cad)»
+\Dm«length_null rewrites length[list[mpoly]]((: :))»
+\Dm«  to 0»
+\Ms«Deciding 1 by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 22.85 secs.»
+\Dm«Real time = 22.867 secs.»
+\end{Verbatim}
+\end{termbox}
+\example{Not every real has an inverse}{d\_no\_inverse}{$\forall\exists$ hypothesis}{0.54\,s}
+PVS shows a negated goal as a hypothesis, so $\forall x\,\exists y\colon xy = 1$ is already formula $-1$ and (flatten) has nothing to do. (cad -1) decides that the hypothesis is FALSE (take $x = 0$), and a false hypothesis closes the goal.
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  d_no_inverse: \Kw«LEMMA» \Kw«NOT» (\Kw«FORALL» (x: real): \Kw«EXISTS» (y: real): x * y = 1)
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«d_no_inverse :»
+
+\Lb«{-1}»  (FORALL (x: real): EXISTS (y: real): x * y = 1)
+\Ts«  |-------»
+
+\Rl«Rule? (flatten)»
+\Dm«No change on: (FLATTEN)»
+\Sh«d_no_inverse :»
+
+\Lb«{-1}»  (FORALL (x: real): EXISTS (y: real): x * y = 1)
+\Ts«  |-------»
+
+\Rl«Rule? (cad -1)»
+\Dm«length_null rewrites length[list[mpoly]]((: :))»
+\Dm«  to 0»
+\Ms«Deciding -1 by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 0.54 secs.»
+\Dm«Real time = 0.54 secs.»
+\end{Verbatim}
+\end{termbox}
+\example{A false claim is reported, not proved}{u\_wilk8\_val}{$\exists$, degree 8}{0.23\,s}
+$(x-1)\cdots(x-8)$ never gets down to $-1000$: its lowest values are about $-641$, near $x \approx 1.31$ and $7.69$. (cad) says the sentence is FALSE and leaves it in place, labelled \texttt{cad}. The first comment on this lemma claimed TRUE; (cad) caught the mistake.
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  u_wilk8_val: \Kw«LEMMA» \Kw«EXISTS» (x: real):
+    x^8 - 36*x^7 + 546*x^6 - 4536*x^5 + 22449*x^4 - 67284*x^3 + 118124*x^2 - 109584*x + 40320 = -1000
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«u_wilk8_val :»
+
+\Ts«  |-------»
+\Lb«{1}»   EXISTS (x: real):
+        x ^ 8 - 36 * x ^ 7 + 546 * x ^ 6 - 4536 * x ^ 5 + 22449 * x ^ 4 -
+         67284 * x ^ 3
+         + 118124 * x ^ 2
+         - 109584 * x
+         + 40320
+         = -1000
+
+\Rl«Rule? (cad)»
+\Bd«cad: the sentence is FALSE; it stays as it is, labelled cad»
+\Ms«Deciding 1 by cylindrical decision, witness first,»
+this simplifies to:
+\Sh«u_wilk8_val : (CAD)»
+
+\Ts«  |-------»
+\Lb«{1, cad}»
+      EXISTS (x: real):
+        x ^ 8 - 36 * x ^ 7 + 546 * x ^ 6 - 4536 * x ^ 5 + 22449 * x ^ 4 -
+         67284 * x ^ 3
+         + 118124 * x ^ 2
+         - 109584 * x
+         + 40320
+         = -1000
+
+\Rl«Rule? (quit)»
+
+\Dm«Run time  = 0.23 secs.»
+\Dm«Real time = 0.23 secs.»
+\end{Verbatim}
+\end{termbox}
+
+\section{(cad *): the whole sequent}
+Each lemma is first taken apart with \texttt{(skeep)} and \texttt{(flatten)}, so that its facts sit in the sequent as formulas
+over skolem constants, next to formulas that are not about polynomials. (Here \texttt{(skeep)} already flattens, so
+\texttt{(flatten)} reports no change.) Then \texttt{(cad *)} says which formulas it used and skipped, which terms became
+unknown reals, and the sentence it decides.
+\example{No real root means a negative discriminant}{s\_disc}{quantified hypothesis}{1.3\,s}
+The hypothesis is itself quantified. (cad *) keeps its quantifier and flips it: a $\forall$ in a hypothesis becomes an $\exists$ in the implication it decides.
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  s_disc: \Kw«LEMMA» \Kw«FORALL» (b, c: real): (\Kw«FORALL» (z: real): z^2 + b * z + c > 0) \Kw«IMPLIES» b^2 < 4 * c
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«s_disc :»
+
+\Ts«  |-------»
+\Lb«{1}»   FORALL (b, c: real):
+        (FORALL (z: real): z ^ 2 + b * z + c > 0) IMPLIES b ^ 2 < 4 * c
+
+\Rl«Rule? (skeep)»
+Skolemizing and keeping names of the universal formula in (+ -),
+this simplifies to:
+\Sh«s_disc : (SKEEP)»
+
+\Lb«{-1}»  FORALL (z: real): z ^ 2 + b * z + c > 0
+\Ts«  |-------»
+\Lb«{1}»   b ^ 2 < 4 * c
+
+\Rl«Rule? (flatten)»
+\Dm«No change on: (FLATTEN)»
+\Sh«s_disc : (SKEEP)»
+
+\Lb«{-1}»  FORALL (z: real): z ^ 2 + b * z + c > 0
+\Ts«  |-------»
+\Lb«{1}»   b ^ 2 < 4 * c
+
+\Rl«Rule? (cad *)»
+\Ms«cad*: using (-1 1), skipping nothing; unknown reals: cadv_1 = b, cadv_2 = c»
+\Ms«cad*: deciding FORALL (cadv_1: real): FORALL (cadv_2: real): EXISTS (cadb_1: real): ((((((cadb_1 ^ 2) + (cadv_1 * cadb_1)) + cadv_2) > (0))) IMPLIES (((cadv_1 ^ 2) < ((4) * cadv_2))))»
+\Dm«length_singleton rewrites»
+\Dm«  length[list[mpoly]]»
+\Dm«      ((: (: mpol((: mpol((: mconst(0), mconst(0), mconst(1) :)),»
+\Dm«                     mconst(-4) :)) :) :))»
+\Dm«  to 1»
+\Ms«Deciding * by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 1.294 secs.»
+\Dm«Real time = 1.295 secs.»
+\end{Verbatim}
+\end{termbox}
+\example{\texttt{sqrt(x)} becomes an unknown real}{s\_sqrt}{abstraction}{2.6\,s}
+$\sqrt{x}$ is not a polynomial, so (cad *) replaces it by a fresh real \texttt{cadv\_2}. Because \texttt{sqrt} returns a nonnegative real, and \texttt{x} is declared nonnegative, it adds both facts as hypotheses of the sentence.
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  s_sqrt: \Kw«LEMMA» \Kw«FORALL» (x: nnreal, a: real): a = sqrt(x) \Kw«AND» a * a = x \Kw«AND» a > 1 \Kw«IMPLIES» x > 1
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«s_sqrt :»
+
+\Ts«  |-------»
+\Lb«{1}»   FORALL (x: nnreal, a: real):
+        a = sqrt(x) AND a * a = x AND a > 1 IMPLIES x > 1
+
+\Rl«Rule? (skeep)»
+Skolemizing and keeping names of the universal formula in (+ -),
+this simplifies to:
+\Sh«s_sqrt : (SKEEP)»
+
+\Lb«{-1}»  a = sqrt(x)
+\Lb«{-2}»  a * a = x
+\Lb«{-3}»  a > 1
+\Ts«  |-------»
+\Lb«{1}»   x > 1
+
+\Rl«Rule? (flatten)»
+\Dm«No change on: (FLATTEN)»
+\Sh«s_sqrt : (SKEEP)»
+
+\Lb«{-1}»  a = sqrt(x)
+\Lb«{-2}»  a * a = x
+\Lb«{-3}»  a > 1
+\Ts«  |-------»
+\Lb«{1}»   x > 1
+
+\Rl«Rule? (cad *)»
+\Ms«cad*: using (-1 -2 -3 1), skipping nothing; unknown reals: cadv_1 = a, cadv_2 = sqrt(x), cadv_3 = x»
+\Ms«cad*: deciding FORALL (cadv_1: real): FORALL (cadv_2: real): FORALL (cadv_3: real): (((cadv_2 >= 0) AND (cadv_3 >= 0)) IMPLIES (((cadv_1 = cadv_2) AND ((cadv_1 * cadv_1) = cadv_3) AND (cadv_1 > (1))) IMPLIES ((cadv_3 > (1)))))»
+\Dm«length_singleton rewrites»
+\Dm«  length[list[mpoly]]((: (: mconst(-1), mconst(1) :) :))»
+\Dm«  to 1»
+\Ms«Deciding * by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 2.60 secs.»
+\Dm«Real time = 2.602 secs.»
+\end{Verbatim}
+\end{termbox}
+\example{An uninterpreted function, and a formula it cannot use}{s\_fun}{abstraction, skipping}{1.8\,s}
+$f(x)$ and \texttt{length(l)} become unknown reals. \texttt{member(x, l)} is not about reals and is skipped.
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  s_fun: \Kw«LEMMA» \Kw«FORALL» (x: real, l: list[real]):
+    f(x) > x^2 \Kw«AND» member(x, l) \Kw«AND» length(l) = 3 \Kw«IMPLIES» f(x) > -1
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«s_fun :»
+
+\Ts«  |-------»
+\Lb«{1}»   FORALL (x: real, l: list[real]):
+        f(x) > x ^ 2 AND member(x, l) AND length(l) = 3 IMPLIES f(x) > -1
+
+\Rl«Rule? (skeep)»
+Skolemizing and keeping names of the universal formula in (+ -),
+this simplifies to:
+\Sh«s_fun : (SKEEP)»
+
+\Lb«{-1}»  f(x) > x ^ 2
+\Lb«{-2}»  member(x, l)
+\Lb«{-3}»  length(l) = 3
+\Ts«  |-------»
+\Lb«{1}»   f(x) > -1
+
+\Rl«Rule? (flatten)»
+\Dm«No change on: (FLATTEN)»
+\Sh«s_fun : (SKEEP)»
+
+\Lb«{-1}»  f(x) > x ^ 2
+\Lb«{-2}»  member(x, l)
+\Lb«{-3}»  length(l) = 3
+\Ts«  |-------»
+\Lb«{1}»   f(x) > -1
+
+\Rl«Rule? (cad *)»
+\Ms«cad*: using (-1 -3 1), skipping (-2); unknown reals: cadv_1 = f(x), cadv_2 = x, cadv_3 = length(l)»
+\Ms«cad*: deciding FORALL (cadv_1: real): FORALL (cadv_2: real): FORALL (cadv_3: real): (((cadv_3 >= 0)) IMPLIES (((cadv_1 > (cadv_2 ^ 2)) AND (cadv_3 = (3))) IMPLIES ((cadv_1 > (-1)))))»
+\Dm«length_singleton rewrites»
+\Dm«  length[list[mpoly]]»
+\Dm«      ((: (: mpol((: mpol((: mconst(1), mconst(1) :)) :)) :) :))»
+\Dm«  to 1»
+\Ms«Deciding * by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 1.818 secs.»
+\Dm«Real time = 1.819 secs.»
+\end{Verbatim}
+\end{termbox}
+\example{Alternation inside a hypothesis}{s\_alt\_hyp}{$\forall\exists$ hypothesis}{1.5\,s}
+The hypothesis $\forall z\,\exists w\colon w > z \wedge wc > 1$ becomes $\exists z\,\forall w$ in the implication. (cad *) builds that prenex form with renamed bound variables.
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  s_alt_hyp: \Kw«LEMMA» \Kw«FORALL» (c: real):
+    (\Kw«FORALL» (z: real): \Kw«EXISTS» (w: real): w > z \Kw«AND» w * c > 1) \Kw«IMPLIES» c > 0
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«s_alt_hyp :»
+
+\Ts«  |-------»
+\Lb«{1}»   FORALL (c: real):
+        (FORALL (z: real): EXISTS (w: real): w > z AND w * c > 1) IMPLIES
+         c > 0
+
+\Rl«Rule? (skeep)»
+Skolemizing and keeping names of the universal formula in (+ -),
+this simplifies to:
+\Sh«s_alt_hyp : (SKEEP)»
+
+\Lb«{-1}»  FORALL (z: real): EXISTS (w: real): w > z AND w * c > 1
+\Ts«  |-------»
+\Lb«{1}»   c > 0
+
+\Rl«Rule? (flatten)»
+\Dm«No change on: (FLATTEN)»
+\Sh«s_alt_hyp : (SKEEP)»
+
+\Lb«{-1}»  FORALL (z: real): EXISTS (w: real): w > z AND w * c > 1
+\Ts«  |-------»
+\Lb«{1}»   c > 0
+
+\Rl«Rule? (cad *)»
+\Ms«cad*: using (-1 1), skipping nothing; unknown reals: cadv_1 = c»
+\Ms«cad*: deciding FORALL (cadv_1: real): EXISTS (cadb_1: real): FORALL (cadb_2: real): ((((cadb_2 > cadb_1) AND ((cadb_2 * cadv_1) > (1)))) IMPLIES ((cadv_1 > (0))))»
+\Dm«length_singleton rewrites»
+\Dm«  length[list[mpoly]]»
+\Dm«      ((: (: mpol((: mpol((: mconst(0), mconst(1) :)) :)) :) :))»
+\Dm«  to 1»
+\Ms«Deciding * by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 1.467 secs.»
+\Dm«Real time = 1.468 secs.»
+\end{Verbatim}
+\end{termbox}
+\example{Everything at once}{s\_mix}{abstraction, skipping}{1.2\,s}
+A predicate $P(x)$, a list fact, a quantified hypothesis about $f$, a polynomial fact and a disequality. Only the real-number content is used.
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  s_mix: \Kw«LEMMA» \Kw«FORALL» (x: real, l: list[real]): P(x) \Kw«AND» cons?(l) \Kw«AND»
+    (\Kw«FORALL» (z: real): f(z) >= 0) \Kw«AND» f(x) > x^2 \Kw«AND» x /= 0 \Kw«IMPLIES» f(x) > 0
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«s_mix :»
+
+\Ts«  |-------»
+\Lb«{1}»   FORALL (x: real, l: list[real]):
+             P(x) AND cons?(l) AND (FORALL (z: real): f(z) >= 0)
+         AND (f(x) > x ^ 2) AND (x /= 0)
+         IMPLIES f(x) > 0
+
+\Rl«Rule? (skeep)»
+Skolemizing and keeping names of the universal formula in (+ -),
+this simplifies to:
+\Sh«s_mix : (SKEEP)»
+
+\Lb«{-1}»  P(x)
+\Lb«{-2}»  cons?(l)
+\Lb«{-3}»  (FORALL (z: real): f(z) >= 0)
+\Lb«{-4}»  f(x) > x ^ 2
+\Ts«  |-------»
+\Lb«{1}»   x = 0
+\Lb«{2}»   f(x) > 0
+
+\Rl«Rule? (flatten)»
+\Dm«No change on: (FLATTEN)»
+\Sh«s_mix : (SKEEP)»
+
+\Lb«{-1}»  P(x)
+\Lb«{-2}»  cons?(l)
+\Lb«{-3}»  (FORALL (z: real): f(z) >= 0)
+\Lb«{-4}»  f(x) > x ^ 2
+\Ts«  |-------»
+\Lb«{1}»   x = 0
+\Lb«{2}»   f(x) > 0
+
+\Rl«Rule? (cad *)»
+\Ms«cad*: using (-4 1 2), skipping (-1 -2 -3); unknown reals: cadv_1 = f(x), cadv_2 = x»
+\Ms«cad*: deciding FORALL (cadv_1: real): FORALL (cadv_2: real): (((cadv_1 > (cadv_2 ^ 2))) IMPLIES ((cadv_2 = (0)) OR (cadv_1 > (0))))»
+\Dm«length_singleton rewrites»
+\Dm«  length[list[mpoly]]((: (: mpol((: mconst(0), mconst(1) :)) :) :))»
+\Dm«  to 1»
+\Ms«Deciding * by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 1.207 secs.»
+\Dm«Real time = 1.208 secs.»
+\end{Verbatim}
+\end{termbox}
+\example{Formulas it has to skip}{s\_skip}{skipping}{0.79\,s}
+$\forall z\colon g(z) \le 1$ has a bound variable under an unknown function, and the second hypothesis has a quantifier under IMPLIES. Neither is prenex polynomial, so both are skipped; $x > 2$ is enough.
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  s_skip: \Kw«LEMMA» \Kw«FORALL» (x: real): (\Kw«FORALL» (z: real): g(z) <= 1) \Kw«AND»
+    (x > 0 \Kw«IMPLIES» \Kw«EXISTS» (z: real): z * z = x) \Kw«AND» x > 2 \Kw«IMPLIES» x > 1
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«s_skip :»
+
+\Ts«  |-------»
+\Lb«{1}»   FORALL (x: real):
+        (FORALL (z: real): g(z) <= 1) AND
+         (x > 0 IMPLIES EXISTS (z: real): z * z = x) AND x > 2
+         IMPLIES x > 1
+
+\Rl«Rule? (skeep)»
+Skolemizing and keeping names of the universal formula in (+ -),
+this simplifies to:
+\Sh«s_skip : (SKEEP)»
+
+\Lb«{-1}»  (FORALL (z: real): g(z) <= 1)
+\Lb«{-2}»  (x > 0 IMPLIES EXISTS (z: real): z * z = x)
+\Lb«{-3}»  x > 2
+\Ts«  |-------»
+\Lb«{1}»   x > 1
+
+\Rl«Rule? (flatten)»
+\Dm«No change on: (FLATTEN)»
+\Sh«s_skip : (SKEEP)»
+
+\Lb«{-1}»  (FORALL (z: real): g(z) <= 1)
+\Lb«{-2}»  (x > 0 IMPLIES EXISTS (z: real): z * z = x)
+\Lb«{-3}»  x > 2
+\Ts«  |-------»
+\Lb«{1}»   x > 1
+
+\Rl«Rule? (cad *)»
+\Ms«cad*: using (-3 1), skipping (-1 -2); unknown reals: cadv_1 = x»
+\Ms«cad*: deciding FORALL (cadv_1: real): (((cadv_1 > (2))) IMPLIES ((cadv_1 > (1))))»
+\Dm«length_singleton rewrites»
+\Dm«  length[list[mpoly]]((: (: mconst(-1), mconst(1) :) :))»
+\Dm«  to 1»
+\Ms«Deciding * by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 0.79 secs.»
+\Dm«Real time = 0.79 secs.»
+\end{Verbatim}
+\end{termbox}
+\example{A false sequent is left alone}{n\_false}{FALSE}{0.26\,s}
+$x > 0 \vdash x > 1$ is false (take $x = 1/2$). (cad *) says so and the sequent is unchanged, because the whole attempt runs inside \texttt{finalize}, which backtracks on failure. (This lemma is in a scratch theory, since it is false.)
+
+\begin{Verbatim}[commandchars=\\«», fontsize=\small]
+  n_false: \Kw«LEMMA» \Kw«FORALL» (x: real): x > 0 \Kw«IMPLIES» x > 1
+\end{Verbatim}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«n_false :»
+
+\Ts«  |-------»
+\Lb«{1}»   FORALL (x: real): x > 0 IMPLIES x > 1
+
+\Rl«Rule? (skeep)»
+Skolemizing and keeping names of the universal formula in (+ -),
+this simplifies to:
+\Sh«n_false : (SKEEP)»
+
+\Lb«{-1}»  x > 0
+\Ts«  |-------»
+\Lb«{1}»   x > 1
+
+\Rl«Rule? (flatten)»
+\Dm«No change on: (FLATTEN)»
+\Sh«n_false : (SKEEP)»
+
+\Lb«{-1}»  x > 0
+\Ts«  |-------»
+\Lb«{1}»   x > 1
+
+\Rl«Rule? (cad *)»
+\Ms«cad*: using (-1 1), skipping nothing; unknown reals: cadv_1 = x»
+\Ms«cad*: deciding FORALL (cadv_1: real): (((cadv_1 > (0))) IMPLIES ((cadv_1 > (1))))»
+\Bd«cad: the sentence is FALSE; it stays as it is, labelled cad»
+\Bd«cad*: not proved; the sequent is unchanged»
+\Dm«No change on: (CAD *)»
+\Sh«n_false : (SKEEP)»
+
+\Lb«{-1}»  x > 0
+\Ts«  |-------»
+\Lb«{1}»   x > 1
+
+\Rl«Rule? (quit)»
+
+\Dm«Run time  = 0.26 secs.»
+\Dm«Real time = 0.26 secs.»
+\end{Verbatim}
+\end{termbox}
+
+\section{Inside the strategy}\label{sec:inside}
+Adding \texttt{\$} to a strategy's name runs the same strategy but keeps each primitive step in the proof,
+so PVS prints the sequent after every step. This is what hides behind the one line of output above.
+
+\subsection*{The witness route: \texttt{(cad\$)} on the folium}
+Before any decision, (cad) tries a model search for a point that settles the goal. For \texttt{b\_folium} it
+finds $x = y = 3/2$: the goal is instantiated twice and evaluated.
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«b_folium :»
+
+\Ts«  |-------»
+\Lb«{1}»   EXISTS (x: real):
+        EXISTS (y: real): x ^ 3 + y ^ 3 = 3 * x * y AND x > 1 AND y > 1
+
+\Rl«Rule? (cad$)»
+Labeling formula(s) (1) as (PAIRING !CWP_451),
+this simplifies to:
+\Sh«b_folium : (RELABEL (:PAIRING !CWP_451) (1))»
+
+\Ts«  |-------»
+\Lb«{1, !CWP_451}»
+      EXISTS (x: real):
+        EXISTS (y: real): x ^ 3 + y ^ 3 = 3 * x * y AND x > 1 AND y > 1
+
+\Dm«No change on: (SKIP)»
+\Sh«b_folium : (RELABEL (:PAIRING !CWP_451) (1))»
+
+\Ts«  |-------»
+\Lb«{1, !CWP_451}»
+      EXISTS (x: real):
+        EXISTS (y: real): x ^ 3 + y ^ 3 = 3 * x * y AND x > 1 AND y > 1
+
+Instantiating the top quantifier in !CWP_451 with the terms:
+ 3/2,
+this simplifies to:
+\Sh«b_folium : (INST !CWP_451 "3/2")»
+
+\Ts«  |-------»
+\Lb«{1, !CWP_451}»
+      EXISTS (y: real):
+        (3 / 2) ^ 3 + y ^ 3 = 3 * (3 / 2) * y AND 3 / 2 > 1 AND y > 1
+
+Instantiating the top quantifier in !CWP_451 with the terms:
+ 3/2,
+this simplifies to:
+\Sh«b_folium : (INST !CWP_451 "3/2")»
+
+\Ts«  |-------»
+\Lb«{1, !CWP_451}»
+      (3 / 2) ^ 3 + (3 / 2) ^ 3 = 3 * (3 / 2) * (3 / 2) AND
+       3 / 2 > 1 AND 3 / 2 > 1
+
+Evaluating formulas in *,
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 0.08 secs.»
+\Dm«Real time = 0.09 secs.»
+\end{Verbatim}
+\end{termbox}
+
+\subsection*{The full decision: \texttt{(cad-direct\$ 1)} on $\exists x\colon x^2 = 2$}
+\texttt{t\_sqrt2} has no rational witness, so the proof goes through the decision procedure. \texttt{(cad-direct)} is the
+decision half of (cad), without the witness search. Expanded, the proof has 1,023 lines of output; the excerpts below are
+consecutive runs of those lines, and every step of the proof falls in one of these stages.
+Recording and printing every step makes it slower: 3.4\,s instead of 0.5\,s.
+
+\begin{enumerate}[leftmargin=1.4em, itemsep=10pt, label=\textbf{\textcolor{accent}{\arabic*}}]
+\item \textbf{The goal.}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«t_sqrt2 :»
+
+\Ts«  |-------»
+\Lb«{1}»   EXISTS (x: real): x ^ 2 = 2
+\end{Verbatim}
+\end{termbox}
+
+\item \textbf{Translate the sentence to data and run the decision.} The quantifier prefix becomes \code{(: FALSE :)}
+(FALSE for $\exists$), the polynomial $x^2 - 2$ becomes its coefficient list \code{(: mconst(-2), mconst(0), mconst(1) :)},
+and the matrix becomes \code{batom(0, 0)}: ``polynomial number 0 has sign 0''. \texttt{eval-expr} runs \texttt{decide5} on
+this data in PVS's ground evaluator, the one trusted computation, and adds the result as a hypothesis:
+the certificate passed (\texttt{ok}) and the sentence is true (\texttt{val}).
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+Labeling new formulas as !CDE_2,
+this simplifies to:
+\Sh«t_sqrt2 : (DISCRIMINATE»
+           (EVAL-EXPR
+            "decide5(reverse((: FALSE :)), (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))")
+           !CDE_2)
+
+\Lb«{-1, !CDE_2}»
+      (decide5(reverse((: FALSE :)),
+               (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0)))
+       = (# ok := TRUE, val := TRUE #)
+\Ts«  |-------»
+\Lb«{1, !CDG_1}»
+      EXISTS (x: real): x ^ 2 = 2
+\end{Verbatim}
+\end{termbox}
+
+\item \textbf{Bring in the correctness theorem for exactly this data.} \texttt{decide5\_correct} says that whenever
+the certificate passes, \texttt{decide5} answers true exactly when the semantics \texttt{fsem} of the encoded sentence holds.
+It is instantiated with the three pieces of data.
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+Labeling new formulas as !CFS_6,
+this simplifies to:
+\Sh«t_sqrt2 : (DISCRIMINATE (LEMMA "decide5_correct") !CFS_6)»
+
+\Lb«{-1, !CFS_6}»
+      FORALL (F: list[list[mpoly]], os: list[bool], phi: BF):
+        decide5(reverse(os), F, phi)`ok IMPLIES
+         (decide5(reverse(os), F, phi)`val IFF fsem(os, F, phi, null))
+\Lb«{-2, !CDE_2}»
+      (decide5(reverse((: FALSE :)),
+               (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0)))
+       = (# ok := TRUE, val := TRUE #)
+\Ts«  |-------»
+\Lb«{1, !CDG_1}»
+      EXISTS (x: real): x ^ 2 = 2
+
+Instantiating the top quantifier in !CFS_6 with the terms:
+ (: (: mconst(-2), mconst(0), mconst(1) :) :), (: FALSE :), batom(0, 0),
+this simplifies to:
+\Sh«t_sqrt2 : (INST !CFS_6 "(: (: mconst(-2), mconst(0), mconst(1) :) :)"»
+           "(: FALSE :)" "batom(0, 0)")
+
+\Lb«{-1, !CFS_6}»
+      decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`ok
+       IMPLIES
+       (decide5(reverse((: FALSE :)),
+                (: (: mconst(-2), mconst(0), mconst(1) :) :),
+                batom(0, 0))`val
+         IFF
+         fsem((: FALSE :), (: (: mconst(-2), mconst(0), mconst(1) :) :),
+              batom(0, 0), null))
+\Lb«[-2, !CDE_2]»
+      (decide5(reverse((: FALSE :)),
+               (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0)))
+       = (# ok := TRUE, val := TRUE #)
+\Ts«  |-------»
+\Lb«[1, !CDG_1]»
+      EXISTS (x: real): x ^ 2 = 2
+
+Case splitting on
+   decide5(reverse((: FALSE :)), (: (: mconst(-2), mconst(0), mconst(1) :) :),
+\end{Verbatim}
+\end{termbox}
+
+\item \textbf{Split on \texttt{ok} and \texttt{val}}, drop the record, and simplify: the correctness theorem now says the
+encoded sentence holds. (The branches where \texttt{ok} or \texttt{val} is false contradict the evaluated record; see stage 9.)
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+Simplifying, rewriting, and recording with decision procedures,
+this simplifies to:
+\Sh«t_sqrt2.1.1 : (ASSERT)»
+
+\Lb«[-1]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`val
+\Lb«[-2]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`ok
+\Lb«{-3, !CFS_6}»
+      fsem((: FALSE :), (: (: mconst(-2), mconst(0), mconst(1) :) :),
+           batom(0, 0), null)
+\Ts«  |-------»
+\Lb«[1, !CDG_1]»
+      EXISTS (x: real): x ^ 2 = 2
+\end{Verbatim}
+\end{termbox}
+
+\item \textbf{Unfold the semantics.} Each \texttt{fsem} step peels one quantifier off the data and puts a real quantifier in the formula;
+the last step turns the matrix into \texttt{bfeval}, the evaluation of the Boolean skeleton.
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+Expanding the definition of fsem,
+this simplifies to:
+\Sh«t_sqrt2.1.1 : (EXPAND "fsem" !CFS_6)»
+
+\Lb«[-1]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`val
+\Lb«[-2]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`ok
+\Lb«{-3, !CFS_6}»
+      EXISTS (x: real):
+        fsem((: :), (: (: mconst(-2), mconst(0), mconst(1) :) :),
+             batom(0, 0), cons(x, null))
+\Ts«  |-------»
+\Lb«[1, !CDG_1]»
+      EXISTS (x: real): x ^ 2 = 2
+\end{Verbatim}
+\end{termbox}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+Expanding the definition of fsem,
+this simplifies to:
+\Sh«t_sqrt2.1.1 : (EXPAND "fsem" !CFS_6)»
+
+\Lb«[-1]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`val
+\Lb«[-2]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`ok
+\Lb«{-3, !CFS_6}»
+      EXISTS (x: real):
+        bfeval(batom(0, 0), (: (: mconst(-2), mconst(0), mconst(1) :) :),
+               cons(x, null))
+\Ts«  |-------»
+\Lb«[1, !CDG_1]»
+      EXISTS (x: real): x ^ 2 = 2
+\end{Verbatim}
+\end{termbox}
+
+\item \textbf{Match the quantifiers.} The existential hypothesis is skolemized with a constant \texttt{x}, and the goal's
+$\exists x$ is instantiated with the same \texttt{x}.
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+For the top quantifier in !CFS_6, we introduce Skolem constants: (x),
+this simplifies to:
+\Sh«t_sqrt2.1.1 : (SKOLEM !CFS_6 ("x"))»
+
+\Lb«[-1]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`val
+\Lb«[-2]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`ok
+\Lb«{-3, !CFS_6}»
+      bfeval(batom(0, 0), (: (: mconst(-2), mconst(0), mconst(1) :) :),
+             cons(x, null))
+\Ts«  |-------»
+\Lb«[1, !CDG_1]»
+      EXISTS (x: real): x ^ 2 = 2
+
+Instantiating the top quantifier in !CDG_1 with the terms:
+ x,
+this simplifies to:
+\Sh«t_sqrt2.1.1 : (INST !CDG_1 "x")»
+
+\Lb«[-1]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`val
+\Lb«[-2]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`ok
+\Lb«[-3, !CFS_6]»
+      bfeval(batom(0, 0), (: (: mconst(-2), mconst(0), mconst(1) :) :),
+             cons(x, null))
+\Ts«  |-------»
+\Lb«{1, !CDG_1}»
+      x ^ 2 = 2
+\end{Verbatim}
+\end{termbox}
+
+\item \textbf{Unfold the skeleton} down to one sign condition on the evaluated polynomial.
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«t_sqrt2.1.1 : (ASSERT)»
+
+\Lb«[-1]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`val
+\Lb«[-2]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`ok
+\Lb«{-3, !CFS_6}»
+      sign3(meval(mpol((: mconst(-2), mconst(0), mconst(1) :)))
+                 (cons(x, null)))
+       = 0
+\Ts«  |-------»
+\Lb«[1, !CDG_1]»
+      x ^ 2 = 2
+\end{Verbatim}
+\end{termbox}
+
+\item \textbf{Reflection: the data is the polynomial.} The strategy states that evaluating the coefficient list at \texttt{x}
+gives $x^2 - 2$, and proves it: the ground evaluator checks that normalizing the expression $x^2 - 2$ (\texttt{pnorm}) yields exactly this list,
+and the library lemma \texttt{peval\_pnorm} says normalization preserves the value. After the replacement, the hypothesis
+is about $x^2 - 2$ itself.
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+Labeling new formulas as !CMV_8,
+this yields  2 subgoals:
+\Sh«t_sqrt2.1.1.1 : (DISCRIMINATE»
+                 (CASE
+                     "meval(mpol((: mconst(-2), mconst(0), mconst(1) :)))((: x :)) = ((x ^ 2)) - (2)")
+                 !CMV_8)
+
+\Lb«{-1, !CMV_8}»
+      meval(mpol((: mconst(-2), mconst(0), mconst(1) :)))((: x :)) =
+       ((x ^ 2)) - (2)
+\Lb«{-2}»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`val
+\Lb«{-3}»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`ok
+\Lb«{-4, !CFS_6}»
+      sign3(meval(mpol((: mconst(-2), mconst(0), mconst(1) :)))
+                 (cons(x, null)))
+       = 0
+\Ts«  |-------»
+\Lb«{1, !CDG_1}»
+      x ^ 2 = 2
+Replacing "meval(mpol((: mconst(-2), mconst(0), mconst(1) :)))((: x :))" with "((x
+                                                                ^
+                                                                2))
+                                                                -
+                                                                (2)"
+Replacing using formula !CMV_8,
+this simplifies to:
+\Sh«t_sqrt2.1.1.1 : (REPLACE !CMV_8)»
+
+\Lb«[-1, !CMV_8]»
+      meval(mpol((: mconst(-2), mconst(0), mconst(1) :)))((: x :)) =
+       ((x ^ 2)) - (2)
+\Lb«[-2]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`val
+\Lb«[-3]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`ok
+\Lb«{-4, !CFS_6}»
+      sign3(((x ^ 2)) - (2)) = 0
+\Ts«  |-------»
+\Lb«[1, !CDG_1]»
+      x ^ 2 = 2
+\end{Verbatim}
+\end{termbox}
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+Labeling new formulas as !CMP_11,
+this simplifies to:
+\Sh«t_sqrt2.1.1.2.1 : (DISCRIMINATE (LEMMA "peval_pnorm") !CMP_11)»
+
+\Lb«{-1, !CMP_11}»
+      FORALL (e: PolyExpr, xs: list[real]):
+        meval(pnorm(e))(xs) = peval(e)(xs)
+\Lb«{-2, !CMA_10}»
+      as_list(pnorm(pe_sub(pe_pow(pe_var(1), 2), pe_const(2)))) =
+       (: mconst(-2), mconst(0), mconst(1) :)
+\Ts«  |-------»
+\Lb«{1, !CMV_8}»
+      meval(pnorm(pe_sub(pe_pow(pe_var(1), 2), pe_const(2))))((: x :)) =
+       ((x ^ 2)) - (2)
+
+Instantiating the top quantifier in !CMP_11 with the terms:
+ pe_sub(pe_pow(pe_var(1), 2), pe_const(2)), (: x :),
+this simplifies to:
+\Sh«t_sqrt2.1.1.2.1 : (INST !CMP_11 "pe_sub(pe_pow(pe_var(1), 2), pe_const(2))"»
+                   "(: x :)")
+
+\Lb«{-1, !CMP_11}»
+      meval(pnorm(pe_sub(pe_pow(pe_var(1), 2), pe_const(2))))((: x :)) =
+       peval(pe_sub(pe_pow(pe_var(1), 2), pe_const(2)))((: x :))
+\Lb«[-2, !CMA_10]»
+      as_list(pnorm(pe_sub(pe_pow(pe_var(1), 2), pe_const(2)))) =
+       (: mconst(-2), mconst(0), mconst(1) :)
+\Ts«  |-------»
+\Lb«[1, !CMV_8]»
+      meval(pnorm(pe_sub(pe_pow(pe_var(1), 2), pe_const(2))))((: x :)) =
+       ((x ^ 2)) - (2)
+Replacing "meval(pnorm(pe_sub(pe_pow(pe_var(1), 2), pe_const(2))))((: x :))" with "peval(pe_sub(pe_pow(pe_var(1),
+                                                                2),
+                                                                pe_const(2)))
+                                                                ((: x :))"
+Replacing using formula !CMP_11,
+this simplifies to:
+\Sh«t_sqrt2.1.1.2.1 : (REPLACE !CMP_11)»
+
+\Lb«[-1, !CMP_11]»
+      meval(pnorm(pe_sub(pe_pow(pe_var(1), 2), pe_const(2))))((: x :)) =
+       peval(pe_sub(pe_pow(pe_var(1), 2), pe_const(2)))((: x :))
+\Lb«[-2, !CMA_10]»
+      as_list(pnorm(pe_sub(pe_pow(pe_var(1), 2), pe_const(2)))) =
+       (: mconst(-2), mconst(0), mconst(1) :)
+\Ts«  |-------»
+\Lb«{1, !CMV_8}»
+      peval(pe_sub(pe_pow(pe_var(1), 2), pe_const(2)))((: x :)) =
+       ((x ^ 2)) - (2)
+
+,
+
+\Ms«This completes the proof of t_sqrt2.1.1.2.1.»
+
+\Sh«t_sqrt2.1.1.2.2 : (DISCRIMINATE»
+                   (CASE
+                       "as_list(pnorm(pe_sub(pe_pow(pe_var(1), 2), pe_const(2)))) = (: mconst(-2), mconst(0), mconst(1) :)")
+                   !CMA_10)
+
+\Ts«  |-------»
+\Lb«{1, !CMA_10}»
+      as_list(pnorm(pe_sub(pe_pow(pe_var(1), 2), pe_const(2)))) =
+       (: mconst(-2), mconst(0), mconst(1) :)
+\Lb«{2, !CMV_8}»
+      meval(mpol((: mconst(-2), mconst(0), mconst(1) :)))((: x :)) =
+       ((x ^ 2)) - (2)
+
+Keeping !CMA_10 and hiding *,
+this simplifies to:
+\Sh«t_sqrt2.1.1.2.2 : (HIDE-ALL-BUT !CMA_10)»
+
+\Ts«  |-------»
+\Lb«[1, !CMA_10]»
+      as_list(pnorm(pe_sub(pe_pow(pe_var(1), 2), pe_const(2)))) =
+       (: mconst(-2), mconst(0), mconst(1) :)
+
+Evaluating formula !CMA_10,
+
+\Ms«This completes the proof of t_sqrt2.1.1.2.2.»
+\end{Verbatim}
+\end{termbox}
+
+\item \textbf{Finish.} \texttt{sign3} is unfolded (the zero case is already gone, because the goal $x^2 = 2$ counts as assumed false
+while it is being proved), the IF is lifted, and propositional reasoning closes the branch. The two side branches, where \texttt{ok} or
+\texttt{val} would be false, contradict the evaluated record and close by simplification.
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+Expanding the definition of sign3,
+this simplifies to:
+\Sh«t_sqrt2.1.1.1 : (EXPAND "sign3" !CFS_6)»
+
+\Lb«[-1]»  meval(mpol((: mconst(-2), mconst(0), mconst(1) :)))((: x :)) =
+       ((x ^ 2)) - (2)
+\Lb«[-2]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`val
+\Lb«[-3]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`ok
+\Lb«{-4, !CFS_6}»
+      IF ((x ^ 2)) - (2) > 0 THEN 1 ELSE -1 ENDIF = 0
+\Ts«  |-------»
+\Lb«[1, !CDG_1]»
+      x ^ 2 = 2
+
+Lifting IF-conditions to the top level,
+this simplifies to:
+\Sh«t_sqrt2.1.1.1 : (LIFT-IF !CFS_6)»
+
+\Lb«[-1]»  meval(mpol((: mconst(-2), mconst(0), mconst(1) :)))((: x :)) =
+       ((x ^ 2)) - (2)
+\Lb«[-2]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`val
+\Lb«[-3]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`ok
+\Lb«{-4, !CFS_6}»
+      IF ((x ^ 2)) - (2) > 0 THEN 1 = 0 ELSE -1 = 0 ENDIF
+\Ts«  |-------»
+\Lb«[1, !CDG_1]»
+      x ^ 2 = 2
+
+\Dm«No change on: (LIFT-IF !CFS_6)»
+\Sh«t_sqrt2.1.1.1 : (LIFT-IF !CFS_6)»
+
+\Lb«[-1]»  meval(mpol((: mconst(-2), mconst(0), mconst(1) :)))((: x :)) =
+       ((x ^ 2)) - (2)
+\Lb«[-2]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`val
+\Lb«[-3]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`ok
+\Lb«{-4, !CFS_6}»
+      IF ((x ^ 2)) - (2) > 0 THEN 1 = 0 ELSE -1 = 0 ENDIF
+\Ts«  |-------»
+\Lb«[1, !CDG_1]»
+      x ^ 2 = 2
+
+\Dm«No change on: (SKIP)»
+\Sh«t_sqrt2.1.1.1 : (LIFT-IF !CFS_6)»
+
+\Lb«[-1]»  meval(mpol((: mconst(-2), mconst(0), mconst(1) :)))((: x :)) =
+       ((x ^ 2)) - (2)
+\Lb«[-2]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`val
+\Lb«[-3]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`ok
+\Lb«{-4, !CFS_6}»
+      IF ((x ^ 2)) - (2) > 0 THEN 1 = 0 ELSE -1 = 0 ENDIF
+\Ts«  |-------»
+\Lb«[1, !CDG_1]»
+      x ^ 2 = 2
+
+\Dm«Postponing t_sqrt2.1.1.1.»
+
+\Sh«t_sqrt2.1.1.1 : (LIFT-IF !CFS_6)»
+
+\Lb«[-1]»  meval(mpol((: mconst(-2), mconst(0), mconst(1) :)))((: x :)) =
+       ((x ^ 2)) - (2)
+\Lb«[-2]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`val
+\Lb«[-3]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`ok
+\Lb«{-4, !CFS_6}»
+      IF ((x ^ 2)) - (2) > 0 THEN 1 = 0 ELSE -1 = 0 ENDIF
+\Ts«  |-------»
+\Lb«[1, !CDG_1]»
+      x ^ 2 = 2
+
+Applying propositional simplification and decision procedures,
+
+\Ms«This completes the proof of t_sqrt2.1.1.1.»
+
+\Ms«This completes the proof of t_sqrt2.1.1.»
+
+\Sh«t_sqrt2.1.2 : (CASE»
+                  "decide5(reverse((: FALSE :)), (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`val")
+
+\Lb«[-1]»  decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`ok
+\Lb«[-2, !CFS_6]»
+      decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`ok
+       IMPLIES
+       (decide5(reverse((: FALSE :)),
+                (: (: mconst(-2), mconst(0), mconst(1) :) :),
+                batom(0, 0))`val
+         IFF
+         fsem((: FALSE :), (: (: mconst(-2), mconst(0), mconst(1) :) :),
+              batom(0, 0), null))
+\Lb«[-3, !CDE_2]»
+      (decide5(reverse((: FALSE :)),
+               (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0)))
+       = (# ok := TRUE, val := TRUE #)
+\Ts«  |-------»
+\Lb«{1}»   decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`val
+\Lb«[2, !CDG_1]»
+      EXISTS (x: real): x ^ 2 = 2
+
+Simplifying, rewriting, and recording with decision procedures,
+
+\Ms«This completes the proof of t_sqrt2.1.2.»
+
+\Ms«This completes the proof of t_sqrt2.1.»
+
+\Sh«t_sqrt2.2 : (CASE»
+                "decide5(reverse((: FALSE :)), (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`ok")
+
+\Lb«[-1, !CFS_6]»
+      decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`ok
+       IMPLIES
+       (decide5(reverse((: FALSE :)),
+                (: (: mconst(-2), mconst(0), mconst(1) :) :),
+                batom(0, 0))`val
+         IFF
+         fsem((: FALSE :), (: (: mconst(-2), mconst(0), mconst(1) :) :),
+              batom(0, 0), null))
+\Lb«[-2, !CDE_2]»
+      (decide5(reverse((: FALSE :)),
+               (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0)))
+       = (# ok := TRUE, val := TRUE #)
+\Ts«  |-------»
+\Lb«{1}»   decide5(reverse((: FALSE :)),
+              (: (: mconst(-2), mconst(0), mconst(1) :) :), batom(0, 0))`ok
+\Lb«[2, !CDG_1]»
+      EXISTS (x: real): x ^ 2 = 2
+
+Simplifying, rewriting, and recording with decision procedures,
+
+\Ms«This completes the proof of t_sqrt2.2.»
+
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 3.401 secs.»
+\Dm«Real time = 3.404 secs.»
+\end{Verbatim}
+\end{termbox}
+
+\end{enumerate}
+
+\subsection*{The whole sequent: \texttt{(cad\$ *)} on the discriminant}
+The two usable formulas get labels, and the combined sentence $G$ is introduced with \texttt{case}. On the first branch $G$ is a
+hypothesis: it is instantiated with \texttt{b} and \texttt{c}, its $\exists$ is skolemized as \texttt{cadk\_1}, the sequent's own
+$\forall z$ is instantiated with \texttt{cadk\_1}, and propositional reasoning closes it. On the second branch $G$ is the goal, and
+(cad) proves it. Both branches are checked by PVS, so nothing about the construction of $G$ has to be trusted.
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+\Sh«s_disc :»
+
+\Ts«  |-------»
+\Lb«{1}»   FORALL (b, c: real):
+        (FORALL (z: real): z ^ 2 + b * z + c > 0) IMPLIES b ^ 2 < 4 * c
+
+\Rl«Rule? (skeep)»
+Skolemizing and keeping names of the universal formula in (+ -),
+this simplifies to:
+\Sh«s_disc : (SKEEP)»
+
+\Lb«{-1}»  FORALL (z: real): z ^ 2 + b * z + c > 0
+\Ts«  |-------»
+\Lb«{1}»   b ^ 2 < 4 * c
+
+\Rl«Rule? (flatten)»
+\Dm«No change on: (FLATTEN)»
+\Sh«s_disc : (SKEEP)»
+
+\Lb«{-1}»  FORALL (z: real): z ^ 2 + b * z + c > 0
+\Ts«  |-------»
+\Lb«{1}»   b ^ 2 < 4 * c
+
+\Rl«Rule? (cad$ *)»
+\Ms«cad*: using (-1 1), skipping nothing; unknown reals: cadv_1 = b, cadv_2 = c»
+\Ms«cad*: deciding FORALL (cadv_1: real): FORALL (cadv_2: real): EXISTS (cadb_1: real): ((((((cadb_1 ^ 2) + (cadv_1 * cadb_1)) + cadv_2) > (0))) IMPLIES (((cadv_1 ^ 2) < ((4) * cadv_2))))»
+\Dm«No change on: (SKIP)»
+\Sh«s_disc :»
+
+\Lb«[-1]»  FORALL (z: real): z ^ 2 + b * z + c > 0
+\Ts«  |-------»
+\Lb«[1]»   b ^ 2 < 4 * c
+
+Using cadsf_465 to label formula(s) -1
+this simplifies to:
+\Sh«s_disc : (LABEL |cadsf_465| -1)»
+
+\Lb«{-1, cadsf_465}»
+      FORALL (z: real): z ^ 2 + b * z + c > 0
+\Ts«  |-------»
+\Lb«[1]»   b ^ 2 < 4 * c
+
+Using cadsf_466 to label formula(s) 1
+this simplifies to:
+\Sh«s_disc : (LABEL |cadsf_466| 1)»
+
+\Lb«[-1, cadsf_465]»
+      FORALL (z: real): z ^ 2 + b * z + c > 0
+\Ts«  |-------»
+\Lb«{1, cadsf_466}»
+      b ^ 2 < 4 * c
+
+Labeling new formulas as cadsg_467,
+this yields  2 subgoals:
+\Sh«s_disc.1 : (DISCRIMINATE»
+            (CASE
+                "id(FORALL (cadv_1: real): FORALL (cadv_2: real): EXISTS (cadb_1: real): ((((((cadb_1 ^ 2) + (cadv_1 * cadb_1)) + cadv_2) > (0))) IMPLIES (((cadv_1 ^ 2) < ((4) * cadv_2)))))")
+            |cadsg_467|)
+
+\Lb«{-1, cadsg_467}»
+      id(FORALL (cadv_1: real):
+           FORALL (cadv_2: real):
+             EXISTS (cadb_1: real):
+               ((((((cadb_1 ^ 2) + (cadv_1 * cadb_1)) + cadv_2) > (0)))
+                 IMPLIES (((cadv_1 ^ 2) < ((4) * cadv_2)))))
+\Lb«{-2, cadsf_465}»
+      FORALL (z: real): z ^ 2 + b * z + c > 0
+\Ts«  |-------»
+\Lb«{1, cadsf_466}»
+      b ^ 2 < 4 * c
+
+Expanding the definition of id,
+this simplifies to:
+\Sh«s_disc.1 : (EXPAND "id" |cadsg_467| :ASSERT? NONE)»
+
+\Lb«{-1, cadsg_467}»
+      FORALL (cadv_1: real):
+        FORALL (cadv_2: real):
+          EXISTS (cadb_1: real):
+            ((((((cadb_1 ^ 2) + (cadv_1 * cadb_1)) + cadv_2) > (0)))
+              IMPLIES (((cadv_1 ^ 2) < ((4) * cadv_2))))
+\Lb«[-2, cadsf_465]»
+      FORALL (z: real): z ^ 2 + b * z + c > 0
+\Ts«  |-------»
+\Lb«[1, cadsf_466]»
+      b ^ 2 < 4 * c
+
+Instantiating the top quantifier in cadsg_467 with the terms:
+ b,
+this simplifies to:
+\Sh«s_disc.1 : (INST |cadsg_467| "b")»
+
+\Lb«{-1, cadsg_467}»
+      FORALL (cadv_2: real):
+        EXISTS (cadb_1: real):
+          ((((((cadb_1 ^ 2) + (b * cadb_1)) + cadv_2) > (0))) IMPLIES
+            (((b ^ 2) < ((4) * cadv_2))))
+\Lb«[-2, cadsf_465]»
+      FORALL (z: real): z ^ 2 + b * z + c > 0
+\Ts«  |-------»
+\Lb«[1, cadsf_466]»
+      b ^ 2 < 4 * c
+
+Instantiating the top quantifier in cadsg_467 with the terms:
+ c,
+this simplifies to:
+\Sh«s_disc.1 : (INST |cadsg_467| "c")»
+
+\Lb«{-1, cadsg_467}»
+      EXISTS (cadb_1: real):
+        ((((((cadb_1 ^ 2) + (b * cadb_1)) + c) > (0))) IMPLIES
+          (((b ^ 2) < ((4) * c))))
+\Lb«[-2, cadsf_465]»
+      FORALL (z: real): z ^ 2 + b * z + c > 0
+\Ts«  |-------»
+\Lb«[1, cadsf_466]»
+      b ^ 2 < 4 * c
+
+For the top quantifier in cadsg_467, we introduce Skolem constants: (cadk_1),
+this simplifies to:
+\Sh«s_disc.1 : (SKOLEM |cadsg_467| ("cadk_1"))»
+
+\Lb«{-1, cadsg_467}»
+      ((((((cadk_1 ^ 2) + (b * cadk_1)) + c) > (0))) IMPLIES
+        (((b ^ 2) < ((4) * c))))
+\Lb«[-2, cadsf_465]»
+      FORALL (z: real): z ^ 2 + b * z + c > 0
+\Ts«  |-------»
+\Lb«[1, cadsf_466]»
+      b ^ 2 < 4 * c
+
+Instantiating the top quantifier in cadsf_465 with the terms:
+ cadk_1,
+this simplifies to:
+\Sh«s_disc.1 : (INST |cadsf_465| "cadk_1")»
+
+\Lb«[-1, cadsg_467]»
+      ((((((cadk_1 ^ 2) + (b * cadk_1)) + c) > (0))) IMPLIES
+        (((b ^ 2) < ((4) * c))))
+\Lb«{-2, cadsf_465}»
+      cadk_1 ^ 2 + b * cadk_1 + c > 0
+\Ts«  |-------»
+\Lb«[1, cadsf_466]»
+      b ^ 2 < 4 * c
+
+Applying propositional simplification,
+
+\Ms«This completes the proof of s_disc.1.»
+
+\Sh«s_disc.2 : (DISCRIMINATE»
+            (CASE
+                "id(FORALL (cadv_1: real): FORALL (cadv_2: real): EXISTS (cadb_1: real): ((((((cadb_1 ^ 2) + (cadv_1 * cadb_1)) + cadv_2) > (0))) IMPLIES (((cadv_1 ^ 2) < ((4) * cadv_2)))))")
+            |cadsg_467|)
+
+\Lb«{-1, cadsf_465}»
+      FORALL (z: real): z ^ 2 + b * z + c > 0
+\Ts«  |-------»
+\Lb«{1, cadsg_467}»
+      id(FORALL (cadv_1: real):
+           FORALL (cadv_2: real):
+             EXISTS (cadb_1: real):
+               ((((((cadb_1 ^ 2) + (cadv_1 * cadb_1)) + cadv_2) > (0)))
+                 IMPLIES (((cadv_1 ^ 2) < ((4) * cadv_2)))))
+\Lb«{2, cadsf_466}»
+      b ^ 2 < 4 * c
+
+Expanding the definition of id,
+this simplifies to:
+\Sh«s_disc.2 : (EXPAND "id" |cadsg_467| :ASSERT? NONE)»
+
+\Lb«[-1, cadsf_465]»
+      FORALL (z: real): z ^ 2 + b * z + c > 0
+\Ts«  |-------»
+\Lb«{1, cadsg_467}»
+      FORALL (cadv_1: real):
+        FORALL (cadv_2: real):
+          EXISTS (cadb_1: real):
+            ((((((cadb_1 ^ 2) + (cadv_1 * cadb_1)) + cadv_2) > (0)))
+              IMPLIES (((cadv_1 ^ 2) < ((4) * cadv_2))))
+\Lb«[2, cadsf_466]»
+      b ^ 2 < 4 * c
+
+\Dm«length_singleton rewrites»
+\Dm«  length[list[mpoly]]»
+\Dm«      ((: (: mpol((: mpol((: mconst(0), mconst(0), mconst(1) :)),»
+\Dm«                     mconst(-4) :)) :) :))»
+\Dm«  to 1»
+\Ms«Deciding cadsg_467 by cylindrical decision, witness first,»
+
+\Ms«This completes the proof of s_disc.2.»
+
+\Qd«Q.E.D.»
+
+\Dm«Run time  = 1.283 secs.»
+\Dm«Real time = 1.284 secs.»
+\end{Verbatim}
+\end{termbox}
+
+\section*{About this document}
+\small
+Source: the pvs\_cad library, theories \texttt{cad\_demo}, \texttt{cad\_limits}, \texttt{cad\_limits2}, \texttt{cad\_limits3} and
+\texttt{cad\_star\_ex}, plus a one-lemma scratch theory for the false (cad *) example. Traces captured on 28 September 2026 with PVS~8.1
+and NASALib, from two scripted \texttt{pvs -raw} sessions. Cut from the transcripts: library loading, strategy-file compilation and
+rewrite-rule installation messages, the Lisp REPL prompts, and the tag ``Top: no parent rule'' that PVS~8.1 appends to goal names in raw mode. Continuation lines of PVS's ``Replacing \dots\ with \dots'' messages, indented by up to 100 columns, are indented by 64.
+\end{document}

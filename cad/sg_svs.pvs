@@ -1,0 +1,79 @@
+sg_svs: THEORY
+%----------------------------------------------------------------------------
+% The realized sign vectors of a family, by a sign function (Phase 6).
+%
+% rsc_sg is the adaptive enumeration of rsc_tree computed for a sign
+% function of the parameters instead of as a branch tree: one existence
+% question (ctree2_sg, the pruned test of sg_conj2) per prefix, the three extensions appended. svs_sg is
+% the leaf of svs_tree: the vectors at the roots of the product, at the
+% roots of its derivative, and at the two ends. At msg(ys) both are the
+% Phase 5 semantics (sound and complete, from ctree2_sg_sound, far_sign and
+% sector_rep, the same proofs as rsc_tree and svs_tree); rsc_srd and
+% svs_srd list what is read, and _det says that is all the sign function is
+% used for. A level of the decision evaluates svs_sg once per cell, with the
+% cell's sign vector as sg.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING sg_conj2, svs_tree
+
+  k: VAR nat
+  g, l: VAR list[mpoly]
+  L, E, Q, F: VAR list[list[mpoly]]
+  acc, v: VAR SV
+  sg, sg1, sg2: VAR SG
+  ys: VAR list[real]
+  x: VAR real
+  LL: VAR list[list[mpoly]]
+  %% length at this concrete list type does not reduce for assert on its own
+  %% (mpoly_univ's length_cdr is typed for list[mpoly]); the collapsed branch
+  %% of rsc_sg needs it for its termination TCCs.
+  len_cdr_LL: LEMMA cons?(LL) IMPLIES length(LL) = 1 + length(cdr(LL))
+
+
+  rsc_sg(k, g, L, E, Q, acc, sg): RECURSIVE SVL =
+    IF NOT ctree2_sg(k, cons(g, E), Q, sg) THEN null[SV]
+    ELSIF null?(L) THEN (: reverse(acc) :)
+    ELSE append(rsc_sg(k, g, cdr(L), E, cons(car(L), Q), cons(1, acc), sg),
+         append(rsc_sg(k, g, cdr(L), cons(car(L), E), Q, cons(0, acc), sg),
+                rsc_sg(k, g, cdr(L), E, cons(lneg(car(L)), Q), cons(-1, acc), sg)))
+    ENDIF
+  MEASURE length(L)
+  rsc_srd(k, g, L, E, Q, acc, sg): RECURSIVE list[mpoly] =
+    append(ctree2_rd(k, cons(g, E), Q, sg),
+      IF NOT ctree2_sg(k, cons(g, E), Q, sg) THEN null[mpoly]
+      ELSIF null?(L) THEN null[mpoly]
+      ELSE append(rsc_srd(k, g, cdr(L), E, cons(car(L), Q), cons(1, acc), sg),
+           append(rsc_srd(k, g, cdr(L), cons(car(L), E), Q, cons(0, acc), sg),
+                  rsc_srd(k, g, cdr(L), E, cons(lneg(car(L)), Q), cons(-1, acc), sg)))
+      ENDIF)
+  MEASURE length(L)
+
+  %% a member that normalizes to a constant has that sign at EVERY x
+  cst_sign: LEMMA length(snorm_sg(l, msg(ys))) <= 1 IMPLIES
+    sign3(meval(mpol(l))(cons(x, ys))) = lcs(snorm_sg(l, msg(ys)), msg(ys))
+
+  rsc_sg_sound: THEOREM FORALL L: FORALL (k, g, E, Q, acc, ys, x):
+    rfuel(g, L, E, Q) <= k AND at(g, E, Q, ys, x) IMPLIES
+    member(append(reverse(acc), svec(L, cons(x, ys))), rsc_sg(k, g, L, E, Q, acc, msg(ys)))
+  rsc_sg_complete: THEOREM FORALL L: FORALL (k, g, E, Q, acc, ys, v):
+    rfuel(g, L, E, Q) <= k AND member(v, rsc_sg(k, g, L, E, Q, acc, msg(ys))) IMPLIES
+    EXISTS x: at(g, E, Q, ys, x) AND v = append(reverse(acc), svec(L, cons(x, ys)))
+  rsc_det: LEMMA FORALL L: FORALL (k, g, E, Q, acc):
+    agree(sg1, sg2, rsc_srd(k, g, L, E, Q, acc, sg1)) IMPLIES
+    rsc_sg(k, g, L, E, Q, acc, sg2) = rsc_sg(k, g, L, E, Q, acc, sg1) AND
+    rsc_srd(k, g, L, E, Q, acc, sg2) = rsc_srd(k, g, L, E, Q, acc, sg1)
+
+  svs_sg(k, F, sg): SVL =
+    append(rsc_sg(k, prodl(F), F, null, null, null, sg),
+           append(rsc_sg(k, lderiv(prodl(F)), F, null, null, null, sg),
+                  (: infv(slofs_sg(F, sg), TRUE), infv(slofs_sg(F, sg), FALSE) :)))
+  svs_srd(k, F, sg): list[mpoly] =
+    append(rsc_srd(k, prodl(F), F, null, null, null, sg),
+           append(rsc_srd(k, lderiv(prodl(F)), F, null, null, null, sg), slofs_rd(F, sg)))
+
+  svs_sg_sound: THEOREM sfuel(F) <= k IMPLIES member(svec(F, cons(x, ys)), svs_sg(k, F, msg(ys)))
+  svs_sg_complete: THEOREM sfuel(F) <= k AND member(v, svs_sg(k, F, msg(ys))) IMPLIES
+    EXISTS x: v = svec(F, cons(x, ys))
+  svs_det: LEMMA agree(sg1, sg2, svs_srd(k, F, sg1)) IMPLIES
+    svs_sg(k, F, sg2) = svs_sg(k, F, sg1) AND svs_srd(k, F, sg2) = svs_srd(k, F, sg1)
+END sg_svs

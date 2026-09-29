@@ -1,0 +1,43 @@
+(|cad_decide3_def|
+ (|decq3_TCC1| 0
+  (|decq3_TCC1-0| "" 3998972862
+   ("" (SKEEP*)
+    (("" (EXPAND "length" -1)
+      (("" (LIFT-IF)
+        (("" (EXPAND "length" -1) (("" (LIFT-IF) (("" (GROUND) NIL NIL)) NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|length| DEF-DECL "nat" |list_props| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|even_plus_odd_is_odd| APPLICATION-JUDGEMENT "odd_int" |integers| NIL)
+    (|plus_u8_u8| APPLICATION-JUDGEMENT "uint16" |integertypes| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (TRUE CONST-DECL "bool" |booleans| NIL))
+   SHOSTAK (|decq3| SUBTYPE "qs" "(list_adt[bool].cons?)" (22 27 22 29))))
+ (|decq3_TCC2| 0
+  (|decq3_TCC2-0| "" 3998972863
+   ("" (SKEEP*)
+    (("" (EXPAND "length" -1)
+      (("" (LIFT-IF)
+        (("" (EXPAND "length" -1) (("" (LIFT-IF) (("" (GROUND) NIL NIL)) NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|length| DEF-DECL "nat" |list_props| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|even_plus_odd_is_odd| APPLICATION-JUDGEMENT "odd_int" |integers| NIL)
+    (|plus_u8_u8| APPLICATION-JUDGEMENT "uint16" |integertypes| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (TRUE CONST-DECL "bool" |booleans| NIL))
+   SHOSTAK
+   (|decq3| SUBTYPE "cdr[bool](qs)" "(list_adt[bool].cons?)" (22 23 22 30)))))
+

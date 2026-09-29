@@ -1,0 +1,51 @@
+(|many_ok|
+ (|mlen_TCC1| 0
+  (|mlen_TCC1-1| NIL 3998310000 ("" (subtype-tcc) NIL NIL) NIL SHOSTAK))
+ (|mlen_TCC2| 0
+  (|mlen_TCC2-1| NIL 3998310000 ("" (termination-tcc) NIL NIL) NIL SHOSTAK))
+ (|mlen_null| 0
+  (|mlen_null-1| NIL 3998310000 ("" (then (expand "mlen") (propax)) NIL NIL) NIL SHOSTAK))
+ (|mlen_cons| 0
+  (|mlen_cons-1| NIL 3998310000 ("" (then (expand "mlen" 1 1) (assert)) NIL NIL) NIL SHOSTAK))
+ (|mok_at| 0
+  (|mok_at-1| NIL 3998310000 ("" (spread (induct "Q")
+ ((then (skeep) (rewrite "mok_null") (expand "mlen") (expand "tok") (expand "lok") (ground))
+  (then (skeep) (label "ih" -1) (skeep) (rewrite "mok_cons") (rewrite "allok_cons") (rewrite "mlen_cons") (flatten)
+        (lemma "lmn_ok") (inst-cp -1 "cons1_var" "g" "ys") (inst -1 "cons1_var" "lmn(cons1_var, g, ys)" "ys")
+        (lemma "lmn_len") (inst-cp -1 "cons1_var" "g" "ys") (inst -1 "cons1_var" "lmn(cons1_var, g, ys)" "ys")
+        (inst-cp "ih" "k" "l0" "lmn(cons1_var, g, ys)" "ys")
+        (inst "ih" "k" "l0" "lmn(cons1_var, lmn(cons1_var, g, ys), ys)" "ys")
+        (ground)))) NIL NIL) NIL SHOSTAK))
+ (|nlists_null| 0
+  (|nlists_null-1| NIL 3998310000 ("" (then (expand "nlists") (expand "map") (propax)) NIL NIL) NIL SHOSTAK))
+ (|nlists_cons| 0
+  (|nlists_cons-1| NIL 3998310000 ("" (then (expand "nlists" 1 1) (expand "map" 1 1) (expand "nlists") (propax)) NIL NIL) NIL SHOSTAK))
+ (|allgt_cons| 0
+  (|allgt_cons-1| NIL 3998310000 ("" (then (skeep) (expand "allgt") (expand "every" 1 1) (propax)) NIL NIL) NIL SHOSTAK))
+ (|allcons_cons| 0
+  (|allcons_cons-1| NIL 3998310000 ("" (then (skeep) (expand "allcons") (expand "every" 1 1) (propax)) NIL NIL) NIL SHOSTAK))
+ (|mlen_nlists| 0
+  (|mlen_nlists-1| NIL 3998310000 ("" (spread (induct "Q")
+ ((then (skeep) (rewrite "nlists_null") (rewrite "mlen_null") (assert))
+  (then (skeep) (label "ih" -1) (skeep) (inst "ih" "ys") (rewrite "nlists_cons") (rewrite "mlen_cons") (rewrite "mlen_cons")
+        (lemma "snorm_length") (inst -1 "cons1_var" "ys") (assert)))) NIL NIL) NIL SHOSTAK))
+ (|allgt_nlists| 0
+  (|allgt_nlists-1| NIL 3998310000 ("" (spread (induct "Q")
+ ((then (skeep) (rewrite "nlists_null") (expand "allgt") (expand "every") (propax))
+  (then (skeep) (label "ih" -1) (skeep) (inst "ih" "x" "ys") (rewrite "nlists_cons") (rewrite "allgt_cons") (rewrite "allgt_cons") (rewrite "snorm_pf") (ground)))) NIL NIL) NIL SHOSTAK))
+ (|allok_nlists| 0
+  (|allok_nlists-1| NIL 3998310000 ("" (spread (induct "Q")
+ ((then (skeep) (rewrite "nlists_null") (expand "allok") (expand "every") (propax))
+  (then (skeep) (label "ih" -1) (skeep) (inst "ih" "ys") (rewrite "nlists_cons") (rewrite "allcons_cons") (rewrite "allok_cons") (flatten)
+        (lemma "snorm_lc") (inst -1 "cons1_var" "ys") (lemma "cons_not_null") (inst -1 "select(snorm(cons1_var), ys)")
+        (expand "lok") (ground)))) NIL NIL) NIL SHOSTAK))
+ (|allgt_allcons| 0
+  (|allgt_allcons-1| NIL 3998310000 ("" (spread (induct "L")
+ ((then (skeep) (expand "allcons") (expand "every") (propax))
+  (then (skeep) (label "ih" -1) (skeep) (inst "ih" "x" "ys") (rewrite "allgt_cons") (rewrite "allcons_cons") (flatten)
+        (spread (case "null?(cons1_var)")
+          ((then (lemma "list_null_extensionality[mpoly]")
+                 (spread (inst -1 "cons1_var" "null[mpoly]")
+                   ((then (replace -1) (rewrite "meval_mpol_null") (assert))
+                    (assert))))
+           (then (lemma "not_null_cons") (inst -1 "cons1_var") (ground))))))) NIL NIL) NIL SHOSTAK)))

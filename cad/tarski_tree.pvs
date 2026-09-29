@@ -1,0 +1,51 @@
+tarski_tree: THEORY
+%----------------------------------------------------------------------------
+% The many-condition Tarski recursion as a branch tree (Phase 3).
+%
+% mts of tarski_many runs only once the valuation is known, because every
+% product it forms is normalized at ys.  mtree is the same recursion with each
+% normalization replaced by a degree branching, so the whole recursion becomes
+% one tree of sign conditions on the parameters whose leaves are integers: the
+% base case is the Tarski query read off the chain tree of sign_tree, and each
+% condition q replaces the multiplier g by the two normalized products q g and
+% q (q g), each of which branches on its own leading coefficient.
+%
+% select_mtree says the leaf the parameters select is exactly mts, with no
+% hypothesis at all --- the tree computes the count on every branch, whether or
+% not the chains it builds are the ones the Tarski theorem applies to.  That
+% question is separate and is decided from the leaf data in many_tree.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING tarski_many, branch_tree[int], branch_map[SL, int], branch_map[int, int],
+      branch_map[list[SL], int]
+
+  l0, l, g: VAR list[mpoly]
+  Q: VAR list[list[mpoly]]
+  ys: VAR list[real]
+  k: VAR nat
+  p0: VAR SL
+
+  mtree(k, p0, Q, g): RECURSIVE btree[int] =
+    IF null?(Q) THEN bmap(tqf, ctree(k, p0, g))
+    ELSE bbind(snormp(lmul(car(Q), g)), LAMBDA (g1: SL):
+           bbind(mtree(k, p0, cdr(Q), g1`slist), LAMBDA (n1: int):
+             bbind(snormp(lmul(car(Q), g1`slist)), LAMBDA (g2: SL):
+               bmap(LAMBDA (n2: int): n1 + n2,
+                    mtree(k, p0, cdr(Q), g2`slist)))))
+    ENDIF
+  MEASURE length(Q)
+
+  mtree_null: LEMMA mtree(k, p0, null[list[mpoly]], g) = bmap(tqf, ctree(k, p0, g))
+  mtree_cons: LEMMA mtree(k, p0, cons(l, Q), g) =
+    bbind(snormp(lmul(l, g)), LAMBDA (g1: SL):
+      bbind(mtree(k, p0, Q, g1`slist), LAMBDA (n1: int):
+        bbind(snormp(lmul(l, g1`slist)), LAMBDA (g2: SL):
+          bmap(LAMBDA (n2: int): n1 + n2, mtree(k, p0, Q, g2`slist)))))
+
+  %% the branching picks the normalized product at the valuation
+  snormp_lmul: LEMMA select(snormp(lmul(l, g)), ys)`slist = lmn(l, g, ys)
+
+  select_mtree: THEOREM FORALL (Q: list[list[mpoly]]):
+    FORALL (k: nat, l0, g: list[mpoly], ys: list[real]):
+      select(mtree(k, sl_of(l0, ys), Q, g), ys) = mts(k, l0, Q, g, ys)
+END tarski_tree

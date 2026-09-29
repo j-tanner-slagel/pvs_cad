@@ -1,0 +1,63 @@
+cells_local: THEORY
+%----------------------------------------------------------------------------
+% Every cell of the level at once (FINISH_PLAN stage S5d, claim B).
+%
+% Fix x0 in the outer sector and separators Y for the level's family P at x0
+% that avoid P's chains.  cells_eq?(.., x, Y2) says that at x the inner
+% sentence has, at every separator of Y2 and at the section of every gap of Y2
+% that holds a root at x0, the truth value it has at x0.  cells_local: that
+% holds for all x of the sector near x0 -- by induction along Y2, taking the
+% smallest of finitely many radii: pwalk_local for the level's own walk,
+% pt_local at each separator, and at each section pt_local together with
+% root_near (the section stays close) and sec_det (P's sign vector at the
+% section is the same, being part of the level's walk).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING pt_local
+
+  F, P: VAR list[list[mpoly]]
+  Psi: VAR [SV -> bool]
+  q3: VAR bool
+  xs: VAR list[real]
+  S: VAR [real -> bool]
+  q, x, x0, beta, beta0: VAR real
+  y0, lo, hi: VAR rat
+  Y, Y2: VAR list[rat]
+
+  %% the hypotheses of claim B at a point x0 of the sector
+  ctx?(F, P, S, q, xs, x0): bool =
+    conv?(S) AND inv?(P, S, q, xs) AND cert?(P, msg(cons(q, xs))) AND S(q) AND S(x0)
+    AND CL?(F, P, cons(q, xs))
+
+  ctx_cl: LEMMA ctx?(F, P, S, q, xs, x0) IMPLIES CL?(F, P, cons(x0, xs))
+
+  Tx(q3, F, Psi, xs, x)(beta): bool = T(q3, F, Psi, cons(x, xs))(beta)
+
+  cells_eq?(q3, F, Psi, P, xs, x0, x, Y2): bool =
+    (FORALL y0: member(y0, Y2) IMPLIES (Tx(q3, F, Psi, xs, x)(y0) IFF Tx(q3, F, Psi, xs, x0)(y0)))
+    AND
+    (FORALL lo, hi, beta, beta0: adj?(Y2, lo, hi)
+       AND lvl?(P, cons(x, xs), lo, hi, beta) AND lvl?(P, cons(x0, xs), lo, hi, beta0)
+       IMPLIES (Tx(q3, F, Psi, xs, x)(beta) IFF Tx(q3, F, Psi, xs, x0)(beta0)))
+
+  %% one separator
+  sep_local: LEMMA ctx?(F, P, S, q, xs, x0) IMPLIES
+    EXISTS (d: posreal): FORALL x: abs(x - x0) < d
+      AND svec(P, cons(y0, cons(x, xs))) = svec(P, cons(y0, cons(x0, xs)))
+      IMPLIES (Tx(q3, F, Psi, xs, x)(y0) IFF Tx(q3, F, Psi, xs, x0)(y0))
+
+  %% one gap that holds a root at x0
+  gap_local: LEMMA ctx?(F, P, S, q, xs, x0) AND cons?(lives(P))
+    AND lvl?(P, cons(x0, xs), lo, hi, beta0)
+    IMPLIES EXISTS (d: posreal): FORALL x, beta: S(x) AND abs(x - x0) < d
+      AND lvl?(P, cons(x, xs), lo, hi, beta)
+      AND sec_sg(P, msg(cons(x, xs)), lo, hi) = sec_sg(P, msg(cons(x0, xs)), lo, hi)
+      IMPLIES (Tx(q3, F, Psi, xs, x)(beta) IFF Tx(q3, F, Psi, xs, x0)(beta0))
+
+  cells_local: THEOREM ctx?(F, P, S, q, xs, x0)
+    AND wok?(P, msg(cons(x0, xs)), Y) AND avall?(P, cons(x0, xs), Y)
+    IMPLIES FORALL Y2: sub?(Y2, Y) IMPLIES
+      EXISTS (d: posreal): FORALL x: S(x) AND abs(x - x0) < d IMPLIES
+        wagree?(P, msg(cons(x0, xs)), msg(cons(x, xs)), Y)
+        AND cells_eq?(q3, F, Psi, P, xs, x0, x, Y2)
+END cells_local

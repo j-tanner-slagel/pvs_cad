@@ -1,0 +1,76 @@
+read_fam: THEORY
+%----------------------------------------------------------------------------
+% The intrinsic reads of a level's walk range over a finite list fixed by
+% the family alone, at every cell and with every valid table
+% (COMPLETENESS_PLAN C7, part 2).
+%
+% With a valid table the walk reads crd(F) and walk_rd's intrinsic reads of
+% the effective family feff(F, od) (odreads' wi_rd_t_eq).  The effective
+% family keeps some of the members, each cut to a prefix, so it is one of
+% the finitely many lists effs(F) (feff_in); for a fixed effective family P
+% the reads at any oracle lie in wu(P) (wi_in, from read_univ's i_rd_in).
+% So every intrinsic read lies in WU(F) (wi_t_in), and every read the
+% closure adds to the level above lies in RW(F) (rw_in).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING read_univ, odreads, list_flat[list[list[mpoly]]],
+      map_member[list[mpoly], list[list[list[mpoly]]]],
+      map_member[list[list[mpoly]], list[list[mpoly]]],
+      map_member[list[list[mpoly]], list[mpoly]]
+
+  F, P, G: VAR list[list[mpoly]]
+  g, f, t: VAR list[mpoly]
+  sg: VAR SG
+  od: VAR OD
+  tb: VAR CT
+  c: VAR mpoly
+
+  %% ---- the effective families ---------------------------------------------------------------
+  strip_pre: LEMMA FORALL f: pre?(strip(f), f)
+  tz_pre: LEMMA FORALL f: pre?(tz(sg, f), f)
+  effs(F): RECURSIVE list[list[list[mpoly]]] =
+    IF null?(F) THEN (: null[list[mpoly]] :)
+    ELSE append(effs(cdr(F)),
+                flat(map[list[mpoly], list[list[list[mpoly]]]]
+                       (LAMBDA t: map[list[list[mpoly]], list[list[mpoly]]](LAMBDA P: cons(t, P))(effs(cdr(F))))
+                       (prefs(car(F)))))
+    ENDIF
+  MEASURE length(F)
+  feff_in: LEMMA FORALL F: member(feff(F, od), effs(F))
+
+  %% ---- the reads of one effective family, at any oracle ---------------------------------------
+  mi_u(P, G): RECURSIVE list[mpoly] =
+    IF null?(G) THEN null[mpoly]
+    ELSE append(IF length(strip(car(G))) >= 2 THEN i_u(bk(P), strip(car(G)))
+                ELSIF length(strip(car(G))) = 1 THEN (: car(strip(car(G))) :)
+                ELSE null[mpoly] ENDIF,
+                mi_u(P, cdr(G)))
+    ENDIF
+  MEASURE length(G)
+  pi_u(g, G): RECURSIVE list[mpoly] =
+    IF null?(G) THEN null[mpoly]
+    ELSE append(IF length(strip(car(G))) >= 2 THEN i_u(ppk(g, car(G)), pprod(g, car(G)))
+                ELSE null[mpoly] ENDIF,
+                pi_u(g, cdr(G)))
+    ENDIF
+  MEASURE length(G)
+  pairs_u(G): RECURSIVE list[mpoly] =
+    IF null?(G) THEN null[mpoly]
+    ELSE append(IF length(strip(car(G))) >= 2 THEN pi_u(car(G), cdr(G)) ELSE null[mpoly] ENDIF,
+                pairs_u(cdr(G)))
+    ENDIF
+  MEASURE length(G)
+  wu(P): list[mpoly] =
+    append(mi_u(P, P), append(pairs_u(P), IF cons?(lives(P)) THEN (: llast(bprod(P)) :) ELSE null[mpoly] ENDIF))
+
+  mi_in: LEMMA FORALL G: member(c, mi_rd(P, sg, G)) IMPLIES member(c, mi_u(P, G))
+  pi_in: LEMMA FORALL G: member(c, pi_rd(sg, g, G)) IMPLIES member(c, pi_u(g, G))
+  pairs_in: LEMMA FORALL G: member(c, pairs_rd(sg, G)) IMPLIES member(c, pairs_u(G))
+  wi_in: LEMMA member(c, wi_rd(P, sg)) IMPLIES member(c, wu(P))
+
+  %% ---- the reads of a family, at any cell -----------------------------------------------------
+  WU(F): list[mpoly] = append(crd(F), flat(map(wu)(effs(F))))
+  wi_t_in: THEOREM valid?(tb) AND member(c, wi_rd_t(F, od, tb)) IMPLIES member(c, WU(F))
+  RW(F): list[list[mpoly]] = map(LAMBDA c: as_list(rd_norm(c)))(WU(F))
+  rw_in: THEOREM valid?(tb) AND member(c, wi_rd_t(F, od, tb)) IMPLIES member(as_list(rd_norm(c)), RW(F))
+END read_fam

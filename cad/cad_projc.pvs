@@ -1,0 +1,54 @@
+cad_projc: THEORY
+%----------------------------------------------------------------------------
+% Collins' projection: coefficients, plus the PRINCIPAL SUBRESULTANT
+% COEFFICIENT CHAINS of each member against its derivative and of each pair
+% (Phase 6, toward delineability).
+%
+% cad_proj is McCallum's smaller operator -- coefficients, disc, pairwise res
+% -- which is disc(f) = res(f, f') = psc(f, f', 0) and res(f, g) = psc(f, g, 0)
+% (subres: psc0_res).  So Collins' operator is McCallum's plus the HIGHER psc,
+% and cad_proj is the j = 0 slice of this one.
+%
+% The higher psc are what a sign-determination argument consumes: a polynomial
+% remainder sequence branches on the signs of its leading coefficients (that
+% branching IS the 3^|F| of rsc_sg), while the psc are determinants and branch
+% on nothing, so "same psc signs" pins down the whole chain structure without
+% any case analysis.
+%
+% Cost is the open question this theory exists to measure: a bigger operator
+% means more roots below, hence more sectors, and the projection route's whole
+% advantage was that it left 1 root sector where the read closure left 21.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING subres, cad_proj
+
+  f, g: VAR list[mpoly]
+  F, G: VAR list[list[mpoly]]
+
+  %% the psc chain of a pair, j running down from min(dg f, dg g) to 0
+  jtop(f, g): nat = min(dg(f), dg(g))
+  chain(f, g): list[mpoly] = pscs(f, g, jtop(f, g))
+
+  %% one member: all coefficients, and the chain against its own derivative
+  %% (whose j = 0 entry is the discriminant)
+  projc1(f): list[list[mpoly]] =
+    IF live?(f) THEN append(cofs(f), map(as_list)(chain(f, lderiv(f))))
+    ELSE null[list[mpoly]] ENDIF
+
+  %% the chains of f against each later member (j = 0 entry is the resultant)
+  projcr(f, G): RECURSIVE list[list[mpoly]] =
+    IF null?(G) THEN null[list[mpoly]]
+    ELSIF live?(f) AND live?(car(G)) THEN
+      append(map(as_list)(chain(f, car(G))), projcr(f, cdr(G)))
+    ELSE projcr(f, cdr(G))
+    ENDIF
+  MEASURE length(G)
+
+  projc(F): RECURSIVE list[list[mpoly]] =
+    IF null?(F) THEN null[list[mpoly]]
+    ELSE append(projc1(car(F)), append(projcr(car(F), cdr(F)), projc(cdr(F))))
+    ENDIF
+  MEASURE length(F)
+
+  projc_null: LEMMA projc(null[list[mpoly]]) = null[list[mpoly]]
+END cad_projc

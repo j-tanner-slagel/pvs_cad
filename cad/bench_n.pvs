@@ -1,0 +1,64 @@
+bench_n: THEORY
+%----------------------------------------------------------------------------
+% Benchmarks for the n-level decision decn_o (not in top.pvs, like
+% bench_pdec): the four-quantifier examples and the ten closed problems of
+% the Bath CAD example bank (bench_pdec has the source and the two excluded
+% entries).  Measure one with (cad-mn): it prints decn_o's record and the
+% wall-clock time and changes nothing.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING towern_od, mpoly_embed
+
+  e4_above: LEMMA FORALL (x: real): FORALL (y: real): FORALL (z: real): EXISTS (w: real):
+    w > x AND w > y AND w > z
+  e4_between: LEMMA FORALL (x: real): FORALL (y: real): FORALL (z: real): EXISTS (w: real):
+    w > x AND w > y AND w < z
+  e4_sum: LEMMA FORALL (x: real): EXISTS (y: real): FORALL (z: real): EXISTS (w: real):
+    w > x + y + z
+  e4_square: LEMMA FORALL (x: real): FORALL (y: real): EXISTS (z: real): FORALL (w: real):
+    w^2 + z > x + y
+  t_sphere: LEMMA FORALL (x: real): FORALL (y: real): EXISTS (z: real):
+    x^2 + y^2 + z^2 = 1 OR x^2 + y^2 > 1
+  t_cone: LEMMA FORALL (x: real): FORALL (y: real): EXISTS (z: real): z^2 = x^2 + y^2
+
+  % Ball and Circular Cylinder  (3 vars, 3 quantifiers)
+  bath_01: LEMMA
+    EXISTS (z: real): EXISTS (x: real): EXISTS (y: real): (((x^2 + y^2 + z^2 - 1 < 0) AND (x^2 + (y + z - 2)^2 - 1 < 0)))
+
+  % Term Rewrite  (3 vars, 3 quantifiers)
+  bath_02: LEMMA
+    EXISTS (r: real): FORALL (x: real): FORALL (y: real): ((((x - r > 0) AND (y - r > 0)) IMPLIES (x^2 * (1 + 2 * y)^2 - y^2 * (1 + 2 * x^2) > 0)))
+
+  % Collision of Circle and Square  (3 vars, 3 quantifiers)
+  bath_03: LEMMA
+    EXISTS (y: real): EXISTS (x: real): EXISTS (t: real): (((17 * t - 96 >= 0) AND (17 * t - 160 <= 0) AND (16 * x - 17 * t + 16 >= 0) AND (16 * x - 17 * t - 16 <= 0) AND (16 * y - 17 * t + 144 >= 0) AND (16 * y - 17 * t + 112 <= 0) AND ((x - t)^2 + y^2 - 1 <= 0)))
+
+  % McCallum Trivariate Random Polynomial  (3 vars, 3 quantifiers)
+  bath_04: LEMMA
+    EXISTS (x: real): EXISTS (y: real): EXISTS (z: real): (((y - 1) * z^4 + x * z^3 + x * (1 - y) * z^2 + (y - x - 1) * z + y = 0))
+
+  % Random A from Buchberger-Hong  (3 vars, 3 quantifiers)
+  bath_05: LEMMA
+    EXISTS (x: real): FORALL (y: real): EXISTS (z: real): (((4 * x^2 + x * y^2 - z + 1/4 = 0) AND (2 * x + y^2 * z + 1/2 = 0) AND (x^2 * z - 1/2 * x - y^2 = 0 )))
+
+  % Random B from Buchberger-Hong  (3 vars, 3 quantifiers)
+  bath_07: LEMMA
+    EXISTS (z: real): FORALL (y: real): EXISTS (x: real): (((4 * x^2 + x * y^2 - z + 1/4 = 0) AND (2 * x + y^2 * z + 1/2 = 0) AND (x^2 * z - 1/2 * x - y^2 = 0 )))
+
+  % Random B Grobner from Buchberger-Hong  (3 vars, 3 quantifiers)
+  bath_08: LEMMA
+    EXISTS (z: real): FORALL (y: real): EXISTS (x: real): (((z^7 - 1/2 * z^6 + 1/16 * z^5 + 13/4 * z^4 + 75/16 * z^3 - 171/8 * z^2 + 133/8 * z - 15/4 = 0) AND (y^2 - 19188/497 * z^6 + 318/497 * z^5 - 4197/1988 * z^4 - 251555/1988 * z^3 - 481837/1988 * z^2 + 1407741/1988 * z - 297833/994 = 0) AND (x + 4638/497 * z^6 - 75/497 * z^5 + 2111/3976 * z^4 + 61031/1988 * z^3 + 232833/3976 * z^2 - 85042/497 * z + 144407/1988 = 0)))
+
+  % Joukowsky Transformation  (4 vars, 4 quantifiers)
+  bath_09: LEMMA
+    FORALL (a: real): FORALL (b: real): FORALL (c: real): FORALL (d: real): ((((a * (c^2 + d^2) * (a^2 + b^2 + 1) - c * (a^2 + b^2) * (c^2 + d^2 + 1) = 0) AND (b * (c^2 + d^2) * (a^2 + b^2 - 1) - d * (a^2 + b^2) * (c^2 + d^2 - 1) = 0) AND (b * d > 0) AND (c^2 + d^2 - 1 > 0)) IMPLIES ((a = c) AND (b = d))))
+
+  % Joukowsky Transformation  (4 vars, 4 quantifiers)
+  bath_10: LEMMA
+    FORALL (a: real): FORALL (b: real): FORALL (c: real): FORALL (d: real): ((((a * (c^2 + d^2) * (a^2 + b^2 + 1) - c * (a^2 + b^2) * (c^2 + d^2 + 1) = 0) AND (b * (c^2 + d^2) * (a^2 + b^2 - 1) - d * (a^2 + b^2) * (c^2 + d^2 - 1) = 0) AND (b * d > 0) AND (c^2 + d^2 - 1 > 0)) IMPLIES ((a = c) AND (b = d))))
+
+  % Upper Half Plane  (4 vars, 4 quantifiers)
+  bath_12: LEMMA
+    FORALL (a: real): FORALL (b: real): FORALL (c: real): FORALL (d: real): ((((a * (c^2 + d^2) * (a^2 + b^2 + 1) - c * (a^2 + b^2) * (c^2 + d^2 + 1) = 0) AND (b * (c^2 + d^2) * (a^2 + b^2 - 1) - d * (a^2 + b^2) * (c^2 + d^2 - 1) = 0) AND (b > 0) AND (d > 0)) IMPLIES ((a = c) AND (b = d))))
+
+END bench_n

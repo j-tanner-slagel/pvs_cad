@@ -1,0 +1,73 @@
+read_univ: THEORY
+%----------------------------------------------------------------------------
+% The reads of a Sturm chain range over a finite list, whatever the oracle
+% (COMPLETENESS_PLAN C7, part 1).
+%
+% A chain built through a sign oracle depends on the oracle at two kinds of
+% places: the reduced step sstep2 picks one of three candidates (the exact
+% quotient, its negative, or the plain pseudo-remainder step) from two sign
+% reads, and snorm_sg cuts off the top coefficients the oracle says vanish,
+% leaving a prefix.  Both have finitely many outcomes that do not depend on
+% the oracle (s3cands, prefs), so by induction on the chain bound every read
+% and every element of a chain, at any oracle, lies in a list computed from
+% the inputs alone (rd_in, el_in, i_rd_in).  The lists are never computed:
+% they are the finiteness the convergence of the closures rests on.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING walk_rd, list_flat[mpoly], list_flat[list[mpoly]],
+    map_member[list[mpoly], mpoly], map_member[list[mpoly], list[mpoly]],
+    map_member[list[mpoly], list[list[mpoly]]]
+
+  sg: VAR SG
+  k, e: VAR nat
+  l, l1, l2, f, x, t: VAR list[mpoly]
+  cc, c: VAR mpoly
+  Ls: VAR list[list[mpoly]]
+
+  %% ---- the normalization leaves a prefix; its reads are the prefixes' tops -------------
+  lbut_pre: LEMMA FORALL l: pre?(lbut(l), l)
+  snorm_pre: LEMMA FORALL l: pre?(snorm_sg(l, sg), l)
+  snrd_u(l): list[mpoly] = map(LAMBDA t: mnorm(llast(t)))(prefs(l))
+  snorm_rd_pre: LEMMA FORALL l: member(c, snorm_rd(l, sg)) IMPLIES
+    EXISTS t: pre?(t, l) AND c = mnorm(llast(t))
+  snorm_rd_in: LEMMA member(c, snorm_rd(l, sg)) IMPLIES member(c, snrd_u(l))
+
+  %% ---- the three candidates of the reduced step --------------------------------------
+  s3cands(l1, (l2 | cons?(l2)), cc, e): list[list[mpoly]] =
+    LET q = ldivl(map(mnorm)(prem(l1, l2)), mnorm(mpow(cc, e))) IN
+    (: q, lscal(mconst(-1), q), sstep(l1, l2) :)
+  sstep2_in: LEMMA cons?(l2) IMPLIES member(sstep2(l1, l2, cc, e, sg), s3cands(l1, l2, cc, e))
+
+  %% one step: the next element and the step's reads
+  next_u(l1, (l2 | cons?(l2)), cc, e): list[list[mpoly]] = flat(map(prefs)(s3cands(l1, l2, cc, e)))
+  step_u(l1, (l2 | cons?(l2)), cc, e): list[mpoly] =
+    append((: mnorm(cc), mnorm(llast(l2)) :), flat(map(snrd_u)(s3cands(l1, l2, cc, e))))
+  next_in: LEMMA cons?(l2) IMPLIES member(snext2_sg(l1, l2, cc, e, sg), next_u(l1, l2, cc, e))
+  step_in: LEMMA cons?(l2) AND member(c, snext2_rd(l1, l2, cc, e, sg)) IMPLIES member(c, step_u(l1, l2, cc, e))
+
+  %% ---- the whole chain ------------------------------------------------------------------
+  rd_u(k, l1, l2, cc, e): RECURSIVE list[mpoly] =
+    IF cons?(l2) AND k > 0
+    THEN append(step_u(l1, l2, cc, e),
+                flat(map(LAMBDA x: rd_u(k - 1, l2, x, llast(l2), nexp(l1, l2)))(next_u(l1, l2, cc, e))))
+    ELSE null[mpoly]
+    ENDIF
+  MEASURE k
+  el_u(k, l1, l2, cc, e): RECURSIVE list[list[mpoly]] =
+    IF cons?(l2) AND k > 0
+    THEN cons(l2, flat(map(LAMBDA x: el_u(k - 1, l2, x, llast(l2), nexp(l1, l2)))(next_u(l1, l2, cc, e))))
+    ELSE (: null[mpoly] :)
+    ENDIF
+  MEASURE k
+
+  rd_in: LEMMA FORALL k: FORALL l1, l2, cc, e:
+    member(c, rchain2_rd(k, l1, l2, cc, e, sg)) IMPLIES member(c, rd_u(k, l1, l2, cc, e))
+  el_in: LEMMA FORALL k: FORALL l1, l2, cc, e:
+    member(x, rchain2_sg(k, l1, l2, cc, e, sg)) IMPLIES member(x, el_u(k, l1, l2, cc, e))
+
+  %% the reads of one chain construction (walk_rd's i_rd), at any oracle
+  i_u(k, f): list[mpoly] =
+    append(rd_u(k, f, lderiv(f), mconst(1), 0),
+           map(LAMBDA x: llast(x))(cons(f, el_u(k, f, lderiv(f), mconst(1), 0))))
+  i_rd_in: THEOREM member(c, i_rd(k, sg, f)) IMPLIES member(c, i_u(k, f))
+END read_univ

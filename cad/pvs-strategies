@@ -1,0 +1,1957 @@
+;;; pvs_cad strategies (Phase 1): mpoly-eq
+;;;
+;;; mpoly-eq proves an equality between two polynomial expressions over real
+;;; atoms by computational reflection:
+;;;   1. the Lisp printer below turns each side into a PolyExpr term
+;;;      (variables are the maximal non-polynomial subterms, numbered by
+;;;      first occurrence; numeric literals become pe_const);
+;;;   2. peval(E)(xs) = side is proved by rewriting with the peval_* lemmas;
+;;;   3. pnorm(E1) = pnorm(E2) is decided by the ground evaluator;
+;;;   4. poly_eq_by_norm closes the goal.
+;;; The printer is not trusted: every equation it suggests is proved.
+
+(defparameter *mpoly-atoms* nil)   ; atom strings, in order of first occurrence
+
+(defun mpoly-atom-index (expr)
+  (let* ((str (expr2str expr))
+         (pos (position str *mpoly-atoms* :test #'string=)))
+    (if pos (1+ pos)
+      (progn (setq *mpoly-atoms* (append *mpoly-atoms* (list str)))
+             (length *mpoly-atoms*)))))
+
+(defun mpoly-expr-rec (expr)
+  (let ((num (extra-get-number-from-expr expr t)))
+    (cond (num (format nil "pe_const(~a)" num))
+          ((and (unary-application? expr) (is-function-expr expr "-"))
+           (format nil "pe_neg(~a)" (mpoly-expr-rec (args1 expr))))
+          ((is-function-expr expr "+")
+           (format nil "pe_add(~a, ~a)" (mpoly-expr-rec (args1 expr)) (mpoly-expr-rec (args2 expr))))
+          ((is-function-expr expr "-")
+           (format nil "pe_sub(~a, ~a)" (mpoly-expr-rec (args1 expr)) (mpoly-expr-rec (args2 expr))))
+          ((is-function-expr expr "*")
+           (format nil "pe_mul(~a, ~a)" (mpoly-expr-rec (args1 expr)) (mpoly-expr-rec (args2 expr))))
+          ((is-function-expr expr "^")
+           (let ((n (extra-get-number-from-expr (args2 expr) t)))
+             (if (and n (integerp n) (>= n 0))
+                 (format nil "pe_pow(~a, ~a)" (mpoly-expr-rec (args1 expr)) n)
+               (format nil "pe_var(~a)" (mpoly-atom-index expr)))))
+          ((is-function-expr expr "sq")   ; sq(a) expands to a*a, so print it as a product
+           (let ((a (mpoly-expr-rec (args1 expr))))
+             (format nil "pe_mul(~a, ~a)" a a)))
+          ((is-function-expr expr "/")
+           (let ((d (extra-get-number-from-expr (args2 expr) t)))
+             (if (and d (not (zerop d)))
+                 (format nil "pe_mul(~a, pe_const(~a))" (mpoly-expr-rec (args1 expr)) (/ 1 d))
+               (format nil "pe_var(~a)" (mpoly-atom-index expr)))))
+          (t (format nil "pe_var(~a)" (mpoly-atom-index expr))))))
+
+(defun mpoly-valuation ()
+  (if *mpoly-atoms*
+      (format nil "(: ~{~a~^, ~} :)" *mpoly-atoms*)
+    "null[real]"))
+
+;; Names of user-defined constants (with a definition, declared outside the
+;; prelude and outside library theories) occurring in EXPR, for unfolding.
+(defun mpoly-user-defined-names (expr)
+  (let ((names nil))
+    (mapobject #'(lambda (obj)
+                   (when (and (name-expr? obj)
+                              (declaration obj)
+                              (const-decl? (declaration obj))
+                              (definition (declaration obj))
+                              (not (from-prelude? (declaration obj)))
+                              (not (lib-datatype-or-theory? (module (declaration obj)))))
+                     (pushnew (string (id obj)) names :test #'string=))
+                   nil)
+               expr)
+    (reverse names)))
+
+(defhelper mpoly-unfold__ (fnum)
+  (let ((fexpr (extra-get-formula fnum))
+        (names (when fexpr (mpoly-user-defined-names fexpr)))
+        ;; the steps are built here: FNUM may be a label, which a step built
+        ;; inside mapstep's lambda would read as a Lisp variable
+        (steps (loop for nm in names collect `(expand ,nm ,fnum))))
+    (when names
+      (mapstep #'(lambda (st) st) steps)))
+  "[pvs_cad] Internal: unfolds user definitions in FNUM." "")
+
+(defparameter *mpoly-peval-rews*
+  '("peval_pconst" "peval_pvar" "peval_padd" "peval_psub" "peval_pmul"
+    "peval_pneg" "peval_ppow" "nth0_1" "nth0_succ"))
+
+(defhelper mpoly-eq-side__ ()
+  (then (rewrite-msg-off)
+        (expand "sq")
+        (auto-rewrite "peval_pconst" "peval_pvar" "peval_padd" "peval_psub" "peval_pmul"
+                      "peval_pneg" "peval_ppow" "nth0_1" "nth0_succ")
+        (assert)
+        (stop-rewrite "peval_pconst" "peval_pvar" "peval_padd" "peval_psub" "peval_pmul"
+                      "peval_pneg" "peval_ppow" "nth0_1" "nth0_succ"))
+  "[pvs_cad] Internal: proves peval(E)(xs) = e by rewriting." "")
+
+;;; Formulas are named by fresh labels (with-fresh-labels, discriminate),
+;;; never by their position in the sequent.  A fact the strategies add to the
+;;; sequent is split on with CAD-FACT-CASE: the case formula is wrapped in id,
+;;; as extrategies does, so that PVS neither closes a branch nor moves a
+;;; negation before the branch's own step runs (a case on a formula already in
+;;; the sequent, or on NOT A, would otherwise shift the branches); each branch
+;;; unwraps it first.  USE runs where FML is a hypothesis and PROVE where it
+;;; is to be proved; LAB labels it in both.
+(defun cad-fact-case (fml lab use prove)
+  `(branch (discriminate (case ,(format nil "id(~a)" fml)) ,lab)
+     ((then (expand "id" ,lab :assert? none) ,use)
+      (then (expand "id" ,lab :assert? none) ,prove))))
+
+;; the proof of one reflection equation, labelled LAB, meval(mpol(L))(CNS) =
+;; EXPR: as_list(pnorm(E)) = L by evaluation, then peval_pnorm and
+;; mpoly-eq-side__'s rewriting (ASL is the text of the first equation)
+(defun cad-mev-proof (asl e cns lab)
+  `(with-fresh-labels ((!cma) (!cmp))
+     (then (hide-all-but ,lab)
+           (branch (discriminate (case ,asl) !cma)
+             ((then (replace !cma :dir RL) (rewrite "meval_as_list")
+                    (discriminate (lemma "peval_pnorm") !cmp) (inst !cmp ,e ,cns) (replace !cmp)
+                    (mpoly-eq-side__))
+              (then (hide-all-but !cma) (eval-formula !cma)))))))
+
+(defhelper mpoly-eq__ (fnum)
+  (let ((fexpr (extra-get-formula fnum))
+        (eq?   (and fexpr (is-function-expr fexpr "=")))
+        (lhs   (when eq? (args1 fexpr)))
+        (rhs   (when eq? (args2 fexpr)))
+        (dummy (setq *mpoly-atoms* nil))
+        (e1    (when eq? (mpoly-expr-rec lhs)))
+        (e2    (when eq? (mpoly-expr-rec rhs)))
+        (xs    (mpoly-valuation))
+        (c1    (when eq? (format nil "peval(~a)(~a) = ~a" e1 xs (expr2str lhs))))
+        (c2    (when eq? (format nil "peval(~a)(~a) = ~a" e2 xs (expr2str rhs))))
+        (c3    (when eq? (format nil "pnorm(~a) = pnorm(~a)" e1 e2))))
+    (if (not eq?)
+        (printf "mpoly-eq: formula ~a is not an equality" fnum)
+      (with-fresh-labels ((!mq1) (!mq2) (!mq3) (!mql))
+        (branch (discriminate (case c1) !mq1)
+          ((branch (discriminate (case c2) !mq2)
+             ((branch (discriminate (case c3) !mq3)
+                ((then (discriminate (lemma "poly_eq_by_norm") !mql) (inst !mql e1 e2 xs) (assert))
+                 (then (hide-all-but !mq3) (eval-formula !mq3))))
+              (then (hide-all-but !mq2) (mpoly-eq-side__))))
+           (then (hide-all-but !mq1) (mpoly-eq-side__)))))))
+  "[pvs_cad] Internal." "")
+
+(defstep mpoly-eq (&optional (fnum 1))
+  (with-fresh-labels ((!mqg fnum))
+    (then (skeep !mqg) (mpoly-unfold__$ !mqg) (mpoly-eq__$ !mqg)))
+  "[pvs_cad] Proves the polynomial identity in FNUM (an equality of real
+expressions over arbitrary atoms, possibly universally quantified) by
+reflection into the verified normal form of mpoly_embed."
+  "Proving polynomial identity in ~a by reflection")
+
+;;; ------------------------------------------------------------------
+;;; mpoly-simp: replace a polynomial expression by its normal form.
+;;; The normal form is computed by the ground evaluator (pnorm) and
+;;; printed back as a PVS expression over the same atoms; the equation
+;;; expr = normal-form is then proved by mpoly-eq, so nothing is trusted.
+
+(defun mpoly-list-elems (arg)
+  (cond ((list-expr? arg) (exprs arg))
+        ((null-expr? arg) nil)
+        (t nil)))
+
+(defun mpoly-zero-term? (term)
+  (and (is-function-expr term "mconst")
+       (let ((n (extra-get-number-from-expr (args1 term) t)))
+         (and n (zerop n)))))
+
+(defun mpoly-const-term? (term)
+  (is-function-expr term "mconst"))
+
+(defun mpoly-num-str (n)
+  (if (< n 0) (format nil "(~a)" n) (format nil "~a" n)))
+
+;; a monomial coef * var^i as a string; coefstr is already rendered
+(defun mpoly-monomial-str (coefstr const? var i)
+  (let ((factor (cond ((= i 0) nil) ((= i 1) var) (t (format nil "~a^~a" var i)))))
+    (cond ((null factor) coefstr)
+          ((string= coefstr "1") factor)
+          (const? (format nil "~a*~a" coefstr factor))
+          (t (format nil "(~a)*~a" coefstr factor)))))
+
+;; render an evaluated mpoly term; depth 1 is the head variable of *mpoly-atoms*
+(defun mpoly-term->str (term depth)
+  (cond ((is-function-expr term "mconst")
+         (mpoly-num-str (extra-get-number-from-expr (args1 term) t)))
+        ((is-function-expr term "mpol")
+         (let* ((elems (mpoly-list-elems (args1 term)))
+                (var   (nth (1- depth) *mpoly-atoms*))
+                (terms nil))
+           (loop for c in elems for i from 0 do
+             (unless (mpoly-zero-term? c)
+               (push (mpoly-monomial-str (mpoly-term->str c (1+ depth)) (mpoly-const-term? c) var i)
+                     terms)))
+           (if (null terms) "0" (format nil "~{~a~^ + ~}" (reverse terms)))))
+        (t (format nil "~a" term))))
+
+(defstep mpoly-simp (expr &optional (fnums *))
+  (let ((fexpr (extra-get-expr expr))
+        (dummy (setq *mpoly-atoms* nil))
+        (e     (when fexpr (mpoly-expr-rec fexpr)))
+        (val   (when e (evalexpr (format nil "pnorm(~a)" e) nil nil t)))
+        (nf    (when val (mpoly-term->str val 1)))
+        (estr  (when fexpr (expr2str fexpr)))
+        (eqn   (when nf (format nil "~a = ~a" estr nf)))
+        ;; FNUMS are labelled before the case adds the equation, so that they
+        ;; name the formulas they named when the step was called
+        (strat (when eqn
+                 `(with-fresh-labels ((!msf ,fnums) (!mse))
+                    ,(cad-fact-case eqn '!mse '(replace !mse !msf :hide? t)
+                                    '(then (hide-all-but !mse) (mpoly-eq !mse)))))))
+    (if (null nf)
+        (printf "mpoly-simp: could not normalize ~a" expr)
+      (if (string= estr nf)
+          (printf "mpoly-simp: ~a is already in normal form" estr)
+        strat)))
+  "[pvs_cad] Replaces the polynomial expression EXPR (a string) by its
+normal form in formulas FNUMS; the equation is proved by mpoly-eq."
+  "Normalizing ~a")
+
+;;; ------------------------------------------------------------------
+;;; alg-roots (Phase 2): isolate the real roots of a univariate polynomial
+;;; expression P in the variable X, and add to the sequent
+;;;   P = 0 IMPLIES (lb_1 <= X AND X <= ub_1) OR ... OR (lb_k <= X AND X <= ub_k)
+;;; and, for each polynomial Q of SIGNS and each root,
+;;;   lb_i <= X AND X <= ub_i AND P = 0 IMPLIES Q > 0 / Q = 0 / Q < 0.
+;;; The intervals come from the verified isolation (alg_isolate.roots), the
+;;; signs from alg_sign; every fact is proved from root_interval /
+;;; sign_at_root, ground evaluation and the reflection of Phase 1.
+
+;; field VALUE of a record expression (as a string), by field name
+(defun alg-record-field (rec field)
+  (let ((asg (find-if #'(lambda (a) (string= (string (id (caar (arguments a)))) field))
+                      (assignments rec))))
+    (when asg (expr2str (expression asg)))))
+
+;; the intervals of an evaluated list of alg records: list of (lb ub recstr)
+(defun alg-intervals (lst)
+  (mapcar #'(lambda (r) (list (alg-record-field r "lb") (alg-record-field r "ub") (expr2str r)))
+          (mpoly-list-elems lst)))
+
+(defun alg-interval-str (iv x)
+  (format nil "(~a <= ~a AND ~a <= ~a)" (first iv) x x (second iv)))
+
+(defun alg-rel-str (q s)
+  (cond ((= s 1) (format nil "~a > 0" q))
+        ((= s -1) (format nil "~a < 0" q))
+        (t (format nil "~a = 0" q))))
+
+;; proves the goal  polylist(PL)(X) = P  (PL the literal of upoly(E))
+(defhelper alg-upoly__ (e pl x)
+  (let ((eqc (format nil "upoly(~a) = ~a" e pl)))
+    (with-fresh-labels ((!aue) (!aul))
+      (branch (discriminate (case eqc) !aue)
+        ((then (replace !aue :dir RL :hide? t)
+               (discriminate (lemma "upoly_eval") !aul) (inst !aul e x) (replace !aul :hide? t)
+               (mpoly-eq-side__))
+         (then (hide-all-but !aue) (eval-formula !aue))))))
+  "[pvs_cad] Internal." "")
+
+(defun alg-sign-strategy (fact rec e pl pstr eq ql qstr s xstr)
+  `(with-fresh-labels ((!asf) (!asa) (!asl) (!ass) (!asp) (!asq))
+     ,(cad-fact-case
+       fact '!asf '(skip)
+       `(then (hide-all-but !asf) (flatten !asf)
+              (branch (discriminate (case ,(format nil "alg?(~a)" rec)) !asa)
+                ((then (discriminate (lemma "sign_at_root") !asl) (inst !asl ,ql ,xstr ,rec)
+                       (branch (discriminate (case ,(format nil "alg_sign(~a, ~a) = ~a" rec ql s)) !ass)
+                         ((branch (discriminate (case ,(format nil "polylist(~a)(~a) = ~a" pl xstr pstr)) !asp)
+                            ((branch (discriminate (case ,(format nil "polylist(~a)(~a) = ~a" ql xstr qstr)) !asq)
+                               ((then (assert) (expand "sign3") (lift-if) (assert))
+                                (then (hide-all-but !asq) (alg-upoly__$ ,eq ,ql ,xstr))))
+                             (then (hide-all-but !asp) (alg-upoly__$ ,e ,pl ,xstr))))
+                          (then (hide-all-but !ass) (eval-formula !ass)))))
+                 (then (hide-all-but !asa) (eval-formula !asa))))))))
+
+(defstep alg-roots (p &optional (signs nil) (var nil) (split? nil))
+  (let ((fexpr (extra-get-expr p))
+        (dummy (setq *mpoly-atoms* nil))
+        (e     (when fexpr (mpoly-expr-rec fexpr)))
+        (pstr  (when fexpr (expr2str fexpr)))
+        (xstr  (cond ((null e) nil)
+                     (var var)
+                     ((= (length *mpoly-atoms*) 1) (car *mpoly-atoms*))
+                     (t nil)))
+        (plval (when xstr (evalexpr (format nil "upoly(~a)" e) nil nil t)))
+        (pl    (when plval (expr2str plval)))
+        (degok (when pl (evalexpr (format nil "deg(~a) > 0" pl) nil nil t)))
+        (rl    (when (and degok (string= (expr2str degok) "TRUE"))
+                 (evalexpr (format nil "roots(~a)" pl) nil nil t)))
+        (ivs   (when rl (alg-intervals rl)))
+        (rlstr (when rl (expr2str rl)))
+        (ks    (make-list (1+ (length ivs))))
+        (disj  (when rl (if ivs (format nil "~{~a~^ OR ~}" (mapcar #'(lambda (iv) (alg-interval-str iv xstr)) ivs)) "FALSE")))
+        (f1    (when rl (format nil "~a = 0 IMPLIES ~a" pstr disj)))
+        (cplp  (when rl (format nil "polylist(~a)(~a) = ~a" pl xstr pstr)))
+        (cpl0  (when rl (format nil "polylist(~a)(~a) = 0" pl xstr)))
+        (crl   (when rl (format nil "roots(~a) = ~a" pl rlstr)))
+        (cdeg  (when rl (format nil "deg(~a) > 0" pl)))
+        ;; root_interval gives a root a of the list with x in its interval; the
+        ;; list is replaced by its value, member is unfolded, and each case
+        ;; a = r_i (labelled by discriminate as the split's new formula) is
+        ;; substituted and evaluated
+        (f1strat (when rl
+                   `(with-fresh-labels ((!arf) (!ard) (!arp) (!arl) (!arc) (!are))
+                      ,(cad-fact-case
+                        f1 '!arf '(label "alg-roots" !arf)
+                        `(then (hide-all-but !arf) (flatten !arf)
+                               (branch (discriminate (case ,cdeg) !ard)
+                                 ((branch (discriminate (case ,cplp) !arp)
+                                    ((then (discriminate (lemma "root_interval") !arl) (inst !arl ,pl ,xstr)
+                                           (assert) (skeep !arl)
+                                           (branch (discriminate (case ,crl) !arc)
+                                             ((then (replace !arc !arl :hide? t)
+                                                    ,@(loop repeat (length ks) collect '(expand "member" !arl))
+                                                    (discriminate (split !arl) !are)
+                                                    (replace !are) (flatten) (assert))
+                                              (then (hide-all-but !arc) (eval-formula !arc)))))
+                                     (then (hide-all-but !arp) (alg-upoly__$ ,e ,pl ,xstr))))
+                                  (then (hide-all-but !ard) (eval-formula !ard)))))))))
+        (qstrats (when rl
+                   (loop for q in signs append
+                     (let* ((qexpr (extra-get-expr q))
+                            (dummy2 (setq *mpoly-atoms* (list xstr)))
+                            (eq    (mpoly-expr-rec qexpr))
+                            (qstr  (expr2str qexpr))
+                            (qlval (evalexpr (format nil "upoly(~a)" eq) nil nil t))
+                            (ql    (expr2str qlval)))
+                       (loop for iv in ivs collect
+                         (let* ((sv (evalexpr (format nil "alg_sign(~a, ~a)" (third iv) ql) nil nil t))
+                                (s  (extra-get-number-from-expr sv t))
+                                (fact (format nil "~a AND ~a = 0 IMPLIES ~a" (alg-interval-str iv xstr) pstr (alg-rel-str qstr s))))
+                           (alg-sign-strategy fact (third iv) e pl pstr eq ql qstr s xstr)))))))
+        (allstrats (when rl (cons f1strat qstrats)))
+        (finish (if split? '(then (assert) (split "alg-roots") (flatten) (assert)) '(skip))))
+    (if (null xstr)
+        (printf "alg-roots: ~a must be a polynomial in exactly one variable (or give :var)" p)
+      (if (null rl)
+          (printf "alg-roots: ~a is constant or could not be evaluated" p)
+        (then (mapstep #'(lambda (st) st) allstrats) finish))))
+  "[pvs_cad] Isolates the real roots of the univariate polynomial expression
+P (a string) and adds the isolating intervals as a hypothesis; with SIGNS, a
+list of polynomial expressions in the same variable, also adds the sign of
+each of them at each root; the interval fact is labeled alg-roots. With
+SPLIT? the sequent is then split into one case per root (avoid prop on the
+result: it is exponential in the number of sign facts). All facts are proved."
+  "Isolating the real roots of ~a")
+
+;;; ------------------------------------------------------------------
+;;; poly-pos (Phase 3): branching positivity.
+;;; For a polynomial expression P in the eliminated variable X whose other
+;;; atoms are parameters, the decision tree pdec of pos_dec is evaluated and
+;;; every branch whose verdict is TRUE contributes
+;;;    <sign conditions on the parameters> IMPLIES P > 0
+;;; to the sequent, labelled poly-pos.  The conditions are the branch
+;;; conditions printed as ordinary arithmetic; each fact is proved from
+;;; pos_branch (branch_sound and pdec_sound), the ground evaluation of the
+;;; tree, and the reflection of Phase 1.  Nothing is trusted.
+
+;; field FIELD of a record expression, as an expression
+(defun ppos-field (rec field)
+  (let ((asg (find-if #'(lambda (a) (string= (string (id (caar (arguments a)))) field))
+                      (assignments rec))))
+    (when asg (expression asg))))
+
+(defun ppos-rel-str (s)
+  (cond ((= s 1) "> 0") ((= s -1) "< 0") (t "= 0")))
+
+;; one sign condition, printed over the parameter atoms (atoms 2, 3, ...)
+(defun ppos-cond-str (rec)
+  (let* ((cp (ppos-field rec "cpol"))
+         (sv (ppos-field rec "csign"))
+         (s  (extra-get-number-from-expr sv t)))
+    (format nil "(~a) ~a" (mpoly-term->str cp 2) (ppos-rel-str s))))
+
+(defun ppos-conds-str (conds)
+  (if conds (format nil "~{~a~^ AND ~}" (mapcar #'ppos-cond-str conds)) "TRUE"))
+
+;; the proof of one branch fact
+(defun ppos-branch-strategy (fact bstr bconds l0 k ys xstr e pstr)
+  (let ((chstr (format nil "branch_tree[bool].conds_hold(~a, ~a)" bconds ys))
+        (memb  (format nil "member(~a, branches(pdec(~a, ~a)))" bstr k l0))
+        (lenc  (format nil "length(~a) <= ~a" l0 k))
+        (mev   (format nil "meval(mpol(~a))(cons(~a, ~a)) = ~a" l0 xstr ys pstr))
+        (asl   (format nil "as_list(pnorm(~a)) = ~a" e l0))
+        (cns   (format nil "cons(~a, ~a)" xstr ys)))
+    `(with-fresh-labels ((!ppf) (!ppc) (!ppm) (!ppl) (!ppb) (!ppv))
+       ,(cad-fact-case
+         fact '!ppf '(label "poly-pos" !ppf)
+         `(then (hide-all-but !ppf) (flatten !ppf)
+                (branch (discriminate (case ,chstr) !ppc)
+                  ((branch (discriminate (case ,memb) !ppm)
+                     ((branch (discriminate (case ,lenc) !ppl)
+                        ((then (discriminate (lemma "pos_branch") !ppb) (inst !ppb ,bstr ,k ,l0 ,ys) (assert)
+                               (inst !ppb ,xstr)
+                               (branch (discriminate (case ,mev) !ppv)
+                                 ((assert) ,(cad-mev-proof asl e cns '!ppv))))
+                         (then (hide-all-but !ppl) (eval-formula !ppl))))
+                      (then (hide-all-but !ppm) (eval-formula !ppm))
+                      (grind)))
+                   (then (expand "conds_hold") (expand "every") (expand "cond_holds")
+                         (expand "msign") (grind))
+                   (grind))))))))
+
+(defstep poly-pos (p &optional (var nil))
+  (let ((fexpr (extra-get-expr p))
+        (dummy (setq *mpoly-atoms* (when var (list var))))
+        (e     (when fexpr (mpoly-expr-rec fexpr)))
+        (pstr  (when fexpr (expr2str fexpr)))
+        (xstr  (cond ((null e) nil)
+                     (var var)
+                     ((= (length *mpoly-atoms*) 1) (car *mpoly-atoms*))
+                     (t nil)))
+        (ys    (if (cdr *mpoly-atoms*)
+                   (format nil "(: ~{~a~^, ~} :)" (cdr *mpoly-atoms*))
+                 "null[real]"))
+        (l0v   (when xstr (evalexpr (format nil "as_list(pnorm(~a))" e) nil nil t)))
+        (l0    (when l0v (expr2str l0v)))
+        (kv    (when l0 (evalexpr (format nil "length(~a)" l0) nil nil t)))
+        (k     (when kv (expr2str kv)))
+        (brv   (when k (evalexpr (format nil "branches(pdec(~a, ~a))" k l0) nil nil t)))
+        (brs   (when brv (mpoly-list-elems brv)))
+        (tbrs  (remove-if-not #'(lambda (b) (string= (expr2str (ppos-field b "bres")) "TRUE")) brs))
+        (strats (loop for b in tbrs collect
+                  (let* ((bstr   (expr2str b))
+                         (bconds (expr2str (ppos-field b "bconds")))
+                         (cstr   (ppos-conds-str (mpoly-list-elems (ppos-field b "bconds"))))
+                         (fact   (format nil "~a IMPLIES ~a > 0" cstr pstr)))
+                    (ppos-branch-strategy fact bstr bconds l0 k ys xstr e pstr)))))
+    (if (null xstr)
+        (printf "poly-pos: ~a must be a polynomial in one variable (or give :var)" p)
+      (if (null brs)
+          (printf "poly-pos: could not evaluate the decision tree of ~a" p)
+        (if (null tbrs)
+            (printf "poly-pos: ~a is positive on no branch" p)
+          (mapstep #'(lambda (st) st) strats)))))
+  "[pvs_cad] For the polynomial expression P (a string) in the variable VAR,
+adds to the sequent one fact per branch of the verified decision tree on which
+P is everywhere positive:  <sign conditions on the other atoms> IMPLIES P > 0.
+The facts are labelled poly-pos and every one of them is proved."
+  "Deciding positivity of ~a by branching Sturm")
+
+;;; poly-nonzero (Phase 3): the same tree, read for the absence of roots.
+;;; Every branch of qdec whose verdict is FALSE contributes
+;;;    <sign conditions on the parameters> IMPLIES P /= 0
+;;; to the sequent, labelled poly-nonzero.
+
+(defun pnz-branch-strategy (fact bstr bconds l0 k ys xstr e pstr)
+  (let ((chstr (format nil "branch_tree[bool].conds_hold(~a, ~a)" bconds ys))
+        (memb  (format nil "member(~a, branches(qdec(~a, ~a)))" bstr k l0))
+        (lenc  (format nil "length(~a) <= ~a" l0 k))
+        (mev   (format nil "meval(mpol(~a))(cons(~a, ~a)) = ~a" l0 xstr ys pstr))
+        (asl   (format nil "as_list(pnorm(~a)) = ~a" e l0))
+        (cns   (format nil "cons(~a, ~a)" xstr ys)))
+    `(with-fresh-labels ((!ppf) (!ppc) (!ppm) (!ppl) (!ppb) (!ppv))
+       ,(cad-fact-case
+         fact '!ppf '(label "poly-nonzero" !ppf)
+         `(then (hide-all-but !ppf) (flatten !ppf)
+                (branch (discriminate (case ,chstr) !ppc)
+                  ((branch (discriminate (case ,memb) !ppm)
+                     ((branch (discriminate (case ,lenc) !ppl)
+                        ((then (discriminate (lemma "noroot_branch") !ppb) (inst !ppb ,bstr ,k ,l0 ,ys) (assert)
+                               (inst !ppb ,xstr)
+                               (branch (discriminate (case ,mev) !ppv)
+                                 ((assert) ,(cad-mev-proof asl e cns '!ppv))))
+                         (then (hide-all-but !ppl) (eval-formula !ppl))))
+                      (then (hide-all-but !ppm) (eval-formula !ppm))
+                      (grind)))
+                   (then (expand "conds_hold") (expand "every") (expand "cond_holds")
+                         (expand "msign") (grind))
+                   (grind))))))))
+
+(defstep poly-nonzero (p &optional (var nil))
+  (let ((fexpr (extra-get-expr p))
+        (dummy (setq *mpoly-atoms* (when var (list var))))
+        (e     (when fexpr (mpoly-expr-rec fexpr)))
+        (pstr  (when fexpr (expr2str fexpr)))
+        (xstr  (cond ((null e) nil)
+                     (var var)
+                     ((= (length *mpoly-atoms*) 1) (car *mpoly-atoms*))
+                     (t nil)))
+        (ys    (if (cdr *mpoly-atoms*)
+                   (format nil "(: ~{~a~^, ~} :)" (cdr *mpoly-atoms*))
+                 "null[real]"))
+        (l0v   (when xstr (evalexpr (format nil "as_list(pnorm(~a))" e) nil nil t)))
+        (l0    (when l0v (expr2str l0v)))
+        (kv    (when l0 (evalexpr (format nil "length(~a)" l0) nil nil t)))
+        (k     (when kv (expr2str kv)))
+        (brv   (when k (evalexpr (format nil "branches(qdec(~a, ~a))" k l0) nil nil t)))
+        (brs   (when brv (mpoly-list-elems brv)))
+        (fbrs  (remove-if-not #'(lambda (b) (string= (expr2str (ppos-field b "bres")) "FALSE")) brs))
+        (strats (loop for b in fbrs collect
+                  (let* ((bstr   (expr2str b))
+                         (bconds (expr2str (ppos-field b "bconds")))
+                         (cstr   (ppos-conds-str (mpoly-list-elems (ppos-field b "bconds"))))
+                         (fact   (format nil "~a IMPLIES ~a /= 0" cstr pstr)))
+                    (pnz-branch-strategy fact bstr bconds l0 k ys xstr e pstr)))))
+    (if (null xstr)
+        (printf "poly-nonzero: ~a must be a polynomial in one variable (or give :var)" p)
+      (if (null brs)
+          (printf "poly-nonzero: could not evaluate the decision tree of ~a" p)
+        (if (null fbrs)
+            (printf "poly-nonzero: ~a has a root on every branch" p)
+          (mapstep #'(lambda (st) st) strats)))))
+  "[pvs_cad] For the polynomial expression P (a string) in the variable VAR,
+adds to the sequent one fact per branch of the verified decision tree on which
+P has no real root:  <sign conditions on the other atoms> IMPLIES P /= 0.
+The facts are labelled poly-nonzero and every one of them is proved."
+  "Deciding the absence of roots of ~a by branching Sturm")
+
+;;; ------------------------------------------------------------------
+;;; poly-sign / poly-nosign (Phase 3): a sign condition at a root.
+;;; The formula FNUM is EXISTS (x: real): P = 0 AND Q > 0, with P and Q
+;;; polynomial in x and in the parameters.  The pruned decision tree sdecide
+;;; of sgn_prune is evaluated and every branch whose verdict is TRUE
+;;; contributes
+;;;    <sign conditions on the parameters> IMPLIES EXISTS x: P = 0 AND Q > 0
+;;; to the sequent (poly-sign), and every branch whose verdict is FALSE
+;;; contributes
+;;;    <sign conditions> IMPLIES FORALL x: NOT (P = 0 AND Q > 0)
+;;; (poly-nosign).  Each fact is proved from psign_branch or pnosign_branch,
+;;; the ground evaluation of the tree, and the reflection of Phase 1: the
+;;; witness the branch theorem provides is named after the bound variable of
+;;; the formula, which is what lets the printed polynomials be reused as
+;;; expressions in the proof.  Nothing is trusted.
+
+;; the bound variable, the polynomial of the equation and the polynomial of
+;; the inequality of EXISTS (x: real): P = 0 AND Q > 0
+(defun psign-parts (fexpr)
+  (when (and fexpr (exists-expr? fexpr))
+    (let ((bs (bindings fexpr)) (body (expression fexpr)))
+      (when (and (= (length bs) 1) (is-function-expr body "AND"))
+        (let ((eqn (args1 body)) (ineq (args2 body)))
+          (when (and (is-function-expr eqn "=") (is-function-expr ineq ">"))
+            (let ((z1 (extra-get-number-from-expr (args2 eqn) t))
+                  (z2 (extra-get-number-from-expr (args2 ineq) t)))
+              (when (and z1 z2 (zerop z1) (zerop z2))
+                (list (string (id (car bs))) (args1 eqn) (args1 ineq))))))))))
+
+;; the conditions of a branch, printed so that the empty list typechecks
+(defun psign-conds-str (b)
+  (if (mpoly-list-elems (ppos-field b "bconds"))
+      (expr2str (ppos-field b "bconds"))
+    "null[branch_tree[bool].SignCond]"))
+
+;; the branch record itself, printed the same way
+(defun psign-brec-str (b)
+  (format nil "(# bconds := ~a, bres := ~a #)"
+          (psign-conds-str b) (expr2str (ppos-field b "bres"))))
+
+;; the proof of one branch fact.  PRE runs on the fact once its conditions are
+;; in the sequent, USE once the branch theorem has been instantiated; the two
+;; reflection equations are the last thing proved.  The fact is labelled !psf
+;; (after flatten, its conclusion carries the label too) and the branch
+;; theorem !psb; PRE and USE refer to them by these labels.
+(defun psign-branch-strategy (name fact lem bstr bconds l0 q k ys xstr ep eq pstr qstr pre use)
+  (let* ((chstr (format nil "branch_tree[bool].conds_hold(~a, ~a)" bconds ys))
+         (memb  (format nil "member(~a, branches(sdecide(~a, ~a, ~a)))" bstr k l0 q))
+         (fuel  (format nil "length(~a) + 3 * length(~a) <= ~a" l0 q k))
+         (cns   (format nil "cons(~a, ~a)" xstr ys))
+         (mevp  (format nil "meval(mpol(~a))(cons(~a, ~a)) = ~a" l0 xstr ys pstr))
+         (mevq  (format nil "meval(mpol(~a))(cons(~a, ~a)) = ~a" q xstr ys qstr))
+         (aslp  (format nil "as_list(pnorm(~a)) = ~a" ep l0))
+         (aslq  (format nil "as_list(pnorm(~a)) = ~a" eq q))
+         (finish `(branch (discriminate (case ,mevp) !psp)
+                    ((branch (discriminate (case ,mevq) !psq)
+                       ((assert) ,(cad-mev-proof aslq eq cns '!psq)))
+                     ,(cad-mev-proof aslp ep cns '!psp))))
+         (core `(then (discriminate (lemma ,lem) !psb) (inst !psb ,bstr ,k ,l0 ,q ,ys) (assert)
+                      ,@use ,finish)))
+    `(with-fresh-labels ((!psf) (!psc) (!psm) (!psu) (!psb) (!psp) (!psq))
+       ,(cad-fact-case
+         fact '!psf `(label ,name !psf)
+         `(then (hide-all-but !psf) (flatten !psf) ,@pre
+                (branch (discriminate (case ,chstr) !psc)
+                  ((branch (discriminate (case ,memb) !psm)
+                     ((branch (discriminate (case ,fuel) !psu)
+                        (,core (then (hide-all-but !psu) (eval-formula !psu))))
+                      (then (hide-all-but !psm) (eval-formula !psm))
+                      (grind)))
+                   (then (expand "conds_hold") (expand "every") (expand "cond_holds")
+                         (expand "msign") (grind))
+                   (grind))))))))
+
+;; the common front end: parse the formula, evaluate the pruned tree
+(defun psign-setup (fnum var)
+  (let* ((fexpr (extra-get-formula fnum))
+         (parts (psign-parts fexpr)))
+    (when parts
+      (let* ((xstr (if var var (first parts)))
+             (pe   (second parts))
+             (qe   (third parts))
+             (ignore (setq *mpoly-atoms* (list xstr)))
+             (ep   (mpoly-expr-rec pe))
+             (eq   (mpoly-expr-rec qe))
+             (pstr (expr2str pe))
+             (qstr (expr2str qe))
+             (ys   (if (cdr *mpoly-atoms*)
+                       (format nil "(: ~{~a~^, ~} :)" (cdr *mpoly-atoms*))
+                     "null[real]"))
+             (l0v  (evalexpr (format nil "as_list(pnorm(~a))" ep) nil nil t))
+             (l0   (when l0v (expr2str l0v)))
+             (qv   (evalexpr (format nil "as_list(pnorm(~a))" eq) nil nil t))
+             (qq   (when qv (expr2str qv)))
+             (kv   (when (and l0 qq)
+                     (evalexpr (format nil "length(~a) + 3 * length(~a)" l0 qq) nil nil t)))
+             (k    (when kv (expr2str kv)))
+             (brv  (when k (evalexpr (format nil "branches(sdecide(~a, ~a, ~a))" k l0 qq) nil nil t)))
+             (brs  (when brv (mpoly-list-elems brv))))
+        (declare (ignore ignore))
+        (list xstr ep eq pstr qstr ys l0 qq k brs (expr2str fexpr))))))
+
+(defstep poly-sign (&optional (fnum 1) (var nil))
+  (let ((setup (psign-setup fnum var))
+        (xstr  (first setup))
+        (ep    (second setup))
+        (eq    (third setup))
+        (pstr  (fourth setup))
+        (qstr  (fifth setup))
+        (ys    (sixth setup))
+        (l0    (seventh setup))
+        (qq    (eighth setup))
+        (k     (ninth setup))
+        (brs   (tenth setup))
+        (gstr  (nth 10 setup))
+        (tbrs  (remove-if-not #'(lambda (b) (string= (expr2str (ppos-field b "bres")) "TRUE")) brs))
+        (strats (loop for b in tbrs collect
+                  (let* ((bstr   (psign-brec-str b))
+                         (bconds (psign-conds-str b))
+                         (cstr   (ppos-conds-str (mpoly-list-elems (ppos-field b "bconds"))))
+                         (fact   (format nil "~a IMPLIES (~a)" cstr gstr)))
+                    (psign-branch-strategy "poly-sign" fact "psign_branch" bstr bconds l0 qq k ys
+                                           xstr ep eq pstr qstr
+                                           nil
+                                           (list `(skolem !psb (,xstr)) '(flatten !psb) `(inst !psf ,xstr)))))))
+    (if (null setup)
+        (printf "poly-sign: formula ~a is not of the form EXISTS (x: real): P = 0 AND Q > 0" fnum)
+      (if (null brs)
+          (printf "poly-sign: could not evaluate the decision tree")
+        (if (null tbrs)
+            (printf "poly-sign: no branch has a root with a positive value")
+          (mapstep #'(lambda (st) st) strats)))))
+  "[pvs_cad] For the formula FNUM, EXISTS (x: real): P = 0 AND Q > 0 over
+polynomials in x and in the parameters, adds to the sequent one fact per
+branch of the verified decision tree on which such a root exists:
+<sign conditions on the parameters> IMPLIES <the formula>.  The facts are
+labelled poly-sign and every one of them is proved."
+  "Deciding a sign condition at a root of ~a by branching Sturm-Tarski")
+
+(defstep poly-nosign (&optional (fnum 1) (var nil))
+  (let ((setup (psign-setup fnum var))
+        (xstr  (first setup))
+        (ep    (second setup))
+        (eq    (third setup))
+        (pstr  (fourth setup))
+        (qstr  (fifth setup))
+        (ys    (sixth setup))
+        (l0    (seventh setup))
+        (qq    (eighth setup))
+        (k     (ninth setup))
+        (brs   (tenth setup))
+        (fbrs  (remove-if-not #'(lambda (b) (string= (expr2str (ppos-field b "bres")) "FALSE")) brs))
+        (strats (loop for b in fbrs collect
+                  (let* ((bstr   (psign-brec-str b))
+                         (bconds (psign-conds-str b))
+                         (cstr   (ppos-conds-str (mpoly-list-elems (ppos-field b "bconds"))))
+                         (fact   (format nil "~a IMPLIES (FORALL (~a: real): NOT (~a = 0 AND ~a > 0))"
+                                         cstr xstr pstr qstr)))
+                    (psign-branch-strategy "poly-nosign" fact "pnosign_branch" bstr bconds l0 qq k ys
+                                           xstr ep eq pstr qstr
+                                           (list '(skeep !psf) '(flatten !psf))
+                                           (list `(inst !psb ,xstr)))))))
+    (if (null setup)
+        (printf "poly-nosign: formula ~a is not of the form EXISTS (x: real): P = 0 AND Q > 0" fnum)
+      (if (null brs)
+          (printf "poly-nosign: could not evaluate the decision tree")
+        (if (null fbrs)
+            (printf "poly-nosign: every branch has a root with a positive value")
+          (mapstep #'(lambda (st) st) strats)))))
+  "[pvs_cad] For the formula FNUM, EXISTS (x: real): P = 0 AND Q > 0 over
+polynomials in x and in the parameters, adds to the sequent one fact per
+branch of the verified decision tree on which no such root exists:
+<sign conditions on the parameters> IMPLIES FORALL x: NOT (P = 0 AND Q > 0).
+The facts are labelled poly-nosign and every one of them is proved."
+  "Deciding the absence of a root with a sign condition in ~a")
+
+
+;;; ------------------------------------------------------------------
+;;; qe-exists (Phase 3): quantifier elimination for one real variable.
+;;; The formula FNUM is EXISTS (x: real): PHI or FORALL (x: real): PHI, with
+;;; PHI a Boolean combination of sign conditions on polynomials in x with
+;;; numeric coefficients.  The Boolean structure is put in disjunctive normal
+;;; form here, in Lisp, and is not trusted: what the strategy adds to the
+;;; sequent is the formula itself, proved from qe_sound of qe_formula, the
+;;; ground evaluation of the decision, and the reflection of Phase 1, one
+;;; proved equation per polynomial.
+
+;; a literal is (POLYEXPR PRINTED . REL) with REL :eq or :gt, meaning
+;; PRINTED = 0 or PRINTED > 0
+(defun qe-lit (e p rel) (list e p rel))
+(defun qe-lit-e (l) (first l))
+(defun qe-lit-p (l) (second l))
+(defun qe-lit-rel (l) (third l))
+
+(defun qe-neg-e (e) (format nil "pe_neg(~a)" e))
+(defun qe-neg-p (p) (format nil "-(~a)" p))
+(defun qe-sub-e (e1 e2) (format nil "pe_sub(~a, ~a)" e1 e2))
+(defun qe-sub-p (p1 p2) (format nil "(~a) - (~a)" p1 p2))
+
+;; the cross product of two DNFs (conjunction)
+(defun qe-cross (d1 d2)
+  (loop for c1 in d1 append (loop for c2 in d2 collect (append c1 c2))))
+
+;; the sign atom of a relational expression, as (POLYEXPR PRINTED . OP)
+(defun qe-atom-parts (expr)
+  (let ((op (cond ((is-function-expr expr "=") "=")
+                  ((is-function-expr expr ">") ">")
+                  ((is-function-expr expr "<") "<")
+                  ((is-function-expr expr ">=") ">=")
+                  ((is-function-expr expr "<=") "<=")
+                  ((is-function-expr expr "/=") "/=")
+                  (t nil))))
+    (when op
+      (let* ((lhs (args1 expr)) (rhs (args2 expr))
+             (z (extra-get-number-from-expr rhs t))
+             (e (if (and z (zerop z))
+                    (mpoly-expr-rec lhs)
+                  (qe-sub-e (mpoly-expr-rec lhs) (mpoly-expr-rec rhs))))
+             (p (if (and z (zerop z))
+                    (expr2str lhs)
+                  (qe-sub-p (expr2str lhs) (expr2str rhs)))))
+        (list e p op)))))
+
+;; the DNF of EXPR (or of its negation when NEG): a list of conjuncts, each a
+;; list of literals; nil is FALSE and (nil) is TRUE
+(defun qe-dnf (expr neg)
+  (cond
+   ((is-function-expr expr "AND")
+    (if neg (append (qe-dnf (args1 expr) t) (qe-dnf (args2 expr) t))
+      (qe-cross (qe-dnf (args1 expr) nil) (qe-dnf (args2 expr) nil))))
+   ((is-function-expr expr "OR")
+    (if neg (qe-cross (qe-dnf (args1 expr) t) (qe-dnf (args2 expr) t))
+      (append (qe-dnf (args1 expr) nil) (qe-dnf (args2 expr) nil))))
+   ((is-function-expr expr "IMPLIES")
+    (if neg (qe-cross (qe-dnf (args1 expr) nil) (qe-dnf (args2 expr) t))
+      (append (qe-dnf (args1 expr) t) (qe-dnf (args2 expr) nil))))
+   ((and (unary-application? expr) (is-function-expr expr "NOT"))
+    (qe-dnf (args1 expr) (not neg)))
+   ((and (name-expr? expr) (string= (string (id expr)) "TRUE"))
+    (if neg nil (list nil)))
+   ((and (name-expr? expr) (string= (string (id expr)) "FALSE"))
+    (if neg (list nil) nil))
+   (t (let ((a (qe-atom-parts expr)))
+        (when a
+          (let* ((e (first a)) (p (second a)) (op (third a))
+                 (eq-lit  (qe-lit e p :eq))
+                 (gt-lit  (qe-lit e p :gt))
+                 (ngt-lit (qe-lit (qe-neg-e e) (qe-neg-p p) :gt)))
+            (cond
+             ((string= op "=")  (if neg (list (list gt-lit) (list ngt-lit))
+                                  (list (list eq-lit))))
+             ((string= op "/=") (if neg (list (list eq-lit))
+                                  (list (list gt-lit) (list ngt-lit))))
+             ((string= op ">")  (if neg (list (list ngt-lit) (list eq-lit))
+                                  (list (list gt-lit))))
+             ((string= op "<")  (if neg (list (list gt-lit) (list eq-lit))
+                                  (list (list ngt-lit))))
+             ((string= op ">=") (if neg (list (list ngt-lit))
+                                  (list (list gt-lit) (list eq-lit))))
+             ((string= op "<=") (if neg (list (list gt-lit))
+                                  (list (list ngt-lit) (list eq-lit))))
+             (t nil))))))))
+
+;; the coefficient list of a literal, evaluated
+(defun qe-list-of (lit)
+  (let ((v (evalexpr (format nil "as_list(pnorm(~a))" (qe-lit-e lit)) nil nil t)))
+    (when v (expr2str v))))
+
+;; a PVS list of strings, printed so that the empty one typechecks
+(defun qe-list-str (strs empty)
+  (if strs (format nil "(: ~{~a~^, ~} :)" strs) empty))
+
+;; the Conj record of one conjunct, and the lists it mentions
+(defun qe-conj-str (lits lists)
+  (let ((eqs nil) (gts nil))
+    (loop for l in lits for s in lists do
+      (if (eq (qe-lit-rel l) :eq) (push s eqs) (push s gts)))
+    (format nil "(# ceqs := ~a, cgts := ~a #)"
+            (qe-list-str (reverse eqs) "null[list[mpoly]]")
+            (qe-list-str (reverse gts) "null[list[mpoly]]"))))
+
+;; the proof of the answer.  When the decision says the existential holds, the
+;; witness comes from qe_sound and the formula's own quantifier is instantiated
+;; with it; when it says the existential fails, the witness comes from the
+;; formula and qe_sound's universal is instantiated with it.
+(defun qe-strategy (fact fokstr qestr fstr kstr ysstr xstr mevs truth isall)
+  (let* ((unfold `(then ,@(loop repeat 8 append '((expand "feval") (expand "some")
+                                                  (expand "ceval") (expand "every")
+                                                  (expand "allgt")))))
+         ;; the fact (labelled !qef) is the formula G when it holds and NOT G
+         ;; when it fails; where the fact is proved, G stands in the consequent
+         ;; in the first case and in the antecedent in the second.  qe_sound
+         ;; (labelled !qes) gives a witness when TRUTH, and takes one otherwise
+         (holds (if isall (not truth) truth))
+         (pre (cond ((and holds (not isall)) nil)
+                    (holds '((skeep !qef)))
+                    (isall '((flatten !qef)))
+                    (t `((flatten !qef) (skolem !qef (,xstr))))))
+         (usex (if truth
+                   `((skolem !qes (,xstr)) (inst !qef ,xstr))
+                 `((inst !qes ,xstr))))
+         (qecase (if truth qestr (format nil "NOT (~a)" qestr)))
+         (core `(then (discriminate (lemma "qe_sound") !qes) (inst !qes ,fstr ,kstr ,ysstr) (assert)
+                      ,@usex ,unfold ,@mevs (ground))))
+    `(with-fresh-labels ((!qef) (!qes))
+       ,(cad-fact-case
+         fact '!qef '(label "qe" !qef)
+         `(then (hide-all-but !qef) ,@pre
+                (spread (case ,fokstr)
+                  ((spread (case ,qecase)
+                     (,core (then (eval-expr ,qestr) (assert))))
+                   (then (eval-expr ,fokstr) (assert)))))))))
+
+;; the reflection equation of one polynomial list, as a case with its proof
+(defun qe-mev (l e pstr xstr ysstr rest)
+  (let ((mev (format nil "meval(mpol(~a))(cons(~a, ~a)) = ~a" l xstr ysstr pstr))
+        (asl (format nil "as_list(pnorm(~a)) = ~a" e l))
+        (cns (format nil "cons(~a, ~a)" xstr ysstr)))
+    `(with-fresh-labels ((!qmv))
+       (branch (discriminate (case ,mev) !qmv)
+         ((then (replace !qmv) ,rest)
+          ,(cad-mev-proof asl e cns '!qmv))))))
+
+;; the proof of one branch fact of the parametric decision.  The fact is
+;; <conditions> IMPLIES <the formula or its negation>; its proof establishes
+;; the conditions (grind on the signs), the membership of the branch and the
+;; fuel bound (both by evaluation), instantiates qe_branch, and then handles
+;; the witness as qe-strategy does, after flattening the conditions in.
+(defun qe-param-strategy (fact bstr bconds fstr kstr ysstr xstr mevs truth isall)
+  (let* ((unfold `(then ,@(loop repeat 8 append '((expand "feval") (expand "some")
+                                                  (expand "ceval") (expand "every")
+                                                  (expand "allgt")))))
+         ;; after the fact (labelled !qpf) is flattened, its conclusion G or NOT
+         ;; G carries the label with the conditions; inst and skolem take the
+         ;; one quantified formula among them.  qe_branchc is labelled !qps
+         (usex (if truth
+                   `((skolem !qps (,xstr)) (inst !qpf ,xstr))
+                 `((skeep !qpf) (inst !qps ,xstr))))
+         (chstr (format nil "branch_tree[bool].conds_hold(~a, ~a)" bconds ysstr))
+         (memb  (format nil "member(~a, branches(qdecidec(~a, ~a)))" bstr kstr fstr))
+         (fuel  (format nil "tfuel(~a) <= ~a" fstr kstr))
+         (core `(then (discriminate (lemma "qe_branchc") !qps) (inst !qps ,fstr ,bstr ,kstr ,ysstr)
+                      (spread (split !qps)
+                        ((then (assert) (flatten) ,@usex ,unfold ,@mevs (ground))
+                         (ground))))))
+    `(with-fresh-labels ((!qpf) (!qps) (!qpc) (!qpm) (!qpu))
+       ,(cad-fact-case
+         fact '!qpf '(label "qe" !qpf)
+         `(then (hide-all-but !qpf)
+                (branch (discriminate (case ,chstr) !qpc)
+                  ((branch (discriminate (case ,memb) !qpm)
+                     ((branch (discriminate (case ,fuel) !qpu)
+                        (,core (then (hide-all-but !qpu) (eval-formula !qpu))))
+                      (then (hide-all-but !qpm) (eval-formula !qpm))
+                      (grind)))
+                   (then (flatten) (expand "conds_hold") (expand "every") (expand "cond_holds")
+                         (expand "msign") (grind))
+                   (grind))))))))
+
+(defstep qe-exists (&optional (fnum 1))
+  (let ((fexpr  (extra-get-formula fnum))
+        (isex   (and fexpr (exists-expr? fexpr)))
+        (isall  (and fexpr (forall-expr? fexpr)))
+        (bs     (when (or isex isall) (bindings fexpr)))
+        (ok1    (and bs (= (length bs) 1)))
+        (xstr   (when ok1 (string (id (car bs)))))
+        (body   (when ok1 (expression fexpr)))
+        (dummy  (setq *mpoly-atoms* (when xstr (list xstr))))
+        (dnf    (when body (qe-dnf body (and isall t))))
+        (params (cdr *mpoly-atoms*))
+        (lists  (when dnf
+                  (loop for c in dnf collect (loop for l in c collect (qe-list-of l)))))
+        (bad    (or (null xstr) (null dnf)
+                    (some #'(lambda (c) (some #'null c)) lists)))
+        (fstr   (unless bad
+                  (qe-list-str (loop for c in dnf for ls in lists collect (qe-conj-str c ls))
+                               "null[Conj]")))
+        (ysstr  (if params (format nil "(: ~{~a~^, ~} :)" params) "null[real]"))
+        (kv     (unless bad
+                  (evalexpr (format nil (if params "tfuel(~a)" "qe_fuel(~a)") fstr) nil nil t)))
+        (kstr   (when kv (expr2str kv)))
+        (fokstr (when (and kstr (null params)) (format nil "fok(~a, ~a, ~a)" kstr fstr ysstr)))
+        (qestr  (when (and kstr (null params)) (format nil "qe_exists(~a, ~a, ~a)" kstr fstr ysstr)))
+        (qev    (when qestr (evalexpr qestr nil nil t)))
+        (truth  (and qev (string= (expr2str qev) "TRUE")))
+        (brv    (when (and kstr params)
+                  (evalexpr (format nil "branches(qdecidec(~a, ~a))" kstr fstr) nil nil t)))
+        (brs    (when brv (mpoly-list-elems brv)))
+        (gstr   (when fexpr (expr2str fexpr)))
+        (holds  (if isall (not truth) truth))
+        (fact   (when (and gstr kstr (null params))
+                  (if holds gstr (format nil "NOT (~a)" gstr))))
+        (pairs  (unless bad
+                  (remove-duplicates
+                   (loop for c in dnf for ls in lists append
+                     (loop for l in c for s in ls collect (list s (qe-lit-e l) (qe-lit-p l))))
+                   :key #'car :test #'string=)))
+        (mevs   (unless bad
+                  (list (reduce #'(lambda (rest pr)
+                                    (qe-mev (first pr) (second pr) (third pr) xstr ysstr rest))
+                                (reverse pairs) :initial-value '(skip)))))
+        (strat  (when (and (not bad) kstr (null params))
+                  (qe-strategy fact fokstr qestr fstr kstr ysstr xstr mevs truth (and isall t))))
+        (pstrats (when (and (not bad) kstr params brs)
+                   (loop for b in brs collect
+                     (let* ((bres  (string= (expr2str (ppos-field b "bres")) "TRUE"))
+                            (bstr  (psign-brec-str b))
+                            (bconds (psign-conds-str b))
+                            (cstr  (ppos-conds-str (mpoly-list-elems (ppos-field b "bconds"))))
+                            (bholds (if isall (not bres) bres))
+                            (bfact (format nil "~a IMPLIES ~a" cstr
+                                           (if bholds (format nil "(~a)" gstr)
+                                             (format nil "NOT (~a)" gstr)))))
+                       (qe-param-strategy bfact bstr bconds fstr kstr ysstr xstr mevs bres (and isall t)))))))
+    (if (null xstr)
+        (printf "qe-exists: formula ~a is not a quantified formula in one real variable" fnum)
+      (if (null kstr)
+          (printf "qe-exists: could not evaluate the decision")
+        (if params
+            (if (null brs)
+                (printf "qe-exists: could not evaluate the decision tree")
+              (mapstep #'(lambda (st) st) pstrats))
+          strat))))
+  "[pvs_cad] Decides the formula FNUM, EXISTS (x: real): PHI or
+FORALL (x: real): PHI with PHI a Boolean combination of sign conditions on
+polynomials in x, and adds the answer to the sequent, labelled qe.  With
+numeric coefficients the answer is the formula or its negation, proved from
+qe_sound; with parameters it is one fact per branch of the pruned decision
+tree qdecidec of qe_ctx (built with the conditions of the path, so a sign
+the path decides is not branched on), <sign conditions on the parameters>
+IMPLIES <the formula or its negation>, proved from qe_branchc.  Both use the ground evaluation of the
+decision and the reflection of Phase 1; the disjunctive normal form is
+computed here but is not trusted."
+  "Deciding ~a by quantifier elimination")
+
+;;; ---------------------------------------------------------------------------
+;;; Phase 5: cad, the cylindrical decision procedure for a closed prenex
+;;; formula with any quantifier prefix.  The prefix and the Boolean matrix are
+;;; read here, in Lisp, and are not trusted: the fact added to the sequent is
+;;; proved from decide_correct_os of cad_decide, the ground evaluation of the
+;;; decision, and the reflection of Phase 1, one proved equation per
+;;; polynomial; the quantifiers are walked one by one, skolemizing one side and
+;;; instantiating the other with the same name.
+;;; ---------------------------------------------------------------------------
+
+;; the quantifier prefix of EXPR, outermost first, as (NAME . ISALL), and the
+;; matrix; nil when a quantifier binds several variables
+(defun cad-prefix (expr)
+  (let ((pre nil) (e expr) (bad nil))
+    (loop while (and (not bad) (or (forall-expr? e) (exists-expr? e))) do
+      (let ((bs (bindings e)))
+        (if (= (length bs) 1)
+            (progn (push (cons (string (id (car bs))) (and (forall-expr? e) t)) pre)
+                   (setq e (expression e)))
+          (setq bad t))))
+    (unless bad (list (reverse pre) e))))
+
+;; the polynomials of the matrix, in index order, as (POLYEXPR . PRINTED)
+(defvar *cad-polys* nil)
+
+(defun cad-poly-index (e p)
+  (let ((pos (position e *cad-polys* :key #'car :test #'string=)))
+    (if pos pos
+      (progn (setq *cad-polys* (append *cad-polys* (list (cons e p))))
+             (1- (length *cad-polys*))))))
+
+;; the matrix as a BF term of bform; nil when some atom is not a sign condition
+(defun cad-bf (expr)
+  (cond
+   ((is-function-expr expr "AND")
+    (let ((a (cad-bf (args1 expr))) (b (cad-bf (args2 expr))))
+      (when (and a b) (format nil "band(~a, ~a)" a b))))
+   ((is-function-expr expr "OR")
+    (let ((a (cad-bf (args1 expr))) (b (cad-bf (args2 expr))))
+      (when (and a b) (format nil "bor(~a, ~a)" a b))))
+   ((is-function-expr expr "IMPLIES")
+    (let ((a (cad-bf (args1 expr))) (b (cad-bf (args2 expr))))
+      (when (and a b) (format nil "bor(bnot(~a), ~a)" a b))))
+   ((is-function-expr expr "IFF")
+    (let ((a (cad-bf (args1 expr))) (b (cad-bf (args2 expr))))
+      (when (and a b) (format nil "band(bor(bnot(~a), ~a), bor(bnot(~a), ~a))" a b b a))))
+   ((and (unary-application? expr) (is-function-expr expr "NOT"))
+    (let ((a (cad-bf (args1 expr)))) (when a (format nil "bnot(~a)" a))))
+   ((and (name-expr? expr) (string= (string (id expr)) "TRUE"))
+    "bnot(band(batom(0, 0), bnot(batom(0, 0))))")
+   ((and (name-expr? expr) (string= (string (id expr)) "FALSE"))
+    "band(batom(0, 0), bnot(batom(0, 0)))")
+   (t (let ((a (qe-atom-parts expr)))
+        (when a
+          (let* ((i (cad-poly-index (first a) (second a))) (op (third a)))
+            (cond
+             ((string= op "=")  (format nil "batom(~a, 0)" i))
+             ((string= op ">")  (format nil "batom(~a, 1)" i))
+             ((string= op "<")  (format nil "batom(~a, -1)" i))
+             ((string= op ">=") (format nil "bor(batom(~a, 1), batom(~a, 0))" i i))
+             ((string= op "<=") (format nil "bor(batom(~a, -1), batom(~a, 0))" i i))
+             ((string= op "/=") (format nil "bnot(batom(~a, 0))" i))
+             (t nil))))))))
+
+;; the nesting depth of the matrix, for unfolding bfeval
+(defun cad-depth (expr)
+  (cond
+   ((or (is-function-expr expr "AND") (is-function-expr expr "OR")
+        (is-function-expr expr "IMPLIES") (is-function-expr expr "IFF"))
+    (+ 2 (max (cad-depth (args1 expr)) (cad-depth (args2 expr)))))
+   ((and (unary-application? expr) (is-function-expr expr "NOT"))
+    (1+ (cad-depth (args1 expr))))
+   (t 3)))
+
+;; one reflection equation, as a case with its proof.  The formulas are
+;; named by fresh labels, never by position (2026-09-27).
+(defun cad-mev (l e pstr vstr rest)
+  (let ((mev (format nil "meval(mpol(~a))(~a) = ~a" l vstr pstr))
+        (asl (format nil "as_list(pnorm(~a)) = ~a" e l)))
+    `(with-fresh-labels ((!cmv))
+       (branch (discriminate (case ,mev) !cmv)
+         ((then (replace !cmv) ,rest)
+          ,(cad-mev-proof asl e vstr '!cmv))))))
+
+;; the atoms of the matrix EXPR as pairs (ATOM . LEAVES): LEAVES is the atom
+;; as the sign condition(s) cad-bf gave it, over the printed polynomial that
+;; the reflection equations put in place of meval (ENDGAME_PLAN.md).  CANON
+;; lists that polynomial per index: two members with the same coefficient
+;; list (0 - x ^ 2 and 1 - (x ^ 2 + 1)) are both replaced by the text of the
+;; first, whose equation comes first.  Call after cad-bf, which fills
+;; *cad-polys*; one pair per distinct atom.
+(defun cad-atom-eqs (expr canon)
+  (cond
+   ((or (is-function-expr expr "AND") (is-function-expr expr "OR")
+        (is-function-expr expr "IMPLIES") (is-function-expr expr "IFF"))
+    (let ((a (cad-atom-eqs (args1 expr) canon)))
+      (append a (remove-if #'(lambda (e) (member e a :test #'equal))
+                           (cad-atom-eqs (args2 expr) canon)))))
+   ((and (unary-application? expr) (is-function-expr expr "NOT"))
+    (cad-atom-eqs (args1 expr) canon))
+   ((and (name-expr? expr) (member (string (id expr)) '("TRUE" "FALSE") :test #'string=))
+    nil)
+   (t (let* ((a  (qe-atom-parts expr))
+             (i  (when a (position (first a) *cad-polys* :key #'car :test #'string=)))
+             (s  (when (and i (nth i canon)) (format nil "sign3(~a)" (nth i canon))))
+             (op (when s (third a))))
+        (when s
+          (list (cons (expr2str expr)
+                      (cond ((string= op "=")  (format nil "~a = 0" s))
+                            ((string= op ">")  (format nil "~a = 1" s))
+                            ((string= op "<")  (format nil "~a = -1" s))
+                            ((string= op ">=") (format nil "(~a = 1 OR ~a = 0)" s s))
+                            ((string= op "<=") (format nil "(~a = -1 OR ~a = 0)" s s))
+                            (t                 (format nil "NOT (~a = 0)" s))))))))))
+
+;; the new endgame for the sentence labelled GOAL: one case per atom equation
+;; of AEQS, replaced in GOAL only and proved by the cad_endgame rewrites and
+;; ground; last, bddsimp on GOAL and !cfs (bound by cad-strategy).
+(defun cad-endgame-leaves (goal aeqs)
+  (reduce #'(lambda (ae rest)
+              `(with-fresh-labels ((!cae))
+                 (branch (discriminate (case ,(format nil "(~a) = (~a)" (car ae) (cdr ae))) !cae)
+                   ((then (replace !cae ,goal) ,rest)
+                    (then (hide-all-but !cae)
+                          (rewrite "cadz_s3_pos" !cae) (rewrite "cadz_s3_zero" !cae)
+                          (rewrite "cadz_s3_neg" !cae) (iff !cae) (ground))))))
+          aeqs :from-end t :initial-value `(bddsimp (,goal !cfs))))
+
+;; the proof of the fact.  GL labels the sentence and EV the decision record;
+;; every other formula is named by a fresh label.  A universal is skolemized in
+;; the consequent and instantiated in the antecedent, an existential the other
+;; way round.  AEQS are the atom equations of cad-atom-eqs.
+(defun cad-strategy (gl ev osstr fstr phistr okstr decstr pre depth m mevs truth ante aeqs
+                     &optional (lem "decide5_correct"))
+  (let* ((deccase (if truth decstr (format nil "NOT (~a)" decstr))))
+    (flet ((core (goal)
+             ;; the asserts of the unfolding name the formula from the lemma
+             ;; and the two case facts (the rest of the sequent is GOAL), so
+             ;; GOAL reaches the endgame as written and the atom equations
+             ;; match it: a whole-sequent assert reorders its sums
+             ;; (x ^ 2 + 1 becomes 1 + x ^ 2) and moves its disequalities
+             (let* ((con (if truth goal '!cfs)) (ant (if truth '!cfs goal))
+                    (asr `(assert ,(if okstr '(!cfs !cok !cvl) '(!cfs !cvl))))
+                    (unfold-fsem (loop repeat (1+ (length pre)) append `((expand "fsem" !cfs) ,asr)))
+                    (unfold-bf (append (loop repeat depth append '((expand "bfeval" !cfs)))
+                                       (loop repeat (1+ m) append
+                                         `((expand "nth" !cfs) (expand "length" !cfs) ,asr)))))
+               ;; The endgame (ENDGAME_PLAN.md).  The unfolded formula !cfs is a
+               ;; Boolean combination of leaves sign3(P) = s.  Each atom of the
+               ;; goal is restated as the leaves cad-bf gave it (one small
+               ;; equation per distinct atom, proved by the cad_endgame rewrites
+               ;; and arithmetic) and replaced in the goal; then both formulas
+               ;; are combinations of the same leaves and bddsimp closes the
+               ;; goal with no case split on the signs.  Inside finalize: it
+               ;; closes the goal or changes nothing, and then the case-split
+               ;; endgame below runs as before, after the whole-sequent assert
+               ;; that the unfolding no longer applies to the goal.
+               ;;
+               ;; The case-split endgame needs unrestricted lift-if rounds after the ground.
+               ;; lift-if is blind past the first disjunct: collect-conds recurses
+               ;; into args1 only for AND/OR/IMPLIES (proofrules.lisp:724-731), so a
+               ;; compound matrix (bor/band/bnot) keeps its later atoms as TERM-level
+               ;; conditionals, which ground's split cannot reach. Two bounded rounds,
+               ;; deliberately not repeat*, which would multiply branches.  Its
+               ;; lift-if builds a term exponential in the number of atoms.
+               `(then ,asr ,@unfold-fsem
+                      ,@(loop for q in pre append
+                          (if (cdr q)
+                              `((skolem ,con (,(car q))) (inst ,ant ,(car q)))
+                            `((skolem ,ant (,(car q))) (inst ,con ,(car q)))))
+                      ,@unfold-bf ,@mevs
+                      (else (finalize__$ ,(cad-endgame-leaves goal aeqs))
+                            (then (printf "cad: case-split endgame")
+                                  (assert) (expand "sign3" !cfs) (repeat (lift-if !cfs)) (ground)
+                                  (then (lift-if) (ground)) (then (lift-if) (ground))))))))
+      ;; the decision record is evaluated once (EV); the completion flag and the
+      ;; value are then read off it by assert.  LEM is decide5_correct, or
+      ;; decide_correct_os (no flag, OKSTR nil) for the complete fallback
+      (flet ((tail (goal)
+               `((discriminate (lemma ,lem) !cfs) (inst !cfs ,fstr ,osstr ,phistr)
+                 ,(if okstr
+                      `(spread (discriminate (case ,okstr) !cok)
+                         ((spread (discriminate (case ,deccase) !cvl)
+                            ((then (hide ,ev) ,(core goal)) (assert)))
+                          (assert)))
+                    `(spread (discriminate (case ,deccase) !cvl)
+                       ((then (hide ,ev) ,(core goal)) (assert)))))))
+        ;; The sentence is proved where it stands when it is TRUE in the
+        ;; consequent, and refuted where it stands when it is FALSE in the
+        ;; antecedent, which closes the goal.  Otherwise it is already its own
+        ;; answer: a TRUE hypothesis, or a FALSE sentence in the consequent,
+        ;; which PVS's sequent reads as the hypothesis NOT A (a case on NOT A
+        ;; would only repeat A in the consequent).  It is labelled cad, the
+        ;; record is deleted, and a message says which it is.
+        `(with-fresh-labels ((!cfs) (!cok) (!cvl))
+           ,(if (eq (and ante t) (not truth))
+                `(then (hide-all-but (,gl ,ev)) ,@(tail gl))
+              `(then (printf "cad: the sentence is ~a; it stays as it is, labelled cad"
+                             ,(if truth "TRUE" "FALSE"))
+                     (delete ,ev) (label "cad" ,gl :push? t))))))))
+
+(defhelper cad-finish__ (gl ev ante &optional complete? decide?)
+  (let ((fexpr  (extra-get-formula gl))
+         (pp     (when fexpr (cad-prefix fexpr)))
+         (pre    (when pp (first pp)))
+         (body   (when pp (second pp)))
+         (dummy1 (setq *mpoly-atoms* (reverse (mapcar #'car pre))))
+         (dummy2 (setq *cad-polys* nil))
+         (phistr (when (and pre body) (cad-bf body)))
+         (lists  (when phistr (loop for pr in *cad-polys* collect
+                               (let ((v (evalexpr (format nil "as_list(pnorm(~a))" (car pr)) nil nil t)))
+                                 (when v (expr2str v))))))
+         (fstr   (qe-list-str lists "null[list[mpoly]]"))
+         (osstr  (format nil "(: ~{~a~^, ~} :)"
+                         (loop for q in pre collect (if (cdr q) "TRUE" "FALSE"))))
+         (okstr  (unless decide? (format nil "decide5(reverse(~a), ~a, ~a)`ok" osstr fstr phistr)))
+         (dstr   (format nil "decide(reverse(~a), ~a, ~a)" osstr fstr phistr))
+         (decstr (if decide? dstr (format nil "decide5(reverse(~a), ~a, ~a)`val" osstr fstr phistr)))
+         ;; the decision record is ALREADY in the sequent, labelled EV by
+         ;; cad-direct; read the flags off it instead of evaluating again
+         (evf    (extra-get-formula ev))
+         (evs    (when evf (expr2str evf)))
+         ;; decide5's record carries ok and val; decide's is a Boolean
+         (okay   (or decide? (and evs (search "ok := TRUE" evs) t)))
+         (truth  (and evs okay
+                      (if decide?
+                          (and (is-function-expr evf "=") (string= (expr2str (args2 evf)) "TRUE"))
+                        (search "val := TRUE" evs))
+                      t))
+         (vstr   (mpoly-valuation))
+         (mevs   (list (reduce #'(lambda (rest pr)
+                                   (cad-mev (first pr) (second pr) (third pr) vstr rest))
+                               (reverse (loop for pr in *cad-polys* for l in lists
+                                              collect (list l (car pr) (cdr pr))))
+                               :initial-value '(skip))))
+         (strat  (cad-strategy gl ev osstr fstr phistr okstr decstr pre (cad-depth body)
+                               (length lists) mevs truth ante
+                               (cad-atom-eqs body (loop for l in lists collect
+                                                    (cdr (nth (position l lists :test #'equal) *cad-polys*))))
+                               (if decide? "decide_correct_os" "decide5_correct"))))
+    (if (null evs)
+        (printf "cad: could not read the decision record")
+      (if okay
+          strat
+        (if complete?
+            (with-fresh-labels ((!cdf))
+              (then (printf "cad: the certificate did not pass; deciding by the complete decision of cad_decide (exponential)")
+                    (discriminate (eval-expr dstr) !cdf)
+                    (cad-finish__$ gl !cdf ante nil t)))
+          (printf "cad: the certificate of the decision did not pass (decide5`ok is FALSE), so there is no proof; the formula is unchanged.  (cad :complete? t) falls back to the complete but exponential decision")))))
+  "[pvs_cad] Internal: finishes (cad) for the sentence labelled GL from the decision record labelled EV (of decide5, or of decide when DECIDE?)." "")
+
+(defstep cad-direct (&optional (fnum 1) complete?)
+  (let ((fexpr  (extra-get-formula fnum))
+        (pp     (when fexpr (cad-prefix fexpr)))
+        (pre    (when pp (first pp)))
+        (body   (when pp (second pp)))
+        (dummy1 (setq *mpoly-atoms* (reverse (mapcar #'car pre))))
+        (dummy2 (setq *cad-polys* nil))
+        (phistr (when (and pre body) (cad-bf body)))
+        (closed (= (length *mpoly-atoms*) (length pre)))
+        (lists  (when phistr (loop for pr in *cad-polys* collect
+                              (let ((v (evalexpr (format nil "as_list(pnorm(~a))" (car pr)) nil nil t)))
+                                (when v (expr2str v))))))
+        (bad    (or (null phistr) (not closed) (some #'null lists)))
+        (fstr   (unless bad (qe-list-str lists "null[list[mpoly]]")))
+        (osstr  (unless bad (format nil "(: ~{~a~^, ~} :)"
+                                    (loop for q in pre collect (if (cdr q) "TRUE" "FALSE")))))
+        (recstr (unless bad (format nil "decide5(reverse(~a), ~a, ~a)" osstr fstr phistr)))
+        ;; the side of the sentence decides the shape of the proof; after this
+        ;; every formula is named by a fresh label, never by its position
+        (fn     (extra-get-fnum fnum))
+        (ante   (and (integerp fn) (< fn 0))))
+    (if (or (null pre) (null body))
+        (printf "cad: formula ~a is not a closed prenex formula" fnum)
+      (if bad
+          (printf "cad: the matrix is not a Boolean combination of polynomial sign conditions in the quantified variables")
+        (with-fresh-labels ((!cdg fnum) (!cde))
+          (then (discriminate (eval-expr recstr) !cde)
+                (cad-finish__$ !cdg !cde ante complete?))))))
+  "[pvs_cad] Decides the closed prenex formula FNUM, Q1 x1: ... Qn xn: PHI
+with each Qi FORALL or EXISTS over one real variable and PHI a Boolean
+combination of sign conditions on polynomials in the xi, by decide5 of
+cad_decide5_def (the n-level cylindrical decision decn_o for three or more
+quantifiers; decw, then decn_o, for two; decide2 for one).  A TRUE formula in the
+consequent is proved and a FALSE one in the antecedent refuted, which closes the
+goal; otherwise the formula is already the answer and stays, labelled cad, with a
+message saying whether it is TRUE or FALSE.  The proof instantiates
+decide5_correct, evaluates the completion flag and the decision on the ground,
+walks the quantifiers, and closes the matrix with the reflection of Phase 1.
+With COMPLETE? a certificate that does not pass is followed by the complete
+decision decide of cad_decide (decide_correct_os: no flag), which always
+answers but can take hours.  The theory must import cad_decide5 and
+mpoly_embed.  (cad) is this, after a witness search when one can settle the
+goal."
+  "Deciding ~a by cylindrical decision")
+
+;;; ------------------------------------------------------------------
+;;; (cad) with a witness first (2026-09-27).  The TARGET is the sentence at
+;;; FNUM when it is in the consequent, and its negation when it is in the
+;;; antecedent (cad -1).  (cad) tries, in order:
+;;;   1. a MODEL SEARCH when the target is existential throughout (proving an
+;;;      existential sentence, refuting a universal one): points are checked
+;;;      exactly in Lisp, and the proof instantiates the one found and
+;;;      evaluates the ground formula (eval-formula);
+;;;   2. the full decision (cad-direct): at once with two quantifiers or
+;;;      fewer, and with three or more when the ground evaluator answers
+;;;      within BUDGET seconds;
+;;;   3. a ONE-VARIABLE REDUCTION: an existential position of the target fixed
+;;;      to a small constant c, the smaller sentence decided within BUDGET
+;;;      seconds; when it holds the proof splits on it (case), proves it by
+;;;      (cad-direct), and closes the goal by instantiation -- a witness that
+;;;      does not depend on the variables outside it is a witness;
+;;;   4. the full decision without a budget.
+;;; Nothing new is trusted: the searches only choose, the proof instantiates
+;;; quantifiers and calls the same decision.
+;;; ------------------------------------------------------------------
+
+(defparameter *cadw-consts* '(0 1 -1 2 -2 1/2 -1/2 3 -3))
+
+;; the matrix, compiled to closures over a vector of rationals; nil when a
+;; construct is not arithmetic in the prefix variables
+(defun cadw-cnum (e names)
+  (let ((i (and (name-expr? e) (position (string (id e)) names :test #'string=))))
+    (cond (i #'(lambda (v) (svref v i)))
+          ((rational-expr? e) (let ((c (number e))) #'(lambda (v) (declare (ignore v)) c)))
+          ((decimal? e) (let ((c (/ (number (args1 e)) (number (args2 e)))))
+                          #'(lambda (v) (declare (ignore v)) c)))
+          ((and (unary-application? e) (is-function-expr e "-"))
+           (let ((a (cadw-cnum (args1 e) names))) (and a #'(lambda (v) (- (funcall a v))))))
+          ((is-function-expr e "+") (cadw-cbin #'+ e names))
+          ((is-function-expr e "-") (cadw-cbin #'- e names))
+          ((is-function-expr e "*") (cadw-cbin #'* e names))
+          ((is-function-expr e "/")
+           (let ((a (cadw-cnum (args1 e) names)) (b (cadw-cnum (args2 e) names)))
+             (and a b #'(lambda (v) (let ((d (funcall b v)))
+                                      (if (zerop d) (throw 'cadw-undef nil) (/ (funcall a v) d)))))))
+          ((is-function-expr e "^")
+           (let ((a (cadw-cnum (args1 e) names))
+                 (k (extra-get-number-from-expr (args2 e) t)))
+             (and a (integerp k) (>= k 0) #'(lambda (v) (expt (funcall a v) k)))))
+          (t nil))))
+(defun cadw-cbin (f e names)
+  (let ((a (cadw-cnum (args1 e) names)) (b (cadw-cnum (args2 e) names)))
+    (and a b #'(lambda (v) (funcall f (funcall a v) (funcall b v))))))
+(defun cadw-cbool (e names)
+  (flet ((b2 (f) (let ((a (cadw-cbool (args1 e) names)) (b (cadw-cbool (args2 e) names)))
+                   (and a b #'(lambda (v) (funcall f (funcall a v) (funcall b v))))))
+         (rel (f) (let ((a (cadw-cnum (args1 e) names)) (b (cadw-cnum (args2 e) names)))
+                    (and a b #'(lambda (v) (and (funcall f (funcall a v) (funcall b v)) t))))))
+    (cond ((is-function-expr e "AND") (b2 #'(lambda (a b) (and a b))))
+          ((is-function-expr e "OR") (b2 #'(lambda (a b) (or a b))))
+          ((is-function-expr e "IMPLIES") (b2 #'(lambda (a b) (or (not a) b))))
+          ((is-function-expr e "IFF") (b2 #'(lambda (a b) (eq (not a) (not b)))))
+          ((and (unary-application? e) (is-function-expr e "NOT"))
+           (let ((a (cadw-cbool (args1 e) names))) (and a #'(lambda (v) (not (funcall a v))))))
+          ((and (name-expr? e) (string= (string (id e)) "TRUE")) #'(lambda (v) (declare (ignore v)) t))
+          ((and (name-expr? e) (string= (string (id e)) "FALSE")) #'(lambda (v) (declare (ignore v)) nil))
+          ((is-function-expr e "=") (rel #'=))
+          ((is-function-expr e "/=") (rel #'/=))
+          ((is-function-expr e "<") (rel #'<))
+          ((is-function-expr e "<=") (rel #'<=))
+          ((is-function-expr e ">") (rel #'>))
+          ((is-function-expr e ">=") (rel #'>=))
+          (t nil))))
+
+;; a point (rationals in prefix order) at which the matrix BODY is WANT, or nil:
+;; the grid of each variable's candidate constants (cadw-cands; up to four
+;; variables), then pseudo-random
+;; rationals in boxes of radius 1, 10 and 100 with denominators 1, 2, 10, 100
+(defun cadw-search (names body want &optional (tries 60000))
+  (let ((f (cadw-cbool body names)) (n (length names)) (found nil))
+    (when f
+      (let ((st (sb-ext:seed-random-state 20260927))
+            (cands (loop for i below n collect (cadw-cands names body i))))
+        (flet ((try (vals)
+                 (let ((r (catch 'cadw-undef (list (funcall f (coerce vals 'simple-vector))))))
+                   (when (and r (eq (and (car r) t) want)) (setq found vals)))))
+          (when (<= n 4)
+            (labels ((grid (k acc)
+                       (unless found
+                         (if (= k n) (try (reverse acc))
+                           (dolist (c (nth k cands)) (unless found (grid (1+ k) (cons c acc))))))))
+              (grid 0 nil)))
+          (loop for i below tries until found
+                do (let ((lim (nth (mod i 3) '(1 10 100)))
+                         (den (nth (mod (floor i 3) 4) '(1 2 10 100))))
+                     (try (loop repeat n collect
+                            (/ (- (random (1+ (* 2 lim den)) st) (* lim den)) den))))))))
+    found))
+
+;; the ground evaluator's value of the matrix at the point agrees with WANT
+(defun cadw-confirm (names pt body want)
+  (let* ((txt (format nil "LET ~{~a~^, ~} IN (~a)"
+                      (loop for nm in names for c in pt collect (format nil "~a: real = ~a" nm c))
+                      body))
+         (v (ignore-errors (evalexpr txt nil nil t)))
+         (s (and v (expr2str v))))
+    (and s (string= s (if want "TRUE" "FALSE")))))
+
+;; the decide5 record for a closed prenex formula EXPR, as a string, or nil
+(defun cadw-recstr (expr)
+  (let* ((pp (cad-prefix expr)) (pre (first pp)) (body (second pp)))
+    (when (and pre body)
+      (setq *mpoly-atoms* (reverse (mapcar #'car pre)))
+      (setq *cad-polys* nil)
+      (let* ((phistr (cad-bf body))
+             (closed (= (length *mpoly-atoms*) (length pre)))
+             (lists (when phistr (loop for pr in *cad-polys* collect
+                                   (let ((v (evalexpr (format nil "as_list(pnorm(~a))" (car pr)) nil nil t)))
+                                     (when v (expr2str v)))))))
+        (when (and phistr closed (notany #'null lists))
+          (format nil "decide5(reverse(~a), ~a, ~a)"
+                  (format nil "(: ~{~a~^, ~} :)" (loop for q in pre collect (if (cdr q) "TRUE" "FALSE")))
+                  (qe-list-str lists "null[list[mpoly]]") phistr))))))
+
+;; the decision on EXPR within SECS seconds: :true, :false (both certified),
+;; :fail (no certificate) or :timeout
+(defun cadw-try (expr secs)
+  (let ((rec (ignore-errors (cadw-recstr expr))))
+    (if (null rec) :fail
+      (let ((s (handler-case
+                   (sb-ext:with-timeout secs
+                     (let ((v (evalexpr rec nil nil t))) (if v (expr2str v) "")))
+                 (sb-ext:timeout () :timeout)
+                 (error () ""))))
+        (cond ((eq s :timeout) :timeout)
+              ((not (search "ok := TRUE" s)) :fail)
+              ((search "val := TRUE" s) :true)
+              (t :false))))))
+
+;; ---- candidate constants: *cadw-consts*, then the rational roots of the
+;; atoms that mention one prefix variable alone (r096 of the robustness set
+;; is false only at z = -4/5, the root of its atom 5 * z + 4 /= 0)
+
+;; the atoms (relational subterms) of a matrix
+(defun cadw-atoms (e)
+  (cond ((or (is-function-expr e "AND") (is-function-expr e "OR")
+             (is-function-expr e "IMPLIES") (is-function-expr e "IFF"))
+         (append (cadw-atoms (args1 e)) (cadw-atoms (args2 e))))
+        ((and (unary-application? e) (is-function-expr e "NOT")) (cadw-atoms (args1 e)))
+        ((some #'(lambda (op) (is-function-expr e op)) '("=" "/=" "<" "<=" ">" ">=")) (list e))
+        (t nil)))
+
+;; the prefix positions a term mentions, from its free variables (mapobject
+;; also reaches objects outside the term's own syntax)
+(defun cadw-vars (e names)
+  (let ((vs nil))
+    (dolist (fv (freevars e))
+      (let ((i (position (string (id fv)) names :test #'string=)))
+        (when i (pushnew i vs))))
+    vs))
+
+;; a bound on the degree of an arithmetic term in the prefix variables, or nil
+(defun cadw-deg (e names)
+  (cond ((and (name-expr? e) (position (string (id e)) names :test #'string=)) 1)
+        ((or (rational-expr? e) (decimal? e)) 0)
+        ((and (unary-application? e) (is-function-expr e "-")) (cadw-deg (args1 e) names))
+        ((or (is-function-expr e "+") (is-function-expr e "-"))
+         (let ((a (cadw-deg (args1 e) names)) (b (cadw-deg (args2 e) names))) (and a b (max a b))))
+        ((is-function-expr e "*")
+         (let ((a (cadw-deg (args1 e) names)) (b (cadw-deg (args2 e) names))) (and a b (+ a b))))
+        ((is-function-expr e "/")
+         (let ((a (cadw-deg (args1 e) names)) (b (cadw-deg (args2 e) names))) (and a b (= b 0) a)))
+        ((is-function-expr e "^")
+         (let ((a (cadw-deg (args1 e) names)) (k (extra-get-number-from-expr (args2 e) t)))
+           (and a (integerp k) (>= k 0) (* a k))))
+        (t nil)))
+
+;; the exact coefficients, lowest first, of the polynomial closure F of
+;; degree <= D in position I of an N-vector: Newton interpolation at 0..D
+(defun cadw-coeffs (f d n i)
+  (let ((c (coerce (loop for x from 0 to d collect
+                     (let ((v (make-array n :initial-element 0)))
+                       (setf (svref v i) x)
+                       (funcall f v)))
+                   'simple-vector)))
+    (loop for j from 1 to d do
+      (loop for k from d downto j do
+        (setf (svref c k) (/ (- (svref c k) (svref c (1- k))) j))))
+    (let ((p (list (svref c d))))
+      (loop for k from (1- d) downto 0 do
+        (let ((q (make-list (1+ (length p)) :initial-element 0)))
+          (loop for a in p for j from 0 do
+            (incf (nth (1+ j) q) a)
+            (decf (nth j q) (* k a)))
+          (incf (nth 0 q) (svref c k))
+          (setq p q)))
+      p)))
+
+(defun cadw-divisors (n)
+  (let ((n (abs n)))
+    (when (<= 1 n 1000000)
+      (loop for k from 1 to (isqrt n)
+            when (zerop (mod n k)) append (if (= (* k k) n) (list k) (list k (/ n k)))))))
+
+(defun cadw-peval (p x)
+  (reduce #'(lambda (a acc) (+ a (* x acc))) p :from-end t :initial-value 0))
+
+;; the rational roots of P (rational coefficients, lowest first), by the
+;; rational root theorem; none when the extreme coefficients are too large
+(defun cadw-rat-roots (p)
+  (let ((hi (position-if-not #'zerop p :from-end t)))
+    (when (and hi (> hi 0))
+      (let* ((lo (position-if-not #'zerop p))
+             (q (subseq p lo (1+ hi)))
+             (l (reduce #'lcm (mapcar #'denominator q)))
+             (z (mapcar #'(lambda (a) (* a l)) q))
+             (roots (when (> lo 0) (list 0))))
+        (dolist (a (cadw-divisors (first z)))
+          (dolist (b (cadw-divisors (car (last z))))
+            (dolist (r (list (/ a b) (- (/ a b))))
+              (when (and (zerop (cadw-peval q r)) (not (member r roots)))
+                (push r roots)))))
+        (reverse roots)))))
+
+;; the constants tried at position I: *cadw-consts*, then up to twelve roots
+(defun cadw-cands (names body i)
+  (let ((extra nil))
+    (dolist (a (cadw-atoms body))
+      (when (equal (cadw-vars a names) (list i))
+        (let ((f (cadw-cbin #'- a names))
+              (d (let ((d1 (cadw-deg (args1 a) names)) (d2 (cadw-deg (args2 a) names)))
+                   (and d1 d2 (max d1 d2)))))
+          (when (and f d (<= 1 d 12))
+            (let ((p (catch 'cadw-undef (cadw-coeffs f d (length names) i))))
+              (when p
+                (dolist (r (cadw-rat-roots p))
+                  (unless (or (member r *cadw-consts*) (member r extra)) (push r extra)))))))))
+    (append *cadw-consts* (let ((e (reverse extra))) (subseq e 0 (min 12 (length e)))))))
+
+;; ---- folding: the matrix with the variable of position I set to C.  Atoms
+;; in that variable alone are evaluated exactly and the Boolean structure is
+;; simplified; the result is :true, :false, or (TEXT . POSITIONS) with the
+;; positions (other than I) that TEXT still mentions.  Nothing here is
+;; trusted: the proof re-derives the folding by ground evaluation.
+(defun cadw-ftxt (a) (if (consp a) (format nil "(~a)" (car a)) (if (eq a :true) "TRUE" "FALSE")))
+(defun cadw-fand (a b)
+  (cond ((or (eq a :false) (eq b :false)) :false) ((eq a :true) b) ((eq b :true) a)
+        (t (cons (format nil "~a AND ~a" (cadw-ftxt a) (cadw-ftxt b)) (union (cdr a) (cdr b))))))
+(defun cadw-for (a b)
+  (cond ((or (eq a :true) (eq b :true)) :true) ((eq a :false) b) ((eq b :false) a)
+        (t (cons (format nil "~a OR ~a" (cadw-ftxt a) (cadw-ftxt b)) (union (cdr a) (cdr b))))))
+(defun cadw-fnot (a)
+  (cond ((eq a :true) :false) ((eq a :false) :true)
+        (t (cons (format nil "NOT ~a" (cadw-ftxt a)) (cdr a)))))
+(defun cadw-fold (e names i c)
+  (flet ((f (x) (cadw-fold x names i c)))
+    (cond ((is-function-expr e "AND") (cadw-fand (f (args1 e)) (f (args2 e))))
+          ((is-function-expr e "OR") (cadw-for (f (args1 e)) (f (args2 e))))
+          ((is-function-expr e "IMPLIES") (cadw-for (cadw-fnot (f (args1 e))) (f (args2 e))))
+          ((is-function-expr e "IFF")
+           (let ((a (f (args1 e))) (b (f (args2 e))))
+             (cadw-fand (cadw-for (cadw-fnot a) b) (cadw-for (cadw-fnot b) a))))
+          ((and (unary-application? e) (is-function-expr e "NOT")) (cadw-fnot (f (args1 e))))
+          ((and (name-expr? e) (string= (string (id e)) "TRUE")) :true)
+          ((and (name-expr? e) (string= (string (id e)) "FALSE")) :false)
+          (t (let* ((vs (cadw-vars e names))
+                    (g (and (subsetp vs (list i)) (cadw-cbool e names)))
+                    (r (and g (catch 'cadw-undef
+                                (let ((v (make-array (length names) :initial-element 0)))
+                                  (setf (svref v i) c)
+                                  (list (funcall g v)))))))
+               (if r (if (car r) :true :false)
+                 (cons (expr2str e) (remove i vs))))))))
+
+;; the reduced sentence: quantifiers QT (t = FORALL) over the positions KEPT,
+;; the folded matrix STXT under LET x_I = C
+(defun cadw-rtext (names qt i c kept stxt)
+  (format nil "~{~a~}(LET ~a: real = ~a IN (~a))"
+          (loop for nm in names for q in qt for j from 0
+                when (member j kept) collect (format nil "~a (~a: real): " (if q "FORALL" "EXISTS") nm))
+          (nth i names) c stxt))
+
+;; the proof of the goal (FNUM) with position I fixed to C, by labels.  The
+;; walk goes through the sentence's positions in order: I is instantiated
+;; with C; a KEPT position is skolemized on one side and instantiated with the
+;; same name on the other; a position the folding dropped is skolemized when
+;; the target is universal there and instantiated with 0 otherwise.  With
+;; RTEXT nil the folded target is TRUE and the walk and ground close the goal;
+;; otherwise RTEXT is split on and proved by (cad-direct).  QS are the
+;; sentence's own quantifiers (t = FORALL); ANTE: it is in the antecedent.
+(defun cadw-reduce-steps (fnum names qs i c kept rtext ante)
+  (let ((walk (loop for q in qs for j from 0
+                    append (let ((tuniv (eq (not ante) q)) (n (freshname "cw")))
+                             (cond ((= j i) `((inst !cwg ,(format nil "~a" c))))
+                                   ((and rtext (member j kept))
+                                    (if tuniv
+                                        `((skolem !cwg (,n)) (inst !cwr ,n))
+                                      `((skolem !cwr (,n)) (inst !cwg ,n))))
+                                   (tuniv `((skolem !cwg (,n))))
+                                   (t `((inst !cwg "0"))))))))
+    (if (null rtext)
+        `(with-fresh-labels ((!cwg ,fnum))
+           (then ,@walk (beta) (ground)))
+      `(with-fresh-labels ((!cwg ,fnum) (!cwr))
+         (branch (discriminate (case ,rtext) !cwr)
+           ((then ,@walk (beta) (ground))
+            (then (beta !cwr) (cad-direct !cwr))))))))
+
+;; the target's matrix folded at position I, C: :true, :false or (TEXT . KEPT)
+(defun cadw-tfold (body names i c ante)
+  (let ((f (cadw-fold body names i c))) (if ante (cadw-fnot f) f)))
+
+;; a constant that makes the target's matrix TRUE outright, at any of its
+;; existential positions: the proof is the walk and ground, no decision
+(defun cadw-trivial (fnum names qs qt body ante)
+  (loop for i from 0 below (length names)
+        unless (nth i qt)
+        do (dolist (c (cadw-cands names body i))
+             (when (eq (cadw-tfold body names i c ante) :true)
+               (return-from cadw-trivial (cadw-reduce-steps fnum names qs i c nil nil ante)))))
+  nil)
+
+;; the reduction: the target's existential positions, outermost first, each
+;; with its candidate constants; the first folded sentence certified TRUE
+;; wins.  Each gets at most BUDGET seconds, the whole search 6 BUDGET
+(defun cadw-reduce (fnum names qs qt body budget ante)
+  (let ((stop (+ (get-internal-real-time) (* 6 budget internal-time-units-per-second))))
+    (loop for i from 0 below (length names)
+          unless (nth i qt)
+          do (dolist (c (cadw-cands names body i))
+               (when (> (get-internal-real-time) stop) (return-from cadw-reduce nil))
+               (let ((tf (cadw-tfold body names i c ante)))
+                 (when (consp tf)
+                   (let* ((kept (cdr tf))
+                          (rtext (cadw-rtext names qt i c kept (car tf)))
+                          (rexpr (ignore-errors
+                                  (beta-reduce (pc-typecheck (pc-parse rtext 'expr) :expected *boolean*)))))
+                     (when (and rexpr (eq (cadw-try rexpr budget) :true))
+                       (return-from cadw-reduce
+                         (cadw-reduce-steps fnum names qs i c kept rtext ante))))))))
+    nil))
+
+;; the plan of (cad), or nil for the full decision.  FNUM may be a number or
+;; a label; ANTE (the sentence is in the antecedent) comes from where it is now
+(defun cadw-plan (fnum fexpr pre body budget ante)
+  (let* ((names (mapcar #'car pre))
+         (qs (mapcar #'cdr pre))
+         (qt (if ante (mapcar #'not qs) qs))
+         (want (not ante)))
+    (or (when (notany #'identity qt)
+          (let ((pt (cadw-search names body want)))
+            ;; the point is checked again by the ground evaluator that
+            ;; eval-formula uses, so the step cannot leave the goal open.  The
+            ;; ground instance may change sides (a negation moves across the
+            ;; sequent), so every formula is offered to the evaluator
+            (when (and pt (cadw-confirm names pt body want))
+              `(with-fresh-labels ((!cwp ,fnum))
+                 (then ,@(loop for c in pt collect `(inst !cwp ,(format nil "~a" c)))
+                       (eval-formula* *))))))
+        (when (>= (length names) 2)
+          (cadw-trivial fnum names qs qt body ante))
+        (when (>= (length names) 3)
+          (let ((full (cadw-try fexpr budget)))
+            (unless (member full '(:true :false))
+              (cadw-reduce fnum names qs qt body (max 1 (floor budget 2)) ante)))))))
+
+;;; ------------------------------------------------------------------
+;;; (cad *): the polynomial content of the whole sequent (CADSTAR_PLAN.md).
+;;;
+;;; The usable formulas of FNUMS -- a prefix of real quantifiers, then a
+;;; Boolean combination of comparisons of real terms that are polynomial in
+;;; the bound variables -- are collected into ONE closed prenex formula
+;;;   G = FORALL (v: real): TYPEFACTS IMPLIES ((A1 AND ...) IMPLIES (C1 OR ...))
+;;; with every other real subterm free of bound variables (a constant,
+;;; sqrt(x), f(a), a nat) replaced by a variable v.  An antecedent's
+;;; quantifiers flip in G, a consequent's stay; bound variables are renamed
+;;; apart.  G enters by case and PVS checks both branches: with G assumed,
+;;; G's variables are instantiated with the terms, G's quantifiers are
+;;; matched one by one with the sequent formulas' (skolemize one side,
+;;; instantiate the other), and prop closes; G itself is proved by (cad).
+;;; Nothing new is trusted.  The whole attempt is wrapped in finalize, so a
+;;; FALSE G leaves the sequent as it was.
+;;; ------------------------------------------------------------------
+(defparameter *cadstar-abs* nil)    ; (key-text name expr) per abstracted term
+(defparameter *cadstar-count* 0)    ; counter for fresh bound-variable names
+
+(defun cadstar-multi? (fnum)
+  (or (member fnum '(* + -)) (and (consp fnum) (not (member (car fnum) '(:in))))))
+
+(defun cadstar-real-type? (te)
+  (and te (or (tc-eq te *real*) (subtype-of? te *real*))))
+
+;; does E mention one of the binding declarations DECLS?
+(defun cadstar-mentions? (e decls)
+  (let ((found nil))
+    (mapobject #'(lambda (obj)
+                   (or found
+                       (when (and (name-expr? obj) (member (declaration obj) decls))
+                         (setq found t))))
+               e)
+    found))
+
+(defun cadstar-abstract (e)
+  (let* ((key (expr2str e))
+         (hit (assoc key *cadstar-abs* :test #'string=)))
+    (if hit (second hit)
+      (let ((nm (format nil "cadv_~a" (1+ (length *cadstar-abs*)))))
+        (setq *cadstar-abs* (append *cadstar-abs* (list (list key nm e))))
+        nm))))
+
+;; the text of the real term E over the renamed bound variables BV (an alist
+;; bind-decl -> name) and the abstracted terms, with E's own structure; nil
+;; when a bound variable occurs outside the polynomial operations or a leaf
+;; is not real
+(defun cadstar-term (e bv)
+  (cond
+   ((and (name-expr? e) (assoc (declaration e) bv)) (cdr (assoc (declaration e) bv)))
+   ((and (extra-get-number-from-expr e t) (not (cadstar-mentions? e (mapcar #'car bv))))
+    (format nil "(~a)" (expr2str e)))
+   ((and (unary-application? e) (is-function-expr e "-"))
+    (let ((a (cadstar-term (args1 e) bv))) (when a (format nil "(- ~a)" a))))
+   ((and (not (unary-application? e))
+         (or (is-function-expr e "+") (is-function-expr e "-") (is-function-expr e "*")))
+    (let ((a (cadstar-term (args1 e) bv)) (b (cadstar-term (args2 e) bv)))
+      (when (and a b) (format nil "(~a ~a ~a)" a (id (operator e)) b))))
+   ((is-function-expr e "^")
+    (let ((n (extra-get-number-from-expr (args2 e) t)) (a (cadstar-term (args1 e) bv)))
+      (when (and a n (integerp n) (>= n 0)) (format nil "(~a ^ ~a)" a n))))
+   ((is-function-expr e "/")
+    (let ((d (extra-get-number-from-expr (args2 e) t)) (a (cadstar-term (args1 e) bv)))
+      (when (and a d (not (zerop d))) (format nil "(~a / (~a))" a (expr2str (args2 e))))))
+   ((is-function-expr e "sq")
+    (let ((a (cadstar-term (args1 e) bv))) (when a (format nil "sq(~a)" a))))
+   ;; a leaf: an unknown real, when it is real (the arithmetic nodes above
+   ;; have the prelude's type numfield) and free of the bound variables
+   ((or (not (cadstar-real-type? (type e))) (cadstar-mentions? e (mapcar #'car bv))) nil)
+   (t (cadstar-abstract e))))
+
+;; the text of the Boolean matrix E, or nil
+(defun cadstar-bool (e bv)
+  (flet ((bin (op) (let ((a (cadstar-bool (args1 e) bv)) (b (cadstar-bool (args2 e) bv)))
+                     (when (and a b) (format nil "(~a ~a ~a)" a op b)))))
+    (cond
+     ((is-function-expr e "AND") (bin "AND"))
+     ((is-function-expr e "OR") (bin "OR"))
+     ((is-function-expr e "IMPLIES") (bin "IMPLIES"))
+     ((is-function-expr e "IFF") (bin "IFF"))
+     ((and (unary-application? e) (is-function-expr e "NOT"))
+      (let ((a (cadstar-bool (args1 e) bv))) (when a (format nil "(NOT ~a)" a))))
+     ((and (name-expr? e) (member (string (id e)) '("TRUE" "FALSE") :test #'string=))
+      (string (id e)))
+     (t (let ((op (find-if #'(lambda (o) (is-function-expr e o)) '("=" "/=" "<" "<=" ">" ">="))))
+          (when (and op (not (unary-application? e)))
+            (let ((a (cadstar-term (args1 e) bv)) (b (cadstar-term (args2 e) bv)))
+              (when (and a b) (format nil "(~a ~a ~a)" a op b)))))))))
+
+;; (NODES MATRIX) for a usable formula: NODES lists (forall? name ...) per
+;; quantifier of the prefix, bound variables renamed; nil when not usable
+(defun cadstar-formula (fml)
+  (let ((nodes nil) (bv nil) (e fml) (bad nil))
+    (loop while (and (not bad) (or (forall-expr? e) (exists-expr? e))) do
+      (let ((names nil))
+        (dolist (b (bindings e))
+          (if (tc-eq (type b) *real*)
+              (let ((nm (format nil "cadb_~a" (incf *cadstar-count*))))
+                (push (cons b nm) bv) (push nm names))
+            (setq bad t)))
+        (push (cons (and (forall-expr? e) t) (reverse names)) nodes)
+        (setq e (expression e))))
+    (unless bad
+      (let ((m (cadstar-bool e bv)))
+        (when m (list (reverse nodes) m))))))
+
+;; the fact the type of the abstracted term E gives its variable NM, or nil
+(defun cadstar-typefact (e nm)
+  (let ((te (type e)))
+    (flet ((sub (s) (ignore-errors (subtype-of? te (pc-typecheck (pc-parse s 'type-expr))))))
+      (cond ((or (sub "posnat") (sub "posint")) (format nil "(~a >= 1)" nm))
+            ((sub "negint") (format nil "(~a <= -1)" nm))
+            ((sub "posreal") (format nil "(~a > 0)" nm))
+            ((sub "negreal") (format nil "(~a < 0)" nm))
+            ((sub "nonneg_real") (format nil "(~a >= 0)" nm))
+            ((sub "nonpos_real") (format nil "(~a <= 0)" nm))
+            ((sub "nzreal") (format nil "(~a /= 0)" nm))
+            (t nil)))))
+
+;; the usable formulas of FNUMS as (fnum nodes matrix), and the skipped fnums
+(defun cadstar-collect (fnums)
+  (setq *cadstar-abs* nil *cadstar-count* 0)
+  (let ((used nil) (skipped nil))
+    (dolist (fn (extra-get-fnums fnums))
+      (let* ((f (extra-get-formula-from-fnum fn))
+             (saved *cadstar-abs*)
+             (r (when f (ignore-errors (cadstar-formula f)))))
+        (if r (push (list fn (first r) (second r)) used)
+          (progn (setq *cadstar-abs* saved) (push fn skipped)))))
+    (list (reverse used) (reverse skipped))))
+
+;; is the quantifier of NODE, of a formula on side ANTE, universal in G?
+(defun cadstar-gall? (node ante) (if ante (not (car node)) (car node)))
+
+(defun cadstar-g (used tfs)
+  (let* ((ants (loop for u in used when (< (first u) 0) collect (third u)))
+         (cons (loop for u in used when (> (first u) 0) collect (third u)))
+         (body (format nil "(~a IMPLIES ~a)"
+                       (if ants (format nil "(~{~a~^ AND ~})" ants) "TRUE")
+                       (if cons (format nil "(~{~a~^ OR ~})" cons) "FALSE")))
+         (body2 (if tfs (format nil "((~{~a~^ AND ~}) IMPLIES ~a)" tfs body) body))
+         (qs (loop for u in used append
+                   (let ((ante (< (first u) 0)))
+                     (loop for node in (second u) append
+                           (loop for nm in (cdr node) collect
+                                 (format nil "~a (~a: real):"
+                                         (if (cadstar-gall? node ante) "FORALL" "EXISTS") nm))))))
+         (vq (loop for a in *cadstar-abs* collect (format nil "FORALL (~a: real):" (second a)))))
+    (format nil "~{~a ~}~{~a ~}~a" vq qs body2)))
+
+;; the steps that derive the goal from G (labelled GL, an antecedent),
+;; the used formulas labelled LABS
+(defun cadstar-use (used labs gl)
+  (let ((k 0))
+    (flet ((fresh () (format nil "cadk_~a" (incf k))))
+      `(then
+        ,@(loop for a in *cadstar-abs* collect `(inst ,gl ,(first a)))
+        ,@(loop for u in used for lab in labs append
+                (let ((ante (< (first u) 0)))
+                  (loop for node in (second u) append
+                        (let ((names (loop for nm in (cdr node) collect (fresh))))
+                          (if (cadstar-gall? node ante)
+                              `((skolem ,lab ,names) ,@(loop for n in names collect `(inst ,gl ,n)))
+                            `(,@(loop for n in names collect `(skolem ,gl (,n)))
+                              (inst ,lab ,@names)))))))
+        ,@(loop for a in *cadstar-abs* when (cadstar-typefact (third a) (second a))
+                collect `(typepred ,(first a)))
+        (prop)
+        (assert)))))
+
+(defhelper cad-seq__ (fnums budget)
+  (let ((cs      (cadstar-collect fnums))
+        (used    (first cs))
+        (skipped (second cs))
+        (tfs     (loop for a in *cadstar-abs* for f = (cadstar-typefact (third a) (second a))
+                       when f collect f))
+        (gstr    (when used (cadstar-g used tfs)))
+        (labs    (freshlabels "cadsf" (length used)))
+        (gl      (freshlabel "cadsg"))
+        (msg     (format nil "cad*: using ~a, skipping ~a~@[; unknown reals: ~{~a~^, ~}~]"
+                         (or (mapcar #'first used) "nothing") (or skipped "nothing")
+                         (loop for a in *cadstar-abs* collect (format nil "~a = ~a" (second a) (first a))))))
+    (if (null used)
+        (printf "cad*: no formula of the sequent is a polynomial formula over the reals")
+      (let ((step `(then ,@(loop for u in used for lab in labs collect `(label ,lab ,(first u)))
+                         ,(cad-fact-case gstr gl (cadstar-use used labs gl) `(cad ,gl ,budget)))))
+        (then (printf "~a~%cad*: deciding ~a" msg gstr)
+              (else (finalize__$ step)
+                    (printf "cad*: not proved; the sequent is unchanged"))))))
+  "[pvs_cad] Internal: (cad *) for the formulas FNUMS." "")
+
+(defstep cad (&optional (fnum 1) (budget 10) complete?)
+  (let ((multi (cadstar-multi? fnum))
+        (fexpr (unless multi (extra-get-formula fnum)))
+        (pp    (when fexpr (cad-prefix fexpr)))
+        (pre   (when pp (first pp)))
+        (body  (when pp (second pp)))
+        (fn    (when fexpr (extra-get-fnum fnum)))
+        (plan  (when (and pre body (integerp fn))
+                 (cadw-plan fnum fexpr pre body budget (< fn 0)))))
+    (if multi (cad-seq__$ fnum budget) (if plan plan (cad-direct fnum complete?))))
+  "[pvs_cad] Decides the closed prenex formula FNUM (a formula number or a
+label), Q1 x1: ... Qn xn: PHI, over the reals: in the consequent it is
+proved when it holds, in the antecedent it closes the goal when it fails;
+otherwise it stays, labelled cad, and a message says whether it is TRUE or
+FALSE.  Before the full
+decision (cad-direct) it looks for a witness: a model search when one point
+settles the goal, and with three or more quantifiers, when the decision does
+not answer within BUDGET seconds (default 10), one existential position of
+the goal fixed to a small constant, the smaller sentence decided (BUDGET/2
+seconds each, 3 BUDGET in all), the goal closed by instantiation.  With
+COMPLETE?, when the certificate does not pass, the complete (exponential)
+decision of cad_decide answers instead (COMPLETENESS_PLAN C1).  Formulas
+are named by fresh labels throughout, never by position.  The theory must
+import cad_decide5 and mpoly_embed.
+
+(cad *) -- or (cad -), (cad +), (cad (-1 2 3)) -- uses the whole sequent
+(those formulas): every formula that is a real quantifier prefix over a
+Boolean combination of polynomial comparisons is collected, other real
+subterms (constants, sqrt(x), f(a), nat variables) become unknown reals,
+and the implication from the antecedents to the consequents is decided and,
+when TRUE, closes the goal; other formulas are ignored (CADSTAR_PLAN.md)."
+  "Deciding ~a by cylindrical decision, witness first")
+
+;;; ------------------------------------------------------------------
+;;; cad-bench: report what the PROJECTION decision (cad_pdec's pdecidef)
+;;; answers on a closed prenex formula, and do NOT claim a proof.
+;;;
+;;; It reuses cad's formula-to-family translation verbatim -- same fstr,
+;;; osstr, phistr -- and osstr is already outermost-first, which is what
+;;; pdecide wants (decide2 has to reverse it).  Nothing here touches the
+;;; sequent: the projection route's correctness rests on delineability, which
+;;; is stated in cad_delin as a PREDICATE and is not yet proved to hold, so
+;;; this measures and prints rather than discharging anything.  Use (cad) for
+;;; a real proof.
+;;; ------------------------------------------------------------------
+(defstep cad-bench (&optional (fnum 1))
+  (let ((fexpr  (extra-get-formula fnum))
+        (pp     (when fexpr (cad-prefix fexpr)))
+        (pre    (when pp (first pp)))
+        (body   (when pp (second pp)))
+        (dummy1 (setq *mpoly-atoms* (reverse (mapcar #'car pre))))
+        (dummy2 (setq *cad-polys* nil))
+        (phistr (when (and pre body) (cad-bf body)))
+        (closed (= (length *mpoly-atoms*) (length pre)))
+        (lists  (when phistr (loop for pr in *cad-polys* collect
+                              (let ((v (evalexpr (format nil "as_list(pnorm(~a))" (car pr)) nil nil t)))
+                                (when v (expr2str v))))))
+        (bad    (or (null phistr) (not closed) (some #'null lists)))
+        (fstr   (unless bad (qe-list-str lists "null[list[mpoly]]")))
+        (osstr  (unless bad (format nil "(: ~{~a~^, ~} :)"
+                                    (loop for q in pre collect (if (cdr q) "TRUE" "FALSE")))))
+        ;; pdecqf is the HYBRID: sign-vector recursion on the projection
+        ;; family, svs_pt where a sector's sample is exactly rational and
+        ;; svs_sg (proved, via alg_sign2) where it is algebraic.  It needs no
+        ;; rational samples, so there is no ok flag and no silent fallback --
+        ;; the only caveat left is delineability.  qs must be INNERMOST-first
+        ;; for pdecq, so osstr is reversed here.
+        (valv   (unless bad (let ((v (evalexpr (format nil "pdecqf(~a, reverse(~a), ~a)" fstr osstr phistr) nil nil t)))
+                              (when v (expr2str v)))))
+        (okv    (unless bad (let ((v (evalexpr (format nil "pdecidef(~a, ~a, ~a)`ok" fstr osstr phistr) nil nil t)))
+                              (when v (expr2str v)))))
+        ;; WHERE does exactness fail?  If the OUTERMOST level's sector
+        ;; samples are already irrational, the very first coordinate is
+        ;; algebraic and no amount of rational-sample machinery helps -- that
+        ;; case needs arithmetic in an algebraic extension.  A number or
+        ;; boolean comes back from evalexpr; structured values do not.
+        (rat1   (unless bad (let ((v (evalexpr (format nil "allrat(sects(rts(evalF(car(tower(length(~a) - 1, ~a)), null[rat]))))" osstr fstr) nil nil t)))
+                              (when v (expr2str v)))))
+        (rat1o  (or rat1 "<none>"))
+        ;; printf in a defstep evaluates VARIABLES but not function
+        ;; applications in its arguments, so the counts are computed here
+        (nvars  (length pre))
+        (npolys (length lists))
+        (okout  (or okv "<none>"))
+        (valout (or valv "<none>")))
+    (if (or (null pre) (null body))
+        (printf "cad-bench: formula ~a is not a closed prenex formula" fnum)
+      (if bad
+          (printf "cad-bench: the matrix is not a Boolean combination of polynomial sign conditions in the quantified variables")
+        (printf "cad-bench: vars=~a polys=~a  hybrid-val=~a  rational-route-ok=~a  outer-level-rational=~a  (projection route, NOT a proof)"
+                nvars npolys valout okout rat1o))))
+  "[pvs_cad] Reports what the projection decision pdecidef of cad_pdec answers
+on the closed prenex formula FNUM, without changing the sequent and without
+claiming a proof.  ok = TRUE means every sample point it used was exactly
+rational, so no approximation entered; it does NOT mean the answer is proved,
+because delineability (cad_delin's delin?) is not yet established.  For a
+proof use (cad)."
+  "Benchmarking ~a by the projection decision")
+
+
+;;; ------------------------------------------------------------------
+;;; cad-m3: MEASURE the three-quantifier decision dec3m of tower_def on a
+;;; closed prenex formula with exactly three quantifiers.  Prints the value
+;;; and the wall-clock time; changes nothing and proves nothing (FINISH_PLAN
+;;; S5c: measure before proving).  The theory must import tower_def.
+(defstep cad-m3 (&optional (fnum 1))
+  (let ((fexpr  (extra-get-formula fnum))
+        (pp     (when fexpr (cad-prefix fexpr)))
+        (pre    (when pp (first pp)))
+        (body   (when pp (second pp)))
+        (dummy1 (setq *mpoly-atoms* (reverse (mapcar #'car pre))))
+        (dummy2 (setq *cad-polys* nil))
+        (phistr (when (and pre body) (cad-bf body)))
+        (lists  (when phistr (loop for pr in *cad-polys* collect
+                              (let ((v (evalexpr (format nil "as_list(pnorm(~a))" (car pr)) nil nil t)))
+                                (when v (expr2str v))))))
+        (bad    (or (null phistr) (/= (length pre) 3) (some #'null lists)))
+        (fstr   (unless bad (qe-list-str lists "null[list[mpoly]]")))
+        (qs     (loop for q in pre collect (if (cdr q) "TRUE" "FALSE")))
+        (t0     (get-internal-real-time))
+        (valv   (unless bad
+                  (let ((v (evalexpr (format nil "decw3(~a, ~a, ~a, ~a, LAMBDA (v: SV): bfsv(~a, v))"
+                                             (first qs) (second qs) (third qs) fstr phistr) nil nil t)))
+                    (when v (expr2str v)))))
+        (secs   (round (- (get-internal-real-time) t0) internal-time-units-per-second))
+        (npolys (length lists))
+        (valout (or valv "<none>")))
+    (if bad
+        (printf "cad-m3: not a closed three-quantifier prenex formula over polynomial sign conditions")
+      (printf "cad-m3: polys=~a  decw3=~a  ~a s  (a measurement, NOT a proof)" npolys valout secs)))
+  "[pvs_cad] Measures the three-quantifier decision dec3m of tower_def on FNUM."
+  "Measuring ~a by the three-quantifier decision")
+
+;;; cad-mn: MEASURE the n-quantifier decision decnm of towern_def on a closed
+;;; prenex formula (any number of quantifiers >= 2).  Prints the value and the
+;;; wall-clock time; changes nothing and proves nothing (FINISH_PLAN S5e-1:
+;;; measure before proving).  The theory must import towern_def.
+(defstep cad-mn (&optional (fnum 1))
+  (let ((fexpr  (extra-get-formula fnum))
+        (pp     (when fexpr (cad-prefix fexpr)))
+        (pre    (when pp (first pp)))
+        (body   (when pp (second pp)))
+        (dummy1 (setq *mpoly-atoms* (reverse (mapcar #'car pre))))
+        (dummy2 (setq *cad-polys* nil))
+        (phistr (when (and pre body) (cad-bf body)))
+        (lists  (when phistr (loop for pr in *cad-polys* collect
+                              (let ((v (evalexpr (format nil "as_list(pnorm(~a))" (car pr)) nil nil t)))
+                                (when v (expr2str v))))))
+        (bad    (or (null phistr) (< (length pre) 2) (some #'null lists)))
+        (fstr   (unless bad (qe-list-str lists "null[list[mpoly]]")))
+        (osstr  (format nil "(: ~{~a~^, ~} :)"
+                        (loop for q in pre collect (if (cdr q) "TRUE" "FALSE"))))
+        (t0     (get-internal-real-time))
+        (valv   (unless bad
+                  (let ((v (evalexpr (format nil "decn_o(~a, ~a, LAMBDA (v: SV): bfsv(~a, v))"
+                                             osstr fstr phistr) nil nil t)))
+                    (when v (expr2str v)))))
+        (secs   (round (- (get-internal-real-time) t0) internal-time-units-per-second))
+        (npolys (length lists))
+        (valout (or valv "<none>")))
+    (if bad
+        (printf "cad-mn: not a closed prenex formula (>= 2 quantifiers) over polynomial sign conditions")
+      (printf "cad-mn: polys=~a  decn_o=~a  ~a s  (a measurement, NOT a proof)" npolys valout secs)))
+  "[pvs_cad] Measures the n-quantifier decision decnm of towern_def on FNUM."
+  "Measuring ~a by the n-quantifier decision")

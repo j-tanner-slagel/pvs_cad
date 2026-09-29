@@ -1,0 +1,71 @@
+pos_dec: THEORY
+%----------------------------------------------------------------------------
+% Deciding whether a symbolic polynomial is everywhere positive (Phase 3).
+%
+% A polynomial with no real root keeps one sign, and at large x that sign is
+% the sign of its leading coefficient.  Both are decided on a branch: the sign
+% of the leading coefficient is what the degree branching recorded, and
+% whether there is a root is what the sign counting answers.  So
+% FORALL x: p(x, ys) > 0 is decided by the same tree, with different leaves:
+% FALSE where the polynomial vanishes identically or its leading coefficient
+% is negative, TRUE for a positive constant, and otherwise the absence of
+% roots.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING root_dec, analysis@derivatives[real], analysis@continuous_functions_props[real]
+
+  l, l0: VAR list[mpoly]
+  ys: VAR list[real]
+  k: VAR nat
+  x, z: VAR real
+
+  %% the polynomial as a function of the eliminated variable
+  pf(l, ys): [real -> real] = LAMBDA (x: real): meval(mpol(l))(cons(x, ys))
+  pf_cont: LEMMA continuous?(pf(l, ys))
+
+  %% a polynomial with no root keeps the sign it has anywhere
+  no_root_pos: LEMMA (FORALL (z: real): pf(l, ys)(z) /= 0) AND pf(l, ys)(x) > 0
+    IMPLIES (FORALL (z: real): pf(l, ys)(z) > 0)
+
+  %% at large x the sign is the sign of the leading coefficient
+  big_pos: LEMMA cons?(l) AND meval(llast(l))(ys) > 0 IMPLIES
+    EXISTS (x: real): pf(l, ys)(x) > 0
+  big_neg: LEMMA cons?(l) AND meval(llast(l))(ys) < 0 IMPLIES
+    EXISTS (x: real): pf(l, ys)(x) < 0
+
+  %% for a polynomial with a positive leading coefficient, positivity
+  %% everywhere is exactly the absence of a root
+  pos_iff: LEMMA cons?(l) AND meval(llast(l))(ys) > 0 IMPLIES
+    ((FORALL (z: real): meval(mpol(l))(cons(z, ys)) > 0) IFF
+     NOT (EXISTS (z: real): meval(mpol(l))(cons(z, ys)) = 0))
+
+  %% the sign field of the pair, and normalizing does not change the values
+  sl_of_ssign: LEMMA sl_of(l, ys)`ssign = sign3(meval(llast(l))(ys))
+  snorm_pf: LEMMA meval(mpol(select(snorm(l0), ys)))(cons(x, ys)) =
+    meval(mpol(l0))(cons(x, ys))
+
+  not_all_pos: LEMMA meval(mpol(l0))(cons(x, ys)) <= 0 IMPLIES
+    NOT (FORALL (z: real): meval(mpol(l0))(cons(z, ys)) > 0)
+  snorm_all_pos: LEMMA (FORALL (z: real): meval(mpol(select(snorm(l0), ys)))(cons(z, ys)) > 0)
+                  IFF (FORALL (z: real): meval(mpol(l0))(cons(z, ys)) > 0)
+
+  %% the decision tree for positivity
+  pdec(k, l0): btree[bool] =
+    bbind(snormp(l0),
+          LAMBDA (p: SL):
+            IF null?(p`slist) OR p`ssign = -1 THEN bleaf(FALSE)
+            ELSIF length(p`slist) = 1 THEN bleaf(TRUE)
+            ELSE bmap(LAMBDA (cs: list[SL]): NOT (nsc_lo(cons(p, cs)) > nsc_hi(cons(p, cs))),
+                      prsp(k, p, dsl(p)))
+            ENDIF)
+
+  pdec_sound: THEOREM length(l0) <= k IMPLIES
+    (select(pdec(k, l0), ys) IFF (FORALL (x: real): meval(mpol(l0))(cons(x, ys)) > 0))
+  %% what the strategy uses: a branch of the tree whose conditions hold at the
+  %% parameters and whose verdict is TRUE proves positivity there
+  b: VAR branch_tree[bool].Branch
+  pos_branch: THEOREM length(l0) <= k AND member(b, branches(pdec(k, l0))) AND
+    b`bres AND branch_tree[bool].conds_hold(b`bconds, ys)
+    IMPLIES FORALL (x: real): meval(mpol(l0))(cons(x, ys)) > 0
+
+END pos_dec

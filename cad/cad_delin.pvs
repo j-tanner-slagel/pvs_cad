@@ -1,0 +1,93 @@
+cad_delin: THEORY
+%----------------------------------------------------------------------------
+% Delineability, stated precisely, and the decision proved CORRECT GIVEN IT
+% (Phase 6).
+%
+% The point of this theory is to turn "correctness is unproved" into "exactly
+% one named statement is unproved".  Nothing here is assumed: delineability is
+% a defined PREDICATE, delin?, and the theorem below is a real proof that the
+% projection decision agrees with the semantics on any family satisfying it.
+% What remains open is that every family does -- see the note at the end.
+%
+% Why this is the right reduction.  svs_pt is ALREADY proved to compute the
+% fibre set exactly (svs_pt_sound, svs_pt_complete), so the decision never
+% needs to reason about root isolation: it needs only that the fibre SET is
+% the same at every point of a sector.  That is delin?.  And because the set
+% is all that matters, the remaining obligation is a statement about two
+% UNIVARIATE families -- same psc signs give the same realizable sign-vector
+% set -- which is sign determination, algebraic, with no continuity of roots
+% and no connectedness in it.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad_pdec
+
+  F, P: VAR list[list[mpoly]]
+  Psi: VAR [SV -> bool]
+  q, q1, q2: VAR bool
+  s: VAR Sect
+  x, y, z: VAR real
+  v: VAR SV
+  ys: VAR list[real]
+  rs: VAR list[rat]
+
+  %% the realizable sign vectors over the fibre above ys
+  fib(F, ys)(v): bool = EXISTS z: v = svec(F, cons(z, ys))
+
+  %% DELINEABILITY on a sector: the fibre set does not vary along it.
+  %% This is what the projection is supposed to buy and what inv1? bought
+  %% the read closure (by a different and much more expensive route).
+  delin?(F, s): bool =
+    FORALL x, y: in?(s, x) AND in?(s, y) IMPLIES
+      (FORALL v: fib(F, (: x :))(v) IFF fib(F, (: y :))(v))
+
+  %% ---- the fibre set is all the semantics of one quantifier can see ----
+  qfold_fib: LEMMA FORALL (vs: SVL): (FORALL v: member(v, vs) IFF fib(F, ys)(v))
+    IMPLIES (qfold(q, vs, Psi) IFF sem((: q :), F, Psi, ys))
+
+  svs_pt_fib: LEMMA svs_ptok(F, rs) IMPLIES
+    (FORALL v: member(v, svs_pt(F, rs)) IFF fib(F, rs)(v))
+
+  %% equal fibre SETS mean every point of one fibre is matched in the other.
+  %% Factored out because both directions of sem1_fib need it, and inlining it
+  %% consumes the universal hypothesis the other direction still needs.
+  fib_swap: LEMMA (FORALL v: fib(F, (: x :))(v) IFF fib(F, (: y :))(v))
+    IMPLIES (FORALL z: EXISTS (z2: real):
+              svec(F, cons(z, (: x :))) = svec(F, cons(z2, (: y :))))
+
+  sem1_fib: LEMMA (FORALL v: fib(F, (: x :))(v) IFF fib(F, (: y :))(v))
+    IMPLIES (sem((: q :), F, Psi, (: x :)) IFF sem((: q :), F, Psi, (: y :)))
+
+  %% the inner fold IS the semantics of the inner quantifier at the sample
+  inner_sem: LEMMA svs_ptok(F, (: rsv(s) :)) IMPLIES
+    (qfold(q, svs_pt(F, (: rsv(s) :)), Psi) IFF sem((: q :), F, Psi, (: rsv(s) :)))
+
+  %% and delineability moves that from the sample to any point of the sector
+  sect_sem: LEMMA delin?(F, s) AND in?(s, rsv(s)) AND in?(s, x) IMPLIES
+    (sem((: q :), F, Psi, (: rsv(s) :)) IFF sem((: q :), F, Psi, (: x :)))
+
+  %% ---- the decision at two quantifiers, correct GIVEN delineability ----
+  %% Mirrors qfoldS_sem, which needs inv1? -- the read-closure condition that
+  %% forces 21 root sectors where the projection leaves 1.  Here the same
+  %% conclusion follows from delin? instead.
+  dec2_sem: THEOREM
+    incr?(rts(P))
+    AND (FORALL s: member(s, sects(rts(P))) IMPLIES
+           delin?(F, s) AND ratsamp?(s) AND in?(s, rsv(s))
+           AND svs_ptok(F, (: rsv(s) :)))
+    IMPLIES
+    (qfoldS(q1, sects(rts(P)), LAMBDA s: qfold(q2, svs_pt(F, (: rsv(s) :)), Psi))
+     IFF sem((: q1, q2 :), F, Psi, null[real]))
+
+  %%-------------------------------------------------------------------------
+  %% WHAT REMAINS OPEN, stated so it cannot be mistaken for proved:
+  %%
+  %%   delin_projc: every sector of projc(F) satisfies delin?(F, -).
+  %%
+  %% By svs_pt_sound/complete this is equivalent to: two univariate families
+  %% with the same principal subresultant coefficient signs realize the same
+  %% sign vectors.  subres builds those psc as determinants (psc_eval), and
+  %% cad_projc puts them in the operator; cad_meas3 measures that doing so
+  %% costs no extra sectors.  The theorem itself is Phase 6's remaining
+  %% mathematics.
+  %%-------------------------------------------------------------------------
+END cad_delin

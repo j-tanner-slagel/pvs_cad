@@ -1,0 +1,112 @@
+cad_decn: THEORY
+%----------------------------------------------------------------------------
+% dec -- the projection decision at ANY number of levels -- computes the
+% semantics.  dec2_sem settled two quantifiers; this is the general form, and
+% it is what a strategy has to cite to emit a proof rather than a measurement.
+%
+% The shape of the result matters as much as the result.  Everything the
+% theorem needs from the GEOMETRY is collected in one predicate, decok?,
+% stated along every path of sectors the fold actually walks:
+%
+%   - the isolated roots of this level's specialized family come out sorted
+%   - every sector's sample point lies inside that sector
+%   - the value of everything INSIDE is the same at the sample as at any
+%     other point of the sector
+%   - and the same again, one level down, over each sector
+%
+% with root isolation having converged at the innermost level.  The third
+% item is delineability in the only form the induction can use: at two
+% quantifiers it is exactly cad_delin's sect_sem, i.e. delin?.  Isolating it
+% this way keeps the combinatorial theorem -- a fold over sectors IS a
+% quantifier over the reals -- separate from the mathematics that has to
+% establish sector invariance, which is still open above degree 2.
+%
+% pdecide_sem at the end lifts it to the entry point: the executable
+% pdecide's val field IS the semantics of the quantified formula.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad_delin
+
+  F, P: VAR list[list[mpoly]]
+  TW: VAR list[list[list[mpoly]]]
+  qs: VAR list[bool]
+  rs: VAR list[rat]
+  Psi: VAR [SV -> bool]
+  q: VAR bool
+  s: VAR Sect
+  x: VAR real
+  Phi: VAR pred[real]
+
+  %% the innermost fold IS the innermost quantifier, at any base point.
+  %% inner_sem says this at a sector sample; the induction needs it at an
+  %% arbitrary rs, since the base of a deep tower is reached with a whole
+  %% path of coordinates already chosen
+  ptsem: LEMMA svs_ptok(F, rs) IMPLIES
+    (qfold(q, svs_pt(F, rs), Psi) IFF sem((: q :), F, Psi, rs))
+
+  %% THE COMBINATORIAL STEP: a fold over sectors IS a quantifier over the
+  %% reals, when every sector's sample lies in it and the predicate cannot
+  %% tell the sample from any other point of the sector
+  fold_quant: LEMMA incr?(rts(P))
+    AND (FORALL s: member(s, sects(rts(P))) IMPLIES in?(s, rsv(s)))
+    AND (FORALL s, x: member(s, sects(rts(P))) AND in?(s, x)
+           IMPLIES (Phi(x) IFF Phi(rsv(s))))
+    IMPLIES (qfoldS(q, sects(rts(P)), LAMBDA s: Phi(rsv(s)))
+             IFF (IF q THEN FORALL x: Phi(x) ELSE EXISTS x: Phi(x) ENDIF))
+
+  %% the fold only looks at members, so two functions agreeing there agree.
+  %% Needed because the induction hypothesis is available exactly on the
+  %% sectors decok? ranges over, not on every Sect
+  ss: VAR list[Sect]
+  Ph1, Ph2: VAR pred[Sect]
+  qfoldS_cong: LEMMA (FORALL s: member(s, ss) IMPLIES (Ph1(s) IFF Ph2(s)))
+    IMPLIES (qfoldS(q, ss, Ph1) IFF qfoldS(q, ss, Ph2))
+
+  %% peeling a level off the tower leaves the original family at the bottom.
+  %% cons?(TW) has to come FIRST: without it the cdr(TW) in the second
+  %% conjunct has nothing to its left to license it, and PVS generates the
+  %% unprovable TCC "FORALL TW: cons?(TW)" -- which the gate catches and a
+  %% Q.E.D. on the lemma itself does not
+  last_cdr: LEMMA cons?(TW) AND cons?(cdr(TW))
+    IMPLIES last(cdr(TW)) = last(TW)
+
+  %% and at the bottom the last entry IS the head.  Kept separate because
+  %% unfolding last and length inside the main induction turns every
+  %% occurrence into CASES and buries the argument
+  last_car: LEMMA cons?(TW) AND null?(cdr(TW)) IMPLIES last(TW) = car(TW)
+
+  %% the tower and the quantifier list step down together
+  tw_len: LEMMA cons?(TW) AND cons?(qs) AND length(TW) = length(qs)
+    IMPLIES (null?(cdr(TW)) IFF null?(cdr(qs)))
+        AND length(cdr(TW)) = length(cdr(qs))
+
+  %% what the geometry has to supply, level by level, along every path of
+  %% sectors the fold actually visits
+  decok?(TW, qs, rs, F, Psi): RECURSIVE bool =
+    IF null?(TW) OR null?(qs) THEN FALSE
+    ELSIF null?(cdr(TW)) OR null?(cdr(qs)) THEN svs_ptok(car(TW), rs)
+    ELSE incr?(rts(evalF(car(TW), rs)))
+      AND (FORALL s: member(s, lsects(car(TW), rs)) IMPLIES
+             in?(s, rsv(s))
+             AND (FORALL x: in?(s, x) IMPLIES
+                    (sem(cdr(qs), F, Psi, cons(x, rs))
+                 IFF sem(cdr(qs), F, Psi, cons(rsv(s), rs))))
+             AND decok?(cdr(TW), cdr(qs), cons(rsv(s), rs), F, Psi))
+    ENDIF
+  MEASURE length(qs)
+
+  %% THE n-LEVEL THEOREM, on the tower as dec walks it
+  decn_sem: THEOREM FORALL qs: FORALL TW, rs, Psi:
+    cons?(TW) AND cons?(qs) AND length(TW) = length(qs)
+    AND decok?(TW, qs, rs, last(TW), Psi)
+    IMPLIES (dec(TW, qs, rs, Psi) IFF sem(qs, last(TW), Psi, rs))
+
+  %% the tower ends where it started
+  m: VAR nat
+  tower_last_eq: LEMMA FORALL m, F: last(tower(m, F)) = F
+
+  %% THE ENTRY POINT: pdecide's val field is the semantics of the formula
+  pdecide_sem: COROLLARY FORALL (qz: (cons?[bool])), F, Psi:
+    decok?(tower(length(qz) - 1, F), qz, null[rat], F, Psi)
+    IMPLIES (pdecide(F, qz, Psi)`val IFF sem(qz, F, Psi, null[real]))
+END cad_decn
