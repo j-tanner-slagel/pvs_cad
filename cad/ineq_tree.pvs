@@ -1,0 +1,57 @@
+ineq_tree: THEORY
+%----------------------------------------------------------------------------
+% A conjunction of strict inequalities with no equation, decided on a tree
+% (Phase 3).
+%
+% itree decides EXISTS x: every q in Q: q(x, ys) > 0.  It normalizes the
+% conditions (snormps of many_tree); a condition that normalizes to nothing is
+% nowhere positive, so that branch is FALSE.  On every other branch the signs
+% of all leading coefficients are known, and so are the two far-out
+% conditions: if either holds the answer is TRUE.  Otherwise the product of
+% the conditions is formed as a tree (wtree, one degree branching per factor);
+% a product of length at most two leaves no critical point to look at and the
+% answer is FALSE, and a longer one has a derivative of positive degree whose
+% sign is the product's (dsl of root_dec, no further branching), at which the
+% critical-point question is mcount's.
+%
+% itree_sound needs only the syntactic fuel bound 2 mlen(Q) + 1 <= k.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING ineq_ok, branch_map[SL, SL]
+
+  Q: VAR list[list[mpoly]]
+  ys: VAR list[real]
+  k: VAR nat
+  x: VAR real
+  ps: VAR list[SL]
+
+  %% the constant one with its sign
+  one_sl: SL = (# slist := one_list, ssign := 1 #)
+  one_sl_at: LEMMA sl_of(one_list, ys) = one_sl
+
+  %% the product of the conditions of a leaf, normalized by branching
+  wtree(ps): RECURSIVE btree[SL] =
+    IF null?(ps) THEN bleaf(one_sl)
+    ELSE bbind(wtree(cdr(ps)), LAMBDA (w: SL): snormp(lmul(car(ps)`slist, w`slist)))
+    ENDIF
+  MEASURE length(ps)
+  wtree_null: LEMMA wtree(null[SL]) = bleaf(one_sl)
+  wtree_cons: LEMMA FORALL (p: SL): wtree(cons(p, ps)) =
+    bbind(wtree(ps), LAMBDA (w: SL): snormp(lmul(p`slist, w`slist)))
+  select_wtree: THEOREM FORALL (ps: list[SL]): FORALL (ys: list[real]):
+    select(wtree(ps), ys) = sl_of(qprod(slists(ps), ys), ys)
+
+  %% the decision
+  itree(k, Q): btree[bool] =
+    bbind(snormps(Q), LAMBDA (ps: list[SL]):
+      IF NOT allcons(slists(ps)) THEN bleaf(FALSE)
+      ELSIF posinfp(ps) OR neginfp(ps) THEN bleaf(TRUE)
+      ELSE bbind(wtree(ps), LAMBDA (w: SL):
+             IF length(w`slist) <= 2 THEN bleaf(FALSE)
+             ELSE mcount(k, dsl(w), ps)
+             ENDIF)
+      ENDIF)
+
+  itree_sound: THEOREM 2 * mlen(Q) + 1 <= k IMPLIES
+    (select(itree(k, Q), ys) IFF (EXISTS (x: real): allgt(Q, ys, x)))
+END ineq_tree

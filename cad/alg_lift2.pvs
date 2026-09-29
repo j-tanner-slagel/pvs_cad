@@ -1,0 +1,77 @@
+alg_lift2: THEORY
+%----------------------------------------------------------------------------
+% svs_alg with Sturm counting in place of the sign-change rule (item A).
+%
+% alg_lift decides whether a member vanishes at a candidate by comparing its
+% signs at the two rational neighbours.  That is exact while every root is
+% simple and silent at a repeated one, so aok? has to refuse a section at a
+% DISCRIMINANT root -- and on x^2 + y^2 - 2 it refuses exactly the two
+% sections, passing the three open sectors.
+%
+% Here the same question is asked of alg_sturm's count:
+%
+%     f vanishes somewhere in (r1, r2]   iff   acount(k, a, f, r1, r2) > 0
+%
+% and since the candidates contain every root of f(., value(a)), the only root
+% that can be in (r1, r2] is the candidate between them.  Sturm does not care
+% about multiplicity, so the discriminant condition goes away: what is left is
+% alc? -- length, LEADING coefficient nonzero at alpha, fuel -- per member.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING alg_sturm2, alg_dec
+
+  a: VAR Alg
+  f: VAR list[mpoly]
+  F: VAR list[list[mpoly]]
+  k: VAR nat
+  y0, y1: VAR rat
+  s: VAR Sect
+  ss: VAR list[Sect]
+
+  %% fuel: the chain of f and its derivative is no longer than f
+  mlen(F): RECURSIVE nat =
+    IF null?(F) THEN 0 ELSE max(length(car(F)), mlen(cdr(F))) ENDIF
+  MEASURE length(F)
+
+  %% the sign of a member on the section between two rational neighbours
+  ssign(k, a, f, y0, y1): Sign3 =
+    IF length(f) >= 2 AND acount(k, a, f, y0, y1) > 0 THEN 0
+    ELSE asgn(a, f, y0)
+    ENDIF
+
+  svec2(k, a, F, y0, y1): SV =
+    map(LAMBDA (g: list[mpoly]): ssign(k, a, g, y0, y1))(F)
+
+  awalk2(k, a, F, ss): RECURSIVE SVL =
+    IF null?(ss) THEN null[SV]
+    ELSIF null?(cdr(ss)) OR null?(cdr(cdr(ss))) THEN (: avec(a, F, rv(car(ss))) :)
+    ELSE LET w = cdr(cdr(ss)) IN
+         cons(avec(a, F, rv(car(ss))),
+              cons(svec2(k, a, F, rv(car(ss)), rv(car(w))),
+                   awalk2(k, a, F, w)))
+    ENDIF
+  MEASURE length(ss)
+
+  svs_alg2(F, a): SVL =
+    awalk2(mlen(F), a, F, sects(sortu(acands(a, F))))
+
+  %% ---- the condition: NO discriminant anywhere in it -------------------
+  aok1b(k, a, f): bool =
+    IF dg(f) = 0 THEN TRUE
+    ELSE alc?(k, a, f) AND deg(cand(a, f)) > 0
+    ENDIF
+
+  aokF(k, a, F): RECURSIVE bool =
+    IF null?(F) THEN TRUE ELSE aok1b(k, a, car(F)) AND aokF(k, a, cdr(F)) ENDIF
+  MEASURE length(F)
+
+  aok2?(a, F): bool = aokF(mlen(F), a, F)
+
+  %% ---- the two-quantifier decision on top of it ------------------------
+  dec2b(q1: bool, q2: bool, (G: list[list[mpoly]]), (Psi: [SV -> bool])): bool =
+    qfoldS(q1, sects(rts(proj(G))),
+           LAMBDA (t: Sect): qfold(q2, svs_alg2(G, sample(t)), Psi))
+
+  ok2b(F): bool =
+    every(LAMBDA (t: Sect): aok2?(sample(t), F))(sects(rts(proj(F))))
+END alg_lift2

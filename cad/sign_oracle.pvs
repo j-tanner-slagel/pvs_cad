@@ -1,0 +1,111 @@
+sign_oracle: THEORY
+%----------------------------------------------------------------------------
+% Deciding the sign of a coefficient under the conditions on its path
+% (Phase 3).
+%
+% A branch tree asks for the sign of a polynomial in the parameters at every
+% step, and most of those signs are already determined --- by the conditions
+% higher up on the path, or by nothing at all (5 D^2 + 3 is positive).  With
+% one parameter that question is one the library already decides: whether
+% the conditions together with NOT (c > 0) have a solution is qe_exists of
+% qe_formula, read with the parameter as the variable and no parameters left.
+% forced(c, cx) is that decision, with the answer 2 (unknown) when the
+% polynomial or a condition is not univariate or the fuel is not right, and
+% forced_sound says a decided sign is the sign at every valuation the
+% conditions admit.  The context-aware trees of branch_ctx consult it before
+% they branch.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING qe_formula
+
+  L: VAR list[mpoly]
+  h, c: VAR mpoly
+  xs, ys: VAR list[real]
+  x: VAR real
+  cd: VAR branch_tree[bool].SignCond
+  cx: VAR list[branch_tree[bool].SignCond]
+  C: VAR Conj
+  F: VAR list[Conj]
+
+  %% a coefficient list of constants: a polynomial in the head variable alone,
+  %% whose value depends on the head of the valuation only
+  ulist?(L): bool = every(mconst?)(L)
+  ulist_null: LEMMA ulist?(null[mpoly])
+  ulist_cons: LEMMA ulist?(cons(h, L)) IFF (mconst?(h) AND ulist?(L))
+  univ_eval: LEMMA FORALL (L: list[mpoly]): FORALL (xs: list[real]):
+    ulist?(L) IMPLIES meval(mpol(L))(xs) = meval(mpol(L))(cons(hd(xs), null))
+
+  %% the negated list
+  lneg(L): list[mpoly] = map(LAMBDA (h: mpoly): mscal(-1, h), L)
+  lneg_null: LEMMA lneg(null[mpoly]) = null[mpoly]
+  lneg_cons: LEMMA lneg(cons(h, L)) = cons(mscal(-1, h), lneg(L))
+  lneg_eval: LEMMA FORALL (L: list[mpoly]): FORALL (xs: list[real]):
+    meval(mpol(lneg(L)))(xs) = - meval(mpol(L))(xs)
+  ulist_lneg: LEMMA FORALL (L: list[mpoly]): ulist?(L) IMPLIES ulist?(lneg(L))
+
+  %% the conditions of a path as one conjunct of qe_formula: an equation for
+  %% a zero sign, a strict inequality for a positive one, the negated list for
+  %% a negative one
+  addeq(C, L): Conj = C WITH [ceqs := cons(L, C`ceqs)]
+  addgt(C, L): Conj = C WITH [cgts := cons(L, C`cgts)]
+  ceval_addeq: LEMMA ceval(addeq(C, L), ys, x) IFF
+    (meval(mpol(L))(cons(x, ys)) = 0 AND ceval(C, ys, x))
+  ceval_addgt: LEMMA ceval(addgt(C, L), ys, x) IFF
+    (meval(mpol(L))(cons(x, ys)) > 0 AND ceval(C, ys, x))
+
+  cx_conj(cx): RECURSIVE Conj =
+    IF null?(cx) THEN (# ceqs := null[list[mpoly]], cgts := null[list[mpoly]] #)
+    ELSE LET C = cx_conj(cdr(cx)), L = as_list(car(cx)`cpol) IN
+      IF car(cx)`csign = 0 THEN addeq(C, L)
+      ELSIF car(cx)`csign = 1 THEN addgt(C, L)
+      ELSE addgt(C, lneg(L))
+      ENDIF
+    ENDIF
+  MEASURE length(cx)
+  cx_conj_null: LEMMA cx_conj(null[branch_tree[bool].SignCond]) =
+    (# ceqs := null[list[mpoly]], cgts := null[list[mpoly]] #)
+  cx_conj_cons: LEMMA cx_conj(cons(cd, cx)) =
+    LET C = cx_conj(cx), L = as_list(cd`cpol) IN
+      IF cd`csign = 0 THEN addeq(C, L)
+      ELSIF cd`csign = 1 THEN addgt(C, L)
+      ELSE addgt(C, lneg(L))
+      ENDIF
+  cx_univ?(cx): bool =
+    every(LAMBDA (d: branch_tree[bool].SignCond): ulist?(as_list(d`cpol)))(cx)
+  cx_univ_cons: LEMMA cx_univ?(cons(cd, cx)) IFF (ulist?(as_list(cd`cpol)) AND cx_univ?(cx))
+
+  %% the value of a condition's polynomial, read at the head of the valuation
+  cond_val: LEMMA ulist?(as_list(c)) IMPLIES
+    meval(c)(ys) = meval(mpol(as_list(c)))(cons(hd(ys), null[real]))
+  cond_univ: LEMMA ulist?(as_list(cd`cpol)) IMPLIES
+    (branch_tree[bool].cond_holds(cd, ys) IFF
+     sign3(meval(mpol(as_list(cd`cpol)))(cons(hd(ys), null[real]))) = cd`csign)
+  cx_conj_eval: LEMMA FORALL (cx: list[branch_tree[bool].SignCond]): FORALL (ys: list[real]):
+    cx_univ?(cx) IMPLIES
+    (branch_tree[bool].conds_hold(cx, ys) IFF ceval(cx_conj(cx), null[real], hd(ys)))
+
+  %% the three questions: is there a valuation the conditions admit at which
+  %% c is not positive, not negative, not zero
+  F_np(c, cx): list[Conj] =
+    (: addeq(cx_conj(cx), as_list(c)), addgt(cx_conj(cx), lneg(as_list(c))) :)
+  F_nn(c, cx): list[Conj] =
+    (: addeq(cx_conj(cx), as_list(c)), addgt(cx_conj(cx), as_list(c)) :)
+  F_nz(c, cx): list[Conj] =
+    (: addgt(cx_conj(cx), as_list(c)), addgt(cx_conj(cx), lneg(as_list(c))) :)
+  nosol(F): bool = fok(qe_fuel(F), F, null[real]) AND NOT qe_exists(qe_fuel(F), F, null[real])
+  nosol_sound: LEMMA nosol(F) IMPLIES NOT feval(F, null[real], x)
+  feval_two: LEMMA FORALL (C1, C2: Conj): feval((: C1, C2 :), ys, x) IFF (ceval(C1, ys, x) OR ceval(C2, ys, x))
+
+  ok?(c, cx): bool = ulist?(as_list(c)) AND cx_univ?(cx)
+  forced(c, cx): int =
+    IF NOT ok?(c, cx) THEN 2
+    ELSIF nosol(F_np(c, cx)) THEN 1
+    ELSIF nosol(F_nn(c, cx)) THEN -1
+    ELSIF nosol(F_nz(c, cx)) THEN 0
+    ELSE 2
+    ENDIF
+
+  forced_range: LEMMA forced(c, cx) = -1 OR forced(c, cx) = 0 OR forced(c, cx) = 1 OR forced(c, cx) = 2
+  forced_sound: THEOREM forced(c, cx) /= 2 AND branch_tree[bool].conds_hold(cx, ys)
+    IMPLIES branch_tree[bool].msign(c, ys) = forced(c, cx)
+END sign_oracle

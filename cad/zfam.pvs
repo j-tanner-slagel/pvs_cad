@@ -1,0 +1,117 @@
+zfam: THEORY
+%----------------------------------------------------------------------------
+% The EFFECTIVE family at a point, its reads, and the closure predicate of
+% the n-level certificate (FINISH_PLAN 3i, stage N2).
+%
+% A member all of whose coefficients vanish at the point ws is identically
+% zero over it: its sign is 0 at every point above, it carries no chain, and
+% it would defeat the walk's conditions (the product vanishes identically).
+% The executable walks feff(F, od); the semantic side walks
+%
+%   zf(F, ws)    the members NOT zero_at? msg(ws), each as ws sees it: without
+%                the top coefficients that vanish at ws (ztrunc's tz,
+%                2026-09-27), so a degree drop at ws is walked as the lower
+%                degree it is
+%   insz         puts the zeros back into a sign vector of zf(F, ws)
+%   crd(F)       every coefficient of every member (their signs decide zf;
+%                defined in ztrunc)
+%   wrs(F, ws)   crd(F) ++ the walk's intrinsic reads on zf(F, ws): what the
+%                executable's wi_rd_t lists, and what a sector must keep
+%   certz?       cert? of zf(F, ws)
+%   rdz?(F, G, p)  the certificate at p holds and every read of the F-walk
+%                there is, after rd_norm, a MEMBER of the family G above
+%                (the executable's clok?); so the reads' signs at any point
+%                are read off G's sign vector there (rdz_agree, rdz_vec)
+%   invz?        the reads wrs keep their signs on S
+%
+% fib_constz is S4's fib_const for a family with identically-zero members;
+% rf_invz is the hypothesis of the level-below constancy along a root-free
+% interval of the level's effective product.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING closed_pt, rd_norm, ztrunc
+
+  F, G, H: VAR list[list[mpoly]]
+  g: VAR list[mpoly]
+  l: VAR list[mpoly]
+  ws, ws0, ws1, xs, p, p1, p2: VAR list[real]
+  v, w: VAR SV
+  z, y, x, x0, q, a, b: VAR real
+  y0: VAR rat
+  S: VAR [real -> bool]
+  r, c: VAR mpoly
+  R: VAR list[mpoly]
+  sg1, sg2: VAR SG
+
+  %% ---- identically zero members ------------------------------------------------------
+  zero_at_list: LEMMA FORALL l: zero_at?(msg(ws), l) IMPLIES meval(mpol(l))(cons(z, ws)) = 0
+  zero_at_eval: LEMMA zero_at?(msg(ws), strip(g)) IMPLIES meval(mpol(g))(cons(z, ws)) = 0
+  zero_at_agree: LEMMA FORALL l: agree(sg1, sg2, l) IMPLIES (zero_at?(sg1, l) IFF zero_at?(sg2, l))
+
+  zf(F, ws): list[list[mpoly]] =
+    map(LAMBDA (g: list[mpoly]): tz(msg(ws), strip(g)))
+       (filter(LAMBDA (g: list[mpoly]): NOT zero_at?(msg(ws), strip(g)))(F))
+  zf_null: LEMMA zf(null[list[mpoly]], ws) = null[list[mpoly]]
+  zf_cons: LEMMA zf(cons(g, F), ws) =
+    IF zero_at?(msg(ws), strip(g)) THEN zf(F, ws) ELSE cons(tz(msg(ws), strip(g)), zf(F, ws)) ENDIF
+  h: VAR list[mpoly]
+  zf_mem: LEMMA FORALL F: member(h, zf(F, ws)) IFF
+    (EXISTS g: member(g, F) AND NOT zero_at?(msg(ws), strip(g)) AND h = tz(msg(ws), strip(g)))
+
+  insz(F, ws, v): RECURSIVE SV =
+    IF null?(F) THEN null[Sign3]
+    ELSIF zero_at?(msg(ws), strip(car(F))) THEN cons(0, insz(cdr(F), ws, v))
+    ELSIF null?(v) THEN null[Sign3]
+    ELSE cons(car(v), insz(cdr(F), ws, cdr(v)))
+    ENDIF
+  MEASURE length(F)
+
+  svec_insz: LEMMA FORALL F: svec(F, cons(z, ws)) = insz(F, ws, svec(zf(F, ws), cons(z, ws)))
+  fib_zf: LEMMA fib(F, ws)(v) IFF EXISTS w: fib(zf(F, ws), ws)(w) AND v = insz(F, ws, w)
+
+  %% the zero pattern is decided by the coefficient signs
+  zf_agree: LEMMA FORALL F: agree(msg(ws0), msg(ws1), crd(F)) IMPLIES
+    zf(F, ws1) = zf(F, ws0) AND FORALL v: insz(F, ws1, v) = insz(F, ws0, v)
+  fib_zfeq: LEMMA agree(msg(ws0), msg(ws1), crd(F))
+    AND (FORALL w: fib(zf(F, ws0), ws1)(w) IFF fib(zf(F, ws0), ws0)(w))
+    IMPLIES (fib(F, ws1)(v) IFF fib(F, ws0)(v))
+
+  %% ---- the reads and the certificate ------------------------------------------------------
+  wrs(F, ws): list[mpoly] = append(crd(F), wi_rd(zf(F, ws), msg(ws)))
+  certz?(F, ws): bool = cert?(zf(F, ws), msg(ws))
+
+  wrs_det: LEMMA agree(msg(ws0), msg(ws1), wrs(F, ws0)) IMPLIES
+    zf(F, ws1) = zf(F, ws0) AND wrs(F, ws1) = wrs(F, ws0) AND (certz?(F, ws1) IFF certz?(F, ws0))
+
+  %% ---- the reads of the level below are members of the family above --------------------
+  rdz?(F, G, p): bool =
+    certz?(F, p) AND FORALL r: member(r, wrs(F, p)) IMPLIES member(as_list(rd_norm(r)), G)
+
+  sign_rdn: LEMMA member(as_list(rd_norm(r)), G) AND svec(G, p1) = svec(G, p2)
+    IMPLIES msg(p1)(r) = msg(p2)(r)
+  rdz_agree: LEMMA rdz?(F, G, p1) AND svec(G, p1) = svec(G, p2)
+    IMPLIES agree(msg(p1), msg(p2), wrs(F, p1))
+  rdz_vec: LEMMA rdz?(F, G, p1) AND svec(G, p1) = svec(G, p2)
+    IMPLIES rdz?(F, G, p2) AND wrs(F, p2) = wrs(F, p1)
+
+  %% ---- a set on which the reads keep their signs ------------------------------------------
+  invz?(F, S, q, xs): bool =
+    FORALL x: S(x) IMPLIES agree(msg(cons(q, xs)), msg(cons(x, xs)), wrs(F, cons(q, xs)))
+
+  invz_wrs: LEMMA invz?(F, S, q, xs) AND S(x) IMPLIES
+    zf(F, cons(x, xs)) = zf(F, cons(q, xs)) AND wrs(F, cons(x, xs)) = wrs(F, cons(q, xs))
+    AND (certz?(F, cons(x, xs)) IFF certz?(F, cons(q, xs)))
+  invz_pair: LEMMA invz?(F, S, q, xs) AND S(x) AND S(x0) IMPLIES
+    agree(msg(cons(x0, xs)), msg(cons(x, xs)), wrs(F, cons(x0, xs)))
+  invz_inv: LEMMA invz?(F, S, q, xs) IMPLIES inv?(zf(F, cons(q, xs)), S, q, xs)
+
+  fib_invz: LEMMA conv?(S) AND invz?(F, S, q, xs) AND certz?(F, cons(q, xs)) AND S(q) AND S(x)
+    IMPLIES (fib(F, cons(x, xs))(v) IFF fib(F, cons(q, xs))(v))
+  fib_constz: THEOREM conv?(S) AND invz?(F, S, q, xs) AND certz?(F, cons(q, xs))
+    AND S(q) AND S(a) AND S(b)
+    IMPLIES (fib(F, cons(a, xs))(v) IFF fib(F, cons(b, xs))(v))
+
+  %% ---- a root-free interval of the effective product ------------------------------------
+  rf_svecz: LEMMA rootfree?(zf(F, ws), ws, y0, y) IMPLIES svec(F, cons(y, ws)) = svec(F, cons(y0, ws))
+  rf_invz: LEMMA rdz?(H, F, cons(y0, ws)) IMPLIES invz?(H, Srf(zf(F, ws), ws, y0), y0, ws)
+END zfam

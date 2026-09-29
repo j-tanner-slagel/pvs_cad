@@ -1,0 +1,35 @@
+spec_deg: THEORY
+%----------------------------------------------------------------------------
+% Stage B of item 1: degree and leading coefficient are determined by sign
+% data alone.
+%
+% deg(pl) is the largest index carrying a nonzero entry, so it depends only on
+% WHICH coefficients vanish -- and sign3 decides exactly that. So two
+% specializations of the same member with equal coefficient signs have equal
+% degree. The coefficients are in the Collins projection (cofs is part of
+% projc1), so sect_svec makes their signs agree along a sector, which is what
+% supplies the hypothesis.
+%
+% Uniqueness is the only real content: deg's dependent type CHARACTERIZES it
+% (nonzero at deg, zero above), and two indices satisfying that must be equal.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad_projc, sect_svec
+
+  p, q: VAR Polylist
+  j: VAR nat
+
+  %% sign3 decides vanishing, which is all deg looks at
+  sign3_zero: LEMMA FORALL (a: real): sign3(a) = 0 IFF a = 0
+
+  %% one inequality; the hypothesis is symmetric in p and q, so the other
+  %% comes free and deg_signs is antisymmetry.  Proving the equality directly
+  %% splits into a dozen sign branches -- this way each half is three steps.
+  deg_le: LEMMA length(p) = length(q)
+    AND (FORALL (j: below(length(p))): sign3(nth(p, j)) = sign3(nth(q, j)))
+    IMPLIES deg(p) <= deg(q)
+
+  deg_signs: LEMMA length(p) = length(q)
+    AND (FORALL (j: below(length(p))): sign3(nth(p, j)) = sign3(nth(q, j)))
+    IMPLIES deg(p) = deg(q)
+END spec_deg

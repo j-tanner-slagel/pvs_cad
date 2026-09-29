@@ -1,0 +1,31 @@
+alg_lift2_ex: THEORY
+%----------------------------------------------------------------------------
+% What Sturm counting buys over the sign-change rule (item A, measured).
+%
+% f_rad2 is x^2 + y^2 - 2.  Its sections are the circle's vertical tangents,
+% at +-sqrt(2), and there the fibre has a REPEATED root: alg_lift's
+% sign-change rule is silent and aok? refuses them, giving
+% (: TRUE, FALSE, TRUE, FALSE, TRUE :) per sector.  Sturm counting does not
+% care about multiplicity, so ok2b should pass everywhere and dec2b should
+% decide.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING alg_lift2, alg_dec_ex
+
+  v: VAR SV
+
+  psi2(v):   bool = sgn(v, 0) = 0 OR sgn(v, 1) > 0
+  psi2_f(v): bool = sgn(v, 0) = 0     % drop the escape clause: FALSE
+
+  %% the old rule refuses the two sections; the new one does not
+  old_refuses_rad2: LEMMA ok2a(f_rad2) = FALSE
+  new_ok_rad2:      LEMMA ok2b(f_rad2)
+
+  %% FORALL x: EXISTS y: x^2 + y^2 = 2 OR x^2 > 2   is TRUE
+  rad2_val:  LEMMA dec2b(TRUE, FALSE, f_rad2, psi2)
+  rad2_ctl:  LEMMA dec2b(TRUE, FALSE, f_rad2, psi2_f) = FALSE
+
+  %% and it still agrees where the sign-change rule worked
+  meet_agrees: LEMMA ok2b(f_meet) AND dec2b(FALSE, FALSE, f_meet, psi_meet)
+  meet_ctl:    LEMMA dec2b(TRUE, FALSE, f_meet, psi_meet) = FALSE
+END alg_lift2_ex

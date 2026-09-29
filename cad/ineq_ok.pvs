@@ -1,0 +1,97 @@
+ineq_ok: THEORY
+%----------------------------------------------------------------------------
+% The conjunction with no equation, at a valuation, in the tree's terms
+% (Phase 3).
+%
+% ineq_exists of poly_rolle decides EXISTS x: every q in Q: q(x, ys) > 0 for
+% conditions with nonvanishing leading coefficients by three cases: far to the
+% right, far to the left, or at a critical point of the product.  The tree of
+% ineq_tree needs each case in a form its leaves can see.  The two far-out
+% conditions are functions of the signs a leaf records (posinfp_at,
+% neginfp_at).  The product has degree the sum of the degrees (qprod_dg), so
+% when it is a constant every condition is a constant and a satisfied
+% conjunction holds everywhere, in particular far to the right (const_posinf);
+% when it is linear its derivative is a nonzero constant and there is no
+% critical point (lin_nocrit); and otherwise its derivative has positive
+% degree and the critical-point question is the one many_tree decides
+% (ineq_big).  The degree sum is bounded by the syntactic fuel mlen (dgs_le).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING many_tree
+
+  l: VAR list[mpoly]
+  Q, L: VAR list[list[mpoly]]
+  ys: VAR list[real]
+  x, y: VAR real
+  n: VAR nat
+  z: VAR real
+  p: VAR SL
+  ps: VAR list[SL]
+
+  %% the far-out conditions read off the signs a leaf carries
+  lcp(p): bool = cons?(p`slist) AND p`ssign = 1
+  lca(p): bool = cons?(p`slist) AND (-1) ^ dg(p`slist) * p`ssign = 1
+  posinfp(ps): bool = every(lcp)(ps)
+  neginfp(ps): bool = every(lca)(ps)
+
+  sign3_one: LEMMA sign3(z) = 1 IFF z > 0
+  m1_pow: LEMMA (-1) ^ n = 1 OR (-1) ^ n = -1
+  lcp_at: LEMMA lcp(sl_of(l, ys)) IFF lcpos(l, ys)
+  lca_at: LEMMA lca(sl_of(l, ys)) IFF lcalt(l, ys)
+
+  posinfp_at: LEMMA FORALL (Q: list[list[mpoly]]): FORALL (ys: list[real]):
+    posinfp(slofs(Q, ys)) IFF posinf(nlists(Q, ys), ys)
+  neginfp_at: LEMMA FORALL (Q: list[list[mpoly]]): FORALL (ys: list[real]):
+    neginfp(slofs(Q, ys)) IFF neginf(nlists(Q, ys), ys)
+
+  %% the lists of a list of pairs
+  slists_null: LEMMA slists(null[SL]) = null[list[mpoly]]
+  slists_cons: LEMMA slists(cons(p, ps)) = cons(p`slist, slists(ps))
+
+  %% the degree of the product is the sum of the degrees
+  dgs(L): RECURSIVE nat = IF null?(L) THEN 0 ELSE dg(car(L)) + dgs(cdr(L)) ENDIF
+  MEASURE length(L)
+  dgs_null: LEMMA dgs(null[list[mpoly]]) = 0
+  dgs_cons: LEMMA dgs(cons(l, L)) = dg(l) + dgs(L)
+  dgs_le: LEMMA FORALL (L: list[list[mpoly]]): 2 * dgs(L) <= mlen(L)
+  dg_one_list: LEMMA dg(one_list) = 0
+  qprod_dg: LEMMA FORALL (L: list[list[mpoly]]): FORALL (ys: list[real]):
+    allok(L, ys) IMPLIES dg(qprod(L, ys)) = dgs(L)
+  qprod_len: LEMMA allok(L, ys) IMPLIES length(qprod(L, ys)) = dgs(L) + 1
+
+  %% a constant product: every condition is a constant, so a conjunction that
+  %% holds somewhere holds everywhere, and so far to the right
+  dgs_zero: LEMMA FORALL (L: list[list[mpoly]]): FORALL (ys: list[real]):
+    allok(L, ys) AND dgs(L) = 0 IMPLIES
+    every(LAMBDA (l: list[mpoly]): length(l) = 1)(L)
+  const_allpf: LEMMA FORALL (L: list[list[mpoly]]): FORALL (x, y: real, ys: list[real]):
+    every(LAMBDA (l: list[mpoly]): length(l) = 1)(L) AND allpf(L, ys, x)
+    IMPLIES allpf(L, ys, y)
+  const_posinf: LEMMA allok(L, ys) AND length(qprod(L, ys)) = 1 AND allpf(L, ys, x)
+    IMPLIES posinf(L, ys)
+
+  %% a linear product: its derivative is a nonzero constant
+  lin_nocrit: LEMMA allok(L, ys) AND length(qprod(L, ys)) = 2 IMPLIES
+    pf(lderiv(qprod(L, ys)), ys)(x) /= 0
+
+  %% the three cases of the reduction
+  ineq_far: LEMMA allok(L, ys) AND (posinf(L, ys) OR neginf(L, ys)) IMPLIES
+    EXISTS (x: real): allgt(L, ys, x)
+  ineq_small: LEMMA allok(L, ys) AND length(qprod(L, ys)) <= 2 AND
+    NOT posinf(L, ys) AND NOT neginf(L, ys) IMPLIES
+    NOT (EXISTS (x: real): allgt(L, ys, x))
+  ineq_big: LEMMA allok(L, ys) AND length(qprod(L, ys)) >= 3 AND
+    NOT posinf(L, ys) AND NOT neginf(L, ys) IMPLIES
+    ((EXISTS (x: real): allgt(L, ys, x)) IFF
+     (EXISTS (x: real): meval(mpol(lderiv(qprod(L, ys))))(cons(x, ys)) = 0 AND
+                        allgt(L, ys, x)))
+
+  %% the derivative of the product, for the tree
+  lderiv_big: LEMMA allok(L, ys) AND length(qprod(L, ys)) >= 3 IMPLIES
+    length(lderiv(qprod(L, ys))) >= 2 AND lok(lderiv(qprod(L, ys)), ys) AND
+    length(lderiv(qprod(L, ys))) = dgs(L)
+
+  %% normalizing the conditions does not change the question
+  ex_allgt_nlists: LEMMA (EXISTS (x: real): allgt(nlists(Q, ys), ys, x)) IFF
+                         (EXISTS (x: real): allgt(Q, ys, x))
+END ineq_ok

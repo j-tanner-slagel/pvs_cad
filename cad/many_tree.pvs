@@ -1,0 +1,83 @@
+many_tree: THEORY
+%----------------------------------------------------------------------------
+% A root at which many conditions hold, decided on a tree (Phase 3).
+%
+% mcore decides EXISTS x: p(x, ys) = 0 AND every q in Q: q(x, ys) > 0 once the
+% polynomial p is normalized and has positive degree.  It normalizes every
+% condition as a degree branching (snormps); a condition that normalizes to
+% nothing is the zero polynomial, which is nowhere positive, so that branch is
+% FALSE; on every other branch all the leading coefficients are known not to
+% vanish, the recursion of tarski_tree is well formed (many_ok), and the
+% answer is whether its count is positive.
+%
+% mcore_sound needs the degree of p and a bound on the fuel, length(p) + 1 +
+% mlen(Q) terms, and nothing about the conditions: those are decided inside.
+% mcount is the part after the normalization, kept separate so that a caller
+% that has already normalized the conditions does not branch on them again.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING many_ok, tarski_tree, branch_map[int, bool]
+
+  l, l0: VAR list[mpoly]
+  Q: VAR list[list[mpoly]]
+  ys: VAR list[real]
+  k: VAR nat
+  x: VAR real
+  p0: VAR SL
+  ps: VAR list[SL]
+
+  %% normalize every condition, recording the sign of each leading coefficient
+  snormps(Q): RECURSIVE btree[list[SL]] =
+    IF null?(Q) THEN bleaf(null[SL])
+    ELSE bbind(snormp(car(Q)), LAMBDA (p: SL):
+           bmap(LAMBDA (qs: list[SL]): cons(p, qs), snormps(cdr(Q))))
+    ENDIF
+  MEASURE length(Q)
+  snormps_null: LEMMA snormps(null[list[mpoly]]) = bleaf(null[SL])
+  snormps_cons: LEMMA snormps(cons(l, Q)) =
+    bbind(snormp(l), LAMBDA (p: SL):
+      bmap(LAMBDA (qs: list[SL]): cons(p, qs), snormps(Q)))
+
+  %% what the branching selects
+  slofs(Q, ys): list[SL] =
+    map(LAMBDA (l: list[mpoly]): sl_of(select(snorm(l), ys), ys), Q)
+  slofs_null: LEMMA slofs(null[list[mpoly]], ys) = null[SL]
+  slofs_cons: LEMMA slofs(cons(l, Q), ys) =
+    cons(sl_of(select(snorm(l), ys), ys), slofs(Q, ys))
+  select_snormps: THEOREM FORALL (Q: list[list[mpoly]]): FORALL (ys: list[real]):
+    select(snormps(Q), ys) = slofs(Q, ys)
+
+  %% the lists of the selected leaf are the normalized conditions
+  slists(ps): list[list[mpoly]] = map(LAMBDA (p: SL): p`slist, ps)
+  slists_slofs: LEMMA FORALL (Q: list[list[mpoly]]): FORALL (ys: list[real]):
+    slists(slofs(Q, ys)) = nlists(Q, ys)
+
+  %% normalizing the conditions does not change the question
+  ex_nlists: LEMMA
+    (EXISTS (x: real): meval(mpol(l0))(cons(x, ys)) = 0 AND allgt(nlists(Q, ys), ys, x))
+    IFF (EXISTS (x: real): meval(mpol(l0))(cons(x, ys)) = 0 AND allgt(Q, ys, x))
+
+  %% the length of the multiplier the recursion starts from
+  one_list_len: LEMMA length(one_list) = 1
+
+  %% the count over conditions that are already normalized: whether the
+  %% recursion of tarski_tree, started from the multiplier one, is positive
+  mcount(k, p0, ps): btree[bool] =
+    bmap(LAMBDA (n: int): n > 0, mtree(k, p0, slists(ps), one_list))
+
+  mcount_sound: THEOREM
+    length(l0) >= 2 AND lok(l0, ys) AND allok(slists(ps), ys) AND
+    length(l0) + 1 + mlen(slists(ps)) <= k IMPLIES
+    (select(mcount(k, sl_of(l0, ys), ps), ys) IFF
+     (EXISTS (x: real): meval(mpol(l0))(cons(x, ys)) = 0 AND allgt(slists(ps), ys, x)))
+
+  %% the decision once the polynomial is normalized and of positive degree
+  mcore(k, p0, Q): btree[bool] =
+    bbind(snormps(Q), LAMBDA (ps: list[SL]):
+      IF allcons(slists(ps)) THEN mcount(k, p0, ps) ELSE bleaf(FALSE) ENDIF)
+
+  mcore_sound: THEOREM
+    length(l0) >= 2 AND lok(l0, ys) AND length(l0) + 1 + mlen(Q) <= k IMPLIES
+    (select(mcore(k, sl_of(l0, ys), Q), ys) IFF
+     (EXISTS (x: real): meval(mpol(l0))(cons(x, ys)) = 0 AND allgt(Q, ys, x)))
+END many_tree

@@ -1,0 +1,50 @@
+mpoly_eqd: THEORY
+%----------------------------------------------------------------------------
+% Decidable equality of polynomials and coefficient lists, for execution.
+%
+% The ground evaluator compares values of a non-primitive type by a generic
+% Lisp equality that fails on two lists of different lengths when the
+% shorter comes first ("Equality unknown between types NULL and CONS"), so
+% the executable procedures of Phase 6 never write l1 = l2 on lists of
+% polynomials. meq and leq decide the equality by structural recursion
+% (meq_eq, leq_eq); posq is pos of sign_vec with leq, and sgnq_of the
+% sgn_of of tree_sel with posq.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING sign_vec
+
+  p, q, c: VAR mpoly
+  l, l2: VAR list[mpoly]
+  F: VAR list[list[mpoly]]
+  v: VAR list[Sign3]
+
+  meq(p, q): RECURSIVE bool =
+    CASES p OF
+      mconst(a): mconst?(q) AND a = mc(q),
+      mpol(u): mpol?(q) AND
+               (IF null?(u) THEN null?(coeffs(q))
+                ELSE cons?(coeffs(q)) AND meq(car(u), car(coeffs(q))) AND
+                     meq(mpol(cdr(u)), mpol(cdr(coeffs(q))))
+                ENDIF)
+    ENDCASES
+  MEASURE msize(p)
+  meq_eq: LEMMA FORALL p: FORALL q: meq(p, q) IFF p = q
+
+  leq(l, l2): RECURSIVE bool =
+    IF null?(l) THEN null?(l2)
+    ELSE cons?(l2) AND meq(car(l), car(l2)) AND leq(cdr(l), cdr(l2))
+    ENDIF
+  MEASURE length(l)
+  leq_eq: LEMMA FORALL l: FORALL l2: leq(l, l2) IFF l = l2
+
+  posq(F, l): RECURSIVE nat =
+    IF null?(F) THEN 0
+    ELSIF leq(car(F), l) THEN 0
+    ELSE 1 + posq(cdr(F), l)
+    ENDIF
+  MEASURE length(F)
+  posq_pos: LEMMA FORALL F: posq(F, l) = pos(F, l)
+
+  sgnq_of(F, v, c): Sign3 =
+    IF posq(F, as_list(c)) < length(v) THEN nth(v, posq(F, as_list(c))) ELSE 0 ENDIF
+END mpoly_eqd

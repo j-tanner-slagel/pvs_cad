@@ -1,0 +1,101 @@
+sg_chain2: THEORY
+%----------------------------------------------------------------------------
+% The Sturm chains and the Tarski query with the reduced step (Phase 6,
+% performance).
+%
+% rchain2_sg is rchain_sg of sg_chain with the step of sturm_step2: the
+% recursion carries the divisor of the next step (the leading coefficient
+% of the element before the pair, and one more than the degree drop before
+% it). At msg(ys) the chain is, element by element, a positive multiple of
+% the chain of branch_prs (rchain2_prop), so the leading signs and the
+% degrees agree and the Tarski query read off it is the query of Phase 3
+% (tq2_sg_at); the count under sign conditions follows (mts2_sg_at). Both
+% depend on the sign function only through their reads (_det), so sg_conj
+% can use mts2_sg in place of mts_sg.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING sturm_step2, sg_chain
+
+  k, e, i: VAR nat
+  l0, l1, l2, m1, m2, g: VAR list[mpoly]
+  cc: VAR mpoly
+  cs, cs2, Q: VAR list[list[mpoly]]
+  sg, sg1, sg2: VAR SG
+  ys: VAR list[real]
+  c1, c2: VAR posreal
+
+  %% the next element and the divisor after it
+  snext2_sg(l1, (l2 | cons?(l2)), cc, e, sg): list[mpoly] = snorm_sg(sstep2(l1, l2, cc, e, sg), sg)
+  snext2_rd(l1, (l2 | cons?(l2)), cc, e, sg): list[mpoly] =
+    append(sstep2_rd(l1, l2, cc, e, sg), snorm_rd(sstep2(l1, l2, cc, e, sg), sg))
+  nexp(l1, l2): nat = IF dg(l1) >= dg(l2) THEN dg(l1) - dg(l2) + 1 ELSE 0 ENDIF
+
+  %% the remainder chain
+  rchain2_sg(k, l1, l2, cc, e, sg): RECURSIVE list[list[mpoly]] =
+    IF cons?(l2) AND k > 0
+    THEN cons(l2, rchain2_sg(k - 1, l2, snext2_sg(l1, l2, cc, e, sg), llast(l2), nexp(l1, l2), sg))
+    ELSE (: null[mpoly] :)
+    ENDIF
+  MEASURE k
+  rchain2_rd(k, l1, l2, cc, e, sg): RECURSIVE list[mpoly] =
+    IF cons?(l2) AND k > 0
+    THEN append(snext2_rd(l1, l2, cc, e, sg),
+                rchain2_rd(k - 1, l2, snext2_sg(l1, l2, cc, e, sg), llast(l2), nexp(l1, l2), sg))
+    ELSE null[mpoly]
+    ENDIF
+  MEASURE k
+
+  %% chains proportional element by element
+  chprop(cs, cs2, ys): bool = length(cs) = length(cs2) AND
+    FORALL i: i < length(cs) IMPLIES EXISTS (c: posreal): prop(nth(cs, i), nth(cs2, i), c, ys)
+  chprop_cons: LEMMA prop(l1, m1, c1, ys) AND chprop(cs, cs2, ys) IMPLIES
+    chprop(cons(l1, cs), cons(m1, cs2), ys)
+  snext2_prop: LEMMA cons?(l2) AND blc(l2, ys) /= 0 AND prop(l1, m1, c1, ys) AND prop(l2, m2, c2, ys) IMPLIES
+    EXISTS (c: posreal): prop(snext2_sg(l1, l2, cc, e, msg(ys)), snext(m1, m2, ys), c, ys)
+  rchain2_prop: LEMMA FORALL k: FORALL l1, l2, m1, m2, cc, e, c1, c2:
+    prop(l1, m1, c1, ys) AND prop(l2, m2, c2, ys) AND (cons?(l2) IMPLIES blc(l2, ys) /= 0) IMPLIES
+    chprop(rchain2_sg(k, l1, l2, cc, e, msg(ys)), rchain(k, m1, m2, ys), ys)
+  rchain2_det: LEMMA FORALL k: FORALL l1, l2, cc, e: agree(sg1, sg2, rchain2_rd(k, l1, l2, cc, e, sg1)) IMPLIES
+    rchain2_sg(k, l1, l2, cc, e, sg2) = rchain2_sg(k, l1, l2, cc, e, sg1) AND
+    rchain2_rd(k, l1, l2, cc, e, sg2) = rchain2_rd(k, l1, l2, cc, e, sg1)
+
+  %% the query depends on the chain only through what chprop preserves
+  slof_len: LEMMA length(slof(cs, ys)) = length(cs)
+  slof_nth: LEMMA i < length(cs) IMPLIES nth(slof(cs, ys), i) = sl_of(nth(cs, i), ys)
+  chprop_tqf: LEMMA chprop(cs, cs2, ys) IMPLIES tqf(slof(cs, ys)) = tqf(slof(cs2, ys))
+
+  %% the Tarski chain and the query
+  tchain2_sg(k, l0, g, sg): list[list[mpoly]] =
+    cons(l0, rchain2_sg(k, l0, tsnd_sg(g, l0, sg), mconst(1), 0, sg))
+  tchain2_rd(k, l0, g, sg): list[mpoly] =
+    append(tsnd_rd(g, l0, sg), rchain2_rd(k, l0, tsnd_sg(g, l0, sg), mconst(1), 0, sg))
+  tchain2_det: LEMMA agree(sg1, sg2, tchain2_rd(k, l0, g, sg1)) IMPLIES
+    tchain2_sg(k, l0, g, sg2) = tchain2_sg(k, l0, g, sg1) AND
+    tchain2_rd(k, l0, g, sg2) = tchain2_rd(k, l0, g, sg1)
+  tq2_sg(k, l0, g, sg): int = tqf(slof_sg(tchain2_sg(k, l0, g, sg), sg))
+  tq2_rd(k, l0, g, sg): list[mpoly] =
+    append(tchain2_rd(k, l0, g, sg), slof_rd(tchain2_sg(k, l0, g, sg), sg))
+  tq2_sg_at: LEMMA tq2_sg(k, l0, g, msg(ys)) = tq(k, l0, g, ys)
+  tq2_det: LEMMA agree(sg1, sg2, tq2_rd(k, l0, g, sg1)) IMPLIES
+    tq2_sg(k, l0, g, sg2) = tq2_sg(k, l0, g, sg1) AND tq2_rd(k, l0, g, sg2) = tq2_rd(k, l0, g, sg1)
+
+  %% roots under sign conditions
+  mts2_sg(k, l0, Q, g, sg): RECURSIVE int =
+    IF null?(Q) THEN tq2_sg(k, l0, g, sg)
+    ELSE mts2_sg(k, l0, cdr(Q), lmn_sg(car(Q), g, sg), sg) +
+         mts2_sg(k, l0, cdr(Q), lmn_sg(car(Q), lmn_sg(car(Q), g, sg), sg), sg)
+    ENDIF
+  MEASURE length(Q)
+  mts2_rd(k, l0, Q, g, sg): RECURSIVE list[mpoly] =
+    IF null?(Q) THEN tq2_rd(k, l0, g, sg)
+    ELSE append(lmn_rd(car(Q), g, sg),
+         append(mts2_rd(k, l0, cdr(Q), lmn_sg(car(Q), g, sg), sg),
+         append(lmn_rd(car(Q), lmn_sg(car(Q), g, sg), sg),
+                mts2_rd(k, l0, cdr(Q), lmn_sg(car(Q), lmn_sg(car(Q), g, sg), sg), sg))))
+    ENDIF
+  MEASURE length(Q)
+  mts2_sg_at: LEMMA FORALL Q: FORALL g: mts2_sg(k, l0, Q, g, msg(ys)) = mts(k, l0, Q, g, ys)
+  mts2_det: LEMMA FORALL Q: FORALL g: agree(sg1, sg2, mts2_rd(k, l0, Q, g, sg1)) IMPLIES
+    mts2_sg(k, l0, Q, g, sg2) = mts2_sg(k, l0, Q, g, sg1) AND
+    mts2_rd(k, l0, Q, g, sg2) = mts2_rd(k, l0, Q, g, sg1)
+END sg_chain2

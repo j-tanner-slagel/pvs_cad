@@ -1,0 +1,40 @@
+mpoly_mono_examples: THEORY
+%----------------------------------------------------------------------------
+% What the conversion to NASALib's mult_poly buys (Phase 1).
+%
+% tm sends a recursive polynomial to a mult_poly monomial list; tm_eval says
+% the two evaluate identically. Composed with the deep embedding, any
+% polynomial expression written with pe_* constructors (that is, anything the
+% mpoly-eq strategy can parse from a sequent) can be handed to the mult_poly
+% library with its value preserved: this is the bridge that lets the Phase 1
+% kernel use mult_poly's theorems (and mult_poly's results use ours).
+%
+% The ground examples are checked by evaluation (eval-formula), i.e. tm is
+% executable as-is.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING mpoly_mono, mpoly_embed
+
+  e: VAR PolyExpr
+  xs: VAR list[real]
+
+  %% the bridge: PolyExpr ---pto---> mpoly ---tm---> mult_poly, value preserved
+  tm_peval: THEOREM length(xs) >= max_length(tm(pto(e))) IMPLIES
+    full_eval(tm(pto(e)))(xs) = peval(e)(xs)
+
+  %% 1 + 2 x   (x = variable 0)
+  tm_ex1: LEMMA tm(mpol((: mconst(1), mconst(2) :))) =
+    (: (# C := 1, alpha := (: 0 :) #), (# C := 2, alpha := (: 1 :) #) :)
+
+  %% x*y + 3   (x = variable 0, y = variable 1):  x * (0 + 1*y) + 3
+  tm_ex2: LEMMA tm(mpol((: mconst(3), mpol((: mconst(0), mconst(1) :)) :))) =
+    (: (# C := 3, alpha := (: 0 :) #), (# C := 1, alpha := (: 1, 1 :) #) :)
+
+  %% the normal form of (x + y)^2 sent to mult_poly (exponent vectors may be
+  %% shorter than the number of variables; a missing exponent is 0)
+  tm_ex3: LEMMA tm(pnorm(pe_pow(pe_add(pe_var(1), pe_var(2)), 2))) =
+    (: (# C := 1, alpha := (: 0, 2 :) #), (# C := 2, alpha := (: 1, 1 :) #), (# C := 1, alpha := (: 2 :) #) :)
+
+  %% and its value agrees with mult_poly's evaluation at (3, 4)
+  tm_ex4: LEMMA full_eval(tm(pnorm(pe_pow(pe_add(pe_var(1), pe_var(2)), 2))))((: 3, 4 :)) = 49
+END mpoly_mono_examples

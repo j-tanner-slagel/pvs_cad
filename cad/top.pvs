@@ -1,0 +1,1350 @@
+top: THEORY
+%----------------------------------------------------------------------------
+% pvs_cad: a formally verified, executable computer algebra core for PVS,
+% centered on cylindrical algebraic decomposition.  See ../CAD_PLAN.md.
+%
+% Phase 0 (baseline and harness)
+%   eval_probe   throwaway experiment: recursive multivariate polynomial
+%                datatype under the ground evaluator (design decision D1)
+%
+% Phase 1 (multivariate polynomial kernel)
+%   mpoly        DATATYPE: mconst(rat) | mpol(list[mpoly])
+%   mpoly_def    size measure, positional evaluation (head of the valuation
+%                is the main variable), variables mvar(j), degree
+%   mpoly_arith  madd, mscal, mneg, msub, mmulx (same-level and coefficient
+%                mode), mmul, mpow; evaluation is a homomorphism for each
+%   mpoly_norm   canonical form mnorm (no trailing zeros, constants collapsed),
+%                meval_mnorm (soundness), normal?/normalx and the facts that
+%                mnorm lands in normal? and is the identity on it
+%   PolyExpr     DATATYPE: deep embedding of polynomial expressions
+%   mpoly_embed  peval, its rewrite lemmas, pto/pnorm, the reflection theorem
+%                poly_eq_by_norm used by the mpoly-eq strategy
+%   mpoly_examples  ten identities closed by (mpoly-eq), incl. a function
+%                atom f(x), sq, and division by a constant
+%   pvs-strategies  mpoly-eq (Lisp printer expression -> PolyExpr, reflection)
+%                and mpoly-simp (normal form printed back and replaced in place)
+%   mpoly_showcase  what the strategies can do: classical identities up to
+%                8 variables, Chebyshev/Legendre definitions, 2x2 matrix
+%                identities, opaque atoms, inequalities via identities,
+%                in-place normalization
+%   mpoly_coefs  bridge to reals@polynomials: coefficient sequences of the
+%                head variable, meval_mpol_poly, poly_coefs_eq (equal
+%                functions of the head variable have equal coefficients)
+%   mpoly_unique uniqueness of normal forms: normal terms denoting the same
+%                function are equal; mnorm(p) = mnorm(q) IFF eq_fun?(p, q)
+%                (completeness of mpoly-eq)
+%   mpoly_univ   the univariate view in the main variable: coef, lc, cf,
+%                meval_coef; mderiv with meval_mderiv and mderiv_is_deriv
+%                (analytic derivative); partial_eval to a Sturm Polylist
+%                with partial_eval_polylist
+%   mpoly_pdiv   pseudo-division in the main variable on coefficient lists:
+%                lscal, shiftl, lbut/llast, lsub with length and evaluation
+%                lemmas; pstep; pquo_rem with pquo_rem_eval
+%                (b^pk * f = quo * g + rem) and pquo_rem_rem_length
+%   mpoly_mono   conversion tm to NASALib mult_poly's monomial lists (shift0,
+%                shift_up, bump on exponent vectors) with tm_eval:
+%                full_eval(tm(p))(xs) = meval(p)(xs); evaluation lemmas for
+%                mult_poly's full_eval (nil, cons, append, scale, shifts)
+%   mpoly_mono_examples  the bridge tm_peval (any PolyExpr reaches mult_poly
+%                with its value preserved) and ground conversions checked by
+%                evaluation
+%
+% Phase 2: real algebraic numbers on top of NASALib's Sturm library
+%   alg_count    root counting on closed rational intervals: nroots_a on
+%                integer arrays (roots_closed_int with its chain) and nroots
+%                on Sturm Polylists via ipoly (clear denominators), with the
+%                specifications nroots = 0 / >= 1 / = 1
+%   alg_def      algebraic numbers as isolating intervals [# p, lb, ub #]
+%                with the executable invariant alg?, value(a) (the unique
+%                root), rational numbers as algebraic numbers, bisection
+%                refine/refine_n keeping the value
+%   alg_zero     q(value(a)) = 0 decided by counting the roots of p^2 + q^2
+%                (integer arrays isq/sos with explicit degree and positive
+%                leading coefficient); zero_at_def
+%   alg_sign     sign of q at value(a): zero test, constant case, bisection
+%                loop sep until q has no root in the interval (measure
+%                real_ord_ep(qdist) with qdist = min_poly_root_dist of p*q),
+%                then the Sturm library's compute_poly_sat decides the sign;
+%                alg_sign_def
+%   alg_isolate  all real roots of p as an increasing list of algebraic
+%                numbers: half-open counting nroots_h (no double counting at
+%                split points), shrink for a rational root, bisection iso
+%                (measure induction with the root separation), Cauchy-type
+%                bound rbound; iso_spec, roots_alg/complete/increasing
+%   alg_order    equality and order of two algebraic numbers with different
+%                polynomials: alg_eq by alg_sign, sepr bisects both until the
+%                intervals are disjoint; alg_cmp_def, alg_lt_def
+%   thom_lemma   Thom's lemma on coefficient sequences: iterated derivatives
+%                dk, sign conditions sat, convexity of their realizations
+%                (sat_convex, downward induction with NASALib's strict
+%                monotonicity), thom_distinct (roots with the same derivative
+%                signs coincide)
+%   thom_enc     executable Thom encodings: pderiv/nderiv on Polylists,
+%                thom(p, a) = signs of p^(d), ..., p' at value(a) by alg_sign,
+%                nderiv_eval bridge, thom_encoding_distinct
+%   alg_strategy support for the alg-roots strategy: upoly (Polylist of a
+%                univariate PolyExpr), root_interval, sign_at_root
+%   alg_strategy_examples  what alg-roots proves: root intervals and signs
+%                of other polynomials at the roots, added as proved facts
+%   alg_examples ground examples checked by eval-formula: root counts, the
+%                representation of sqrt(2), its refinement, signs, isolation
+%                of all roots (up to a quintic), comparisons, Thom encodings
+%
+% Phase 3: branching quantifier elimination
+%   btree / branch_tree  sign-condition branch trees: a node branches on the
+%                sign of an mpoly in the parameters, a leaf carries a result;
+%                select follows the signs at a valuation, branches lists the
+%                leaves with their path conditions, and branch_exists and
+%                branch_sound make that list an exhaustive and unambiguous
+%                case analysis of the parameters
+%   branch_map   bmap and bbind, so one symbolic step followed by another is
+%                again a branch tree; select commutes with both
+%   branch_norm  the symbolic degree: snorm branches on the sign of the
+%                leading coefficient until it is known nonzero, preserving the
+%                polynomial as a function (snorm_eval, snorm_lc)
+%   poly_unique  uniqueness of division with remainder over the reals, in the
+%                plain and the scaled form, which NASALib's poly_divide does
+%                not provide
+%   mpoly_real   earr, the evaluation homomorphism from a coefficient list
+%                over mpoly to a real coefficient array, the form every
+%                theorem of NASALib's Sturm development is stated in
+%   prem_arr     the symbolic pseudo-remainder of Phase 1 is exactly b^k
+%                times the remainder of NASALib's poly_divide, one valuation
+%                at a time
+%   mpoly_prod   lmul, the product of two coefficient lists, and earr_lmul:
+%                the array it denotes is NASALib's polynomial_prod of the
+%                arrays of the factors, proved by coefficient uniqueness
+%                rather than by computing the convolution
+%   snorm_arr    normalizing leaves the array alone, not only the polynomial
+%                (snorm_earr), so the degree of the normalized list is the top
+%                index at which the array is nonzero (snorm_dg_eq)
+%   earr_deriv   the formal derivative of a coefficient list, and the array it
+%                denotes is NASALib's poly_deriv of the array of the list
+%   branch_prs   the pseudo-remainder sequence as a branch tree: prs iterates
+%                the step and the degree branching, rchain is the same
+%                recursion at one valuation, select_prs identifies them, and
+%                the rchain lemmas are the structure of the sequence (it ends
+%                with the zero polynomial, the earlier elements have nonzero
+%                leading coefficients, the lengths strictly decrease, and each
+%                element is the normalized step of the two before it)
+%   tarski_chain the chain of a Tarski query: the same recursion with g times
+%                the derivative as its second element, and tchain_sturm, which
+%                is Tarski@sturmtarski's constructed_sturm_sequence? of it at
+%                every valuation; gchain and its lemmas are the chain
+%                structure with an arbitrary second element
+%   tarski_count the Tarski query of a symbolic pair at a valuation: tq_val
+%                says it is #{roots where g > 0} - #{roots where g < 0}
+%   tarski_dec   two queries decide a sign condition at the roots: twice the
+%                number of roots where q is positive is TQ(p, q) + TQ(p, q^2),
+%                so sign_exists decides EXISTS x: p(x) = 0 AND q(x) > 0
+%   branch_sgn   the sequence with the sign of every leading coefficient in
+%                the leaf (snormp, prsp), so the counts below need no further
+%                branching
+%   sgn_count    the number of sign changes of the chain at plus and at minus
+%                infinity, computed from the signs the leaf carries
+%   root_dec     qdec, a tree of sign conditions whose leaves are TRUE or
+%                FALSE, and qdec_sound: the leaf the parameters select answers
+%                EXISTS x: p(x, ys) = 0
+%   pos_dec      pdec and pdec_sound: the same tree decides whether a
+%                symbolic polynomial is everywhere positive, since a
+%                polynomial with no root keeps the sign of its leading
+%                coefficient
+%   crit_pos     the analytic step the sign conditions need: a polynomial of
+%                even degree with a negative leading coefficient is positive
+%                somewhere exactly when it is positive at a critical point
+%                (crit_exists), from the extreme value theorem and the
+%                vanishing of the derivative at an interior maximum
+%   mpoly_cst    mcst? recognizes a term that denotes a constant and cst_val
+%                is that constant (mcst_eval)
+%   btree_prune  prune replaces every node whose polynomial is a constant by
+%                the child that constant selects, and select_prune says the
+%                branch the parameters take is unchanged, so the soundness of
+%                a decision carries over to the pruned tree
+%   sgn_prune    sdecide, the sign-condition tree pruned: for x^2 - 1 and x it
+%                has one branch instead of 48827, and psign_branch /
+%                pnosign_branch are what the strategies use
+%   sgn_examples the poly-sign and poly-nosign strategies: a root of x^2 - 1
+%                where x is positive, none of x^2 + 1, and the parametric
+%                statements about x - a and x^2 - a
+%   tarski_pair  two sign conditions at the roots of one polynomial: the four
+%                queries of the pairs q1^a q2^b with a, b in {1, 2} count the
+%                roots where both are positive four times over (pair_count),
+%                so pair_exists decides EXISTS x: p = 0 AND q1 > 0 AND q2 > 0;
+%                NASALib has this for families but only over integer
+%                coefficient arrays, and the symbolic chains produce real ones
+%   tarski_two   the symbolic side of the pair: the four query polynomials as
+%                normalized products of coefficient lists (lmn and its six
+%                lemmas), their arrays and degrees, and two_exists, which
+%                decides EXISTS x: p = 0 AND q1 > 0 AND q2 > 0 from four of
+%                the chains of tarski_chain
+%   tarski_multi the restricted Tarski query T(p, P, f) --- the query of f over
+%                the roots of p at which every function of P is positive ---
+%                and T_step, which halves one condition into two queries, so
+%                m conditions cost 2^m; T_exists decides the conjunction
+%   tarski_many  the same on coefficient lists: mts is the executable
+%                recursion (2^m chains) and many_exists decides
+%                EXISTS x: p = 0 AND every q in Q: q > 0
+%   poly_farinf  a list of polynomials far out on either side: all leading
+%                coefficients positive, or all positive after (-1)^deg, and
+%                both converses
+%   poly_rolle   the conjunction with no equation: it holds somewhere exactly
+%                when it holds far right, far left, or at a critical point of
+%                the product (ineq_exists), by the sup and inf of the roots of
+%                the product on each side and Rolle's theorem
+%   qe_conj      one conjunct: several equations collapse into one by a sum of
+%                squares (sqsum_zero), and cdec_sound decides
+%                EXISTS x: all equations and all strict inequalities, using
+%                many_exists when there is an equation and ineq_exists when
+%                there is none
+%   qe_formula   a formula as a disjunction of such conjuncts, and qe_sound:
+%                qe_exists decides EXISTS x: feval(F, ys, x) whenever the fuel
+%                and the degrees are right.  This is quantifier elimination
+%                for one variable; the Boolean normalization is done by the
+%                strategy, outside the verified core, and every fact it
+%                produces is proved
+%   qe_run       the qe-exists strategy at work: a root of x^2 - 1 with x > 0,
+%                none of x^2 + 1, a Boolean combination, two conjunctions with
+%                no equation, a universally quantified statement, and the
+%                paper's conflict-detection question with numbers, decided on
+%                both sides
+%   tarski_tree  the many-condition recursion as a branch tree: mtree
+%                replaces every normalization of mts by a degree branching,
+%                so its leaves are the counts, and select_mtree says the leaf
+%                the parameters select is mts, with no hypothesis
+%   many_ok      when the recursion of tarski_many is well formed: mok_at
+%                reduces mok to nonvanishing leading coefficients and the
+%                syntactic fuel length(p) + length(g) + mlen(Q); normalizing
+%                the conditions keeps their values and does not lengthen them
+%   many_tree    a root at which many conditions hold, on a tree: snormps
+%                normalizes every condition with its sign, mcount asks
+%                whether the count of tarski_tree is positive, and mcore
+%                answers FALSE for a condition that is the zero polynomial;
+%                mcore_sound needs the degree of p and the syntactic fuel
+%                length(p) + 1 + mlen(Q) alone
+%   ineq_ok      the no-equation conjunction at a valuation in the tree's
+%                terms: the far-out conditions from the recorded signs
+%                (posinfp_at, neginfp_at), the degree of the product as the
+%                sum of the degrees, and the three cases of the Rolle
+%                reduction (a constant product, a linear one with no critical
+%                point, and the rest) with the fuel bound dgs_le
+%   ineq_tree    itree decides EXISTS x: every q in Q: q(x, ys) > 0 on a
+%                tree: normalize the conditions, answer TRUE far out, form
+%                the product as a tree (wtree), FALSE for a product of length
+%                at most two, and mcount at the derivative otherwise;
+%                itree_sound needs the fuel 2 mlen(Q) + 1 alone
+%   conj_tree    ctree decides one conjunct: the equations collapse to the
+%                sum of squares, whose degree branching sends the zero case
+%                to itree, the constant case to FALSE and the rest to mcore;
+%                ctree_sound needs length(sqsum(E)) + 2 mlen(Q) + 1 <= k
+%   qe_tree      qtree decides EXISTS x: feval(F, ys, x) for a formula of
+%                qe_formula as a tree of sign conditions on the parameters
+%                (qtree_sound, fuel tfuel(F)); qdecide is the pruned tree and
+%                qe_branch is what the parametric qe-exists strategy uses
+%   sign_oracle  deciding the sign of a coefficient under the conditions on
+%                its path: with one parameter the question is one-variable QE
+%                on the parameter (qe_exists of qe_formula with no parameters
+%                left), forced(c, cx) is that decision or 2 for unknown, and
+%                forced_sound says a decided sign is the sign at every
+%                valuation the conditions admit
+%   hutch_oracle the same question decided by NASALib's hutch, a sign-
+%                invariant interval decomposition on integer chains with
+%                content stripping: forced2, forced2_sound; this is the
+%                oracle snormc uses, since forced took minutes per node once
+%                the path held a few conditions of degree ten and more
+%   branch_ctx   bbindc: bbind that passes the leaf's path to the
+%                continuation; select_bbindc is its one select fact
+%   snorm_ctx    snormc: the degree branching that asks sign_oracle before it
+%                branches, and gives the zero child its new condition
+%   prsp_ctx     prspc and ctreec: the chains built with snormc and bbindc,
+%                with select_prspc and select_ctreec under the path
+%   tarski_ctx   mtreec, snormpsc, mcountc, mcorec: the many-condition
+%                recursion and the root decision with contexts
+%   ineq_ctx     wtreec, itreec: the no-equation conjunction with contexts
+%   qe_ctx       cjtreec, qtreec: one conjunct and a formula with contexts;
+%                qdecidec is the tree from the empty path and qe_branchc is
+%                what qe-exists uses: for x - a the tree has three branches
+%                where qdecide had twenty-five
+%   qe_symbolic  the parametric qe-exists at work: x - a, x^2 - a, a
+%                parametric discriminant, and the conflict question with the
+%                radius D symbolic
+%   sgn_dec      gdec and gdec_sound: the sign condition on a tree with no
+%                hypothesis on the valuation, the cases tok2 rules out
+%                answered by exists_dec or by hand, so the fuel bound is the
+%                only condition; sign_branch and nosign_branch are the forms
+%                the strategy uses
+%   exists_dec   edec and edec_sound: the tree for EXISTS x: q(x, ys) > 0, a
+%                case analysis on the normalized query whose last case is
+%                crit_pos's and is answered by sdec for the derivative
+%   sign_tree    sdec, a tree of sign conditions whose leaves are TRUE or
+%                FALSE, and sdec_sound: the leaf the parameters select answers
+%                EXISTS x: p(x, ys) = 0 AND q(x, ys) > 0, from the two
+%                queries of tarski_dec read off the two chains
+%   tarski_examples  the queries run: for x^2 - 1 and x the two queries are 0
+%                and 2, so a root with x > 0 exists and the statement about
+%                the reals is proved; for -x^2 the sum is zero and none does
+%   pos_examples the poly-pos and poly-nonzero strategies: a positivity statement whose
+%                polynomial has free parameters is proved by evaluating the
+%                tree and discharging the branch conditions by arithmetic
+%   qe_examples  the decision run by the ground evaluator on x^2 + y, on
+%                a*x + b (where the degree branching decides) and on the
+%                quadratic, and a fact about the reals proved by running it
+%
+% Phase 4: subresultants
+%   ring_det     the Laplace determinant of a matrix of polynomials in the
+%                parameters (detl, executable) and of a real matrix, and
+%                det_eval: evaluating the determinant is the determinant of
+%                the evaluated matrix.  NASALib's det is built from
+%                elementary matrices and has no expansion, so this is its own
+%   sylvester    the Sylvester matrix of two coefficient lists, the resultant
+%                res and the discriminant disc, and their specializations
+%                res_eval and disc_eval
+%
+% Phase 5: cylindrical algebraic decomposition
+%   cpoly_unique complex polynomials: n + 1 distinct roots make the zero
+%                function (roots_bound), the zero function has zero
+%                coefficients (coefs_unique, coefs_eq), the coefficients of
+%                (x - y) q (shift_poly) and the leading coefficient of the
+%                cofactor of a linear factor (factor_lc); NASALib's
+%                fundamental_algebra has one root and one factor only
+%   croots       cfact: a proper polynomial is its leading coefficient times
+%                the product of n linear factors, the fundamental theorem of
+%                algebra iterated
+%   croot_near   root proximity: |p(z)| is bounded by (n+1) M B^n on |z| <= B,
+%                every root of a proper polynomial lies in |z| <= 1 + n M/|a_n|
+%                (root_bound), and for every eps there is a delta such that a
+%                root of any polynomial whose coefficients are within delta of
+%                p's is within eps of some root of p (root_near) -- the
+%                analytic input to delineability
+%   sign_vec     sign vectors of a family (svec) and positions in a list
+%   tree_sel     selecting a branch tree by a sign vector instead of a
+%                valuation (sel_by, sel_by_sel), the conditions of a tree
+%   bbindc_ex    the existential form of select_bbindc
+%   rsc_tree     realized sign vectors at the roots of one polynomial with
+%                side conditions, the adaptive enumeration on cjtreec
+%                (rsc_sound, rsc_complete)
+%   far_sign     the sign vectors at +oo and -oo from the normalized
+%                leading coefficients (far_vec_right, far_vec_left)
+%   sector_rep   the intermediate value theorem for a polynomial in the top
+%                variable, the product of a family, sign vectors constant
+%                between roots, Rolle, and consecutive roots (sector_cases)
+%   svs_tree     every sign vector a family realizes along the top variable,
+%                as a branch tree over the parameters: roots of the product,
+%                roots of its derivative, the two ends (svs_sound,
+%                svs_complete)
+%   bform        Boolean formulas over sign atoms, evaluated at a point or
+%                on a sign vector
+%   cad_decide   the cylindrical decision procedure decq/decide for a closed
+%                prenex formula with any quantifier prefix, and its
+%                correctness decq_correct/decide_correct
+%   cad_examples the cad strategy on two-variable alternations with linear
+%                atoms; the heavier examples are the Phase 6 target
+%   chain_sturm  the chain of branch_prs, read as the triple Sturm@sturm
+%                expects, satisfies constructed_sturm_sequence?: the six
+%                conditions, assembled from the structure of the chain and
+%                from the step of sturm_step
+%   sturm_step   one step of the symbolic sequence: minus b^k times the
+%                pseudo-remainder, whose multiplier of the true remainder is
+%                the square (b^k)^2, negative as the Sturm condition asks and
+%                of known sign without branching on the sign of b
+% Phase 6: the per-cell procedure (decision 13-15 of the plan)
+%   sg_norm      evaluation by a sign function sg: [mpoly -> Sign3] instead
+%                of a branch tree: normalization (snorm_sg), agreement with
+%                select at msg(ys), read lists and determinism (X_det)
+%   sg_chain     the sign remainder chain and Tarski queries by a sign
+%                function (rchain_sg, tq_sg, mts_sg)
+%   mpoly_div    exact division at the coefficient level: a fuel-bounded
+%                quotient attempt (mdiv) and the check lexact (d * q = r by
+%                meq after mnorm); nothing about mdiv needs proof
+%   earr_ops     coefficient arrays through the list operations of
+%                pseudo-division; proportional lists prop(l1, l2, c, ys) and
+%                their passage through prem, sstep, normalization at ys and
+%                the leading sign
+%   sturm_step2  the reduced chain step sstep2: the pseudo-remainder divided
+%                by cc^e when lexact confirms it, signed by the sign
+%                function to be a negative multiple of the remainder,
+%                otherwise sstep; at msg(ys) a positive multiple of sstep
+%                (sstep2_prop), read-determined (sstep2_det)
+%   sg_chain2    the chains with the reduced step, carrying the divisor of
+%                Collins's reduced sequence (rchain2_sg); element by element
+%                a positive multiple of rchain (rchain2_prop), so the Tarski
+%                query and the count under sign conditions are those of
+%                Phase 3 (tq2_sg_at, mts2_sg_at) and read-determined (_det)
+%   sg_conj      the existence decision of a conjunction by a sign function
+%                (ctree_sg, ctree_sg_sound), counting with mts2_sg
+%   sg_conj2     the same, pruned: a nonzero constant refutes, identically
+%                zero equations are dropped, a single equation is decided
+%                on itself without the sum of squares (ctree2_sg_sound)
+%   sg_svs       the realized sign vectors of a family by a sign function
+%                (svs_sg_sound, svs_sg_complete, svs_det)
+%   map_member   membership in a mapped list
+%   mpoly_eqd    decidable equalities of polynomials and coefficient lists
+%                (the ground evaluator cannot compare lists through =)
+%   alg_fast     root isolation with the Sturm chain computed once (isoc_iso)
+%   alg_sign2    the sign of a polynomial at an algebraic number without the
+%                sum of squares: alg_sign decides q(value(a)) = 0 first by
+%                counting the roots of p^2 + q^2, of twice the degree, and a
+%                cell walk asks for thousands of signs at one point.
+%                alg_sign2 counts the roots of q alone in the isolating
+%                interval: with none, q keeps one sign there (sturm_sign) and
+%                the sign is q at the midpoint, one rational evaluation.
+%                alg_sign2_sign, alg_sign2_def
+%   alg_count2   forward bounds on the root count: a root in a closed interval
+%                forces a count of one (already in alg_count), and two or
+%                three distinct roots force two or three, read off the
+%                bijection of alg_count through the cardinality of the root
+%                set (three_card, roots_finite, nroots_ge2, nroots_ge3). The
+%                corrected sector test of sect_inv needs the three-root bound
+%   cell1        the bottom level by root isolation: roots sorted without
+%                repetition, rational samples between consecutive roots,
+%                svs1_sound / svs1_complete
+%   sect_inv     sectors of a sorted root list with their samples, numeric
+%                sign invariance of a polynomial on a sector (inv_chk_sound)
+%   svs_pt       the realized sign vectors over one fibre at a RATIONAL sample
+%                point, by root isolation instead of enumeration: svs_sg
+%                branches three ways per family member, so it costs 3^|F|,
+%                while specializing the family at the point (evalF) and
+%                isolating the roots of the result is polynomial in the
+%                family. evalF_svec relates the two, svs_pt_sound and
+%                svs_pt_complete characterize the output as exactly
+%                { svec(F, cons(x, rs)) : x real }
+%   cad_lift     the cylindrical decision evaluated per cell: closure under
+%                reads at the higher levels, sectors at level 1, lv_sound,
+%                lv_complete, decq2_correct, decide2_correct (relative to
+%                the completion flag)
+%   subres       the subresultant chain and its principal coefficients: psc
+%                is a det of a submatrix of the same Sylvester-style matrix,
+%                so ring_det's det_eval gives the specialization theorem free
+%                (psc_eval), exactly as for res. psc(f,g,0) = res(f,g)
+%                (psc0_res), so cad_proj is the j = 0 slice of Collins.
+%                A polynomial remainder sequence branches on the signs of its
+%                leading coefficients -- that branching IS the 3^|F| of
+%                rsc_sg -- while the psc are determinants and branch on
+%                nothing, which is what a sign-determination argument needs
+%   subres2      the FULL subresultant polynomial, not just its leading
+%                coefficient (Stage C of item 1). Sturm counts sign changes of
+%                CHAIN ENTRIES, and an entry is a polynomial whose sign at
+%                -inf and +inf is its leading coefficient's sign times
+%                (-1)^degree, so the whole Sres_j is needed. It is the same
+%                determinant with the last column ranging over degrees 0..j,
+%                so one matrix sresm2 covers both: sresm(f,g,j) is
+%                sresm2(f,g,j,j) and psc is the j-th coefficient (psc_sres),
+%                with evaluation commuting as before (sresc_eval)
+%   nsc_scale    sign-change counting is blind to positive rescaling, which
+%                is what licenses the approach to sh_count: NASALib's chain
+%                entries come from adjusted_remainder, and
+%                adjusted_remainder_def pins them only up to a POSITIVE
+%                factor (= -cp * the true remainder, cp: posreal). So they
+%                are the classical Sturm sequence up to positive factors --
+%                harmless for the COUNT (nsc_scale, from
+%                number_sign_changes_eq and sign_ext_mult), and it is why a
+%                chain entry's leading-coefficient SIGN is well defined,
+%                which is the quantity the psc correspondence is about
+%   quad_sign    groundwork for psc_det? at degree <= 2, which is the case
+%                every member of all four worked examples falls in.
+%                Completing the square (qv_shift), the perfect-square
+%                identity 4a*qv + discr = (2ay+b)^2 (qv_square) and the
+%                extremum bounds it gives (qv_sq_ge, qv_min, qv_max), the
+%                beyond-roots witness from quadratic_aux (bey, qv_bey,
+%                bey_gt), and when ZERO is realized (qset_zero). NOTE
+%                a /= 0 is required wherever discr appears: NASALib declares
+%                discr on nonzero_real, and without the hypothesis the TCC is
+%                the false FORALL a: a /= 0
+%   quad_set     which signs a quadratic realizes: one small DIRECTIONAL
+%                lemma per case (qset_pos_apos, qset_pos_aneg, qset_pos_lin,
+%                qset_pos_cst, qset_pos_nec) rather than one ten-branch IFF,
+%                which is what made the first attempt grind. The negative
+%                case is free: qv(-a,-b,-c)(y) = -qv(a,b,c)(y) flips the
+%                realized signs while discr is INVARIANT under negating all
+%                three coefficients (qv_neg, discr_neg, qset_flip).
+%                pos_prod is the helper that unstuck nearly everything here:
+%                PVS's decision procedures are linear and will not chain
+%                products of positives, so it goes through the prelude AXIOM
+%                posreal_mult_closed
+%   quad_det     psc_det? AT DEGREE <= 2: the realized sign SET is a function
+%                of the sign data (qset_det). Every member of all four worked
+%                examples has degree <= 2 in the main variable, so this is the
+%                case that makes their fast decision proved. Uses a TOTAL
+%                discriminant dsc, because NASALib's discr is declared on
+%                nonzero_real while the hypothesis must cover a = 0 -- which
+%                is precisely the case where a = b = 0 gives the same
+%                discriminant sign as a genuine double root but a different
+%                set. sign3_iff converts equal signs into equal comparisons
+%                ONCE and is used four times; expanding sign3 inside the six
+%                IFF characterisations instead makes ground blow up
+%                combinatorially, and splitting the three sign cases
+%                SEPARATELY keeps each assert small
+%   fib_quad     psc_det? for a SINGLE-member family of degree <= 2, which
+%                closes the chain end to end for the first time: with
+%                delin_from_psc and dec2_sem, the two-quantifier projection
+%                decision is PROVED CORRECT for single-polynomial families of
+%                degree <= 2. meval3 specializes the member at the parameter
+%                (stated over an EXPLICIT 3-element list -- with a
+%                length(u) = 3 hypothesis meval unfolds into nested datatype
+%                CASES and the proof does not converge), fib1_qset2 phrases
+%                the fibre set as the 1-vectors of the realized signs so
+%                qset_det applies with no skolem bookkeeping. The MULTI-member
+%                case needs more: the fibre set is a set of VECTORS, so it
+%                depends on how different members' roots interleave, which
+%                per-member discriminants do not settle
+%   projc_mem    what is actually IN Collins' projection: every coefficient
+%                of a live member (cofs_mem, cofs_projc). fib1_det's
+%                hypothesis is about a member's COEFFICIENT signs while
+%                psc_det?'s is about projc's members, and these agree only
+%                because projc really contains those polynomials -- a
+%                structural fact about projc1 = cofs ++ chain that has to be
+%                proved. cofs IS map(as_list) (cofs_map), which turns the
+%                membership into a standard map lemma instead of an index
+%                induction fighting nth
+%   psc_quad1    the bookkeeping between fib_quad and delin_bridge:
+%                svec_eq_sign (equal sign VECTORS give equal signs member by
+%                member), pscs_zero (a psc chain always contains its j = 0
+%                entry) and disc_projc (so the DISCRIMINANT is in projc, via
+%                psc0_res identifying psc(f,f',0) with res(f,f') = disc f).
+%                With projc_mem's coefficients, these are what let sect_svec
+%                discharge fib1_det's hypothesis along a sector
+%   disc_quad    what the projection's discriminant evaluates to at degree 2:
+%                the 3x3 Sylvester determinant of (f, f') comes out to
+%                -c2 * (c1^2 - 4*c0*c2), so sign(disc) = -sign(c2)*sign(dsc)
+%                (disc_quad_eval). This is the last link for the single-member
+%                result, and it is needed because sign(dsc) genuinely is NOT
+%                determined by the coefficient signs alone -- (1,1,1) gives
+%                dsc < 0 while (1,3,1) gives dsc > 0 -- so it has to come from
+%                the projection, where disc lives
+%   psc_det_quad THE OBLIGATION DISCHARGED, at degree <= 2 with one member.
+%                psc_det?((: (: u0,u1,u2 :) :)) holds OUTRIGHT (psc_det_quad1):
+%                equal sign vectors of projc give equal signs of every
+%                coefficient and of disc (mem_sign over svec_eq_mem and
+%                meval_as_list, with quad_mem0/1/2/d placing the four
+%                polynomials inside projc); dsc_sign then divides disc's sign
+%                by the leading coefficient's -- and when that vanishes reads
+%                dsc = c1^2 off sign(c1) -- to recover sign(dsc); fib1_det
+%                closes it.  quad_delin and quad_dec2 carry it through: the
+%                two-quantifier projection decision is correct for such a
+%                family with NO delineability assumption left, only side
+%                conditions the executable code checks (roots sorted, gaps
+%                separating, samples rational and inside their sector, root
+%                isolation converged)
+%   mpoly_swap  exchanging the two variables of a bivariate mpoly (item A).
+%                mpoly's res eliminates the MAIN variable; lifting at an
+%                algebraic sample has to eliminate the SECOND one, because
+%                Res_x(p, f) for alpha a root of p is a polynomial in y with
+%                RATIONAL coefficients whose roots include every y with
+%                f(y, alpha) = 0 -- which is what keeps the candidate roots
+%                over Q and makes an extension field unnecessary.  mswap is a
+%                transpose of the rational coefficient matrix and mswap_eval
+%                is its correctness; keeping the transpose at matrix level
+%                makes that proof a sum interchange (mcons_bev) instead of a
+%                double induction over the datatype
+%   alg_lift    LIFTING AT AN ALGEBRAIC SAMPLE POINT, with no arithmetic in
+%                Q(alpha).  svs_pt is typed on list[rat] and cannot represent
+%                an algebraic coordinate at all, which is why every Bath
+%                problem answers ok = FALSE.  svs_alg does the same job at an
+%                algebraic alpha: cand(a, f) = Res_x(p, f) keeps the candidate
+%                roots over Q (a SUPERSET, and supersets only refine the
+%                decomposition); asgn is alg_sign2 on the rational univariate
+%                f(y0, .); and a member's vanishing AT a candidate is read off
+%                as a SIGN CHANGE between the two rational neighbours, which
+%                under aok? -- lc and disc nonvanishing at alpha, so every
+%                root simple -- is exact.  That replaces the
+%                two-algebraic-coordinate zero test that forces Q(alpha).
+%                SCOPE: one algebraic coordinate, so 2-variable-complete
+%   alg_meas    what was measured before any of it was proved: the circle
+%                lifts to +, 0, -, 0, +; the LINE shows the spurious candidate
+%                carrying its neighbours' vector, which is the measurement
+%                that justifies the whole design; the two together show
+%                COINCIDING roots read off correctly per member; and aok?
+%                refuses a degree drop instead of guessing
+%   alg_sturm   STURM COUNTING AT AN ALGEBRAIC PARAMETER -- the piece that
+%                was supposed to need a new theorem and did not.  alg_lift's
+%                sign-change rule is exact only while every root is simple, so
+%                it refuses a section at a DISCRIMINANT root; Sturm counting
+%                does not care about multiplicity.  Everything it needs was
+%                already proved: chain_sturm's fchain_sturm (the symbolic
+%                chain read at ANY real valuation IS a
+%                constructed_sturm_sequence?, and its condition fok asks only
+%                for the LEADING COEFFICIENT), sg_chain's rchain_sg_at (the
+%                same chain from a SIGN FUNCTION, which makes it executable
+%                through alg_sign2), nsc_scale (counting signs is counting
+%                values) and earr_eval_dg (a chain entry at rational y0 and
+%                x = alpha is a rational univariate at alpha).  acount counts
+%                the roots in (y0, y1]; acount_zero and acount_pos are what
+%                bisection needs, and alc? -- length, leading coefficient,
+%                fuel -- is the whole condition
+%   alg_sturm2  the counts at +-infinity, so isolation has a starting
+%                interval and a termination test.  A Cauchy bound is not
+%                available -- it needs MAGNITUDES of the coefficients at
+%                alpha, where alg_sign2 gives only signs -- but Sturm's
+%                unbounded theorems need none either: at +-infinity the
+%                sequence is read off the chain's LEADING COEFFICIENTS alone,
+%                which arr_lc turns into meval(llast(.)).  atotal splits as
+%                aleft + acount + aright, each part is >= 0, so acount =
+%                atotal forces the other two to zero and acaptures says the
+%                interval has every root.  That is the widening test, with no
+%                bound on any coefficient anywhere
+%   alg_lift2   svs_alg with STURM COUNTING in place of the sign-change rule.
+%                A member vanishes somewhere in (r1, r2] exactly when
+%                acount(k, a, f, r1, r2) > 0, and Sturm does not care about
+%                multiplicity -- so the discriminant condition disappears and
+%                what is left, aok1b, is: constant in the main variable, or
+%                else length >= 2, LEADING coefficient nonzero at alpha, fuel,
+%                and a nonzero candidate polynomial
+%   alg_lift2_ex the measurement: ok2a refuses x^2 + y^2 - 2 (its sections are
+%                the circle's vertical tangents, where the fibre has a
+%                repeated root) and ok2b accepts it and decides both
+%                directions correctly, while still agreeing with the
+%                sign-change rule where that rule worked
+%   alg_bis     THE LIFTING ON BISECTION ALONE: no resultant anywhere.
+%                alg_lift and alg_lift2 place the section points at the roots
+%                of Res_x(p, f), which leaves one step an argument rather than
+%                a theorem -- that those candidates CONTAIN every root.  Here
+%                acount finds the roots itself: bwide doubles until
+%                acount = atotal (acaptures then says every root is inside --
+%                no Cauchy bound, no magnitudes), bint splits until every gap
+%                holds at most one root of the product, and bwalk reads a
+%                vector at each separator plus one per gap holding a root,
+%                where a member is zero exactly when acount says it has a
+%                root there.  Two things measurement forced: the product must
+%                be over the LIVE members only (on x^2 + y^2 - 2 the second
+%                member IS x^2 - 2, so including it makes the product vanish
+%                identically at exactly the sections), and it must be
+%                STRIPPED of structural trailing zeros (lmul pads, so llast
+%                came back mconst(0) and alc? refused)
+%   alg_bis_ex  the same answers as the resultant route, measured, including
+%                the DOUBLE root: at x = sqrt(2) the fibre is y^2 and
+%                svs_bis reports (: (1,0), (0,0), (1,0) :)
+%   sturm_sg    Sturm counting THROUGH A SIGN ORACLE (FINISH_PLAN S1).  The
+%                counts of alg_sturm/alg_sturm2 restated for an arbitrary
+%                sg: SG and proved at sg = msg(ys) for ys of ANY length:
+%                cnt_nneg/zero/pos, cnt_one (a count of one means the root is
+%                unique), left/right_zero, captures.  A chain entry is read at
+%                a rational y0 as sg(sub1(c, y0)), sub1 substituting the main
+%                variable inside the mpoly ring, so no variable swap is needed
+%   walk_def    the lifting as a WALK over rational separators through a sign
+%                oracle (FINISH_PLAN S2): walk reads a vector at each
+%                separator and one per gap holding a root of the live product;
+%                wok? is everything it needs from the separators, decided
+%                through the oracle; seps is an UNTRUSTED search for them
+%   walk_ok     walk_fib: wok?(F, msg(ys), Y) implies the walk lists exactly
+%                fib(F, ys) -- for ANY separators that pass, at ANY real
+%                valuation.  Members that strip below length 2 are constant
+%                along the fibre, live ones vanish only where the product
+%                does, so the vector is constant off the product's roots
+%                (svec_same_live, without sector_rep's assumption that no
+%                member vanishes identically); a gap with count one has a
+%                unique root (cnt_one), at which a member is zero exactly when
+%                its own count is positive (sgn_at)
+%   loc_const   a predicate that is LOCALLY constant on a closed interval is
+%                constant on it (FINISH_PLAN S4, T4): the connectedness of the
+%                line by a least-upper-bound argument, nothing else imported
+%   sign_pers   SIGN PERSISTENCE (T1): finitely many polynomials, each nonzero
+%                at x0 or zero for every value of the main variable, keep
+%                their signs near x0 with the other variables xs held fixed --
+%                msg(cons(z, xs)) agrees with msg(cons(x0, xs)) on the list
+%                (msg_pers), from the continuity of pf
+%   walk_rd     what the walk READS, split in two (T2): INTRINSIC reads wi_rd
+%                (chain construction reads and leading coefficients, no
+%                separator in them) and ENTRY reads we_rd (chain entries and
+%                members at the separators).  walk_det: oracles that agree on
+%                both walk alike and pass or fail wok? alike
+%   sturm_sg2   the converses of sturm_sg's counting theorems: cnt_root (a
+%                root makes the count positive), cnt_two (a count of two gives
+%                two distinct roots), left_pos / right_pos, and how the counts
+%                add (cnt_add, left_step, right_step)
+%   sep_exist   SEPARATORS EXIST AT EVERY POINT (T3): for f with nonzero
+%                leading coefficient at ys and a finite list of polynomials to
+%                avoid there are increasing rationals at which none of them
+%                vanishes, each gap holds at most one root of f, and no root
+%                lies outside.  No root bound, no enumeration: induction on
+%                the unbounded counts for the ends, on the bounded count for
+%                the middle, density inside a root-free interval (avoid)
+%   walk_transfer  THE TRANSFER THEOREM (T5).  fib_local: where the intrinsic
+%                reads keep their signs, the fibre set is locally constant --
+%                separators exist at x0, the entry reads are nonzero there and
+%                persist, so nearby oracles agree on all the walk reads and
+%                walk_fib gives the same set.  fib_const: on a CONVEX such set
+%                it is constant.  Stated along ONE coordinate of a point
+%                cons(x, xs) (S5a); xs = null is the one-parameter case.  This is delineability certified at run time,
+%                with no subresultants; the entry reads are never certified,
+%                because no constant separator stays clear of an unbounded or
+%                colliding root curve (measured: 164 roots and ok = FALSE)
+%   cad_fast_def  the FAST two-quantifier decision decw: sectors of the
+%                projection closed under the intrinsic reads only (iclos),
+%                lifting by the walk (svs_w), certificate icert?
+%   cad_fast    decw_correct: decw`ok implies decw`val IFF the sentence --
+%                unconditional in the sense of decide2_correct.  Per sector:
+%                the walk's list is the fibre set at the sample (sect_walk),
+%                the sector is delineable (sect_delin, from fib_const and
+%                inv_chk_sound), so the inner fold is the inner quantifier at
+%                every point (sect_sem); the sectors cover the line
+%   cad_fast_ex  measured: ex_line ONE root sector and ~1 s where decide2
+%                takes 48 s over 43 sectors; circle, disc, the meeting curves
+%                and the discriminant-root sections (both refused or slow
+%                before) about a second each, negative controls right
+%   cad_decide3_def, cad_decide3  decide3 = decw when its certificate passes
+%                at two quantifiers, decide2 otherwise; decide3_correct has
+%                decide2_correct's statement, and (cad) now cites it
+%   tower_def   the ORACLE TOWER, executable (FINISH_PLAN S5): a level below
+%                the outermost is a walk through the oracle of the level
+%                above; at a separator the cell's oracle is sg o sub1(., y_j),
+%                at a section a bounded Tarski query tq_b against the member
+%                that vanishes there.  dec3m: a MEASURING three-quantifier
+%                decision (ex_three 4 s; decide2 does not finish)
+%   tower_ok    tower: the bounded Tarski query through msg(ys) is the sign of
+%                g at the one root of l0 in the gap (sturm_tarski_ends on
+%                tchain_sturm: only l0 need be nonzero at the ends)
+%   cell_ok     the cells of an inner level are read correctly: at a separator
+%                sg_pt(msg(ys), y0) IS msg(cons(y0, ys)) (pt_fib); at a section
+%                every sound query returns the sign at (beta, ys) (qsec_val,
+%                from tower), so when all the inner walk's queries are sound
+%                walk_det makes it the walk at (beta, ys) (sec_fib); and at a
+%                gap the walk certified every query is sound
+%                (qsec_ok_complete, allok_complete: COMPLETENESS_PLAN C4)
+%   level_ok    TWO INNER QUANTIFIERS AT A FIXED POINT (S5d, claim A).
+%                inner2_sem: in2ok?(F, msg(ys)) implies inner2 IFF
+%                sem((: q2, q3 :), F, Psi, ys), at any real ys.  The cells
+%                cover the line: on an interval where the level's product has
+%                no root the inner truth is that at the separator inside it
+%                (T_same = fib_const in the y-direction; its hypothesis holds
+%                because the inner walk's intrinsic reads are MEMBERS of the
+%                level's family, mem_same); the rest mirrors walk_ok one level
+%                up with the truth value in place of the sign vector
+%   cad3_def    the THREE-QUANTIFIER decision decw3, executable: per outer
+%                sector the level below is inner2; the certificate is in2ok?
+%                at the sample plus the S4 certificate for the level's family
+%                on the sector.  Measured: ok = TRUE and the right value on
+%                seven sentences, ex_three included, 0-9 s each
+%   joint_cont  a polynomial keeps its sign near a point of the plane of its
+%                first two variables (unif: Horner induction; joint_sign;
+%                joint_pers for a list) -- for the entry reads at a section,
+%                which moves in both coordinates
+%   cover       the cells of a level cover the line, on its own: every y sees
+%                a separator across a root-free interval (atsep?) or is the
+%                section of a gap (atsec?)
+%   closed_pt   "the inner walk's intrinsic reads are members of P" at EVERY
+%                point: rdin? depends on a point only through P's sign vector
+%                there (rdin_vec), S4's fib_const for P gives equal SETS of
+%                sign vectors over the sector, so cl_transfer needs no
+%                correspondence between cells; cl_cells gets it at the sample
+%                from the executable certificate
+%   walk_same   walk_transfer's fibre lemma between ANY two valuations, not
+%                just two that differ in the first coordinate: if the walk
+%                passes at vs0 and the oracles agree on the intrinsic reads and
+%                on wnz (the entry reads that do not vanish), the fibres over
+%                vs1 and vs0 are the same set of sign vectors
+%   root_cont   a simple root moves continuously, by counting: lev? (a level
+%                family over a convex S) keeps cnt on a fixed gap constant near
+%                x0 (cnt_local); ends_exist shrinks the gap around the root;
+%                root_near puts the root over x within eta of the root over x0
+%   pt_local    local constancy at ONE cell: near (beta0, x0), points with the
+%                same sign vector on P have the same inner fibre set
+%                (joint_pers + walk_same), so the inner truth T is the same
+%   cells_local all cells at once, by induction over the separators: for x
+%                near x0 in the sector the walk over P agrees (wagree?) and
+%                every cell -- separator or section -- has the same inner truth
+%                over x as over x0 (cells_eq?); sections by root_near
+%   inner_const the two inner quantifiers do not vary along an outer sector:
+%                V_sub (cover + T_same_r + gap_sec) turns cells_eq? into "every
+%                inner truth value over one point occurs over the other",
+%                G_local is that near x0, G_const is loc_const on the sector
+%   cad3        THE THREE-QUANTIFIER DECISION IS CORRECT: decw3_correct.  Per
+%                sector, inner2_sem reads the two inner quantifiers at the
+%                sample and G_const carries that truth along the sector
+%                (inv? from inv_sect over the level's family, cert? from
+%                cert_w, CL? from cl_cells); fold3_sem is foldw_sem's fold
+%   cad_decide4_def, cad_decide4  the decision (cad) ran until N10: decw
+%                for two quantifiers, decw3 for three, decide2 as the fallback
+%                and for every other prefix; decide4_correct (decide5's
+%                fallback now)
+%   cad_examples3  three quantifiers through (cad), seconds each: five TRUE
+%                sentences (sphere over the disc, the cone, a sum of
+%                squares) and two FALSE ones refuted by (cad -1)
+%   walk_od     the walk through an ORACLE DESCRIPTOR (a rational point, an
+%                algebraic sample, or a section over a descriptor) and a
+%                CHAIN TABLE: chains built once per level and reused at any
+%                cell whose oracle agrees with the recorded signs of their
+%                reads (i_det), entry signs at a rational point by meval
+%                (sent_sign); every function proved equal to its walk_def
+%                original at the oracle the descriptor denotes (walk_t_eq,
+%                wok_wt_eq, svs_t_eq).  Ten cells: 15 s -> 5 s, of which
+%                the table is 5 s
+%   rd_norm     reads normalized to a canonical scalar multiple (divide by
+%                the leading rational): equal-up-to-a-constant reads of
+%                different pair chains coincide in the closure; the value
+%                scales by a fixed nonzero constant (rd_norm_eval), which is
+%                all sign invariance needs
+%   qsec_rd     the reads of one section query (secp, the normalized c,
+%                the Tarski chain, its entries at the two ends of the gap):
+%                qsec_det -- the query's ok flag and value depend on the
+%                oracle only through them; qs_det for a read list
+%   qsec_lift   a section oracle over an APPROXIMATE base oracle: if the base
+%                agrees with the point on the queries' reads, every certified
+%                query answers the sign at the section root (allok_agree2)
+%   ztrunc      degree drops (2026-09-27): tz(sg, l) is a coefficient list
+%                without the top coefficients the oracle says vanish; at a
+%                point with a right oracle it has the member's value above the
+%                point (tz_eval), a nonzero top (tz_top), and it is decided by
+%                the coefficients' signs (tz_agree); crd(F), every coefficient
+%   towern_def, towern_od  the n-LEVEL EXECUTABLE: one tower of families per
+%                outer sector, cells through oracle descriptors and chain
+%                tables, the members identically zero at a cell filtered out
+%                and every other member truncated at the cell (feff, ztrunc),
+%                their sign 0 put back (ins0); decn_o, with the
+%                recursive certificate okqs of every oracle answer (3i).
+%                Four quantifiers in 1-16 s.  Correctness: decn_ok
+%   odreads     the executable's read lists ARE the trusted walk's at the
+%                walked (effective) family, plus every member coefficient
+%                (wi_rd_t_eq, we_rd_p_eq), so agreement on them transports to
+%                walk_det / wok_exist (wi_agree, we_agree)
+%   mpar        continuity of meval in ALL coordinates (near?: same length,
+%                every coordinate within d) through prod_cont, and so
+%                persistence of finitely many signs in many parameters
+%                (msg_mpers): the n-level proof moves every coordinate at once
+%   zfam        the EFFECTIVE family zf(F, ws) (members not identically zero
+%                at ws, each truncated at ws by ztrunc's tz; the executable's
+%                feff), insz putting their zeros
+%                back, the reads wrs (all member coefficients ++ the walk's
+%                intrinsic reads), certz?, and rdz?(F, G, p): the reads of the
+%                F-walk at p are, after rd_norm, MEMBERS of the family above
+%                (the executable's clok?), so their signs anywhere are read
+%                off G's sign vector (rdz_agree, rdz_vec); invz? and
+%                fib_constz (S4's fib_const with identically-zero members);
+%                rf_invz (the hypothesis one level down on a root-free
+%                interval)
+%   mwalk       the walk near a point with every coordinate moving: the
+%                separators still pass, gaps, separator and section vectors
+%                unchanged (near_cells); the fibre is locally constant
+%                (fib_mlocal: the base of the tower induction)
+%   mroot       root_near in many parameters (mroot_near): the member owning
+%                the section root keeps exactly one root between rational
+%                ends near it (cnt_mlocal); root_cont's lemmas reused at a
+%                one-point set
+%   cvl         the CELL VALUE LIST of a level: a truth function read at the
+%                separators and at the roots of the gaps (secbeta), in the
+%                walk's order; if the function does not change across
+%                root-free intervals its members are exactly its values
+%                (cvl_all, by cover), so the fold is the quantifier
+%                (bfold_cvl); equal cells give equal lists (cvl_eq)
+%   tclf        the CLOSURE of a tower (CLF: at every point over ws each
+%                level's effective family is certified and its walk's reads
+%                are members of the family above), prefixes, the all-EX
+%                sentence (sem_ex), and the three height-n statements: CBh
+%                constancy on a sector, LCh local constancy with every
+%                coordinate moving, CTh closure transfer along a sector;
+%                ct_step (CTh from CBh below) and cb_step (CBh from LCh, CTh
+%                by loc_const)
+%   tlc         LCh by induction on the height (lc_base from fib_mlocal,
+%                lc_step: the walk agrees near the point, the cell value lists
+%                are equal, root-free constancy of the inner truth, rfc_tw)
+%   tower_sem   tower_all: CBh, LCh, CTh at every height by strong induction;
+%                tower_cb (the inner quantifiers have one truth value on an
+%                outer sector) and tower_ct (the closure certified at the
+%                sample holds on the whole sector)
+%   oddef       what a descriptor denotes (den: sections by secbeta, the root
+%                of the gap) and when it is well formed (wf?); okqs_agree:
+%                the executable's recursive certificate okqs makes the oracle
+%                right on the reads it certifies; the cells' descriptors
+%                denote the cell points (opt_den, osec_den); feff is zf
+%   innern_sem  CLAIM A on descriptors: a checked tower (okn_o) at a well
+%                formed descriptor reads the inner quantifiers' truth at the
+%                point it denotes, and certifies the closure there (induction
+%                on the tower: lvl_exact, cellsf_cvl, clf_level, ia_step)
+%   decn_ok     THE n-LEVEL DECISION IS CORRECT: decn_correct.  Per outer
+%                sector the tower has k levels ending with F (lvln_shape),
+%                claim A at the sample (sectn_sem), the top family's reads
+%                invariant on an open sector from inv_chk (inv_topreads), so
+%                tower_cb carries the truth along it; foldn_sem is the fold
+%   cad_decide5_def, cad_decide5  the decision (cad) runs: decn_u (decn_o
+%                from u = 0, raising u until the certificate holds) for
+%                three or more quantifiers, decw then decn_u for two,
+%                decide2 for one; no exponential fallback; decide5_correct.
+%                complete_all: it always answers (decide5_decides)
+%   cad_decide6_def, cad_decide6  a decision with no failure flag
+%                (COMPLETENESS_PLAN C1): decide5 when its certificate passes,
+%                else the complete but exponential decide of cad_decide;
+%                decide6_correct, for every closed prenex formula, no
+%                hypothesis.  (cad :complete? t) uses the fallback
+%   complete1   the one-quantifier decision is complete (COMPLETENESS_PLAN
+%                C3): decq2's certificate at one quantifier is gaps_ok on the
+%                sorted roots, which cell1's total refinement gapw now makes
+%                TRUE on every strictly increasing list (gaps_ok_incr);
+%                decide5_complete1: decide5 answers every closed formula with
+%                at most one quantifier
+%   sturm_tarski_ends  the Tarski query with only the first polynomial
+%                nonzero at the ends (COMPLETENESS_PLAN C4): NASALib's
+%                sturm_tarski asks it of every entry of the constructed Sturm
+%                sequence; sturm_tarski_ends moves each end inward past no root
+%                (ends_inward), applies sturm_tarski, and carries the counts back
+%                (tsig_near, from nsc_edge_diff: tss_opposite, tss_no_two_zeros)
+%                and the root sets (NSol_union_top, nsol_none)
+%   od_exact    every oracle of a well-formed descriptor is exact
+%                (COMPLETENESS_PLAN C4): with the section queries complete
+%                (cell_ok's allok_complete), the executable's recursive
+%                certificate okqs holds at every well-formed descriptor on any
+%                read list (okqs_complete), so with oddef's okqs_agree
+%                osg(od) = msg(den(od)) (wf_exact): every walk below a
+%                certified level runs at the point's own oracle
+%   cert_all    the walk's leading-coefficient certificate holds at every
+%                point (COMPLETENESS_PLAN C5): certz_all, from tz_top (the
+%                effective members' tops are nonzero), zc_iff/strip_at (a
+%                coefficient zero everywhere is structurally zero and strip
+%                removes it) and prodl_above/prodl_top (the product has no
+%                coefficient above the degree sum, and there it is the product
+%                of the leading coefficients)
+%   walk_fuel   seps_n: the separator search with an explicit fuel n
+%                (seps_n_fuel: seps is seps_n at sfuel2)
+%   walk_count  counting for the search's completeness (COMPLETENESS_PLAN
+%                C6): cnt_ge (a Sturm count is at least the number of distinct
+%                roots listed), cnt_le_total, nzat_P_iff, and stop_ok -- the
+%                bisection's stop test passes on any gap where the product of
+%                the live members has at most one distinct root, with no
+%                condition on the chains
+%   walk_search the walk's search succeeds at every exact oracle, and more
+%                fuel changes nothing (C6): spick/sint/swide each return
+%                their first success (spick_mono, sint_mono, swide_mono);
+%                spick_exists (distinct probes cannot all be roots),
+%                sint_exists (nested induction on the product's count and a
+%                shrink budget, sint_inner -- no global root separation),
+%                swide_exists (P_bounded, leftok_P/rightok_P); seps_ok: some
+%                fuel N makes wok? hold and every n >= N gives the same
+%                separators
+%   list_flat   generic: flat (a member of a member is a member of the
+%                flattening), pre?/prefs (every prefix is listed)
+%   read_univ   the reads of a Sturm chain lie in one finite list at EVERY
+%                oracle (C7): sstep2 picks one of three candidates
+%                (s3cands), snorm_sg leaves a prefix (snorm_pre), so by
+%                induction on the chain bound rd_in, el_in, i_rd_in
+%   read_fam    the intrinsic reads of a level's walk, at any cell and with
+%                any valid table, lie in WU(F) fixed by the family: the
+%                effective family is one of effs(F) (feff_in), and wu(P)
+%                bounds a fixed one's reads (wi_in); rw_in for the closure
+%   tower_univ  the tower closure stays in finite universes (C7): tul gives
+%                each level's universe from the innermost up (the initial
+%                family and rwall of the level below's), tinv? (initial
+%                family + new members, no repeats) is kept by every round
+%                (treads_sub, zipadd_inv), so tsize <= tbnd(T0); tclos_fix,
+%                lvln_fix: u >= tbnd(T0) gives a tower one more round leaves
+%                unchanged (fixp?)
+%   clos_ok     at a fixpoint the closure check passes at every cell of
+%                every level: cells_o lists a walk's cells (cellsf_every,
+%                cellsr_has), zipadd_zsub, fixp_clk (clk?: cellok_o at every
+%                cell)
+%   nclos_ok    the outer closure ends with every sector's reads passing
+%                inv_chk: a member's reads pass (memb_inv, from
+%                allroots_complete, sect_noroot, inv_chk_complete), so bad
+%                reads are new (nbads_new) and lie in rwall(tul(T0))
+%                (nbads_in); nclos_fix: with enough fuel no bad reads remain
+%   ev_pred, ev_nat  "eventually" over the escalation parameter u (C8):
+%                ev?, evc? (eventually constant), ev_list over a finite
+%                list, lim (the value an eventually constant map settles on)
+%   lev_ev      one level at a well-formed cell: from some u on lvok_o holds
+%                and the separators are fixed (lev_ok: wf_exact, certz_all,
+%                seps_ok, okqs_complete); the cells do not depend on the
+%                valid table (cells_valid) and are well formed (cells_wf);
+%                cellsr_cong
+%   tower_ev    okn_o = lvall? (walks) AND clk? (closure) (okn_split); by
+%                induction on the tower, for eventually constant valid
+%                tables, lvall? eventually holds and treads_o is eventually
+%                constant (tower_ev); the tables are (tables_evc)
+%   clos_ev     the closures settle: tclos_evc / tclos_stop / lvln_evc,
+%                okn_ev (each sector's closed tower passes okn_o for large
+%                u), nbads_evc / nclos_stop / nclos_evc_fuel
+%   decn_complete  THE n-LEVEL DECISION IS COMPLETE: decn_ev -- for every
+%                family and at least two quantifiers decn_o(u, ..)`ok for
+%                every large u; decn_complete
+%   decide_u_def, decide_u  decn_u: decn_o from a given u, raising u until
+%                the certificate holds; terminates by decn_ev (the bound is
+%                only in the measure); decn_u_correct, decn_u_complete
+%   complete_all  (cad)'s decision is complete: decq5_complete,
+%                decide5_complete, and decide5_decides -- decide5 answers
+%                every closed formula with its truth, no hypothesis
+%   cad_examples4  FOUR quantifiers through (cad), seconds each: three TRUE
+%                sentences with alternating prefixes and a FALSE one refuted
+%                by (cad -1)
+%   chain_rd    a Sturm chain and the reads of its construction in ONE pass
+%                (rchain2_cr, schain_rd_eq); walk_od's chain-table entries
+%                (mkce) go through it (PERF_PLAN P1: they built each chain
+%                step about seven times)
+%   alg_isign   the sign at an algebraic number by an interval-Horner
+%                enclosure over its (refined) isolating interval, with
+%                alg_sign2 as the fallback (alg_isign_sign, from NASALib's
+%                Add_inclusion / Mult_inclusion); the mix oracle of walk_od
+%                uses it (PERF_PLAN P4)
+%   sturm_fast  NASALib's Sturm root count with every chain element evaluated
+%                once, by Horner (hornz_poly, hornA_poly); rcf_eq: it is
+%                roots_closed_int; alg_count's nroots_a, sect_inv's nroots_c
+%                and alg_isolate's nrh (the half-open count of the root
+%                isolation) use it (PERF_PLAN R3)
+%   poly_gcd    Euclid on rational polynomials: a point is a common root of
+%                p and q exactly when it is a root of their gcd (pgcd_root,
+%                through pmod_root; fuel-bounded, no termination argument);
+%                alg_zero's zero_at decides "q vanishes at an algebraic
+%                number" through it, the sum of squares as the fallback
+%                (PERF_PLAN P6b: 0.31 s -> ~1 ms per test)
+%   cad_star_ex  (cad *): the polynomial content of a whole sequent -- the
+%                usable antecedents and consequents (real quantifier prefix,
+%                polynomial comparisons; other real subterms as unknown
+%                reals, other formulas skipped) decided as one closed
+%                formula and applied by case; 15 sequents (CADSTAR_PLAN.md)
+%   cad_endgame  the endgame of (cad) (ENDGAME_PLAN.md): sign3(x) = 1 / 0 / -1
+%                IFF x > 0 / x = 0 / x < 0 (cadz_s3_pos/zero/neg).  The
+%                strategy restates each atom of the goal as the sign
+%                conditions the decision reads, so the goal and the formula
+%                from decide5_correct share their atoms and bddsimp closes
+%                the goal -- no case split on the signs (the old lift-if
+%                endgame, kept as the fallback, is exponential in the atoms)
+%   cad_endgame_ex  tests of that endgame: every comparison and connective,
+%                TRUE and FALSE, a repeated atom, division by a numeral,
+%                alternation, an irrational witness, a refuted hypothesis
+%   cad_bath    a problem of the Bath CAD example bank (Random B Grobner from
+%                Buchberger-Hong, three quantifiers, a degree-7 member)
+%                refuted by (cad -1) through decn_o in under five minutes; the
+%                other nine closed Bath problems run past 300 s
+%   cad_examples2  larger two-variable problems through (cad), seconds each:
+%                a cubic, AM-GM, the circle meeting a parabola, a quartic, and
+%                a FALSE sentence refuted in the antecedent by (cad -1)
+%   alg_dec     the two-quantifier decision with ALGEBRAIC samples: no rsv,
+%                no ratsamp?, no fallback, since sample(s) is an Alg for every
+%                sector and rat_alg covers the rational ones
+%   alg_dec_ex  what that buys and where it stops, both measured.  f_meet
+%                (y - x with y^2 - 2) has IRRATIONAL sections at +-sqrt(2)
+%                that the rational route refuses and this one certifies.
+%                f_rad2 (the circle of radius sqrt(2)) has its sections AT
+%                DISCRIMINANT ROOTS, where the fibre has a repeated root, so
+%                no member changes sign there and aok? correctly refuses --
+%                the three open sectors pass, the two sections do not.  That
+%                residual case needs the sign of a polynomial at a point with
+%                two algebraic coordinates, which is what sh_count supplies
+%   cad_decn    dec at ANY number of levels computes the semantics
+%                (decn_sem), and pdecide's val field with it (pdecide_sem).
+%                dec2_sem settled two quantifiers; this is the general form,
+%                and it is what a strategy must cite to emit a proof rather
+%                than a measurement.  Everything the theorem needs from the
+%                geometry is collected in ONE predicate, decok?, stated along
+%                every path of sectors the fold actually walks -- roots sorted,
+%                samples inside their sectors, the value of everything inside
+%                constant along each sector, and the same one level down.
+%                fold_quant is the combinatorial core (a fold over sectors IS
+%                a quantifier over the reals); qfoldS_cong is what lets the
+%                induction hypothesis, available only on the sectors decok?
+%                ranges over, be used under the fold
+%   sturm_habicht non-defectiveness, and the shape of Stage C's remaining
+%                theorem. NON-DEFECTIVENESS IS ITSELF A SIGN CONDITION ON THE
+%                psc (ndef_signs), so two points where projc(F) has the same
+%                signs are either both defective or both not, and the runtime
+%                check ITEM1_PLAN.md calls for is just "every psc nonzero" --
+%                which sect_svec already makes constant along a sector, so
+%                nothing extra is computed. sh_count, the correspondence
+%                between NASALib's integer pseudo-remainder sequence and the
+%                psc, is STATED AND NOT PROVED: it is what remains of Stage C
+%   cad_projc    Collins' projection: coefficients, plus the psc chain of each
+%                member against its derivative and of each pair. Measured
+%                barely larger than McCallum's and, decisively, adding NO
+%                roots below (cad_meas3: collins_cost), so the sector count
+%                and the whole speed advantage survive the correct operator
+%   cad_pdec     the projection decision at any number of levels: tower(m,F)
+%                is (: proj^m(F), ..., F :), and dec folds the outermost
+%                quantifier over the sectors of the outermost family
+%                specialized at the coordinates chosen so far, prepending
+%                each sector's sample, handing the innermost fibre to svs_pt.
+%                Sample points must be exact: alg? demands lb < ub STRICTLY so
+%                an exact rational is never a collapsed interval; rsamp takes
+%                -c0/c1 when the defining polynomial is linear and otherwise
+%                bisects for a midpoint that evaluates to zero, which PROVES
+%                it is the root (rroot_exact, rroot_in, rsamp_value,
+%                rsv_exact). okpts checks that over every sector visited.
+%                CORRECTNESS IS NOT CLAIMED: that the projection's sectors
+%                are cells over which the fibre is invariant is delineability
+%   cad_pdec_ex  that decision on the worked examples: pdec_examples (all four
+%                correct with ok = TRUE, 0.20-0.34 s) and pdec_controls
+%                (FALSE on false formulas over the same families)
+%   sect_svec    a sector carries one sign vector of the family that defined
+%                it: on a sector of sects(rts(P)) every member of P keeps its
+%                sign, so svec(P,(: x :)) = svec(P,(: r :)) for x and the
+%                sector's rational sample. This is the first half of
+%                delin_projc and is about the DECOMPOSITION, not about
+%                delineability. cell1's svec_between gives it from "no
+%                isolated root lies between", and below_first / above_last
+%                cover the outer sectors; the mid and above cases needed
+%                their own inductions because gsects has no inverse-structure
+%                lemma (gsects_mid_mem, gsects_mid_noroot, gsects_above_mem,
+%                gsects_above_max, gsects_above_noroot, gsects_kind), plus
+%                in_between for sector convexity
+%   delin_bridge from the psc statement to delineability: psc_det? says two
+%                points where projc(F) has the same signs have the same fibre
+%                set, and delin_from_psc turns that into delin? on every
+%                sector -- which is what dec2_sem consumes. Chaining them,
+%                psc_det? ALONE implies the two-quantifier projection decision
+%                is correct, so psc_det? is the only open statement and has no
+%                CAD machinery around it. The route goes through the sector's
+%                RATIONAL sample because cell1's svec_between, and so
+%                sect_svec, compares a real against a rational; at an at
+%                sector both points collapse to the root
+%   spec_deg     Stage B of item 1: degree is determined by sign data alone.
+%                deg(pl) is the largest index carrying a nonzero entry, so it
+%                depends only on WHICH coefficients vanish, and sign3 decides
+%                exactly that (sign3_zero). Proved as one inequality plus
+%                antisymmetry (deg_le, deg_signs): the hypothesis is symmetric
+%                in p and q, and proving the equality head-on splits into a
+%                dozen sign branches while each half of the inequality is a
+%                few steps
+%   cad_delin    delineability stated as a PREDICATE (delin?: the fibre set
+%                does not vary along a sector) and the decision proved
+%                correct GIVEN it: dec2_sem is the projection analogue of
+%                qfoldS_sem, which needs inv1? -- the read-closure condition
+%                that forces 21 root sectors where the projection leaves 1.
+%                Nothing is assumed: delin? is a definition, dec2_sem a
+%                proof. The reduction works because svs_pt is ALREADY proved
+%                to compute the fibre set exactly (svs_pt_fib), so one
+%                quantifier's semantics sees only that set (qfold_fib,
+%                sem1_fib, via fib_swap) and delineability moves it from the
+%                sample to the whole sector (sect_sem).
+%                cad_pdec also carries pdecq, the HYBRID: decq2 with proj in
+%                place of clos1 and svsec's dispatch at level 2, so algebraic
+%                coordinates go through the proved svs_sg/alg_sign2 route and
+%                no rational sample is needed (hence no ok flag). Correct and
+%                fast on the four examples, but it TIMES OUT on the Bath
+%                problems, which have an algebraic coordinate at the
+%                outermost level -- svs_pt is typed on list[rat] and cannot
+%                represent one, so they enter the 3^|F| branch at once.
+%                Exact arithmetic in an algebraic extension is required
+%                STILL OPEN: delin_projc, that every sector of projc(F)
+%                satisfies delin? -- equivalently that two univariate
+%                families with the same psc signs realize the same sign
+%                vectors. That is the ONLY remaining correctness obligation
+%   cad_proj     the Collins/McCallum projection operator: all coefficients,
+%                the discriminant of each member of degree > 0, and the
+%                pairwise resultants. cad_lift derives the level-below family
+%                instead by iterating "which polynomials were read" to a
+%                fixpoint, and answering that is the 3^|F| enumeration; the
+%                projection computes a sufficient family once, in time
+%                polynomial in the family. OPERATOR ONLY: the delineability
+%                argument that makes projection + lifting a correct CAD is
+%                not claimed here
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING eval_probe,
+            mpoly_def,
+            mpoly_arith,
+            mpoly_norm,
+            mpoly_embed,
+            mpoly_examples,
+            mpoly_coefs,
+            mpoly_unique,
+            mpoly_univ,
+            mpoly_pdiv,
+            mpoly_showcase,
+            mpoly_mono,
+            mpoly_mono_examples,
+            alg_count,
+            alg_def,
+            alg_zero,
+            alg_sign,
+            alg_isolate,
+            alg_order,
+            thom_lemma,
+            thom_enc,
+            alg_examples,
+            alg_strategy,
+            alg_strategy_examples,
+            branch_norm,
+            branch_map[list[mpoly], list[mpoly]],
+            poly_unique,
+            mpoly_real,
+            prem_arr,
+            mpoly_prod,
+            snorm_arr,
+            earr_deriv,
+            sturm_step,
+            branch_prs,
+            chain_sturm,
+            tarski_chain,
+            branch_sgn,
+            sgn_count,
+            root_dec,
+            pos_dec,
+            crit_pos,
+            tarski_count,
+            tarski_dec,
+            sign_tree,
+            exists_dec,
+            sgn_dec,
+            mpoly_cst,
+            btree_prune[bool],
+            sgn_prune,
+            sgn_examples,
+            tarski_pair,
+            tarski_two,
+            tarski_multi,
+            tarski_many,
+            poly_farinf,
+            poly_rolle,
+            qe_conj,
+            qe_formula,
+            qe_run,
+            tarski_tree,
+            many_ok,
+            many_tree,
+            ineq_ok,
+            ineq_tree,
+            conj_tree,
+            qe_tree,
+            sign_oracle,
+            hutch_oracle,
+            branch_ctx[bool, bool],
+            snorm_ctx,
+            prsp_ctx,
+            tarski_ctx,
+            ineq_ctx,
+            qe_ctx,
+            qe_symbolic,
+            ring_det,
+            sylvester,
+            cpoly_unique,
+            croots,
+            croot_near,
+            sign_vec,
+            tree_sel[list[list[Sign3]]],
+            bbindc_ex[bool, list[list[Sign3]]],
+            rsc_tree,
+            far_sign,
+            sector_rep,
+            svs_tree,
+            bform,
+            cad_decide,
+            sg_norm,
+            sg_chain,
+            mpoly_div,
+            earr_ops,
+            sturm_step2,
+            sg_chain2,
+            sg_conj,
+            sg_conj2,
+            sg_svs,
+            map_member[mpoly, list[mpoly]],
+            mpoly_eqd,
+            alg_fast,
+            alg_count2,
+            alg_sign2,
+            cell1,
+            sect_inv,
+            svs_pt,
+            cad_lift,
+            subres,
+            subres2,
+            nsc_scale,
+            quad_sign,
+            quad_set,
+            quad_det,
+            projc_mem,
+            fib_quad,
+            psc_quad1,
+            disc_quad,
+            psc_det_quad,
+            sturm_habicht,
+            cad_proj,
+            cad_projc,
+            cad_pdec,
+            cad_pdec_ex,
+            sect_svec,
+            spec_deg,
+            cad_delin,
+            cad_decn,
+            mpoly_swap,
+            alg_lift,
+            alg_meas,
+            alg_sturm,
+            alg_sturm2,
+            alg_lift2,
+            sturm_sg,
+            walk_def,
+            walk_ok,
+            loc_const,
+            sign_pers,
+            walk_rd,
+            sturm_sg2,
+            sep_exist,
+            walk_transfer,
+            cad_fast_def,
+            cad_fast,
+            cad_fast_ex,
+            cad_decide3_def,
+            cad_decide3,
+            tower_def,
+            tower_ok,
+            cell_ok,
+            level_ok,
+            cad3_def,
+            joint_cont,
+            cover,
+            closed_pt,
+            walk_same,
+            root_cont,
+            pt_local,
+            cells_local,
+            inner_const,
+            cad3,
+            cad_decide4_def,
+            cad_decide4,
+            walk_od,
+            rd_norm,
+            qsec_rd,
+            qsec_lift,
+            ztrunc,
+            odreads,
+            mpar,
+            zfam,
+            mwalk,
+            mroot,
+            cvl,
+            tclf,
+            tlc,
+            tower_sem,
+            oddef,
+            innern_sem,
+            decn_ok,
+            cad_decide5_def,
+            cad_decide5,
+            cad_decide6_def,
+            cad_decide6,
+            complete1,
+            sturm_tarski_ends,
+            od_exact,
+            cert_all,
+            walk_fuel,
+            walk_count,
+            walk_search,
+            read_univ,
+            read_fam,
+            tower_univ,
+            clos_ok,
+            nclos_ok,
+            ev_pred,
+            lev_ev,
+            tower_ev,
+            clos_ev,
+            decn_complete,
+            decide_u_def,
+            decide_u,
+            complete_all,
+            chain_rd,
+            alg_isign,
+            poly_gcd,
+            sturm_fast,
+            alg_bis,
+            alg_bis_ex,
+            alg_lift2_ex,
+            alg_dec,
+            alg_dec_ex,
+            delin_bridge,
+            cad_examples,
+            cad_examples2,
+            cad_examples3,
+            cad_examples4,
+            cad_bath,
+            cad_star_ex,
+            cad_endgame,
+            cad_endgame_ex,
+            tarski_examples,
+            pos_examples,
+            qe_examples
+END top

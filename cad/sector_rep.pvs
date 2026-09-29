@@ -1,0 +1,58 @@
+sector_rep: THEORY
+%----------------------------------------------------------------------------
+% Where a sign vector is realized (Phase 5).
+%
+% Along the top variable, the sign vector of a family is constant on any
+% interval free of roots of the product prodl(F) (svec_same, by the
+% intermediate value theorem). A point that is not a root of a polynomial g
+% lies between two consecutive roots, or beyond all roots on one side
+% (sector_cases, with the nearest roots of poly_rolle); between two roots
+% there is a root of the derivative (rolle_pf, the mean value theorem). So a
+% sign vector realized anywhere is realized at a root of prodl(F), at a root
+% of its derivative, or beyond all roots.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING poly_rolle, sign_vec
+
+  l, g, f: VAR list[mpoly]
+  F: VAR list[list[mpoly]]
+  xs, ys: VAR list[real]
+  x, a, b, c, z: VAR real
+
+  %% the intermediate value theorem for a polynomial in the top variable
+  ivt_pf: LEMMA a < b AND ((pf(l, ys)(a) < 0 AND pf(l, ys)(b) > 0) OR
+                           (pf(l, ys)(a) > 0 AND pf(l, ys)(b) < 0))
+    IMPLIES EXISTS c: a < c AND c < b AND pf(l, ys)(c) = 0
+  same_sign: LEMMA a <= x AND x <= b AND a <= c AND c <= b AND
+    (FORALL z: a <= z AND z <= b IMPLIES pf(l, ys)(z) /= 0)
+    IMPLIES sign3(pf(l, ys)(x)) = sign3(pf(l, ys)(c))
+
+  %% the product of a family
+  prodl(F): RECURSIVE list[mpoly] =
+    IF null?(F) THEN (: mconst(1) :) ELSE lmul(car(F), prodl(cdr(F))) ENDIF
+  MEASURE length(F)
+  prodl_null: LEMMA prodl(null[list[mpoly]]) = (: mconst(1) :)
+  prodl_cons: LEMMA prodl(cons(l, F)) = lmul(l, prodl(F))
+  prodl_eval_null: LEMMA meval(mpol(prodl(null[list[mpoly]])))(xs) = 1
+  prodl_eval_cons: LEMMA meval(mpol(prodl(cons(l, F))))(xs) =
+    meval(mpol(l))(xs) * meval(mpol(prodl(F)))(xs)
+  mem_cons: LEMMA member(f, cons(l, F)) IFF (f = l OR member(f, F))
+  prodl_zero: LEMMA FORALL F: meval(mpol(prodl(F)))(xs) = 0 IFF
+    (EXISTS f: member(f, F) AND meval(mpol(f))(xs) = 0)
+
+  %% the vector is constant on an interval without roots of the product
+  svec_same: LEMMA FORALL F: a <= x AND x <= b AND a <= c AND c <= b AND
+    (FORALL z: a <= z AND z <= b IMPLIES meval(mpol(prodl(F)))(cons(z, ys)) /= 0)
+    IMPLIES svec(F, cons(x, ys)) = svec(F, cons(c, ys))
+
+  %% Rolle for the product
+  rolle_pf: LEMMA cons?(g) AND a < b AND pf(g, ys)(a) = 0 AND pf(g, ys)(b) = 0 IMPLIES
+    EXISTS c: a < c AND c < b AND meval(mpol(lderiv(g)))(cons(c, ys)) = 0
+
+  %% a non-root is between consecutive roots or beyond all roots on a side
+  sector_cases: LEMMA pf(g, ys)(x) /= 0 IMPLIES
+    (EXISTS a, b: a < x AND x < b AND pf(g, ys)(a) = 0 AND pf(g, ys)(b) = 0 AND
+       (FORALL z: a < z AND z < b IMPLIES pf(g, ys)(z) /= 0))
+    OR (FORALL z: z >= x IMPLIES pf(g, ys)(z) /= 0)
+    OR (FORALL z: z <= x IMPLIES pf(g, ys)(z) /= 0)
+END sector_rep

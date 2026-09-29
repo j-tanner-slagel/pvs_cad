@@ -1,0 +1,84 @@
+sgn_dec: THEORY
+%----------------------------------------------------------------------------
+% The sign condition decided on a tree, with nothing assumed (Phase 3).
+%
+% sdec_sound needs tok2, a condition on the valuation, so a strategy cannot
+% check it: whether the two Tarski queries are well formed depends on the
+% parameters.  gdec removes that by branching on the cases tok2 rules out and
+% answering them itself: the polynomial may vanish identically at ys, and then
+% the question is the one exists_dec decides; it may be a nonzero constant,
+% and then it has no root; and the query may vanish identically, and then it
+% is nowhere positive.  In every other case both degrees are decided and
+% sign_tree's score answers.
+%
+% So gdec_sound holds under a bound on the fuel alone, length(p) + 3 length(q)
+% terms, which is syntactic.  sign_branch and nosign_branch are the two forms
+% a strategy uses: a branch of the tree whose conditions hold at the
+% parameters carries the answer there.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING exists_dec
+
+  l0, q: VAR list[mpoly]
+  ys: VAR list[real]
+  k: VAR nat
+  x: VAR real
+
+  %% the answer of score once both degrees are decided
+  score_sound: LEMMA tok2(k, l0, q, ys) IMPLIES
+    (select(score(k, sl_of(l0, ys), sl_of(q, ys)), ys) IFF
+     (EXISTS (x: real): meval(mpol(l0))(cons(x, ys)) = 0 AND
+                        meval(mpol(q))(cons(x, ys)) > 0))
+
+  %% the two queries are well formed as soon as both degrees are decided and
+  %% the fuel covers the polynomial and twice the query
+  tok2_at: LEMMA cons?(l0) AND length(l0) >= 2 AND meval(llast(l0))(ys) /= 0 AND
+    cons?(q) AND meval(llast(q))(ys) /= 0 AND length(l0) + 2 * length(q) <= k
+    IMPLIES tok2(k, l0, q, ys)
+
+  %% a polynomial that vanishes identically: every x is a root
+  ex_null_p: LEMMA null?(select(snorm(l0), ys)) IMPLIES
+    ((EXISTS (x: real): meval(mpol(l0))(cons(x, ys)) = 0 AND
+                        meval(mpol(q))(cons(x, ys)) > 0)
+     IFF (EXISTS (x: real): meval(mpol(q))(cons(x, ys)) > 0))
+
+  %% a nonzero constant has no root, and a query that vanishes identically is
+  %% nowhere positive
+  no_root_p: LEMMA length(select(snorm(l0), ys)) = 1 IMPLIES
+    NOT (EXISTS (x: real): meval(mpol(l0))(cons(x, ys)) = 0 AND
+                           meval(mpol(q))(cons(x, ys)) > 0)
+  no_pos_q: LEMMA null?(select(snorm(q), ys)) IMPLIES
+    NOT (EXISTS (x: real): meval(mpol(l0))(cons(x, ys)) = 0 AND
+                           meval(mpol(q))(cons(x, ys)) > 0)
+
+  %% the guarded tree
+  gdec(k, l0, q): btree[bool] =
+    bbind(snormp(l0),
+          LAMBDA (p: SL):
+            IF null?(p`slist) THEN edec(k, q)
+            ELSIF length(p`slist) = 1 THEN bleaf(FALSE)
+            ELSE bbind(snormp(q),
+                       LAMBDA (pq: SL):
+                         IF null?(pq`slist) THEN bleaf(FALSE)
+                         ELSE score(k, p, pq)
+                         ENDIF)
+            ENDIF)
+
+  gdec_sound: THEOREM length(l0) + 3 * length(q) <= k IMPLIES
+    (select(gdec(k, l0, q), ys) IFF
+     (EXISTS (x: real): meval(mpol(l0))(cons(x, ys)) = 0 AND
+                        meval(mpol(q))(cons(x, ys)) > 0))
+
+  %% what a strategy uses: the branch the parameters select carries the answer
+  b: VAR branch_tree[bool].Branch
+  sign_branch: THEOREM length(l0) + 3 * length(q) <= k AND
+    member(b, branches(gdec(k, l0, q))) AND b`bres AND
+    branch_tree[bool].conds_hold(b`bconds, ys)
+    IMPLIES EXISTS (x: real): meval(mpol(l0))(cons(x, ys)) = 0 AND
+                              meval(mpol(q))(cons(x, ys)) > 0
+  nosign_branch: THEOREM length(l0) + 3 * length(q) <= k AND
+    member(b, branches(gdec(k, l0, q))) AND NOT b`bres AND
+    branch_tree[bool].conds_hold(b`bconds, ys)
+    IMPLIES FORALL (x: real): NOT (meval(mpol(l0))(cons(x, ys)) = 0 AND
+                                   meval(mpol(q))(cons(x, ys)) > 0)
+END sgn_dec

@@ -1,0 +1,95 @@
+decn_ok: THEORY
+%----------------------------------------------------------------------------
+% The decision at ANY number of quantifiers is correct (FINISH_PLAN 3i,
+% stage N9).
+%
+%   decn_correct   decn_o(u, qs, F, Psi)`ok IMPLIES
+%                  (decn_o(u, qs, F, Psi)`val IFF sem(qs, F, Psi, null))
+%
+% Per outer sector s: the tower lvln_o(u, T0, s) has k families and ends with F
+% (lvln_len, lvln_last); its tables are valid and the sample's descriptor is
+% well formed and denotes the sample (tables_vtb, odS_wf, odS_den).  Claim A
+% (innern_sem) reads the inner quantifiers at the sample and gives the
+% closure there; on an open sector the top family's reads keep their signs
+% (inv_topreads, from the inv_chk certificate through rd_norm and cpl_eval),
+% so claim B (tower_cb) carries the truth to every point of the sector; a
+% root sector is a point.  The sectors cover the line, so the fold over them
+% is the outermost quantifier.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING innern_sem
+
+  TW, TR, T1, T2, T0: VAR Tower
+  TB: VAR list[CT]
+  F, P, Q: VAR list[list[mpoly]]
+  qs, qs1: VAR list[bool]
+  q1: VAR bool
+  Psi: VAR [SV -> bool]
+  s: VAR Sect
+  ss: VAR list[Sect]
+  x, z: VAR real
+  k, fuel, m, u: VAR nat
+  od, od2: VAR OD
+  tb: VAR CT
+  c: VAR mpoly
+  Y: VAR list[rat]
+  fr: VAR [OD -> Tower]
+  g: VAR [Sect -> SC]
+  pr: VAR [SC -> bool]
+
+  %% ---- the shape of the tower ---------------------------------------------------------
+  lcons: LEMMA length(cons(F, TW)) = 1 + length(TW)
+  lcdr: LEMMA cons?(TW) IMPLIES length(TW) = 1 + length(cdr(TW))
+  zipapp_len: LEMMA FORALL T1: length(zipapp(T1, T2)) = max(length(T1), length(T2))
+  cellsr_len: LEMMA FORALL Y: (FORALL od2: length(fr(od2)) <= m)
+    IMPLIES length(cellsr_o(fr, P, od, tb, Y)) <= m
+  treads_len: LEMMA FORALL TW: FORALL TB, od: cons?(TW) IMPLIES length(treads_o(u, TW, TB, od)) < length(TW)
+  zipadd_len: LEMMA FORALL TW: length(zipadd(TW, TR)) = length(TW)
+  zipadd_last: LEMMA FORALL TW: FORALL TR: cons?(TW) AND length(TR) < length(TW)
+    IMPLIES tlast(zipadd(TW, TR)) = tlast(TW)
+  tclos_shape: LEMMA FORALL fuel: FORALL TW: cons?(TW) IMPLIES
+    length(tclos_o(u, fuel, TW, od)) = length(TW) AND tlast(tclos_o(u, fuel, TW, od)) = tlast(TW)
+  tw0_shape: LEMMA FORALL k: k >= 1 IMPLIES length(tw0(k, F)) = k AND tlast(tw0(k, F)) = F
+  lvln_shape: LEMMA cons?(T0) IMPLIES
+    cons?(lvln_o(u, T0, s)) AND length(lvln_o(u, T0, s)) = length(T0) AND tlast(lvln_o(u, T0, s)) = tlast(T0)
+
+  %% ---- the tables, the sample's descriptor ---------------------------------------------
+  tables_vtb: LEMMA FORALL TW: FORALL od: vtb?(tables(u, TW, od))
+  odS_wf: LEMMA wf?(odS(s))
+  odS_den: LEMMA den(odS(s)) = (: value(sample(s)) :)
+  odS_exact: LEMMA exact?(odS(s))
+
+  %% ---- the certificate of an open sector gives invariance of the top reads ---------------
+  %% every / some over the sector records
+  every_map_mem: LEMMA FORALL ss: every(pr)(map(g)(ss)) AND member(s, ss) IMPLIES pr(g(s))
+  every_map_all: LEMMA FORALL ss: (FORALL s: member(s, ss) IMPLIES pr(g(s))) IMPLIES every(pr)(map(g)(ss))
+  some_map_mem: LEMMA FORALL ss: some(pr)(map(g)(ss)) IMPLIES EXISTS s: member(s, ss) AND pr(g(s))
+  some_map_intro: LEMMA FORALL ss: member(s, ss) AND pr(g(s)) IMPLIES some(pr)(map(g)(ss))
+  wrs_top: LEMMA exact?(od) AND member(c, wrs(P, den(od)))
+    IMPLIES member(rd_norm(c), topreads(cons(P, TW), od))
+  %% rd_norm scales by a nonzero constant, so its sign test is the read's
+  rdn_msg: LEMMA sign3(polylist(cpl(rd_norm(c)))(x)) = sign3(polylist(cpl(rd_norm(c)))(z))
+    IMPLIES msg((: x :))(c) = msg((: z :))(c)
+  inv_topreads: LEMMA sok2?(s) AND NOT at?(s) AND cons?(TW)
+    AND every(LAMBDA (c: mpoly): inv_chk(cpl(c), s))(topreads(TW, odS(s)))
+    IMPLIES invz?(car(TW), insec(s), value(sample(s)), null[real])
+
+  %% ---- one sector -------------------------------------------------------------------------
+  sectn_sem: LEMMA cons?(T0) AND length(qs1) = length(T0) AND tlast(T0) = F
+    AND sok2?(s) AND scok?(u)(scof(u, T0, s)) AND in?(s, x)
+    IMPLIES (scval(u, qs1, Psi)(scof(u, T0, s)) IFF sem(qs1, F, Psi, (: x :)))
+
+  %% ---- the fold over the sectors -------------------------------------------------------------
+  memn_ok: LEMMA gaps_ok(rts(Q)) AND every(scok?(u))(map(LAMBDA (s: Sect): scof(u, T0, s))(sects(rts(Q))))
+    AND member(s, sects(rts(Q)))
+    IMPLIES sok2?(s) AND scok?(u)(scof(u, T0, s)) AND in?(s, value(sample(s)))
+
+  foldn_sem: LEMMA cons?(T0) AND length(qs1) = length(T0) AND tlast(T0) = F AND gaps_ok(rts(Q))
+    AND every(scok?(u))(map(LAMBDA (s: Sect): scof(u, T0, s))(sects(rts(Q))))
+    IMPLIES ((IF q1 THEN every(scval(u, qs1, Psi))(map(LAMBDA (s: Sect): scof(u, T0, s))(sects(rts(Q))))
+              ELSE some(scval(u, qs1, Psi))(map(LAMBDA (s: Sect): scof(u, T0, s))(sects(rts(Q)))) ENDIF)
+             IFF sem(cons(q1, qs1), F, Psi, null[real]))
+
+  decn_correct: THEOREM decn_o(u, qs, F, Psi)`ok IMPLIES
+    (decn_o(u, qs, F, Psi)`val IFF sem(qs, F, Psi, null[real]))
+END decn_ok

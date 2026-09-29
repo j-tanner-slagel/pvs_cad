@@ -1,0 +1,590 @@
+(|alg_bis|
+ (|lives_TCC1| 0
+  (|lives_TCC1-1| NIL 3998945495 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|lives| SUBTYPE "F" "(list_adt[list_adt[mpoly_adt.mpoly].list].cons?)"
+    (45 20 45 21))))
+ (|lives_TCC2| 0
+  (|lives_TCC2-1| NIL 3998945495 ("" (TERMINATION-TCC) NIL NIL)
+   ((|live?| CONST-DECL "bool" |cad_proj| NIL)
+    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL))
+   NIL
+   (|lives| TERMINATION "lives(cdr[list[mpoly]](F))" #A((3) BASE-CHAR . "NIL")
+    (45 42 45 55))))
+ (|lives_TCC3| 0
+  (|lives_TCC3-1| NIL 3998945495 ("" (TERMINATION-TCC) NIL NIL)
+   ((|live?| CONST-DECL "bool" |cad_proj| NIL)
+    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL))
+   NIL
+   (|lives| TERMINATION "lives(cdr[list[mpoly]](F))" #A((3) BASE-CHAR . "NIL")
+    (46 9 46 22))))
+ (|strip_TCC1| 0
+  (|strip_TCC1-0| "" 3998945525
+   ("" (SKEEP)
+    (("" (LEMMA "lbut_length") (("" (INST -1 "f") (("" (ASSERT) NIL NIL)) NIL))
+      NIL))
+    NIL)
+   ((|lbut_length| FORMULA-DECL NIL |mpoly_pdiv| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL))
+   SHOSTAK
+   (|strip| TERMINATION "strip(lbut(f))" #A((3) BASE-CHAR . "NIL")
+    (65 29 65 43))))
+ (|bpick_TCC1| 0
+  (|bpick_TCC1-1| NIL 3998945495 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|rat_plus_rat_is_rat| APPLICATION-JUDGEMENT "rat" |rationals| NIL)
+    (|bprod| CONST-DECL "list[mpoly]" |alg_bis| NIL)
+    (|pmat| CONST-DECL "list[list[rat]]" |mpoly_swap| NIL)
+    (|mswap| CONST-DECL "list[mpoly]" |mpoly_swap| NIL)
+    (|partial_eval| CONST-DECL "Polylist" |mpoly_univ| NIL)
+    (|asgn| CONST-DECL "Sign3" |alg_lift| NIL)
+    (|rat_poly_to_int| CONST-DECL "{ai: [nat -> int] |
+   EXISTS (cp: posrat): FORALL (j: upto(n)): ai(j) = cp * aq(j)}"
+     |clear_denominators| |Sturm|)
+    (|ipoly| CONST-DECL "[nat -> int]" |alg_count| NIL)
+    (|remainder_seq| CONST-DECL "{crem: (is_neg_remainder_list?(g, n, h, m)) |
+   length(crem) > 1 AND length(nth(crem, 0)) = 0}"
+     |remainder_sequence| |Sturm|)
+    (|chain_a| CONST-DECL "(Eq_computed_remainder?(A, n))" |alg_count| NIL)
+    (^ CONST-DECL "real" |exponentiation| NIL)
+    (|polynomial| CONST-DECL "[real -> real]" |polynomials| |reals|)
+    (C CONST-DECL "posnat" |binomial| |reals|)
+    (|poly_n_deriv| CONST-DECL "real" |polynomials| |reals|)
+    (|poly_rootless_width| CONST-DECL "posreal" |more_polynomial_props|
+     |reals|)
+    (|roots_closed_int| CONST-DECL "int" |compute_sturm| |Sturm|)
+    (|nroots_a| CONST-DECL "nat" |alg_count| NIL)
+    (|nroots| CONST-DECL "nat" |alg_count| NIL)
+    (|rat_div_nzrat_is_rat| APPLICATION-JUDGEMENT "rat" |rationals| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_times_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (|posreal_div_posreal_is_posreal| APPLICATION-JUDGEMENT "posreal"
+     |real_types| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|sigma_rat| APPLICATION-JUDGEMENT "rational" |sigma_nat| |reals|)
+    (|posint_times_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|rat_times_rat_is_rat| APPLICATION-JUDGEMENT "rat" |rationals| NIL)
+    (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|alg?| CONST-DECL "bool" |alg_def| NIL)
+    (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   NIL (|bpick| SUBTYPE "n - 1" "nat" (79 28 79 33))))
+ (|bpick_TCC2| 0
+  (|bpick_TCC2-0| "" 3998945526 ("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL)
+   ((|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|rat_plus_rat_is_rat| APPLICATION-JUDGEMENT "rat" |rationals| NIL)
+    (|rat_div_nzrat_is_rat| APPLICATION-JUDGEMENT "rat" |rationals| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL))
+   SHOSTAK
+   (|bpick| TERMINATION "bpick(a, F, lo, m, n - 1)" #A((3) BASE-CHAR . "NIL")
+    (79 9 79 34))))
+ (|bint_TCC1| 0
+  (|bint_TCC1-1| NIL 3998945495 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|acount| CONST-DECL "int" |alg_sturm| NIL)
+    (|avar| CONST-DECL "nat" |alg_sturm| NIL)
+    (|achain| CONST-DECL "list[list[mpoly]]" |alg_sturm| NIL)
+    (|bk| CONST-DECL "nat" |alg_bis| NIL)
+    (|bprod| CONST-DECL "list[mpoly]" |alg_bis| NIL)
+    (|rat_poly_to_int| CONST-DECL "{ai: [nat -> int] |
+   EXISTS (cp: posrat): FORALL (j: upto(n)): ai(j) = cp * aq(j)}"
+     |clear_denominators| |Sturm|)
+    (|ipoly| CONST-DECL "[nat -> int]" |alg_count| NIL)
+    (|remainder_seq| CONST-DECL "{crem: (is_neg_remainder_list?(g, n, h, m)) |
+   length(crem) > 1 AND length(nth(crem, 0)) = 0}"
+     |remainder_sequence| |Sturm|)
+    (|chain_a| CONST-DECL "(Eq_computed_remainder?(A, n))" |alg_count| NIL)
+    (^ CONST-DECL "real" |exponentiation| NIL)
+    (|polynomial| CONST-DECL "[real -> real]" |polynomials| |reals|)
+    (C CONST-DECL "posnat" |binomial| |reals|)
+    (|poly_n_deriv| CONST-DECL "real" |polynomials| |reals|)
+    (|poly_rootless_width| CONST-DECL "posreal" |more_polynomial_props|
+     |reals|)
+    (|roots_closed_int| CONST-DECL "int" |compute_sturm| |Sturm|)
+    (|nroots_a| CONST-DECL "nat" |alg_count| NIL)
+    (|nroots| CONST-DECL "nat" |alg_count| NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_times_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (|posreal_div_posreal_is_posreal| APPLICATION-JUDGEMENT "posreal"
+     |real_types| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|sigma_rat| APPLICATION-JUDGEMENT "rational" |sigma_nat| |reals|)
+    (|posint_times_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|rat_times_rat_is_rat| APPLICATION-JUDGEMENT "rat" |rationals| NIL)
+    (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|alg?| CONST-DECL "bool" |alg_def| NIL)
+    (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   NIL (|bint| SUBTYPE "n - 1" "nat" (87 41 87 46))))
+ (|bint_TCC2| 0
+  (|bint_TCC2-0| "" 3998945535
+   ("" (SKEEP) (("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL)) NIL)
+   ((|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
+   SHOSTAK
+   (|bint| TERMINATION "bint(a, F, lo, m, n - 1)" #A((3) BASE-CHAR . "NIL")
+    (87 23 87 47))))
+ (|bint_TCC3| 0
+  (|bint_TCC3-0| "" 3998945568
+   ("" (SKEEP)
+    (("" (SKEEP)
+      (("" (LEMMA "rat_list_every_num") (("" (INST -1 "(: m :)") NIL NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
+    (|rat_list_every_num| FORMULA-DECL NIL |mpoly_univ| NIL))
+   SHOSTAK (|bint| SUBTYPE "(: m :)" "list[rat]" (87 49 87 56))))
+ (|bwide_TCC1| 0
+  (|bwide_TCC1-1| NIL 3998945495 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|atotal| CONST-DECL "int" |alg_sturm2| NIL)
+    (|ahi| CONST-DECL "nat" |alg_sturm2| NIL)
+    (|alo| CONST-DECL "nat" |alg_sturm2| NIL)
+    (|acount| CONST-DECL "int" |alg_sturm| NIL)
+    (|avar| CONST-DECL "nat" |alg_sturm| NIL)
+    (|achain| CONST-DECL "list[list[mpoly]]" |alg_sturm| NIL)
+    (|bk| CONST-DECL "nat" |alg_bis| NIL)
+    (|asgn| CONST-DECL "Sign3" |alg_lift| NIL)
+    (|partial_eval| CONST-DECL "Polylist" |mpoly_univ| NIL)
+    (|mswap| CONST-DECL "list[mpoly]" |mpoly_swap| NIL)
+    (|pmat| CONST-DECL "list[list[rat]]" |mpoly_swap| NIL)
+    (|bprod| CONST-DECL "list[mpoly]" |alg_bis| NIL)
+    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|rat_times_rat_is_rat| APPLICATION-JUDGEMENT "rat" |rationals| NIL)
+    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|posint_times_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|sigma_rat| APPLICATION-JUDGEMENT "rational" |sigma_nat| |reals|)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|posreal_div_posreal_is_posreal| APPLICATION-JUDGEMENT "posreal"
+     |real_types| NIL)
+    (|real_times_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|nroots| CONST-DECL "nat" |alg_count| NIL)
+    (|nroots_a| CONST-DECL "nat" |alg_count| NIL)
+    (|roots_closed_int| CONST-DECL "int" |compute_sturm| |Sturm|)
+    (|poly_rootless_width| CONST-DECL "posreal" |more_polynomial_props|
+     |reals|)
+    (|poly_n_deriv| CONST-DECL "real" |polynomials| |reals|)
+    (C CONST-DECL "posnat" |binomial| |reals|)
+    (|polynomial| CONST-DECL "[real -> real]" |polynomials| |reals|)
+    (^ CONST-DECL "real" |exponentiation| NIL)
+    (|chain_a| CONST-DECL "(Eq_computed_remainder?(A, n))" |alg_count| NIL)
+    (|remainder_seq| CONST-DECL "{crem: (is_neg_remainder_list?(g, n, h, m)) |
+   length(crem) > 1 AND length(nth(crem, 0)) = 0}"
+     |remainder_sequence| |Sturm|)
+    (|ipoly| CONST-DECL "[nat -> int]" |alg_count| NIL)
+    (|rat_poly_to_int| CONST-DECL "{ai: [nat -> int] |
+   EXISTS (cp: posrat): FORALL (j: upto(n)): ai(j) = cp * aq(j)}"
+     |clear_denominators| |Sturm|)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|posrat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (> CONST-DECL "bool" |reals| NIL)
+    (|nonneg_rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|alg?| CONST-DECL "bool" |alg_def| NIL)
+    (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   NIL (|bwide| SUBTYPE "n - 1" "nat" (98 28 98 33))))
+ (|bwide_TCC2| 0
+  (|bwide_TCC2-0| "" 3998945527 ("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL)
+   ((|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
+   SHOSTAK
+   (|bwide| TERMINATION "bwide(a, F, 2 * b, n - 1)" #A((3) BASE-CHAR . "NIL")
+    (98 9 98 34))))
+ (|bseps_TCC1| 0
+  (|bseps_TCC1-0| "" 3998945569
+   ("" (SKEEP)
+    (("" (SKEEP)
+      (("" (LEMMA "rat_list_every_num")
+        (("" (INST -1 "append[rat](bint(a, F, -b, b, bfuel), (: b :))") NIL
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|append| DEF-DECL "list[T]" |list_props| NIL)
+    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
+    (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|alg?| CONST-DECL "bool" |alg_def| NIL)
+    (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|bint| DEF-DECL "list[rat]" |alg_bis| NIL)
+    (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
+    (- CONST-DECL "[numfield -> numfield]" |number_fields| NIL)
+    (|nonneg_rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (> CONST-DECL "bool" |reals| NIL)
+    (|posrat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|bfuel| CONST-DECL "nat" |alg_bis| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
+    (|minus_nzrat_is_nzrat| APPLICATION-JUDGEMENT "nzrat" |rationals| NIL)
+    (|rat_list_every_num| FORMULA-DECL NIL |mpoly_univ| NIL))
+   SHOSTAK
+   (|bseps| SUBTYPE "append[real](bint(a, F, -b, b, bfuel), (: b :))"
+    "list[rat]" (107 18 107 59))))
+ (|bwalk_TCC1| 0
+  (|bwalk_TCC1-1| NIL 3998945495 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|rat_times_rat_is_rat| APPLICATION-JUDGEMENT "rat" |rationals| NIL)
+    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|posint_times_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|sigma_rat| APPLICATION-JUDGEMENT "rational" |sigma_nat| |reals|)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|posreal_div_posreal_is_posreal| APPLICATION-JUDGEMENT "posreal"
+     |real_types| NIL)
+    (|real_times_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (|nroots| CONST-DECL "nat" |alg_count| NIL)
+    (|nroots_a| CONST-DECL "nat" |alg_count| NIL)
+    (|roots_closed_int| CONST-DECL "int" |compute_sturm| |Sturm|)
+    (|poly_rootless_width| CONST-DECL "posreal" |more_polynomial_props|
+     |reals|)
+    (|poly_n_deriv| CONST-DECL "real" |polynomials| |reals|)
+    (C CONST-DECL "posnat" |binomial| |reals|)
+    (|polynomial| CONST-DECL "[real -> real]" |polynomials| |reals|)
+    (^ CONST-DECL "real" |exponentiation| NIL)
+    (|chain_a| CONST-DECL "(Eq_computed_remainder?(A, n))" |alg_count| NIL)
+    (|remainder_seq| CONST-DECL "{crem: (is_neg_remainder_list?(g, n, h, m)) |
+   length(crem) > 1 AND length(nth(crem, 0)) = 0}"
+     |remainder_sequence| |Sturm|)
+    (|ipoly| CONST-DECL "[nat -> int]" |alg_count| NIL)
+    (|rat_poly_to_int| CONST-DECL "{ai: [nat -> int] |
+   EXISTS (cp: posrat): FORALL (j: upto(n)): ai(j) = cp * aq(j)}"
+     |clear_denominators| |Sturm|)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
+    (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|alg?| CONST-DECL "bool" |alg_def| NIL)
+    (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
+   NIL (|bwalk| SUBTYPE "rs" "(list_adt[real].cons?)" (125 20 125 22))))
+ (|bwalk_TCC2| 0
+  (|bwalk_TCC2-1| NIL 3998945495 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|rat_times_rat_is_rat| APPLICATION-JUDGEMENT "rat" |rationals| NIL)
+    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|posint_times_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|sigma_rat| APPLICATION-JUDGEMENT "rational" |sigma_nat| |reals|)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|posreal_div_posreal_is_posreal| APPLICATION-JUDGEMENT "posreal"
+     |real_types| NIL)
+    (|real_times_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (|nroots| CONST-DECL "nat" |alg_count| NIL)
+    (|nroots_a| CONST-DECL "nat" |alg_count| NIL)
+    (|roots_closed_int| CONST-DECL "int" |compute_sturm| |Sturm|)
+    (|poly_rootless_width| CONST-DECL "posreal" |more_polynomial_props|
+     |reals|)
+    (|poly_n_deriv| CONST-DECL "real" |polynomials| |reals|)
+    (C CONST-DECL "posnat" |binomial| |reals|)
+    (|polynomial| CONST-DECL "[real -> real]" |polynomials| |reals|)
+    (^ CONST-DECL "real" |exponentiation| NIL)
+    (|chain_a| CONST-DECL "(Eq_computed_remainder?(A, n))" |alg_count| NIL)
+    (|remainder_seq| CONST-DECL "{crem: (is_neg_remainder_list?(g, n, h, m)) |
+   length(crem) > 1 AND length(nth(crem, 0)) = 0}"
+     |remainder_sequence| |Sturm|)
+    (|ipoly| CONST-DECL "[nat -> int]" |alg_count| NIL)
+    (|rat_poly_to_int| CONST-DECL "{ai: [nat -> int] |
+   EXISTS (cp: posrat): FORALL (j: upto(n)): ai(j) = cp * aq(j)}"
+     |clear_denominators| |Sturm|)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
+    (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|alg?| CONST-DECL "bool" |alg_def| NIL)
+    (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
+   NIL
+   (|bwalk| SUBTYPE "cdr[real](rs)" "(list_adt[real].cons?)" (126 46 126 53))))
+ (|bwalk_TCC3| 0
+  (|bwalk_TCC3-0| "" 3998945535
+   ("" (SKEEP)
+    (("" (SKEEP) (("" (EXPAND "length" + 2) (("" (ASSERT) NIL NIL)) NIL)) NIL))
+    NIL)
+   ((|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
+   SHOSTAK
+   (|bwalk| TERMINATION "bwalk(a, F, cdr[rat](rs))" #A((3) BASE-CHAR . "NIL")
+    (129 46 129 66))))
+ (|bwalk_TCC4| 0
+  (|bwalk_TCC4-0| "" 3998945536
+   ("" (SKEEP)
+    (("" (SKEEP) (("" (EXPAND "length" + 2) (("" (ASSERT) NIL NIL)) NIL)) NIL))
+    NIL)
+   ((|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
+   SHOSTAK
+   (|bwalk| TERMINATION "bwalk(a, F, cdr[rat](rs))" #A((3) BASE-CHAR . "NIL")
+    (130 19 130 39))))
+ (|bokF_TCC1| 0
+  (|bokF_TCC1-1| NIL 3998945495 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|alc?| CONST-DECL "bool" |alg_sturm| NIL)
+    (|cpl| CONST-DECL "Polylist" |cad_lift| NIL)
+    (|bk| CONST-DECL "nat" |alg_bis| NIL)
+    (|bprod| CONST-DECL "list[mpoly]" |alg_bis| NIL)
+    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|rat_times_rat_is_rat| APPLICATION-JUDGEMENT "rat" |rationals| NIL)
+    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|posint_times_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|sigma_rat| APPLICATION-JUDGEMENT "rational" |sigma_nat| |reals|)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|posreal_div_posreal_is_posreal| APPLICATION-JUDGEMENT "posreal"
+     |real_types| NIL)
+    (|real_times_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (|nroots| CONST-DECL "nat" |alg_count| NIL)
+    (|nroots_a| CONST-DECL "nat" |alg_count| NIL)
+    (|roots_closed_int| CONST-DECL "int" |compute_sturm| |Sturm|)
+    (|poly_rootless_width| CONST-DECL "posreal" |more_polynomial_props|
+     |reals|)
+    (|poly_n_deriv| CONST-DECL "real" |polynomials| |reals|)
+    (C CONST-DECL "posnat" |binomial| |reals|)
+    (|polynomial| CONST-DECL "[real -> real]" |polynomials| |reals|)
+    (^ CONST-DECL "real" |exponentiation| NIL)
+    (|chain_a| CONST-DECL "(Eq_computed_remainder?(A, n))" |alg_count| NIL)
+    (|remainder_seq| CONST-DECL "{crem: (is_neg_remainder_list?(g, n, h, m)) |
+   length(crem) > 1 AND length(nth(crem, 0)) = 0}"
+     |remainder_sequence| |Sturm|)
+    (|ipoly| CONST-DECL "[nat -> int]" |alg_count| NIL)
+    (|rat_poly_to_int| CONST-DECL "{ai: [nat -> int] |
+   EXISTS (cp: posrat): FORALL (j: upto(n)): ai(j) = cp * aq(j)}"
+     |clear_denominators| |Sturm|)
+    (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|alg?| CONST-DECL "bool" |alg_def| NIL)
+    (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   NIL
+   (|bokF| SUBTYPE "G" "(list_adt[list_adt[mpoly_adt.mpoly].list].cons?)"
+    (142 28 142 29))))
+ (|bokF_TCC2| 0
+  (|bokF_TCC2-0| "" 3998945528
+   ("" (SKEEP) (("" (EXPAND "length" + 2) (("" (ASSERT) NIL NIL)) NIL)) NIL)
+   ((|length| DEF-DECL "nat" |list_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
+   SHOSTAK
+   (|bokF| TERMINATION "bokF(a, F, cdr[list[mpoly]](G))"
+    #A((3) BASE-CHAR . "NIL") (142 13 142 31)))))
+

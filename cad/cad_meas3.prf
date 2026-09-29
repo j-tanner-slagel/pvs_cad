@@ -1,0 +1,11 @@
+(|cad_meas3|
+ (|collins_cost| 0
+  (|collins_cost-0| "" 3998609855 ("" (EVAL-FORMULA) NIL NIL) NIL SHOSTAK)
+  (|collins_cost-1| NIL 3998609855 ("" (POSTPONE) NIL NIL)
+   ((|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|bijective?| CONST-DECL "bool" |functions| NIL)
+    (|id| CONST-DECL "(bijective?[T, T])" |identity| NIL)
+    (TRUE CONST-DECL "bool" |booleans| NIL))
+   SHOSTAK)))
+

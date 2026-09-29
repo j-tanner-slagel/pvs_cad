@@ -1,0 +1,69 @@
+qe_formula: THEORY
+%----------------------------------------------------------------------------
+% Quantifier elimination for one variable (Phase 3).
+%
+% A formula is a disjunction of conjunctions of sign conditions: a list of
+% conjuncts, each a list of equations and a list of strict inequalities.  That
+% is the normal form every Boolean combination of sign conditions has, and the
+% other relations reduce to it (p < 0 is -p > 0, p /= 0 is p > 0 OR -p > 0,
+% p >= 0 is p > 0 OR p = 0), so the Boolean structure is handled outside the
+% verified core --- by the strategy, whose every step is proved.
+%
+% qe_exists(k, F, ys) decides EXISTS x: feval(F, ys, x) by deciding each
+% conjunct with cdec, and qe_sound is the theorem the phase was aiming at:
+% the answer is right whenever the fuel and the degrees are (fok).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING qe_conj
+
+  %% a conjunct and a formula
+  Conj: TYPE = [# ceqs: list[list[mpoly]], cgts: list[list[mpoly]] #]
+  C: VAR Conj
+  F: VAR list[Conj]
+  ys: VAR list[real]
+  k: VAR nat
+  x: VAR real
+
+  ceval(C, ys, x): bool =
+    every(LAMBDA (u: list[mpoly]): meval(mpol(u))(cons(x, ys)) = 0)(C`ceqs)
+    AND allgt(C`cgts, ys, x)
+  feval(F, ys, x): bool = some(LAMBDA (D: Conj): ceval(D, ys, x))(F)
+
+  %% the decision and its well-formedness condition
+  qe_exists(k, F, ys): bool =
+    some(LAMBDA (D: Conj): cdec(k, D`ceqs, D`cgts, ys))(F)
+  fok(k, F, ys): bool =
+    every(LAMBDA (D: Conj): cok(k, D`ceqs, D`cgts, ys))(F)
+
+  %% a fuel bound big enough for the chains of every conjunct; nothing depends
+  %% on it being right, since fok is checked by evaluation
+  lens(L: list[list[mpoly]]): RECURSIVE nat =
+    IF null?(L) THEN 0 ELSE length(car(L)) + lens(cdr(L)) ENDIF
+  MEASURE length(L)
+  cfuel(C): nat = 2 * lens(C`ceqs) + 3 * lens(C`cgts) + 8
+  qe_fuel(F): RECURSIVE nat =
+    IF null?(F) THEN 1 ELSE max(cfuel(car(F)), qe_fuel(cdr(F))) ENDIF
+  MEASURE length(F)
+
+  feval_null: LEMMA NOT feval(null[Conj], ys, x)
+  feval_cons: LEMMA feval(cons(C, F), ys, x) IFF
+    (ceval(C, ys, x) OR feval(F, ys, x))
+  qe_null: LEMMA NOT qe_exists(k, null[Conj], ys)
+  qe_cons: LEMMA qe_exists(k, cons(C, F), ys) IFF
+    (cdec(k, C`ceqs, C`cgts, ys) OR qe_exists(k, F, ys))
+  fok_cons: LEMMA fok(k, cons(C, F), ys) IFF
+    (cok(k, C`ceqs, C`cgts, ys) AND fok(k, F, ys))
+  ex_or: LEMMA (EXISTS (x: real): ceval(C, ys, x) OR feval(F, ys, x)) IFF
+    ((EXISTS (x: real): ceval(C, ys, x)) OR
+     (EXISTS (x: real): feval(F, ys, x)))
+
+  ex_feval_cons: LEMMA (EXISTS (x: real): feval(cons(C, F), ys, x)) IFF
+    ((EXISTS (x: real): ceval(C, ys, x)) OR
+     (EXISTS (x: real): feval(F, ys, x)))
+
+  %% quantifier elimination for one quantifier
+  qe_sound: THEOREM FORALL (F: list[Conj]):
+    FORALL (k: nat, ys: list[real]):
+      fok(k, F, ys) IMPLIES
+      (qe_exists(k, F, ys) IFF (EXISTS (x: real): feval(F, ys, x)))
+END qe_formula

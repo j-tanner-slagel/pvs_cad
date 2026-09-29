@@ -1,0 +1,22 @@
+alg_bis_ex: THEORY
+%----------------------------------------------------------------------------
+% The bisection lifting, measured against the resultant one (item A).
+%
+% svs_bis places its section points by BISECTION on acount rather than at the
+% roots of a resultant, so nothing in it depends on the resultant containing
+% every root -- the one step alg_lift2 still leaves as an argument.  These
+% check it gives the same answers.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING alg_bis, alg_lift2_ex
+
+  v: VAR SV
+
+  bis_ok_rad2: LEMMA ok2c(f_rad2)
+  bis_rad2:    LEMMA dec2c(TRUE, FALSE, f_rad2, psi2)
+  bis_rad2_f:  LEMMA dec2c(TRUE, FALSE, f_rad2, psi2_f) = FALSE
+
+  bis_ok_meet: LEMMA ok2c(f_meet)
+  bis_meet:    LEMMA dec2c(FALSE, FALSE, f_meet, psi_meet)
+  bis_meet_f:  LEMMA dec2c(TRUE, FALSE, f_meet, psi_meet) = FALSE
+END alg_bis_ex

@@ -1,0 +1,131 @@
+innern_sem: THEORY
+%----------------------------------------------------------------------------
+% Claim A on descriptors: the n-level executable reads the truth of the inner
+% quantifiers at the point its descriptor denotes, and certifies the closure
+% there (FINISH_PLAN 3i, stage N8).
+%
+%   innern_sem   okn_o(u, TW, TB, od), valid tables, a well formed od IMPLY
+%                  innern_o(u, qs, TW, TB, Psi, od) IFF sem(qs, tlast(TW), Psi, den(od))
+%                and CLF(TW, den(od)).
+%
+% By induction on the tower.  At a checked level (lvok_o) the oracle is right
+% on every read the level makes (lv_agree, from okqs_agree), so the filter is
+% the effective family (feff_zf), and the walk, its separators, gaps and
+% certificate through the descriptor are those at the point (lvl_exact, by
+% odreads and walk_det).  At the bottom the listed vectors are the fibre set
+% (walk_fib, fib_zf).  Above it, the cell list of the executable IS the cell
+% value list of the point (cellsf_cvl: a separator's descriptor denotes the
+% separator point, a section's the gap's root, opt_den / osec_den), and the
+% closure at the point follows from the closure checked at the cells
+% (rdz_cell) and, between cells, from rdz_vec and tower_ct along the
+% root-free intervals (clf_level).  Then the fold is the quantifier
+% (bfold_cvl, with the root-free constancy of tlc's rfc_tw).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING oddef, tower_sem, map_member[SV, SV]
+
+  TW, TW1: VAR Tower
+  TB: VAR list[CT]
+  tb, tb2: VAR CT
+  F, P, G: VAR list[list[mpoly]]
+  qs, qs1: VAR list[bool]
+  q: VAR bool
+  Psi: VAR [SV -> bool]
+  od, od2: VAR OD
+  ws: VAR list[real]
+  Y: VAR list[rat]
+  y0, lo, hi: VAR rat
+  y: VAR real
+  v: VAR SV
+  r: VAR mpoly
+  f: VAR [OD -> bool]
+  T: VAR [real -> bool]
+  u: VAR nat
+
+  vtb?(TB): bool = every(valid?)(TB)
+
+  %% ---- a checked level ------------------------------------------------------------------
+  lv_agree: LEMMA wf?(od) AND lvok_o(u, F, od, tb) IMPLIES agree(osg(od), msg(den(od)), wr_t(u, F, od, tb))
+
+  lvl_exact: LEMMA valid?(tb) AND wf?(od) AND lvok_o(u, F, od, tb) IMPLIES
+    feff(F, od) = zf(F, den(od))
+    AND (FORALL v: ins0(F, od, v) = insz(F, den(od), v))
+    AND seps_t(u, feff(F, od), od, tb) = seps_n(feff(F, od), osg(od), sfuel2 + u)
+    AND wok?(zf(F, den(od)), msg(den(od)), seps_t(u, feff(F, od), od, tb))
+    AND wagree?(zf(F, den(od)), osg(od), msg(den(od)), seps_t(u, feff(F, od), od, tb))
+    AND certz?(F, den(od))
+    AND agree(osg(od), msg(den(od)), wi_rd_t(F, od, tb))
+
+  %% the closure checked at a cell is rdz? at the cell's point
+  rdz_cell: LEMMA valid?(tb2) AND wf?(od2) AND lvok_o(u, F, od2, tb2) AND cellok_o(F, P, od2, tb2)
+    IMPLIES rdz?(F, P, den(od2))
+
+  %% ---- the cells of the executable -----------------------------------------------------
+  bs: VAR list[bool]
+  b0: VAR bool
+  every_true: LEMMA FORALL bs: every(LAMBDA (b: bool): b)(bs) AND member(b0, bs) IMPLIES b0
+  cellsf_msep: LEMMA FORALL Y: member(y0, Y) IMPLIES member(f(opt(od, y0)), cellsf_o(f, P, od, tb, Y))
+  cellsf_msec: LEMMA FORALL Y: adj?(Y, lo, hi) AND gap_t(P, od, lo, hi, tb)
+    IMPLIES member(f(osec(od, P, lo, hi)), cellsf_o(f, P, od, tb, Y))
+  cellsf_sep: LEMMA FORALL Y: every(LAMBDA (b: bool): b)(cellsf_o(f, P, od, tb, Y)) AND member(y0, Y)
+    IMPLIES f(opt(od, y0))
+  cellsf_sec: LEMMA FORALL Y: every(LAMBDA (b: bool): b)(cellsf_o(f, P, od, tb, Y))
+    AND adj?(Y, lo, hi) AND gap_t(P, od, lo, hi, tb)
+    IMPLIES f(osec(od, P, lo, hi))
+
+  cellsf_cvl: LEMMA FORALL Y:
+    (FORALL y0: member(y0, Y) IMPLIES f(opt(od, y0)) = T(y0))
+    AND (FORALL lo, hi: adj?(Y, lo, hi) IMPLIES (gap_t(P, od, lo, hi, tb) IFF gap?(G, msg(ws), lo, hi)))
+    AND (FORALL lo, hi: adj?(Y, lo, hi) AND gap?(G, msg(ws), lo, hi) IMPLIES
+           f(osec(od, P, lo, hi)) = T(secbeta(G, ws, lo, hi)))
+    IMPLIES cellsf_o(f, P, od, tb, Y) = cvl(T, G, ws, Y)
+
+  %% ---- the closure of a level from its cells -----------------------------------------------
+  clf_level: LEMMA cons?(TW1) AND certz?(P, ws) AND wok?(zf(P, ws), msg(ws), Y)
+    AND (FORALL y0: member(y0, Y) IMPLIES
+           rdz?(car(TW1), P, cons(y0, ws)) AND CLF(TW1, cons(y0, ws)))
+    AND (FORALL lo, hi: adj?(Y, lo, hi) AND gap?(zf(P, ws), msg(ws), lo, hi) IMPLIES
+           rdz?(car(TW1), P, cons(secbeta(zf(P, ws), ws, lo, hi), ws))
+           AND CLF(TW1, cons(secbeta(zf(P, ws), ws, lo, hi), ws)))
+    IMPLIES CLF(cons(P, TW1), ws)
+
+  %% ---- claim A ------------------------------------------------------------------------------
+  innern_base: LEMMA length(qs) = 1 AND vtb?(TB) AND wf?(od) AND okn_o(u, (: P :), TB, od)
+    IMPLIES (innern_o(u, qs, (: P :), TB, Psi, od) IFF sem(qs, P, Psi, den(od)))
+      AND CLF((: P :), den(od))
+
+  %% claim A for one tower, as a predicate (the induction hypothesis)
+  IA(u, TW): bool = FORALL qs, TB, Psi, od:
+    length(qs) = length(TW) AND vtb?(TB) AND wf?(od) AND okn_o(u, TW, TB, od)
+    IMPLIES (innern_o(u, qs, TW, TB, Psi, od) IFF sem(qs, tlast(TW), Psi, den(od)))
+      AND CLF(TW, den(od))
+
+  %% the context of a level with a level below it
+  ctxA?(u, P, TW1, TB, od): bool =
+    cons?(TW1) AND vtb?(TB) AND cons?(TB) AND cons?(cdr(TB)) AND wf?(od)
+    AND lvok_o(u, P, od, car(TB))
+    AND every(LAMBDA (b: bool): b)
+         (cellsf_o(LAMBDA (od2: OD): cellok_o(car(TW1), P, od2, car(cdr(TB)))
+                                      AND okn_o(u, TW1, cdr(TB), od2),
+                   feff(P, od), od, car(TB), seps_t(u, feff(P, od), od, car(TB))))
+
+  ia_sep: LEMMA IA(u, TW1) AND ctxA?(u, P, TW1, TB, od) AND length(qs1) = length(TW1)
+    AND member(y0, seps_t(u, feff(P, od), od, car(TB)))
+    IMPLIES (innern_o(u, qs1, TW1, cdr(TB), Psi, opt(od, y0)) = Tv(qs1, TW1, Psi, den(od))(y0))
+      AND CLF(TW1, cons(y0, den(od))) AND rdz?(car(TW1), P, cons(y0, den(od)))
+
+  ia_sec: LEMMA IA(u, TW1) AND ctxA?(u, P, TW1, TB, od) AND length(qs1) = length(TW1)
+    AND adj?(seps_t(u, feff(P, od), od, car(TB)), lo, hi)
+    AND gap?(zf(P, den(od)), msg(den(od)), lo, hi)
+    IMPLIES (innern_o(u, qs1, TW1, cdr(TB), Psi, osec(od, feff(P, od), lo, hi))
+             = Tv(qs1, TW1, Psi, den(od))(secbeta(zf(P, den(od)), den(od), lo, hi)))
+      AND CLF(TW1, cons(secbeta(zf(P, den(od)), den(od), lo, hi), den(od)))
+      AND rdz?(car(TW1), P, cons(secbeta(zf(P, den(od)), den(od), lo, hi), den(od)))
+
+  ia_step: LEMMA cons?(TW1) AND IA(u, TW1) IMPLIES IA(u, cons(P, TW1))
+
+  innern_sem: THEOREM FORALL TW: FORALL qs, TB, Psi, od:
+    cons?(TW) AND length(qs) = length(TW) AND vtb?(TB) AND wf?(od) AND okn_o(u, TW, TB, od)
+    IMPLIES (innern_o(u, qs, TW, TB, Psi, od) IFF sem(qs, tlast(TW), Psi, den(od)))
+      AND CLF(TW, den(od))
+END innern_sem

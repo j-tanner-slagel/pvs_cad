@@ -1,0 +1,72 @@
+subres: THEORY
+%----------------------------------------------------------------------------
+% The subresultant chain and its principal coefficients (Phase 6, toward
+% delineability).
+%
+% Why these and not just res/disc.  cad_proj is McCallum's operator:
+% coefficients, discriminants, pairwise resultants.  It decides all four
+% worked examples correctly and fast, but it FAILS inv1? (cad_meas:
+% proj_not_inv1), and the read closure that does satisfy inv1? costs
+% #root_sectors x 3^|F|.  So a correctness argument cannot come from inv1?,
+% and delineability is required (PHASE6_PLAN.md, item B).
+%
+% The route to it that needs no topology: svs_pt is already proved to compute
+% the fibre set exactly (svs_pt_sound, svs_pt_complete), so delineability
+% reduces to a statement about two UNIVARIATE families --
+%
+%   same principal subresultant coefficient signs  =>  same realizable
+%   sign-vector set
+%
+% -- which is sign-determination theory, purely algebraic.  No continuity of
+% roots, no connectedness.  The psc are the sign-INDEPENDENT stand-ins for the
+% leading coefficients of a polynomial remainder sequence: a PRS branches on
+% those signs (that is exactly the 3^|F| in rsc_sg), while the subresultants
+% are determinants and branch on nothing.
+%
+% Each psc is a det of a submatrix of the same Sylvester-style matrix, so
+% ring_det's det_eval -- which commutes with evaluation for ANY matrix --
+% gives the specialization theorem for free, as it does for res and disc.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING sylvester
+
+  f, g: VAR list[mpoly]
+  ys: VAR list[real]
+
+  %% The j-th subresultant matrix.  Rows: dg(g) - j shifts of f, then
+  %% dg(f) - j shifts of g, so it is square of side dg(f) + dg(g) - 2j.
+  %% Columns b < side - 1 carry degree dg(f) + dg(g) - j - 1 - b; the LAST
+  %% column carries degree j, which is what makes the determinant the
+  %% PRINCIPAL coefficient rather than the whole subresultant.
+  %% At j = 0 this is exactly syl (sres0_syl), so psc(f, g, 0) = res(f, g).
+  sresm(f, g, (j: nat)): Mat =
+    LAMBDA (a, b: nat):
+      LET p = dg(f), q = dg(g),
+          side = p + q - 2 * j,
+          %% the j = 0 case keeps the plain column degree for EVERY b, so the
+          %% matrix agrees with syl outside the block too and sres0_syl is a
+          %% genuine extensional equality (det has no congruence lemma here)
+          d = IF j = 0 OR b < side - 1 THEN p + q - j - 1 - b ELSE j ENDIF
+      IN IF a < q - j THEN coef_at(f, d - (q - j - 1 - a))
+         ELSE coef_at(g, d - (p - j - 1 - (a - (q - j))))
+         ENDIF
+
+  psc(f, g, (j: nat | 2 * j <= dg(f) + dg(g))): mpoly =
+    det(dg(f) + dg(g) - 2 * j, sresm(f, g, j))
+
+  %% the chain is the operator's raw material: psc for every j below dg(g)
+  pscs(f, g, (j: nat | 2 * j <= dg(f) + dg(g))): RECURSIVE list[mpoly] =
+    IF j = 0 THEN (: psc(f, g, 0) :)
+    ELSE cons(psc(f, g, j), pscs(f, g, j - 1))
+    ENDIF
+  MEASURE j
+
+  %% sanity: the 0-th subresultant matrix IS the Sylvester matrix, so the
+  %% 0-th principal subresultant coefficient is the resultant
+  sres0_syl: LEMMA sresm(f, g, 0) = syl(f, g)
+  psc0_res:  LEMMA psc(f, g, 0) = res(f, g)
+
+  %% and evaluation commutes, exactly as it does for res (res_eval)
+  psc_eval: LEMMA FORALL (j: nat): 2 * j <= dg(f) + dg(g) IMPLIES
+    meval(psc(f, g, j))(ys) = rdet(dg(f) + dg(g) - 2 * j, ev(sresm(f, g, j), ys))
+END subres

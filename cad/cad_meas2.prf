@@ -1,0 +1,33 @@
+(|cad_meas2|
+ (|sec0_TCC1| 0
+  (|sec0_TCC1-0| "" 3998603880
+   ("" (EXPAND "sects")
+    (("" (GROUND)
+      (("" (SKEEP) (("" (LIFT-IF) (("" (GROUND) NIL NIL)) NIL)) NIL)) NIL))
+    NIL)
+   NIL SHOSTAK
+   (|sec0| SUBTYPE "sects(rts(proj(F)))" "(list_adt[sect_inv.Sect].cons?)"
+    (15 22 15 41)))
+  (|sec0_TCC1-1| NIL 3998603145 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|sects| CONST-DECL "list[Sect]" |sect_inv| NIL)) NIL
+   (|sec0| SUBTYPE "sects(rts(proj(F)))" "(list_adt[sect_inv.Sect].cons?)"
+    (15 22 15 41))))
+ (|read_set_small| 0
+  (|read_set_small-0| "" 3998603501 ("" (EVAL-FORMULA) NIL NIL) NIL SHOSTAK)
+  (|read_set_small-1| NIL 3998603497 ("" (POSTPONE) NIL NIL)
+   ((|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|bijective?| CONST-DECL "bool" |functions| NIL)
+    (|id| CONST-DECL "(bijective?[T, T])" |identity| NIL)
+    (TRUE CONST-DECL "bool" |booleans| NIL))
+   SHOSTAK))
+ (|root_sectors| 0
+  (|root_sectors-0| "" 3998603507 ("" (EVAL-FORMULA) NIL NIL) NIL SHOSTAK)
+  (|root_sectors-1| NIL 3998603497 ("" (POSTPONE) NIL NIL)
+   ((|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|bijective?| CONST-DECL "bool" |functions| NIL)
+    (|id| CONST-DECL "(bijective?[T, T])" |identity| NIL)
+    (TRUE CONST-DECL "bool" |booleans| NIL))
+   SHOSTAK)))
+

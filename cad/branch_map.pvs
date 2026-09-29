@@ -1,0 +1,44 @@
+branch_map[T, U: TYPE]: THEORY
+%----------------------------------------------------------------------------
+% Mapping and sequencing branch trees (Phase 3).
+%
+% bmap applies a function to every leaf; bbind replaces every leaf by a tree,
+% which is how one symbolic step is followed by the next: the later step may
+% branch on further sign conditions, and those become deeper nodes of the same
+% tree. The two select lemmas say the constructions commute with evaluation,
+% so reasoning about the symbolic algorithm reduces to reasoning about the
+% ordinary one at each valuation.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING branch_tree[T], branch_tree[U]
+
+  t: VAR btree[T]
+  ys: VAR list[real]
+  f: VAR [T -> U]
+  g: VAR [T -> btree[U]]
+  v: VAR T
+  c: VAR mpoly
+  t1, t2, t3: VAR btree[T]
+
+  bmap(f, t): RECURSIVE btree[U] =
+    CASES t OF
+      bleaf(v): bleaf(f(v)),
+      bnode(c, n, z, p): bnode(c, bmap(f, n), bmap(f, z), bmap(f, p))
+    ENDCASES
+  MEASURE t BY <<
+
+  bmap_leaf: LEMMA bmap(f, bleaf(v)) = bleaf(f(v))
+  bmap_node: LEMMA bmap(f, bnode(c, t1, t2, t3)) = bnode(c, bmap(f, t1), bmap(f, t2), bmap(f, t3))
+  select_bmap: LEMMA select(bmap(f, t), ys) = f(select(t, ys))
+
+  bbind(t, g): RECURSIVE btree[U] =
+    CASES t OF
+      bleaf(v): g(v),
+      bnode(c, n, z, p): bnode(c, bbind(n, g), bbind(z, g), bbind(p, g))
+    ENDCASES
+  MEASURE t BY <<
+
+  bbind_leaf: LEMMA bbind(bleaf(v), g) = g(v)
+  bbind_node: LEMMA bbind(bnode(c, t1, t2, t3), g) = bnode(c, bbind(t1, g), bbind(t2, g), bbind(t3, g))
+  select_bbind: LEMMA select(bbind(t, g), ys) = select(g(select(t, ys)), ys)
+END branch_map

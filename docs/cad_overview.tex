@@ -1,0 +1,300 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper, margin=0.85in, top=0.75in, bottom=0.8in]{geometry}
+\usepackage{libertinus}
+\usepackage[scale=0.82]{sourcecodepro}
+\usepackage{xcolor, fvextra, booktabs, enumitem, titlesec, microtype, tabularx}
+\usepackage[most]{tcolorbox}
+\usepackage[hidelinks]{hyperref}
+
+% J.T.S. palette
+\definecolor{ink}{HTML}{1E2B24}
+\definecolor{muted}{HTML}{56645B}
+\definecolor{accent}{HTML}{2B5E8C}
+\definecolor{accentsoft}{HTML}{DCE6EF}
+\definecolor{moss}{HTML}{4F6E4C}
+\definecolor{sand}{HTML}{CDBF9E}
+\definecolor{panel}{HTML}{F7F9F5}
+\definecolor{rulec}{HTML}{D2DACD}
+\color{ink}
+
+\newcommand\Kw[1]{\textcolor{accent}{\textbf{#1}}}
+\newcommand\Cm[1]{\textcolor{muted}{#1}}
+\newcommand\Rl[1]{\textcolor{accent}{\textbf{#1}}}
+\newcommand\Ms[1]{\textcolor{moss}{\textbf{#1}}}
+\newcommand\Dm[1]{\textcolor{muted}{#1}}
+\definecolor{mosssoft}{HTML}{E1EADC}
+\newcommand\Qd[1]{\colorbox{mosssoft}{\textcolor{moss}{\textbf{#1}}}}
+\newtcolorbox{termbox}{breakable, enhanced, colback=panel, colframe=rulec, boxrule=0.4pt,
+  borderline west={2.2pt}{0pt}{sand}, arc=2pt, left=7pt, right=5pt, top=3pt, bottom=3pt,
+  before skip=4pt, after skip=8pt}
+
+\fvset{fontsize=\small, breaklines, commandchars=\\\{\}}
+\newtcolorbox{thmbox}[1]{enhanced, colback=panel, colframe=rulec, boxrule=0.4pt,
+  borderline west={2.4pt}{0pt}{accent}, arc=2pt, left=8pt, right=6pt, top=5pt, bottom=5pt,
+  title={#1}, coltitle=accent, fonttitle=\sffamily\bfseries\small, attach title to upper={\par\smallskip},
+  before skip=6pt, after skip=8pt}
+
+\titleformat{\section}{\sffamily\large\bfseries\color{ink}}{}{0pt}{}
+\titlespacing*{\section}{0pt}{14pt}{4pt}
+\setlength\parindent{0pt}
+\setlength\parskip{5pt}
+\setlength\emergencystretch{3em}
+\pagestyle{plain}
+
+\begin{document}
+
+{\sffamily\small\bfseries\color{moss}PVS\_CAD \quad·\quad PVS 8.1 + NASALib \quad·\quad SEPTEMBER 2026}\par\vspace{6pt}
+{\fontsize{24}{29}\selectfont\bfseries A verified, complete CAD decision procedure in PVS}\par\vspace{8pt}
+{\large\color{muted}An overview of the pvs\_cad library and the \texttt{(cad)} proof strategy}\par\vspace{8pt}
+{\large J.~Tanner Slagel{\renewcommand\thefootnote{*}\footnote{This report was written with Claude Code using Claude Opus 5.5. The pvs\_cad library was developed the same way, with Claude Fable 5.1 and then Opus 5 and Opus 5.5; every proof in it is checked by PVS. Claude Code: \url{https://claude.com/claude-code}.}}}\par\vspace{2pt}
+{\small\color{muted}Code and proofs: \url{https://github.com/j-tanner-slagel/pvs_cad}}\par\vspace{10pt}
+
+\textbf{In short.} pvs\_cad is a PVS library, together with a proof strategy \texttt{(cad)}, that decides the
+first-order theory of the real numbers: sentences built from polynomial equations and inequalities with rational
+coefficients, the connectives AND, OR, NOT, IMPLIES and IFF, and quantifiers \texttt{FORALL}/\texttt{EXISTS} over real
+variables, written in prenex form (every sentence has one). The procedure is cylindrical algebraic decomposition (CAD), written as an executable PVS function. The library
+proves it \emph{sound} (an answer is always the truth) and \emph{complete} (it always answers). Inside a proof,
+\texttt{(cad)} evaluates the procedure and turns the answer into a PVS proof that the kernel checks. The whole library,
+232 theories and 3,502 formulas, is proved.
+
+\section{What it looks like}
+Real PVS sessions, with the simplifier's internal messages cut. \texttt{(cad)} decides one closed formula where it stands.
+Four quantifiers, the quadratic formula as an existence theorem:
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«», fontsize=\footnotesize]
+\Dm«d_quad_suf :»
+\Dm«  |-------»
+\Dm«{1}»   FORALL (a: real):
+        FORALL (b: real):
+          FORALL (c: real):
+            EXISTS (x: real):
+              a /= 0 AND b ^ 2 >= 4 * a * c IMPLIES
+               a * x ^ 2 + b * x + c = 0
+\Rl«Rule? (cad)»
+\Ms«Deciding 1 by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+\Dm«Real time = 2.109 secs.»
+\end{Verbatim}
+\end{termbox}
+
+Motzkin's polynomial~\cite{motzkin} is nonnegative, although it is not a sum of squares, so sum-of-squares certificates cannot prove it:
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«», fontsize=\footnotesize]
+\Dm«b_motzkin :»
+\Dm«  |-------»
+\Dm«{1}»   FORALL (x: real):
+        FORALL (y: real):
+          x ^ 4 * y ^ 2 + x ^ 2 * y ^ 4 - 3 * x ^ 2 * y ^ 2 + 1 >= 0
+\Rl«Rule? (cad)»
+\Ms«Deciding 1 by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+\Dm«Real time = 1.135 secs.»
+\end{Verbatim}
+\end{termbox}
+
+\texttt{(cad *)} works on a whole sequent. After \texttt{(skeep)} the facts sit in the sequent over skolem constants. The
+strategy says which formulas it uses and which it skips, which terms become unknown reals, and which sentence it decides.
+Here \texttt{member(x, l)} is not about reals and is skipped, while \texttt{f(x)} and \texttt{length(l)} become unknown
+reals; that \texttt{length(l)} is nonnegative comes from its type:
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«», fontsize=\footnotesize]
+\Dm«s_fun :»
+\Dm«  |-------»
+\Dm«{1}»   FORALL (x: real, l: list[real]):
+        f(x) > x ^ 2 AND member(x, l) AND length(l) = 3 IMPLIES f(x) > -1
+\Rl«Rule? (skeep)»
+\Dm«{-1}»  f(x) > x ^ 2
+\Dm«{-2}»  member(x, l)
+\Dm«{-3}»  length(l) = 3
+\Dm«  |-------»
+\Dm«{1}»   f(x) > -1
+\Rl«Rule? (cad *)»
+\Ms«cad*: using (-1 -3 1), skipping (-2); unknown reals: cadv_1 = f(x), cadv_2 = x, cadv_3 = length(l)»
+\Ms«cad*: deciding FORALL (cadv_1: real): FORALL (cadv_2: real): FORALL (cadv_3: real): (((cadv_3 >= 0)) IMPLIES (((cadv_1 > (cadv_2 ^ 2)) AND (cadv_3 = (3))) IMPLIES ((cadv_1 > (-1)))))»
+\Ms«Deciding * by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+\Dm«Real time = 1.819 secs.»
+\end{Verbatim}
+\end{termbox}
+
+A term that is not a polynomial: \texttt{sqrt(x)} becomes an unknown real, and the fact that it is nonnegative, which comes from its type, is added to the sentence. \texttt{(cad)} alone could not take this goal in any form:
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«», fontsize=\footnotesize]
+\Dm«s_sqrt :»
+\Dm«  |-------»
+\Dm«{1}»   FORALL (x: nnreal, a: real):
+        a = sqrt(x) AND a * a = x AND a > 1 IMPLIES x > 1
+\Rl«Rule? (skeep)»
+\Dm«{-1}»  a = sqrt(x)
+\Dm«{-2}»  a * a = x
+\Dm«{-3}»  a > 1
+\Dm«  |-------»
+\Dm«{1}»   x > 1
+\Rl«Rule? (cad *)»
+\Ms«cad*: using (-1 -2 -3 1), skipping nothing; unknown reals: cadv_1 = a, cadv_2 = sqrt(x), cadv_3 = x»
+\Ms«cad*: deciding FORALL (cadv_1: real): FORALL (cadv_2: real): FORALL (cadv_3: real): (((cadv_2 >= 0) AND (cadv_3 >= 0)) IMPLIES (((cadv_1 = cadv_2) AND ((cadv_1 * cadv_1) = cadv_3) AND (cadv_1 > (1))) IMPLIES ((cadv_3 > (1)))))»
+\Ms«Deciding * by cylindrical decision, witness first,»
+\Qd«Q.E.D.»
+\Dm«Real time = 2.602 secs.»
+\end{Verbatim}
+\end{termbox}
+
+\section{How a proof by \texttt{(cad)} works}
+The strategy follows the reflection template of Narkawicz, Muñoz and Dutle's univariate Sturm and Tarski strategies in NASALib~\cite{nasalib,nmd}. \texttt{(cad)} reads the goal and computes its encoding as data \texttt{(os, F, phi)}: the quantifier prefix, the polynomials' coefficient lists and the Boolean skeleton (see ``The main theorems''). It then runs
+\texttt{decide5} in PVS's ground evaluator and instantiates \texttt{decide5\_correct} with that data. Unfolding
+\texttt{fsem}, the semantics, turns the result back into the original formula: each quantifier is matched, and one reflection lemma per
+polynomial (\texttt{peval\_pnorm}) shows that the coefficient list evaluates to the polynomial as written. A FALSE
+sentence is reported and left in place, and a false hypothesis closes the goal. \texttt{(cad *)} extends this to a whole
+sequent. It collects the polynomial hypotheses and goals, replaces non-polynomial real terms such as \texttt{sqrt(x)} or
+\texttt{f(x)} by universally quantified reals, and decides the implication. The combined formula enters the proof by
+\texttt{case}, so both branches are checked by PVS.
+
+The trusted base is the PVS kernel plus the ground evaluator that runs \texttt{decide5}, the same base as NASALib's
+Sturm and Tarski strategies; beyond that, one trusts the specification: that the semantics \texttt{fsem} and the
+theorem statements (last section) say what is intended. The strategy code (1,957 lines of Lisp) is not trusted: it only chooses proof steps.
+
+\section{What it decides in practice}
+CAD is doubly exponential in the worst case, so completeness means ``always answers, given time''. Some measured
+times for complete proofs (PVS's own timing, one M-series Mac):
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}X l r@{}}
+\toprule
+Sentence & Shape & Time\\
+\midrule
+Wilkinson's $(x-1)\cdots(x-20)$, expanded, is positive for $x<1$ (coefficients to $2.4\times10^{18}$) & $\forall$, degree 20 & 2.9\,s\\
+Chebyshev $T_{10}$ stays in $[-1,1]$ on $[-1,1]$ & $\forall$, degree 10 & 2.0\,s\\
+Motzkin's polynomial is nonnegative (not a sum of squares) & $\forall\forall$, degree 6 & 1.1\,s\\
+Every depressed cubic $x^3+px+q$ has a real root & $\forall\forall\exists$ & 0.8\,s\\
+Quadratic formula: $a\neq0 \wedge b^2\ge 4ac \Rightarrow \exists x\colon ax^2+bx+c=0$ & $\forall\forall\forall\exists$ & 2.1\,s\\
+$\forall x\,\exists y\,\forall z\colon z^4+yz^2+y\ge x$ & $\forall\exists\forall$ & 22.9\,s\\
+No real root of $z^2+bz+c$ implies $b^2<4c$, by \texttt{(cad *)} on a sequent & quantified hypothesis & 1.3\,s\\
+\bottomrule
+\end{tabularx}
+\end{center}
+The limits show up with three or four variables at degree 3 to 4: AM--GM for three or four variables and
+Cauchy--Schwarz in the plane do not finish in two minutes. On a set of 100 generated sentences with 1 to 6 quantifiers,
+98 were proved within 300\,s, and no answer disagreed with Z3.
+
+\section{How it was built}
+The library was built in stages in September 2026 (273 commits). Most stages also shipped a verified strategy of their own.
+\begin{enumerate}[leftmargin=1.3em, itemsep=2pt, topsep=2pt]
+\item \textbf{Multivariate polynomials.} A normal form for multivariate polynomials over the rationals, proved unique, and
+reflection lemmas connecting it to PVS real expressions (strategies \texttt{mpoly-eq}, \texttt{mpoly-simp}).
+\item \textbf{Real algebraic numbers.} Root isolation, ordering and signs at algebraic numbers, on top of NASALib's
+Sturm and Tarski libraries (\texttt{alg-roots}).
+\item \textbf{Branching quantifier elimination.} One-variable quantifier elimination with parametric sign conditions
+(\texttt{qe-exists}, \texttt{poly-sign}).
+\item \textbf{Resultants and subresultants}: determinants, the resultant, and the subresultant theory behind
+Collins's projection.
+\item \textbf{A first cylindrical decision}, \texttt{decide}, proved correct for every sentence
+(\texttt{decide\_correct}). It was complete but exponential in the number of polynomials: a circle and a line did not
+finish in 15 minutes.
+\item \textbf{The fast CAD.} This is the procedure \texttt{(cad)} runs. Over each cell of the lower variables, it lifts to
+the next variable by walking exact rational separators between that variable's roots. It reads the sign vector at each
+separator and at each root through Tarski queries at the cell's sample point, which may be algebraic. This builds one
+tower of cells per outer sector, for any number of levels. Soundness
+never assumes what it cannot check: delineability and separation are certified at run time, and a failed check sets
+\texttt{ok} to FALSE (\texttt{decw\_correct} for two quantifiers, \texttt{decn\_correct} for any number).
+\item \textbf{Completeness.} A review showed that the only way \texttt{ok} could be FALSE was a fixed search limit running
+out. Some searches were made total; the others share one fuel parameter $u$. The proof shows that every large enough $u$
+makes every check pass. Two
+facts carry it. First, each search stops at its first success, so a larger $u$ changes nothing once $u$ suffices.
+Second, the closures that add sign reads draw them from a finite set built level by level from \texttt{F}, so they reach
+a fixpoint (\texttt{decn\_complete}). \texttt{decide5} raises $u$ until the checks pass; it terminates on the
+non-computable measure ``least sufficient $u$'', which keeps it an ordinary executable PVS function
+(\texttt{decn\_u\_complete}, then \texttt{decide5\_decides}).
+\end{enumerate}
+
+\section{The library in numbers}
+\begin{center}\small
+\begin{tabular}{@{}l r@{\qquad}l r@{}}
+\toprule
+PVS theories (files) & 232 & Formulas proved, whole-library replay & 3,502 of 3,502\\
+Lines of PVS specification & 18,266 & \quad lemmas and theorems & 2,388\\
+Lines of strategy code (Lisp) & 1,957 & \quad TCCs (type-correctness obligations) & 1,114\\
+Commits, September 2026 & 273 & Axioms added & none\\
+\bottomrule
+\end{tabular}
+\end{center}
+It builds on NASALib's \texttt{Sturm} and \texttt{Tarski} (univariate root counting) and on \texttt{reals}, \texttt{structures}, \texttt{analysis}, \texttt{complex}, \texttt{mult\_poly}, \texttt{matrices} and \texttt{interval\_arith}.
+
+\section{Where this sits}
+Tarski showed that the first-order theory of the real numbers is decidable~\cite{tarski}, and Collins's
+cylindrical algebraic decomposition~\cite{collins} made the decision practical; this library builds on the
+PVS~\cite{pvs} libraries of NASALib~\cite{nasalib}, in particular the univariate Sturm and Tarski decision
+procedures of Narkawicz, Mu\~noz and Dutle~\cite{nmd}. A formal correctness proof of CAD exists in
+Rocq~\cite{vermande}, stated for an abstract real closed field; it is a correctness proof, not an executable
+procedure used as a tactic. Isabelle/HOL has a verified, complete multivariate quantifier elimination
+procedure~\cite{kosaian}, exported to executable code; its authors report that without virtual substitution
+it ``appears to hang on all but the simplest univariate examples''. Lean's Mathlib~\cite{mathlib} has, as far
+as we could find, no CAD formalization and no CAD-based decision tactic, and a Lean project's roadmap from
+September 2026 lists CAD, delineability and Sturm theory among what Mathlib lacks~\cite{hex}; Lean's
+nonlinear tactics (\texttt{nlinarith}, \texttt{polyrith}) are heuristic or check certificates found by an
+external algebra system, and are not complete. To our knowledge (a survey of September 2026), pvs\_cad is
+the first executable, proof-producing CAD that is formally verified sound and complete and is usable as a
+tactic in an interactive prover.
+
+\section{The main theorems}
+A sentence is encoded as data: \texttt{os} lists the quantifiers outermost first (\texttt{TRUE} for $\forall$,
+\texttt{FALSE} for $\exists$), \texttt{F} lists the polynomials (exact rational coefficients), and \texttt{phi} is the
+Boolean skeleton, whose atoms say ``polynomial $i$ has sign $s$''. Its meaning is defined by recursion on the prefix, with
+the real quantifiers of PVS itself:
+
+\begin{thmbox}{The semantics \Cm{\normalfont(cad\_decide.pvs)}}
+\begin{Verbatim}
+fsem(os, F, phi, ys): \Kw{RECURSIVE} bool =
+  \Kw{CASES} os \Kw{OF}
+    null: bfeval(phi, F, ys),
+    cons(q, r): \Kw{IF} q \Kw{THEN} \Kw{FORALL} x: fsem(r, F, phi, cons(x, ys))
+                \Kw{ELSE} \Kw{EXISTS} x: fsem(r, F, phi, cons(x, ys)) \Kw{ENDIF}
+  \Kw{ENDCASES}
+\end{Verbatim}
+\end{thmbox}
+
+The decision procedure \texttt{decide5} returns a record: \texttt{val}, its verdict, and \texttt{ok}, a flag that is
+TRUE when its run-time checks passed. Three theorems say everything about it:
+
+\begin{thmbox}{Soundness \Cm{\normalfont(cad\_decide5.pvs)}}
+\begin{Verbatim}
+decide5_correct: \Kw{THEOREM} decide5(reverse(os), F, phi)`ok \Kw{IMPLIES}
+  (decide5(reverse(os), F, phi)`val \Kw{IFF} fsem(os, F, phi, null))
+\end{Verbatim}
+\end{thmbox}
+\vspace{-4pt}
+\begin{thmbox}{Completeness \Cm{\normalfont(complete\_all.pvs)}}
+\begin{Verbatim}
+decide5_complete: \Kw{THEOREM} decide5(reverse(os), F, phi)`ok
+decide5_decides:  \Kw{THEOREM} decide5(reverse(os), F, phi)`val \Kw{IFF} fsem(os, F, phi, null)
+\end{Verbatim}
+\end{thmbox}
+
+There are no hypotheses: \texttt{os}, \texttt{F} and \texttt{phi} are arbitrary, so the result covers every closed
+prenex sentence with any number of quantifiers. \texttt{decide5} is a total function, and PVS generated and proved
+its termination obligations. So the procedure always terminates, always passes its own checks, and always returns the
+truth of the sentence.
+
+
+\begin{thebibliography}{99}\small
+\setlength\itemsep{1pt}
+\bibitem{tarski} A.~Tarski. \emph{A Decision Method for Elementary Algebra and Geometry}. RAND Corporation, 1948;
+  2nd ed., University of California Press, 1951.
+\bibitem{collins} G.~E. Collins. Quantifier elimination for real closed fields by cylindrical algebraic
+  decomposition. In \emph{Automata Theory and Formal Languages}, LNCS 33, pages 134--183. Springer, 1975.
+\bibitem{pvs} S.~Owre, J.~M. Rushby, N.~Shankar. PVS: A prototype verification system. In \emph{CADE-11},
+  LNAI 607. Springer, 1992. \url{https://pvs.csl.sri.com}
+\bibitem{nasalib} NASALib, the NASA PVS library collection. \url{https://github.com/nasa/pvslib}
+\bibitem{nmd} A.~Narkawicz, C.~Mu\~noz, A.~Dutle. Formally-verified decision procedures for univariate
+  polynomial computation based on Sturm's and Tarski's theorems. \emph{Journal of Automated Reasoning}
+  54:285--326, 2015. \url{https://doi.org/10.1007/s10817-015-9320-x}
+\bibitem{vermande} Q.~Vermande. Cylindrical algebraic decomposition in Coq/Rocq. In \emph{CPP 2026},
+  pages 45--58. ACM, 2026. \url{https://doi.org/10.1145/3779031.3779100}
+\bibitem{kosaian} K.~Kosaian, Y.~K. Tan, A.~Platzer. A first complete algorithm for real quantifier
+  elimination in Isabelle/HOL. In \emph{CPP 2023}. ACM, 2023. \url{https://arxiv.org/abs/2209.10978}
+\bibitem{mathlib} The mathlib Community. The Lean mathematical library. In \emph{CPP 2020}. ACM, 2020.
+\bibitem{hex} Hex project (Lean), roadmap for the real algebraic geometry behind CAD, issue 10300,
+  September 2026. \url{https://github.com/kim-em/hex-dev/issues/10300}
+\bibitem{motzkin} T.~S. Motzkin. The arithmetic-geometric inequality. In O.~Shisha (ed.), \emph{Inequalities},
+  pages 205--224. Academic Press, 1967.
+\end{thebibliography}
+
+\end{document}

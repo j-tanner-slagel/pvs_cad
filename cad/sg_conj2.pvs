@@ -1,0 +1,100 @@
+sg_conj2: THEORY
+%----------------------------------------------------------------------------
+% The existence decision of a conjunction, pruned (Phase 6, performance).
+%
+% ctree_sg of sg_conj collapses the equations E into the sum of squares
+% sqsum(E), which doubles the degree of every equation before anything is
+% normalized. ctree2_sg looks at the normalized equations first: one that
+% is a nonzero constant (cst?) refutes the conjunction at once; the ones
+% that are identically zero (dropped by live) impose nothing; a single
+% remaining equation is decided on itself (ctree1_sg, no square) when the
+% fuel allows it; otherwise the equations go through the sum of squares. The semantics
+% (ctree2_sg_sound) and the reads (ctree2_det) have the same shape as those
+% of ctree_sg, so sg_svs can use ctree2_sg in place of ctree_sg.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING sg_conj, rsc_tree
+
+  k: VAR nat
+  l, g: VAR list[mpoly]
+  E, Q: VAR list[list[mpoly]]
+  sg, sg1, sg2: VAR SG
+  ys: VAR list[real]
+  x: VAR real
+
+  %% the semantics of one normalized coefficient list
+  sel_eval: LEMMA meval(mpol(select(snorm(l), ys)))(cons(x, ys)) = meval(mpol(l))(cons(x, ys))
+  sel_null: LEMMA null?(select(snorm(l), ys)) IMPLIES meval(mpol(l))(cons(x, ys)) = 0
+  sel_const: LEMMA length(select(snorm(l), ys)) = 1 IMPLIES meval(mpol(l))(cons(x, ys)) /= 0
+  sel_lok: LEMMA cons?(select(snorm(l), ys)) IMPLIES lok(select(snorm(l), ys), ys)
+
+  %% a single equation, decided on itself
+  ctree1_sg(k, g, Q, sg): bool =
+    LET p0 = snorm_sg(g, sg) IN
+    IF null?(p0) THEN itree_sg(k, Q, sg)
+    ELSIF length(p0) = 1 THEN FALSE
+    ELSE mcore_sg(k, p0, Q, sg)
+    ENDIF
+  ctree1_rd(k, g, Q, sg): list[mpoly] =
+    LET p0 = snorm_sg(g, sg) IN
+    append(snorm_rd(g, sg),
+      IF null?(p0) THEN itree_rd(k, Q, sg)
+      ELSIF length(p0) = 1 THEN null[mpoly]
+      ELSE mcore_rd(k, p0, Q, sg)
+      ENDIF)
+  ctree1_sg_sound: THEOREM length(g) + 1 + mlen(Q) <= k AND 2 * mlen(Q) + 1 <= k IMPLIES
+    (ctree1_sg(k, g, Q, msg(ys)) IFF
+     (EXISTS x: meval(mpol(g))(cons(x, ys)) = 0 AND allgt(Q, ys, x)))
+  ctree1_det: LEMMA agree(sg1, sg2, ctree1_rd(k, g, Q, sg1)) IMPLIES
+    ctree1_sg(k, g, Q, sg2) = ctree1_sg(k, g, Q, sg1) AND ctree1_rd(k, g, Q, sg2) = ctree1_rd(k, g, Q, sg1)
+
+  %% the equations that are not identically zero; whether one is a nonzero
+  %% constant; the reads of both
+  live(E, sg): RECURSIVE list[list[mpoly]] =
+    IF null?(E) THEN null[list[mpoly]]
+    ELSIF null?(snorm_sg(car(E), sg)) THEN live(cdr(E), sg)
+    ELSE cons(car(E), live(cdr(E), sg))
+    ENDIF
+  MEASURE length(E)
+  cst?(E, sg): RECURSIVE bool =
+    IF null?(E) THEN FALSE
+    ELSIF length(snorm_sg(car(E), sg)) = 1 THEN TRUE
+    ELSE cst?(cdr(E), sg)
+    ENDIF
+  MEASURE length(E)
+  live_rd(E, sg): RECURSIVE list[mpoly] =
+    IF null?(E) THEN null[mpoly] ELSE append(snorm_rd(car(E), sg), live_rd(cdr(E), sg)) ENDIF
+  MEASURE length(E)
+  live_det: LEMMA FORALL E: agree(sg1, sg2, live_rd(E, sg1)) IMPLIES
+    live(E, sg2) = live(E, sg1) AND cst?(E, sg2) = cst?(E, sg1) AND live_rd(E, sg2) = live_rd(E, sg1)
+  PP: VAR [list[mpoly] -> bool]
+  every_cons_ll: LEMMA every(PP)(cons(l, E)) IFF (PP(l) AND every(PP)(E))
+  live_eqs_sg: LEMMA FORALL E: (FORALL l: member(l, E) AND null?(snorm_sg(l, sg)) IMPLIES
+    meval(mpol(l))(cons(x, ys)) = 0) IMPLIES (eqs_at(live(E, sg), ys, x) IFF eqs_at(E, ys, x))
+  live_eqs: LEMMA FORALL E: eqs_at(live(E, msg(ys)), ys, x) IFF eqs_at(E, ys, x)
+  cst_eqs: LEMMA FORALL E: cst?(E, msg(ys)) IMPLIES NOT eqs_at(E, ys, x)
+  live_mem: LEMMA FORALL E: member(l, live(E, sg)) IMPLIES member(l, E)
+  sqsum_live_len: LEMMA FORALL E: length(sqsum(live(E, sg))) <= length(sqsum(E))
+
+  ctree2_sg(k, E, Q, sg): bool =
+    IF cst?(E, sg) THEN FALSE
+    ELSE LET L = live(E, sg) IN
+         IF null?(L) THEN itree_sg(k, Q, sg)
+         ELSIF null?(cdr(L)) AND length(car(L)) + 1 + mlen(Q) <= k THEN ctree1_sg(k, car(L), Q, sg)
+         ELSE ctree_sg(k, L, Q, sg)
+         ENDIF
+    ENDIF
+  ctree2_rd(k, E, Q, sg): list[mpoly] =
+    append(live_rd(E, sg),
+      IF cst?(E, sg) THEN null[mpoly]
+      ELSE LET L = live(E, sg) IN
+           IF null?(L) THEN itree_rd(k, Q, sg)
+           ELSIF null?(cdr(L)) AND length(car(L)) + 1 + mlen(Q) <= k THEN ctree1_rd(k, car(L), Q, sg)
+           ELSE ctree_rd(k, L, Q, sg)
+           ENDIF
+      ENDIF)
+  ctree2_sg_sound: THEOREM length(sqsum(E)) + 2 * mlen(Q) + 1 <= k IMPLIES
+    (ctree2_sg(k, E, Q, msg(ys)) IFF (EXISTS (x: real): eqs_at(E, ys, x) AND allgt(Q, ys, x)))
+  ctree2_det: LEMMA agree(sg1, sg2, ctree2_rd(k, E, Q, sg1)) IMPLIES
+    ctree2_sg(k, E, Q, sg2) = ctree2_sg(k, E, Q, sg1) AND ctree2_rd(k, E, Q, sg2) = ctree2_rd(k, E, Q, sg1)
+END sg_conj2

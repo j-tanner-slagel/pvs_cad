@@ -1,0 +1,49 @@
+sign_pers: THEORY
+%----------------------------------------------------------------------------
+% Sign persistence (FINISH_PLAN stage S4 step T1, generalized in S5a).
+%
+% A polynomial that is nonzero at x0 -- as a function of its MAIN variable,
+% the other variables xs held fixed -- keeps its sign on a neighbourhood of
+% x0, and so do finitely many at once: the oracle msg(cons(z, xs)) agrees
+% with msg(cons(x0, xs)) on any finite list of reads each of which is nonzero
+% at x0 or zero for every value of the main variable, for z close enough.
+%
+% This is where the ENTRY reads of the walk are handled.  They are not
+% certified invariant on a sector (a constant separator cannot be); they are
+% only nonzero at the point in hand, and continuity does the rest.  With
+% xs = null this is the one-parameter statement S4 uses; S5 needs it along
+% one coordinate of a point with several.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING pos_dec, sg_norm
+
+  f: VAR [real -> real]
+  x0, z: VAR real
+  xs: VAR list[real]
+  u: VAR mpoly
+  R: VAR list[mpoly]
+
+  cont_sign: LEMMA continuous?(f) AND f(x0) /= 0 IMPLIES
+    EXISTS (d: posreal): FORALL z: abs(z - x0) < d IMPLIES sign3(f(z)) = sign3(f(x0))
+
+  msg_pers1: LEMMA meval(u)(cons(x0, xs)) /= 0 IMPLIES
+    EXISTS (d: posreal): FORALL z: abs(z - x0) < d IMPLIES
+      msg(cons(z, xs))(u) = msg(cons(x0, xs))(u)
+
+  %% nonzero at x0, or zero everywhere (the null entry that ends a chain)
+  nz1?(u, x0, xs): bool =
+    meval(u)(cons(x0, xs)) /= 0 OR FORALL z: meval(u)(cons(z, xs)) = 0
+  msg_pers2: LEMMA nz1?(u, x0, xs) IMPLIES
+    EXISTS (d: posreal): FORALL z: abs(z - x0) < d IMPLIES
+      msg(cons(z, xs))(u) = msg(cons(x0, xs))(u)
+
+  nz?(R, x0, xs): bool = FORALL u: member(u, R) IMPLIES nz1?(u, x0, xs)
+  nz_null: LEMMA nz?(null[mpoly], x0, xs)
+  nz_cons: LEMMA nz?(cons(u, R), x0, xs) IFF (nz1?(u, x0, xs) AND nz?(R, x0, xs))
+  nz_append: LEMMA FORALL (R1, R2: list[mpoly]):
+    nz?(append(R1, R2), x0, xs) IFF (nz?(R1, x0, xs) AND nz?(R2, x0, xs))
+
+  msg_pers: THEOREM FORALL R: nz?(R, x0, xs) IMPLIES
+    EXISTS (d: posreal): FORALL z: abs(z - x0) < d IMPLIES
+      agree(msg(cons(z, xs)), msg(cons(x0, xs)), R)
+END sign_pers

@@ -1,0 +1,74 @@
+svs_pt: THEORY
+%----------------------------------------------------------------------------
+% The realized sign vectors at a rational point, by root isolation
+% (Phase 6, performance).
+%
+% svs_sg of sg_svs finds the realized sign vectors of a family along the fibre
+% by ENUMERATING sign-condition prefixes: rsc_sg branches three ways on every
+% member of the family, so its cost is 3^|F| before pruning.  At level 1 the
+% family is the formula's atoms (two, in every example here) and that costs
+% nothing; from level 2 the decision hands the ACCUMULATED PROJECTION FAMILY
+% down - measured on ex_three: 10 members in the first round, 40 in the second,
+% with reads growing about threefold per member (19, 45, 1305, 4567, 12701 for
+% |F| = 1, 2, 4, 5, 6).  That is what makes three quantifiers infeasible, and
+% it is a property of the enumeration, not of CAD.
+%
+% The ANSWER, though, is small: by svs_sg_sound and svs_sg_complete the result
+% is exactly { svec(F, cons(x, ys)) : x real }, and for a RATIONAL ys that set
+% is computable directly by root isolation - which is what svs1 of cell1
+% already does at level 1.  partial_list of mpoly_univ specializes each member
+% at ys to a rational coefficient list, pmc of sect_inv turns that back into
+% constant mpolys, and svs1 reads the vectors off the sectors of the isolated
+% roots.  The cost becomes polynomial in the family instead of exponential.
+%
+% svs_pt_sound and svs_pt_complete give the same characterization that svs_sg
+% has, so a fold over either list has the same value and cad_lift can use this
+% at the sectors whose sample is rational (which is where the cost is: on
+% ex_three's level-2 family a rational sector cost 190411 reads against 10476
+% at a root).  At an algebraic sample the coefficients are not rational and the
+% Sturm engine does not apply, so those sectors keep the enumeration.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING sect_inv
+
+  F: VAR list[list[mpoly]]
+  u: VAR list[mpoly]
+  rs: VAR list[rat]
+  x: VAR real
+  i: VAR nat
+  v: VAR list[Sign3]
+
+  %% the family specialized at a rational point: every coefficient evaluated
+  %% at rs, carried back as a constant mpoly so the level-1 machinery applies
+  %% partial_eval (not partial_list) because pmc wants a Polylist, which is a
+  %% NON-EMPTY list of rationals; partial_eval yields (: 0 :) for the empty
+  %% coefficient list, and it is the function partial_eval_polylist is about.
+  spec(u, rs): list[mpoly] = pmc(partial_eval(mpol(u), rs))
+  evalF(F, rs): list[list[mpoly]] = map(LAMBDA u: spec(u, rs))(F)
+
+  spec_cons: LEMMA cons?(spec(u, rs))
+  spec_pl: LEMMA pl(spec(u, rs)) = partial_eval(mpol(u), rs)
+
+  %% one specialized member evaluates at x to the original at cons(x, rs)
+  evalF_member: LEMMA meval(mpol(spec(u, rs)))((: x :)) =
+    meval(mpol(u))(cons(x, rs))
+
+  %% structural, so the induction in evalF_svec can stay folded: expanding
+  %% evalF and svec leaves the goal unfolded while the IH stays folded.
+  evalF_null: LEMMA evalF(null[list[mpoly]], rs) = null[list[mpoly]]
+  evalF_cons: LEMMA evalF(cons(u, F), rs) = cons(spec(u, rs), evalF(F, rs))
+
+
+  %% hence the sign vectors agree, coordinate by coordinate
+  evalF_svec: LEMMA svec(evalF(F, rs), (: x :)) = svec(F, cons(x, rs))
+
+  %% the realized sign vectors at the point, by root isolation
+  svs_pt(F, rs): list[list[Sign3]] = svs1(evalF(F, rs))
+  svs_ptok(F, rs): bool = svs1ok(evalF(F, rs))
+
+  %% the same characterization svs_sg has (sg_svs: svs_sg_sound/complete)
+  svs_pt_sound: THEOREM svs_ptok(F, rs) IMPLIES
+    member(svec(F, cons(x, rs)), svs_pt(F, rs))
+  svs_pt_complete: THEOREM member(v, svs_pt(F, rs)) IMPLIES
+    EXISTS x: v = svec(F, cons(x, rs))
+END svs_pt

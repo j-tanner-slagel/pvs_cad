@@ -1,0 +1,91 @@
+tlc: THEORY
+%----------------------------------------------------------------------------
+% Local constancy of a tower's truth with every coordinate moving
+% (FINISH_PLAN 3i, stage N6, second half).
+%
+%   lc_base   height one: the fibre set is locally constant (fib_mlocal), and
+%             one quantifier sees only the fibre set (sem1_fibs)
+%   lc_step   height n from height n - 1.  TW = cons(F, TW1).  At vs0 the
+%             walk of the effective family G = zf(F, vs0) has separators Y
+%             that avoid its chains.  At every point the truth of the level
+%             is the fold of the CELL VALUE LIST (sem_cvl: cvl's bfold_cvl,
+%             the root-free constancy coming from CBh(n - 1) along a
+%             root-free interval, rfc_tw).  Near vs0 (near_cells) the walk,
+%             its gaps and the sign vectors of F at the cells are unchanged,
+%             and each cell's value is unchanged by LCh(n - 1) at the cell:
+%             at a separator y0 (cell_sep) directly, at the root of a gap
+%             (cell_sec) with the root moving continuously (mroot_near).  The
+%             agreement LCh(n - 1) wants is on the reads of TW1's top family,
+%             which rdz? reads off F's sign vector at the cell.  Finitely
+%             many cells, so one radius (fin_near); the two lists are equal
+%             (cvl_eq), and so are their folds.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING tclf
+
+  TW, TW1: VAR Tower
+  F, G: VAR list[list[mpoly]]
+  qs, qs1: VAR list[bool]
+  qq: VAR bool
+  Psi: VAR [SV -> bool]
+  vs, vs0, vs1: VAR list[real]
+  Y, L: VAR list[rat]
+  y0, lo, hi: VAR rat
+  y: VAR real
+  d: VAR posreal
+  n: VAR nat
+  Hp: VAR [list[real] -> bool]
+  C: VAR [rat, list[real] -> bool]
+
+  %% ---- finitely many neighbourhoods -----------------------------------------------------
+  fin_near: LEMMA FORALL L:
+    (FORALL y0: member(y0, L) IMPLIES
+       EXISTS d: FORALL vs1: near?(vs1, vs0, d) AND Hp(vs1) IMPLIES C(y0, vs1))
+    IMPLIES EXISTS d: FORALL vs1: near?(vs1, vs0, d) AND Hp(vs1) IMPLIES
+      FORALL y0: member(y0, L) IMPLIES C(y0, vs1)
+
+  %% ---- height one ------------------------------------------------------------------------
+  lc_base: LEMMA LCh(1)
+
+  %% ---- the truth of the level at a point is the fold of its cell values ------------------
+  Tv(qs1, TW1, Psi, vs)(y): bool = sem(qs1, tlast(TW1), Psi, cons(y, vs))
+
+  rfc_tw: LEMMA CBh(length(TW1)) AND cons?(TW1) AND length(qs1) = length(TW1)
+    AND CLF(cons(F, TW1), vs)
+    IMPLIES rfc?(Tv(qs1, TW1, Psi, vs), zf(F, vs), vs, Y)
+
+  sem_cvl: LEMMA CBh(length(TW1)) AND cons?(TW1) AND length(qs1) = length(TW1)
+    AND CLF(cons(F, TW1), vs) AND wok?(zf(F, vs), msg(vs), Y)
+    IMPLIES (sem(cons(qq, qs1), tlast(TW1), Psi, vs) IFF
+             bfold(qq, cvl(Tv(qs1, TW1, Psi, vs), zf(F, vs), vs, Y)))
+
+  %% ---- the cells near vs0 ----------------------------------------------------------------
+  cell_sep: LEMMA LCh(length(TW1)) AND cons?(TW1) AND length(qs1) = length(TW1)
+    AND CLF(cons(F, TW1), vs0) AND wok?(zf(F, vs0), msg(vs0), Y) AND avall?(zf(F, vs0), vs0, Y)
+    AND member(y0, Y)
+    IMPLIES EXISTS d: FORALL vs1: near?(vs1, vs0, d)
+      AND (agree(msg(vs0), msg(vs1), wrs(F, vs0)) AND CLF(cons(F, TW1), vs1))
+      IMPLIES (Tv(qs1, TW1, Psi, vs1)(y0) IFF Tv(qs1, TW1, Psi, vs0)(y0))
+
+  cell_sec: LEMMA LCh(length(TW1)) AND cons?(TW1) AND length(qs1) = length(TW1) AND cons?(vs0)
+    AND CLF(cons(F, TW1), vs0) AND wok?(zf(F, vs0), msg(vs0), Y) AND avall?(zf(F, vs0), vs0, Y)
+    AND adj?(Y, lo, hi) AND gap?(zf(F, vs0), msg(vs0), lo, hi)
+    IMPLIES EXISTS d: FORALL vs1: near?(vs1, vs0, d)
+      AND (agree(msg(vs0), msg(vs1), wrs(F, vs0)) AND CLF(cons(F, TW1), vs1))
+      IMPLIES (Tv(qs1, TW1, Psi, vs1)(secbeta(zf(F, vs0), vs1, lo, hi))
+               IFF Tv(qs1, TW1, Psi, vs0)(secbeta(zf(F, vs0), vs0, lo, hi)))
+
+  %% every cell at once
+  cells_near: LEMMA LCh(length(TW1)) AND cons?(TW1) AND length(qs1) = length(TW1) AND cons?(vs0)
+    AND CLF(cons(F, TW1), vs0) AND wok?(zf(F, vs0), msg(vs0), Y) AND avall?(zf(F, vs0), vs0, Y)
+    IMPLIES EXISTS d: FORALL vs1: near?(vs1, vs0, d)
+      AND (agree(msg(vs0), msg(vs1), wrs(F, vs0)) AND CLF(cons(F, TW1), vs1))
+      IMPLIES (FORALL y0: member(y0, Y) IMPLIES
+                 (Tv(qs1, TW1, Psi, vs1)(y0) IFF Tv(qs1, TW1, Psi, vs0)(y0)))
+        AND (FORALL lo: member(lo, Y) IMPLIES FORALL hi: member(hi, Y) IMPLIES
+               adj?(Y, lo, hi) AND gap?(zf(F, vs0), msg(vs0), lo, hi) IMPLIES
+               (Tv(qs1, TW1, Psi, vs1)(secbeta(zf(F, vs0), vs1, lo, hi))
+                IFF Tv(qs1, TW1, Psi, vs0)(secbeta(zf(F, vs0), vs0, lo, hi))))
+
+  lc_step: LEMMA n >= 2 AND LCh(n - 1) AND CBh(n - 1) IMPLIES LCh(n)
+END tlc

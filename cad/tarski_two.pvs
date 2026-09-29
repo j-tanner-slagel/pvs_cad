@@ -1,0 +1,92 @@
+tarski_two: THEORY
+%----------------------------------------------------------------------------
+% Two sign conditions, symbolically (Phase 3).
+%
+% tarski_pair states the four-query identity over real coefficient arrays;
+% this theory builds the four query polynomials as coefficient lists over
+% mpoly, so that the chains of tarski_chain compute them.  Each query is a
+% normalized product of lists: lmn(l1, l2, ys) is the product with its
+% trailing zeros dropped, and the six lemmas about it say it is nonempty, has
+% degree dg(l1) + dg(l2), has a nonvanishing leading coefficient, and denotes
+% NASALib's polynomial_prod of the two factor arrays.  Since lmn is closed
+% under those conditions, the squares and the mixed products are built by
+% composing it.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING tarski_pair, exists_dec
+
+  l0, l1, l2, q1, q2: VAR list[mpoly]
+  ys: VAR list[real]
+  k, i: VAR nat
+  x: VAR real
+
+  %% the normalized product of two coefficient lists
+  lok(l1, ys): bool = cons?(l1) AND meval(llast(l1))(ys) /= 0
+  lmn(l1, l2, ys): list[mpoly] = select(snorm(lmul(l1, l2)), ys)
+
+  mn_top: LEMMA lok(l1, ys) AND lok(l2, ys) IMPLIES
+    earr(lmul(l1, l2), ys)(dg(l1) + dg(l2)) /= 0
+  mn_zero: LEMMA i > dg(l1) + dg(l2) IMPLIES earr(lmul(l1, l2), ys)(i) = 0
+  lmn_cons: LEMMA lok(l1, ys) AND lok(l2, ys) IMPLIES cons?(lmn(l1, l2, ys))
+  lmn_dg: LEMMA lok(l1, ys) AND lok(l2, ys) IMPLIES
+    dg(lmn(l1, l2, ys)) = dg(l1) + dg(l2)
+  lmn_lc: LEMMA lok(l1, ys) AND lok(l2, ys) IMPLIES
+    meval(llast(lmn(l1, l2, ys)))(ys) /= 0
+  lmn_ok: LEMMA lok(l1, ys) AND lok(l2, ys) IMPLIES lok(lmn(l1, l2, ys), ys)
+  lmn_arr: LEMMA lok(l1, ys) AND lok(l2, ys) IMPLIES
+    earr(lmn(l1, l2, ys), ys) =
+    polynomial_prod(earr(l1, ys), dg(l1), earr(l2, ys), dg(l2))
+  lmn_len: LEMMA lok(l1, ys) AND lok(l2, ys) IMPLIES
+    length(lmn(l1, l2, ys)) = length(l1) + length(l2) - 1
+
+  %% the four queries of the pair
+  Q11(q1, q2, ys): list[mpoly] = lmn(q1, q2, ys)
+  Q12(q1, q2, ys): list[mpoly] = lmn(q1, lmn(q2, q2, ys), ys)
+  Q21(q1, q2, ys): list[mpoly] = lmn(lmn(q1, q1, ys), q2, ys)
+  Q22(q1, q2, ys): list[mpoly] = lmn(lmn(q1, q1, ys), lmn(q2, q2, ys), ys)
+
+  Q11_dg: LEMMA lok(q1, ys) AND lok(q2, ys) IMPLIES
+    dg(Q11(q1, q2, ys)) = dg(q1) + dg(q2)
+  Q12_dg: LEMMA lok(q1, ys) AND lok(q2, ys) IMPLIES
+    dg(Q12(q1, q2, ys)) = dg(q1) + 2 * dg(q2)
+  Q21_dg: LEMMA lok(q1, ys) AND lok(q2, ys) IMPLIES
+    dg(Q21(q1, q2, ys)) = 2 * dg(q1) + dg(q2)
+  Q22_dg: LEMMA lok(q1, ys) AND lok(q2, ys) IMPLIES
+    dg(Q22(q1, q2, ys)) = 2 * dg(q1) + 2 * dg(q2)
+
+  Q11_arr: LEMMA lok(q1, ys) AND lok(q2, ys) IMPLIES
+    earr(Q11(q1, q2, ys), ys) =
+    q11(earr(q1, ys), dg(q1), earr(q2, ys), dg(q2))
+  Q12_arr: LEMMA lok(q1, ys) AND lok(q2, ys) IMPLIES
+    earr(Q12(q1, q2, ys), ys) =
+    q12(earr(q1, ys), dg(q1), earr(q2, ys), dg(q2))
+  Q21_arr: LEMMA lok(q1, ys) AND lok(q2, ys) IMPLIES
+    earr(Q21(q1, q2, ys), ys) =
+    q21(earr(q1, ys), dg(q1), earr(q2, ys), dg(q2))
+  Q22_arr: LEMMA lok(q1, ys) AND lok(q2, ys) IMPLIES
+    earr(Q22(q1, q2, ys), ys) =
+    q22(earr(q1, ys), dg(q1), earr(q2, ys), dg(q2))
+
+  %% the four queries are well formed, and then they decide the two conditions
+  two_ok(k, l0, q1, q2, ys): bool =
+    lok(q1, ys) AND lok(q2, ys) AND
+    tok(k, l0, Q11(q1, q2, ys), ys) AND tok(k, l0, Q12(q1, q2, ys), ys) AND
+    tok(k, l0, Q21(q1, q2, ys), ys) AND tok(k, l0, Q22(q1, q2, ys), ys)
+
+  %% the same existential in the two forms the two theories use
+  ex_bridge: LEMMA
+    (EXISTS (r: real): polynomial(earr(l0, ys), dg(l0))(r) = 0 AND
+                       polynomial(earr(q1, ys), dg(q1))(r) > 0 AND
+                       polynomial(earr(q2, ys), dg(q2))(r) > 0)
+    IFF
+    (EXISTS (x: real): meval(mpol(l0))(cons(x, ys)) = 0 AND
+                       meval(mpol(q1))(cons(x, ys)) > 0 AND
+                       meval(mpol(q2))(cons(x, ys)) > 0)
+
+  two_exists: THEOREM two_ok(k, l0, q1, q2, ys) IMPLIES
+    ((EXISTS (x: real): meval(mpol(l0))(cons(x, ys)) = 0 AND
+                        meval(mpol(q1))(cons(x, ys)) > 0 AND
+                        meval(mpol(q2))(cons(x, ys)) > 0)
+     IFF tq(k, l0, Q11(q1, q2, ys), ys) + tq(k, l0, Q12(q1, q2, ys), ys) +
+         tq(k, l0, Q21(q1, q2, ys), ys) + tq(k, l0, Q22(q1, q2, ys), ys) > 0)
+END tarski_two

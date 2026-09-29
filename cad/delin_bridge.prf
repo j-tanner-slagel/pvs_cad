@@ -1,0 +1,104 @@
+(|delin_bridge|
+ (|sval_in_TCC1| 0
+  (|sval_in_TCC1-1| NIL 3998714948 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|sval_in| SUBTYPE "s"
+    "{x: sect_inv.Sect | booleans.OR(sect_inv.mid?(x), sect_inv.above?(x))}"
+    (38 73 38 74))))
+ (|sval_in_TCC2| 0
+  (|sval_in_TCC2-1| NIL 3998714948 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|sval_in| SUBTYPE "s"
+    "{x: sect_inv.Sect | booleans.OR(sect_inv.below?(x), sect_inv.mid?(x))}"
+    (38 88 38 89))))
+ (|sval_in| 0
+  (|sval_in-0| "" 3998715619
+   ("" (SKEEP)
+    (("" (USE "sample_in")
+      (("" (USE "sval_sample") (("" (ASSERT) NIL NIL)) NIL)) NIL))
+    NIL)
+   ((|sample_in| FORMULA-DECL NIL |sect_inv| NIL)
+    (|Sect| TYPE-DECL NIL |sect_inv| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|sval_sample| FORMULA-DECL NIL |cad_lift| NIL))
+   SHOSTAK))
+ (|delin_from_psc| 0
+  (|delin_from_psc-0| "" 3998715662
+   ("" (SKEEP)
+    (("" (EXPAND "delin?")
+      (("" (SKEEP)
+        (("" (CASE "at?(s)")
+          (("1" (EXPAND "in?")
+            (("1" (ASSERT)
+              (("1" (REPLACE -6)
+                (("1" (REPLACE -7) (("1" (ASSERT) NIL NIL)) NIL)) NIL))
+              NIL))
+            NIL)
+           ("2" (USE "sects_ok" ("rs" "sortu(allroots(projc(F)))" "s" "s"))
+            (("2" (ASSERT)
+              (("2" (USE "sval_in" ("s" "s"))
+                (("2" (ASSERT)
+                  (("2"
+                    (USE "sect_svec"
+                         ("P" "projc(F)" "s" "s" "x" "x" "r" "sval(s)"))
+                    (("2"
+                      (USE "sect_svec"
+                           ("P" "projc(F)" "s" "s" "x" "y" "r" "sval(s)"))
+                      (("2" (ASSERT)
+                        (("2" (GROUND)
+                          (("1" (EXPAND "psc_det?")
+                            (("1" (INST -6 "x" "y") (("1" (ASSERT) NIL NIL))
+                              NIL))
+                            NIL)
+                           ("2" (EXPAND "psc_det?")
+                            (("2" (INST -5 "x" "y") (("2" (ASSERT) NIL NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|delin?| CONST-DECL "bool" |cad_delin| NIL)
+    (|Sect| TYPE-DECL NIL |sect_inv| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|at?| ADT-RECOGNIZER-DECL "[Sect -> boolean]" |sect_inv| NIL)
+    (|in?| CONST-DECL "bool" |sect_inv| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|psc_det?| CONST-DECL "bool" |delin_bridge| NIL)
+    (|sval| CONST-DECL "rat" |cad_lift| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|sect_svec| FORMULA-DECL NIL |sect_svec| NIL)
+    (|sval_in| FORMULA-DECL NIL |delin_bridge| NIL)
+    (|projc| DEF-DECL "list[list[mpoly]]" |cad_projc| NIL)
+    (|allroots| DEF-DECL "list[Alg]" |cell1| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|sortu| DEF-DECL "list[Alg]" |cell1| NIL)
+    (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|alg?| CONST-DECL "bool" |alg_def| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|sects_ok| FORMULA-DECL NIL |sect_inv| NIL))
+   SHOSTAK)))
+

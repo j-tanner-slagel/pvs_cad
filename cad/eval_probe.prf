@@ -1,0 +1,195 @@
+(|eval_probe|
+ (|sum_nat_TCC1| 0
+  (|sum_nat_TCC1-1| NIL 3997978764 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+   (|sum_nat| TERMINATION "sum_nat(t)" "NIL" (20 41 20 51))))
+ (|sum_nat_cons| 0
+  (|sum_nat_cons-1| NIL 3997978764
+   ("" (SKEEP) (("" (EXPAND "sum_nat" 1 1) (("" (PROPAX) NIL NIL)) NIL)) NIL)
+   NIL SHOSTAK))
+ (|map_msize_cons| 0
+  (|map_msize_cons-1| NIL 3997978764
+   ("" (SKEEP) (("" (EXPAND "map" 1 1) (("" (PROPAX) NIL NIL)) NIL)) NIL) NIL
+   SHOSTAK))
+ (|msize_mconst| 0
+  (|msize_mconst-1| NIL 3997978764
+   ("" (EXPAND "msize")
+    (("" (EXPAND "reduce_nat") (("" (PROPAX) NIL NIL)) NIL)) NIL)
+   ((|reduce_nat| ADT-DEF-DECL "[mpoly -> nat]" |mpoly_adt| NIL)) SHOSTAK))
+ (|msize_mpol| 0
+  (|msize_mpol-1| NIL 3997978764
+   ("" (SKEEP)
+    (("" (EXPAND "msize" 1 1)
+      (("" (EXPAND "reduce_nat" 1 1)
+        (("" (EXPAND "msize") (("" (PROPAX) NIL NIL)) NIL)) NIL))
+      NIL))
+    NIL)
+   ((|reduce_nat| ADT-DEF-DECL "[mpoly -> nat]" |mpoly_adt| NIL)) SHOSTAK))
+ (|msize_pos| 0
+  (|msize_pos-1| NIL 3997978764
+   ("" (INDUCT "p")
+    (("1" (SKEEP) (("1" (REWRITE "msize_mconst") (("1" (ASSERT) NIL NIL)) NIL))
+      NIL)
+     ("2" (SKEEP) (("2" (REWRITE "msize_mpol") (("2" (ASSERT) NIL NIL)) NIL))
+      NIL))
+    NIL)
+   ((|mpoly_induction| FORMULA-DECL NIL |mpoly_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL))
+   SHOSTAK))
+ (|msize_car| 0
+  (|msize_car-1| NIL 3997978765
+   ("" (INDUCT "l")
+    (("1" (ASSERT) NIL NIL)
+     ("2" (SKEEP)
+      (("2" (HIDE -1)
+        (("2" (REWRITE "msize_mpol" 1)
+          (("2" (REWRITE "map_msize_cons")
+            (("2" (REWRITE "sum_nat_cons") (("2" (ASSERT) NIL NIL)) NIL)) NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|mpol| ADT-CONSTRUCTOR-DECL "[list[mpoly] -> (mpol?)]" |mpoly_adt| NIL)
+    (|mpol?| ADT-RECOGNIZER-DECL "[mpoly -> boolean]" |mpoly_adt| NIL))
+   SHOSTAK))
+ (|msize_cdr| 0
+  (|msize_cdr-1| NIL 3997978765
+   ("" (INDUCT "l")
+    (("1" (ASSERT) NIL NIL)
+     ("2" (SKEEP)
+      (("2" (HIDE -1)
+        (("2" (REWRITE "msize_mpol" 1)
+          (("2" (REWRITE "msize_mpol" 1)
+            (("2" (REWRITE "map_msize_cons")
+              (("2" (REWRITE "sum_nat_cons")
+                (("2" (LEMMA "msize_pos")
+                  (("2" (INST -1 "cons1_var") (("2" (ASSERT) NIL NIL)) NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|mpol| ADT-CONSTRUCTOR-DECL "[list[mpoly] -> (mpol?)]" |mpoly_adt| NIL)
+    (|mpol?| ADT-RECOGNIZER-DECL "[mpoly -> boolean]" |mpoly_adt| NIL))
+   SHOSTAK))
+ (|hd_TCC1| 0
+  (|hd_TCC1-1| NIL 3997978764 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|hd| SUBTYPE "xs" "(list_adt[real].cons?)" (35 46 35 48))))
+ (|meval_TCC1| 0
+  (|meval_TCC1-1| NIL 3997978764 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|meval| SUBTYPE "l" "(list_adt[mpoly_adt.mpoly].cons?)" (43 30 43 31))))
+ (|meval_TCC2| 0
+  (|meval_TCC2-1| NIL 3997978764 ("" (TERMINATION-TCC) NIL NIL)
+   ((|reduce_nat| ADT-DEF-DECL "[mpoly -> nat]" |mpoly_adt| NIL)) NIL
+   (|meval| TERMINATION "meval(car[mpoly](l))" "NIL" (43 20 43 33))))
+ (|meval_TCC3| 0
+  (|meval_TCC3-1| NIL 3997978764
+   ("" (SKEEP)
+    (("" (REPLACE -1 :HIDE? T)
+      (("" (LEMMA "msize_cdr") (("" (INST -1 "l") (("" (ASSERT) NIL NIL)) NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|msize_cdr| FORMULA-DECL NIL |eval_probe| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL))
+   NIL (|meval| TERMINATION "meval(mpol(cdr[mpoly](l)))" "NIL" (43 53 43 72))))
+ (|madd_TCC1| 0
+  (|madd_TCC1-1| NIL 3997978764 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|madd| SUBTYPE "l" "(list_adt[mpoly_adt.mpoly].cons?)" (57 77 57 78))))
+ (|madd_TCC2| 0
+  (|madd_TCC2-1| NIL 3997978764 ("" (TERMINATION-TCC) NIL NIL)
+   ((|reduce_nat| ADT-DEF-DECL "[mpoly -> nat]" |mpoly_adt| NIL)) NIL
+   (|madd| TERMINATION "madd(p, car[mpoly](l))" "NIL" (57 65 57 80))))
+ (|madd_TCC3| 0
+  (|madd_TCC3-1| NIL 3997978764 ("" (TERMINATION-TCC) NIL NIL)
+   ((|reduce_nat| ADT-DEF-DECL "[mpoly -> nat]" |mpoly_adt| NIL)) NIL
+   (|madd| TERMINATION "madd(car[mpoly](l), q)" "NIL" (62 31 62 46))))
+ (|madd_TCC4| 0
+  (|madd_TCC4-1| NIL 3997978764 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|madd| SUBTYPE "l2" "(list_adt[mpoly_adt.mpoly].cons?)" (64 52 64 54))))
+ (|madd_TCC5| 0
+  (|madd_TCC5-1| NIL 3997978764 ("" (TERMINATION-TCC) NIL NIL)
+   ((|reduce_nat| ADT-DEF-DECL "[mpoly -> nat]" |mpoly_adt| NIL)) NIL
+   (|madd| TERMINATION "madd(car[mpoly](l), car[mpoly](l2))" "NIL"
+    (64 35 64 56))))
+ (|madd_TCC6| 0
+  (|madd_TCC6-1| NIL 3997978764
+   ("" (SKEEP)
+    (("" (REPLACE -1 :HIDE? T)
+      (("" (SKEEP)
+        (("" (REPLACE -1 :HIDE? T)
+          (("" (LEMMA "msize_cdr")
+            (("" (INST -1 "l")
+              (("" (LEMMA "msize_cdr")
+                (("" (INST -1 "l2") (("" (ASSERT) NIL NIL)) NIL)) NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)) NIL
+   (|madd| TERMINATION "madd(mpol(cdr[mpoly](l)), mpol(cdr[mpoly](l2)))" "NIL"
+    (64 66 64 99))))
+ (|mmulx_TCC1| 0
+  (|mmulx_TCC1-1| NIL 3997978764 ("" (TERMINATION-TCC) NIL NIL)
+   ((|reduce_nat| ADT-DEF-DECL "[mpoly -> nat]" |mpoly_adt| NIL)) NIL
+   (|mmulx| TERMINATION "mmulx(FALSE, p, car[mpoly](l))" "NIL" (86 32 86 55))))
+ (|mmulx_TCC2| 0
+  (|mmulx_TCC2-1| NIL 3997978764
+   ("" (SKEEP)
+    (("" (SKEEP)
+      (("" (LEMMA "msize_cdr") (("" (INST -1 "l") (("" (ASSERT) NIL NIL)) NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)) NIL
+   (|mmulx| TERMINATION "mmulx(TRUE, p, mpol(cdr[mpoly](l)))" "NIL"
+    (86 65 86 93))))
+ (|mmulx_TCC3| 0
+  (|mmulx_TCC3-1| NIL 3997978764 ("" (TERMINATION-TCC) NIL NIL)
+   ((|reduce_nat| ADT-DEF-DECL "[mpoly -> nat]" |mpoly_adt| NIL)) NIL
+   (|mmulx| TERMINATION "mmulx(TRUE, car[mpoly](l), q)" "NIL" (95 27 95 49))))
+ (|mmulx_TCC4| 0
+  (|mmulx_TCC4-1| NIL 3997978764
+   ("" (SKEEP)
+    (("" (SKEEP)
+      (("" (REPLACE -1 :HIDE? T)
+        (("" (SKEEP)
+          (("" (REPLACE -1 :HIDE? T)
+            (("" (LEMMA "msize_cdr")
+              (("" (INST -1 "l") (("" (ASSERT) NIL NIL)) NIL)) NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)) NIL
+   (|mmulx| TERMINATION "mmulx(FALSE, mpol(cdr[mpoly](l)), q)" "NIL"
+    (96 51 96 80))))
+ (|mpow_TCC1| 0
+  (|mpow_TCC1-1| NIL 3997978764 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|mpow| SUBTYPE "n - 1" "nat" (105 49 105 54))))
+ (|mpow_TCC2| 0
+  (|mpow_TCC2-1| NIL 3997978764 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+   (|mpow| TERMINATION "mpow(p, n - 1)" "NIL" (105 41 105 55))))
+ (|deg_TCC1| 0
+  (|deg_TCC1-1| NIL 3997978764
+   ("" (SKEEP)
+    (("" (EXPAND "length" 2) (("" (LIFT-IF) (("" (ASSERT) NIL NIL)) NIL)) NIL))
+    NIL)
+   NIL NIL (|deg| SUBTYPE "length[mpoly](l) - 1" "nat" (109 63 109 76))))
+ (|probe_eval| 0
+  (|probe_eval-1| NIL 3997978933 ("" (EVAL-FORMULA) NIL NIL) NIL SHOSTAK))
+ (|probe_pow8| 0
+  (|probe_pow8-1| NIL 3997978935 ("" (EVAL-FORMULA) NIL NIL) NIL SHOSTAK))
+ (|probe_deg| 0
+  (|probe_deg-1| NIL 3997978936 ("" (EVAL-FORMULA) NIL NIL) NIL SHOSTAK)))
+

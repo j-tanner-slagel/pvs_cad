@@ -1,0 +1,55 @@
+branch_ctx[T, U: TYPE]: THEORY
+%----------------------------------------------------------------------------
+% Sequencing branch trees with the conditions of the path (Phase 3).
+%
+% bbind of branch_map replaces every leaf by a tree that knows nothing about
+% where it hangs.  bbindc passes the leaf's path down: the continuation gets
+% the conditions on the way to the leaf added to the context it was given,
+% and can use them (through sign_oracle) not to branch on a sign the path has
+% already decided.  select_bbindc is the only fact about it the library
+% needs: at a valuation admitted by the context, if the tree the continuation
+% builds at the selected leaf selects u under every context the valuation
+% admits, the combined tree selects u.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING branch_tree[T], branch_tree[U], branch_tree[bool]
+
+  Cx: TYPE = list[branch_tree[bool].SignCond]
+  t, t1, t2, t3: VAR btree[T]
+  ys: VAR list[real]
+  cx: VAR Cx
+  g: VAR [T, Cx -> btree[U]]
+  u: VAR U
+  v: VAR T
+  c: VAR mpoly
+
+  bbindc(t, cx, g): RECURSIVE btree[U] =
+    CASES t OF
+      bleaf(v): g(v, cx),
+      bnode(c, n, z, p):
+        bnode(c, bbindc(n, cons(branch_tree[bool].neg(c), cx), g),
+                 bbindc(z, cons(branch_tree[bool].zer(c), cx), g),
+                 bbindc(p, cons(branch_tree[bool].pos(c), cx), g))
+    ENDCASES
+  MEASURE t BY <<
+
+  bbindc_leaf: LEMMA bbindc(bleaf(v), cx, g) = g(v, cx)
+  bbindc_node: LEMMA bbindc(bnode(c, t1, t2, t3), cx, g) =
+    bnode(c, bbindc(t1, cons(branch_tree[bool].neg(c), cx), g),
+             bbindc(t2, cons(branch_tree[bool].zer(c), cx), g),
+             bbindc(t3, cons(branch_tree[bool].pos(c), cx), g))
+
+  %% the conditions of a child's path hold when the parent's do and the sign
+  %% sends the valuation that way
+  ctx_neg: LEMMA branch_tree[bool].conds_hold(cx, ys) AND branch_tree[bool].msign(c, ys) = -1
+    IMPLIES branch_tree[bool].conds_hold(cons(branch_tree[bool].neg(c), cx), ys)
+  ctx_zer: LEMMA branch_tree[bool].conds_hold(cx, ys) AND branch_tree[bool].msign(c, ys) = 0
+    IMPLIES branch_tree[bool].conds_hold(cons(branch_tree[bool].zer(c), cx), ys)
+  ctx_pos: LEMMA branch_tree[bool].conds_hold(cx, ys) AND branch_tree[bool].msign(c, ys) = 1
+    IMPLIES branch_tree[bool].conds_hold(cons(branch_tree[bool].pos(c), cx), ys)
+
+  select_bbindc: THEOREM FORALL (t: btree[T]): FORALL (cx: Cx, ys: list[real], g: [T, Cx -> btree[U]], u: U):
+    branch_tree[bool].conds_hold(cx, ys) AND
+    (FORALL (cx2: Cx): branch_tree[bool].conds_hold(cx2, ys) IMPLIES select(g(select(t, ys), cx2), ys) = u)
+    IMPLIES select(bbindc(t, cx, g), ys) = u
+END branch_ctx

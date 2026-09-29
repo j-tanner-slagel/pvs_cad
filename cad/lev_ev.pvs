@@ -1,0 +1,42 @@
+lev_ev: THEORY
+%----------------------------------------------------------------------------
+% One level at a well-formed cell (COMPLETENESS_PLAN C8, part 1).
+%
+% At a well-formed descriptor the oracle is exact (wf_exact), the effective
+% family is zf (feff_zf) and certified (certz_all), so the separator search
+% succeeds from some fuel on and returns the same separators for every
+% larger fuel (seps_ok): lvok_o holds for every large u, with any valid
+% table (lev_ok; the query half by okqs_complete).  The cells a walk visits
+% do not depend on which valid table it uses (cells_valid), and when the
+% walk passes they are all well formed (cells_wf: a separator by opt_wf, a
+% section by gap_sec and osec_den).  cellsr_o only looks at the cells
+% (cellsr_cong).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING nclos_ok, od_exact, cert_all, walk_search
+
+  u, N: VAR nat
+  F, P: VAR list[list[mpoly]]
+  od, od2: VAR OD
+  tb, tb2: VAR CT
+  Y: VAR list[rat]
+  fr, fr2: VAR [OD -> Tower]
+  y0, lo, hi: VAR rat
+
+  %% the separators of a level at a well-formed cell, from some fuel on
+  lsep(F, od, N): list[rat] = seps_n(zf(F, den(od)), msg(den(od)), sfuel2 + N)
+  lev_ok: LEMMA wf?(od) IMPLIES EXISTS N: FORALL u, tb: u >= N AND valid?(tb) IMPLIES
+    lvok_o(u, F, od, tb) AND seps_t(u, feff(F, od), od, tb) = lsep(F, od, N)
+    AND wok?(zf(F, den(od)), msg(den(od)), lsep(F, od, N))
+
+  %% ---- the cells ------------------------------------------------------------------------------
+  cells_valid: LEMMA FORALL Y: valid?(tb) AND valid?(tb2) IMPLIES
+    cells_o(P, od, tb, Y) = cells_o(P, od, tb2, Y)
+  cells_mem: LEMMA FORALL Y: member(od2, cells_o(P, od, tb, Y)) IMPLIES
+    (EXISTS y0: member(y0, Y) AND od2 = opt(od, y0)) OR
+    (EXISTS lo, hi: adj?(Y, lo, hi) AND gap_t(P, od, lo, hi, tb) AND od2 = osec(od, P, lo, hi))
+  cells_wf: LEMMA wf?(od) AND valid?(tb) AND wok?(zf(F, den(od)), msg(den(od)), Y)
+    AND member(od2, cells_o(feff(F, od), od, tb, Y)) IMPLIES wf?(od2)
+  cellsr_cong: LEMMA FORALL Y: (FORALL od2: member(od2, cells_o(P, od, tb, Y)) IMPLIES fr(od2) = fr2(od2))
+    IMPLIES cellsr_o(fr, P, od, tb, Y) = cellsr_o(fr2, P, od, tb, Y)
+END lev_ev

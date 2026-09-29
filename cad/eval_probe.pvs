@@ -1,0 +1,121 @@
+eval_probe: THEORY
+%----------------------------------------------------------------------------
+% Phase 0 probe: does the PVS ground evaluator (eval-expr) handle the recursive
+% multivariate polynomial datatype of design decision D1?  Recursion over the
+% coefficient list is expressed as recursion on mpol(cdr(l)) with the size
+% measure msize, since PVS has no mutual recursion.
+% Evaluation takes the valuation as a list whose head is the main variable of
+% the current level; missing variables count as 0.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING mpoly
+
+  p, q: VAR mpoly
+  c, d: VAR rat
+  l: VAR list[mpoly]
+  xs: VAR list[real]
+  n: VAR nat
+
+  sum_nat(ns: list[nat]): RECURSIVE nat =
+    CASES ns OF null: 0, cons(h, t): h + sum_nat(t) ENDCASES
+  MEASURE ns BY <<
+
+  msize: [mpoly -> nat] =
+    reduce_nat(LAMBDA c: 1, LAMBDA (ns: list[nat]): 1 + sum_nat(ns))
+
+  sum_nat_cons: LEMMA FORALL (h: nat, t: list[nat]): sum_nat(cons(h, t)) = h + sum_nat(t)
+  map_msize_cons: LEMMA map(msize)(cons(p, l)) = cons(msize(p), map(msize)(l))
+
+  msize_mconst: LEMMA msize(mconst(c)) = 1
+  msize_mpol: LEMMA msize(mpol(l)) = 1 + sum_nat(map(msize)(l))
+  msize_pos: LEMMA msize(p) >= 1
+  msize_car: LEMMA cons?(l) IMPLIES msize(car(l)) < msize(mpol(l))
+  msize_cdr: LEMMA cons?(l) IMPLIES msize(mpol(cdr(l))) < msize(mpol(l))
+
+  hd(xs): real = IF null?(xs) THEN 0 ELSE car(xs) ENDIF
+  tl(xs): list[real] = IF null?(xs) THEN xs ELSE cdr(xs) ENDIF
+
+  % Horner: meval(mpol(c0 :: rest))(x :: ys) = meval(c0)(ys) + x * meval(mpol(rest))(x :: ys)
+  meval(p)(xs): RECURSIVE real =
+    CASES p OF
+      mconst(c): c,
+      mpol(l): IF null?(l) THEN 0
+               ELSE meval(car(l))(tl(xs)) + hd(xs) * meval(mpol(cdr(l)))(xs) ENDIF
+    ENDCASES
+  MEASURE msize(p)
+
+  zero: mpoly = mconst(0)
+
+  % lift a constant/lower-level polynomial to a one-coefficient list
+  as_list(p): list[mpoly] = CASES p OF mconst(c): (: p :), mpol(l): l ENDCASES
+
+  madd(p, q): RECURSIVE mpoly =
+    CASES p OF
+      mconst(c):
+        CASES q OF
+          mconst(d): mconst(c + d),
+          mpol(l): IF null?(l) THEN mpol((: p :)) ELSE mpol(cons(madd(p, car(l)), cdr(l))) ENDIF
+        ENDCASES,
+      mpol(l):
+        IF null?(l) THEN (CASES q OF mconst(d): mpol((: q :)), mpol(l2): q ENDCASES)
+        ELSE CASES q OF
+          mconst(d): mpol(cons(madd(car(l), q), cdr(l))),
+          mpol(l2): IF null?(l2) THEN p
+                    ELSE mpol(cons(madd(car(l), car(l2)), as_list(madd(mpol(cdr(l)), mpol(cdr(l2)))))) ENDIF
+        ENDCASES ENDIF
+    ENDCASES
+  MEASURE msize(p) + msize(q)
+
+  mscal(c, p): RECURSIVE mpoly =
+    CASES p OF
+      mconst(d): mconst(c * d),
+      mpol(l): IF null?(l) THEN p ELSE mpol(cons(mscal(c, car(l)), as_list(mscal(c, mpol(cdr(l)))))) ENDIF
+    ENDCASES
+  MEASURE msize(p)
+
+  % One function, two modes, because PVS has no mutual recursion.
+  %   coef? = FALSE: p * q with both at the same level.
+  %   coef? = TRUE : p is a coefficient-ring element (level below q's main
+  %                  variable); multiply it into every coefficient of q.
+  % (h1 + x*t1) * q = h1 * q + x * (t1 * q)
+  mmulx(coef?: bool, p, q): RECURSIVE mpoly =
+    IF coef? THEN
+      CASES q OF
+        mconst(d): mscal(d, p),
+        mpol(l): IF null?(l) THEN q
+                 ELSE mpol(cons(mmulx(FALSE, p, car(l)), as_list(mmulx(TRUE, p, mpol(cdr(l)))))) ENDIF
+      ENDCASES
+    ELSE
+      CASES p OF
+        mconst(c): mscal(c, q),
+        mpol(l):
+          IF null?(l) THEN zero
+          ELSE CASES q OF
+            mconst(d): mscal(d, p),
+            mpol(l2): madd(mmulx(TRUE, car(l), q),
+                           mpol(cons(zero, as_list(mmulx(FALSE, mpol(cdr(l)), q)))))
+          ENDCASES ENDIF
+      ENDCASES
+    ENDIF
+  MEASURE msize(p) + msize(q)
+
+  mmul(p, q): mpoly = mmulx(FALSE, p, q)
+
+  mpow(p, n): RECURSIVE mpoly =
+    IF n = 0 THEN mconst(1) ELSE mmul(p, mpow(p, n - 1)) ENDIF
+  MEASURE n
+
+  deg(p): nat =
+    CASES p OF mconst(c): 0, mpol(l): (IF null?(l) THEN 0 ELSE length(l) - 1 ENDIF) ENDCASES
+
+  % test data: x = main variable of level 2, y = main variable of level 1
+  X: mpoly = mpol((: mconst(0), mconst(1) :))
+  Y: mpoly = mpol((: mpol((: mconst(0), mconst(1) :)) :))
+  ONE: mpoly = mconst(1)
+  XY1: mpoly = madd(madd(X, Y), ONE)
+
+  probe_eval: LEMMA meval(mmul(XY1, XY1))((: 2, 3 :)) = 36
+  probe_pow8: LEMMA meval(mpow(XY1, 8))((: 2, 3 :)) = 1679616
+  probe_deg: LEMMA deg(mpow(XY1, 8)) = 8
+
+END eval_probe

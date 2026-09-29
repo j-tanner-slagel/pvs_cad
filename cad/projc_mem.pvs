@@ -1,0 +1,32 @@
+projc_mem: THEORY
+%----------------------------------------------------------------------------
+% What is actually IN Collins' projection (glue for item 1).
+%
+% fib1_det's hypothesis is about the signs of a member's COEFFICIENTS and its
+% discriminant; psc_det?'s is about the signs of projc(F)'s members. These
+% are the same thing only because projc really does contain those
+% polynomials, which is a structural fact about projc1 = cofs ++ chain and
+% has to be proved rather than assumed.
+%
+% With it, sect_svec makes every coefficient and the discriminant
+% sign-invariant along a sector for free, which is what discharges fib1_det.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad_projc
+
+  f: VAR list[mpoly]
+  F: VAR list[list[mpoly]]
+  i: VAR nat
+
+  %% cofs IS map(as_list) -- saying so turns the membership fact into a
+  %% standard map lemma instead of an index induction that fights nth
+  cofs_map: LEMMA FORALL f: cofs(f) = map(as_list)(f)
+
+  %% every coefficient of a member is in cofs of it
+  cofs_mem: LEMMA FORALL f, i: i < length(f)
+    IMPLIES member(as_list(nth(f, i)), cofs(f))
+
+  %% and cofs of the head member is inside projc of the family
+  cofs_projc: LEMMA cons?(F) AND live?(car(F)) AND i < length(car(F))
+    IMPLIES member(as_list(nth(car(F), i)), projc(F))
+END projc_mem

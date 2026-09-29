@@ -1,0 +1,32 @@
+cad_decide3_def: THEORY
+%----------------------------------------------------------------------------
+% The decision behind (cad), executable part (FINISH_PLAN stage S4).
+%
+% decide3 has decide2's signature and decide2's meaning.  With two
+% quantifiers it first runs the fast decision decw of cad_fast_def -- sectors
+% of the projection closed under the walk's intrinsic reads, lifting by the
+% walk -- and keeps its answer when the certificate passes.  Otherwise, and at
+% every other number of quantifiers, it is decide2.  So it answers whatever
+% decide2 answers, and on the two-quantifier problems answers first.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad_fast_def
+
+  qs: VAR list[bool]
+  F: VAR list[list[mpoly]]
+  Psi: VAR [SV -> bool]
+  phi: VAR BF
+
+  decq3(qs, F, Psi): [# ok: bool, val: bool #] =
+    IF length(qs) = 2 THEN
+      LET d = decw(car(cdr(qs)), car(qs), F, Psi) IN
+      IF d`ok THEN d ELSE decq2(qs, F, Psi) ENDIF
+    ELSE decq2(qs, F, Psi)
+    ENDIF
+
+  decide3(qs, F, phi): [# ok: bool, val: bool #] = decq3(qs, F, LAMBDA (v: SV): bfsv(phi, v))
+
+  %% which route answered, for reports
+  fast?(qs, F, phi): bool =
+    length(qs) = 2 AND decw(car(cdr(qs)), car(qs), F, LAMBDA (v: SV): bfsv(phi, v))`ok
+END cad_decide3_def

@@ -1,0 +1,135 @@
+mpoly_mono: THEORY
+%----------------------------------------------------------------------------
+% Conversion of the recursive representation into the monomial-list
+% representation of NASALib's mult_poly (Slagel, White, Dutle), with
+% evaluation preserved (Phase 1).
+%
+% A term at depth k denotes a polynomial in the variables at positions
+% 0..k-1 of the valuation; the exponent vector alpha of a mult_poly monomial
+% is positional in the same way, so the head variable of an mpol gets
+% exponent position 0 and the coefficients' exponent vectors are shifted
+% right (shift0), while the tail polynomial x * Sum_{i>=1} l_i x^(i-1) is
+% obtained by incrementing the head exponent (shift_up).
+%
+% tm_eval: full_eval(tm(p))(xs) = meval(p)(xs) whenever xs is long enough
+% for mult_poly's evaluation (mult_poly requires length(xs) >= max_length,
+% ours treats missing variables as 0).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING mpoly_arith, mult_poly@eval_properties
+
+  m: VAR monomial
+  q, q1, q2: VAR MultPoly
+  p: VAR mpoly
+  xs, ys: VAR list[real]
+  x: VAR real
+  c: VAR rat
+  l: VAR list[mpoly]
+
+  shift0(q): RECURSIVE MultPoly =
+    CASES q OF
+      null: null,
+      cons(m, r): cons((# C := m`C, alpha := cons[nat](0, m`alpha) #), shift0(r))
+    ENDCASES
+  MEASURE q BY <<
+
+  %% increment the head exponent (an empty exponent list means x^0)
+  bump(al: list[nat]): list[nat] =
+    IF null?[nat](al) THEN cons[nat](1, null[nat])
+    ELSE cons[nat](car[nat](al) + 1, cdr[nat](al)) ENDIF
+  shift_up(q): RECURSIVE MultPoly =
+    CASES q OF
+      null: null,
+      cons(m, r): cons((# C := m`C, alpha := bump(m`alpha) #), shift_up(r))
+    ENDCASES
+  MEASURE q BY <<
+
+  tm(p): RECURSIVE MultPoly =
+    CASES p OF
+      mconst(c): IF c = 0 THEN null ELSE (: (# C := c, alpha := null[nat] #) :) ENDIF,
+      mpol(l): IF null?(l) THEN null
+               ELSE append(shift0(tm(car(l))), shift_up(tm(mpol(cdr(l))))) ENDIF
+    ENDCASES
+  MEASURE msize(p)
+
+  %% defining equations, for rewriting
+  shift0_null: LEMMA shift0(null) = null
+  shift0_cons: LEMMA shift0(cons(m, q)) = cons((# C := m`C, alpha := cons[nat](0, m`alpha) #), shift0(q))
+  shift_up_null: LEMMA shift_up(null) = null
+  shift_up_cons: LEMMA shift_up(cons(m, q)) = cons((# C := m`C, alpha := bump(m`alpha) #), shift_up(q))
+  max_length_null: LEMMA max_length(null) = 0
+  max_length_nullp: LEMMA null?(q) IMPLIES max_length(q) = 0
+  shift0_nullp: LEMMA null?(q) IMPLIES shift0(q) = null
+  shift_up_nullp: LEMMA null?(q) IMPLIES shift_up(q) = null
+  max_length_cons: LEMMA max_length(cons(m, q)) = max(length(m`alpha), max_length(q))
+
+  %% arithmetic helpers
+  nat_max_le: LEMMA FORALL (a, b, n: nat): n >= a AND n >= b IMPLIES n >= max(a, b)
+  max_ge1: LEMMA FORALL (a, b: nat): max(a, b) >= a
+  max_ge2: LEMMA FORALL (a, b: nat): max(a, b) >= b
+  length_cons_nat: LEMMA FORALL (al: list[nat]): cons?(al) IMPLIES length(al) = 1 + length(cdr(al))
+  length_null_nat: LEMMA FORALL (al: list[nat]): null?(al) IMPLIES length(al) = 0
+  length_cons_real: LEMMA length(cons(x, ys)) = 1 + length(ys)
+  length_cons_natv: LEMMA FORALL (n: nat, al: list[nat]): length(cons(n, al)) = 1 + length(al)
+  bump_length: LEMMA FORALL (al: list[nat]): length(bump(al)) = max(1, length(al))
+
+  %% a monomial with an empty exponent list evaluates to its coefficient
+  eval_null_alpha: LEMMA FORALL (cc: real, index: list[nat], (xs: list[real] | length(xs) = length(index))):
+    eval((# C := cc, alpha := null[nat] #), index)(xs) = (# C := cc, alpha := null[nat] #)
+  full_eval_null_alpha: LEMMA FORALL (cc: real, xs: list[real]):
+    full_eval((# C := cc, alpha := null[nat] #))(xs) = cc
+
+  %% max_length of the constructions
+
+  max_length_append: LEMMA max_length(append(q1, q2)) = max(max_length(q1), max_length(q2))
+  max_length_shift0: LEMMA max_length(shift0(q)) = IF null?(q) THEN 0 ELSE 1 + max_length(q) ENDIF
+  max_length_shift_up: LEMMA max_length(shift_up(q)) = IF null?(q) THEN 0 ELSE max(1, max_length(q)) ENDIF
+
+  %% evaluation of the constructions
+
+  full_eval_nil: LEMMA full_eval(null)(xs) = 0
+  full_eval_nullp: LEMMA null?(q) IMPLIES full_eval(q)(xs) = 0
+  null_max_length_shift0: LEMMA length(xs) >= max_length(shift0(q)) AND null?(xs) IMPLIES null?(q)
+  null_max_length_shift_up: LEMMA length(xs) >= max_length(shift_up(q)) AND null?(xs) IMPLIES null?(q)
+  full_eval_cons: LEMMA length(xs) >= max_length(cons(m, q)) IMPLIES
+    full_eval(cons(m, q))(xs) = full_eval(m)(xs) + full_eval(q)(xs)
+
+  full_eval_append: LEMMA length(xs) >= max_length(q1) AND length(xs) >= max_length(q2) IMPLIES
+    full_eval(append(q1, q2))(xs) = full_eval(q1)(xs) + full_eval(q2)(xs)
+
+  full_eval_scale: LEMMA FORALL (cc: real, al: list[nat]): length(xs) >= length(al) IMPLIES
+    full_eval((# C := cc, alpha := al #))(xs) = cc * full_eval((# C := 1, alpha := al #))(xs)
+
+  %% single-monomial versions of the shifts
+  mono_eta: LEMMA m = (# C := m`C, alpha := m`alpha #)
+  expt_succ: LEMMA FORALL (n: nat): x^(n + 1) = x * x^n
+  full_eval_shift0_mono: LEMMA FORALL (cc: real, al: list[nat]): length(ys) >= length(al) IMPLIES
+    full_eval((# C := cc, alpha := cons[nat](0, al) #))(cons(x, ys)) = full_eval((# C := cc, alpha := al #))(ys)
+  full_eval_shift_up_mono: LEMMA FORALL (cc: real, al: list[nat]): length(cons(x, ys)) >= length(al) IMPLIES
+    full_eval((# C := cc, alpha := bump(al) #))(cons(x, ys)) = x * full_eval((# C := cc, alpha := al #))(cons(x, ys))
+  shift0_len: LEMMA length(ys) >= max_length(q) IMPLIES length(cons(x, ys)) >= max_length(shift0(q))
+  shift_up_len: LEMMA length(cons(x, ys)) >= max_length(q) IMPLIES length(cons(x, ys)) >= max_length(shift_up(q))
+  full_eval_shift0: LEMMA length(ys) >= max_length(q) IMPLIES
+    full_eval(shift0(q))(cons(x, ys)) = full_eval(q)(ys)
+
+  full_eval_shift_up: LEMMA length(cons(x, ys)) >= max_length(q) IMPLIES
+    full_eval(shift_up(q))(cons(x, ys)) = x * full_eval(q)(cons(x, ys))
+
+  %% defining equations of tm, and the pieces of the main induction
+  tm_c: LEMMA tm(mconst(c)) = IF c = 0 THEN null ELSE (: (# C := c, alpha := null[nat] #) :) ENDIF
+  tm_null: LEMMA null?(l) IMPLIES tm(mpol(l)) = null
+  tm_cons: LEMMA cons?(l) IMPLIES tm(mpol(l)) = append(shift0(tm(car(l))), shift_up(tm(mpol(cdr(l)))))
+  tm_eval_c: LEMMA full_eval(tm(mconst(c)))(xs) = c
+  tm_eval_null: LEMMA null?(l) IMPLIES full_eval(tm(mpol(l)))(xs) = 0
+  tm_len_car: LEMMA cons?(l) AND length(xs) >= max_length(tm(mpol(l))) IMPLIES
+    length(tl(xs)) >= max_length(tm(car(l)))
+  tm_len_cdr: LEMMA cons?(l) AND length(xs) >= max_length(tm(mpol(l))) IMPLIES
+    length(xs) >= max_length(tm(mpol(cdr(l))))
+  tm_eval_step: LEMMA cons?(l) AND length(xs) >= max_length(tm(mpol(l))) IMPLIES
+    full_eval(tm(mpol(l)))(xs) = full_eval(tm(car(l)))(tl(xs)) + hd(xs) * full_eval(tm(mpol(cdr(l))))(xs)
+
+  %% the conversion preserves evaluation
+
+  tm_eval: THEOREM length(xs) >= max_length(tm(p)) IMPLIES full_eval(tm(p))(xs) = meval(p)(xs)
+
+END mpoly_mono

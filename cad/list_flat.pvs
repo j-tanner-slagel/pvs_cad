@@ -1,0 +1,29 @@
+list_flat[T: TYPE]: THEORY
+%----------------------------------------------------------------------------
+% Flattening a list of lists, and the prefixes of a list: a member of a
+% member is a member of the flattening; every prefix is listed by prefs.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING structures@list2set_props[T], map_member[list[T], list[T]]
+
+  a, b: VAR T
+  l, x, t, s: VAR list[T]
+  LL: VAR list[list[T]]
+
+  flat(LL): RECURSIVE list[T] =
+    IF null?(LL) THEN null[T] ELSE append(car(LL), flat(cdr(LL))) ENDIF
+  MEASURE length(LL)
+  flat_mem: LEMMA FORALL LL: member(x, LL) AND member(a, x) IMPLIES member(a, flat(LL))
+
+  %% t is a prefix of l
+  pre?(t, l): RECURSIVE bool =
+    IF null?(t) THEN TRUE ELSE cons?(l) AND car(l) = car(t) AND pre?(cdr(t), cdr(l)) ENDIF
+  MEASURE length(t)
+  prefs(l): RECURSIVE list[list[T]] =
+    IF null?(l) THEN (: null[T] :) ELSE cons(null[T], map[list[T], list[T]](LAMBDA t: cons(car(l), t))(prefs(cdr(l)))) ENDIF
+  MEASURE length(l)
+
+  pre_refl: LEMMA FORALL l: pre?(l, l)
+  pre_trans: LEMMA FORALL t: FORALL s, l: pre?(t, s) AND pre?(s, l) IMPLIES pre?(t, l)
+  pre_prefs: LEMMA FORALL t: FORALL l: pre?(t, l) IMPLIES member(t, prefs(l))
+END list_flat

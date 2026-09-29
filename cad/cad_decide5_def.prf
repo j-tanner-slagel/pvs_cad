@@ -1,0 +1,39 @@
+(|cad_decide5_def|
+ (|decq5_TCC1| 0
+  (|decq5_TCC1-0| "" 3999535945
+   ("" (SKEEP)
+    (("" (EXPAND "length" -1) (("" (LIFT-IF -1) (("" (ASSERT) NIL NIL)) NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK (|decq5| SUBTYPE "qs" "(list_adt[bool].cons?)" (26 27 26 29)))
+  (|decq5_TCC1-1| NIL 3999531229 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|length| DEF-DECL "nat" |list_props| NIL))
+   NIL (|decq5| SUBTYPE "qs" "(list_adt[bool].cons?)" (26 27 26 29))))
+ (|decq5_TCC2| 0
+  (|decq5_TCC2-0| "" 3999535946
+   ("" (SKEEP)
+    (("" (EXPAND "length" -1)
+      (("" (EXPAND "length" -1) (("" (LIFT-IF -1) (("" (ASSERT) NIL NIL)) NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK
+   (|decq5| SUBTYPE "cdr[bool](qs)" "(list_adt[bool].cons?)" (26 23 26 30)))
+  (|decq5_TCC2-1| NIL 3999531229 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|even_plus_odd_is_odd| APPLICATION-JUDGEMENT "odd_int" |integers| NIL)
+    (|plus_u8_u8| APPLICATION-JUDGEMENT "uint16" |integertypes| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL))
+   NIL
+   (|decq5| SUBTYPE "cdr[bool](qs)" "(list_adt[bool].cons?)" (26 23 26 30)))))
+

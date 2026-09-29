@@ -1,0 +1,61 @@
+inner_const: THEORY
+%----------------------------------------------------------------------------
+% The truth of the two inner quantifiers does not vary along an outer sector
+% (FINISH_PLAN stage S5d, claim B).
+%
+%   G_const   conv?(S), the intrinsic reads of the walk over P invariant on S
+%             (inv?, cert? at the sample q), and the closure CL? over the
+%             sample, IMPLY   G(a) IFF G(b)   for a, b in S,
+%             where G(x) = sem((: q2, q3 :), F, Psi, cons(x, xs)).
+%
+% V_sub: if two points have the same separators passing wok?, the same gaps
+% flagged, and the same inner truth at every cell (cells_eq?), then every
+% inner truth value that occurs over one occurs over the other -- by cover,
+% T_same_r across root-free intervals, and gap_sec for sections.  G_local puts
+% cells_local under it; G_const is loc_const.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cells_local
+
+  F, P: VAR list[list[mpoly]]
+  Psi: VAR [SV -> bool]
+  q2, q3: VAR bool
+  xs, ys: VAR list[real]
+  S: VAR [real -> bool]
+  q, x, x0, xa, xb, y, a, b: VAR real
+  lo, hi: VAR rat
+  Y: VAR list[rat]
+
+  G(q2, q3, F, Psi, xs)(x): bool = sem((: q2, q3 :), F, Psi, cons(x, xs))
+
+  gap_sec: LEMMA wok?(P, msg(ys), Y) AND adj?(Y, lo, hi) AND gap?(P, msg(ys), lo, hi)
+    IMPLIES EXISTS (beta: real): lvl?(P, ys, lo, hi, beta)
+
+  cells_eq_sym: LEMMA cells_eq?(q3, F, Psi, P, xs, xa, xb, Y)
+    IMPLIES cells_eq?(q3, F, Psi, P, xs, xb, xa, Y)
+
+  samegaps?(P, xs, xa, xb, Y): bool = FORALL lo, hi: member(lo, Y) AND member(hi, Y) IMPLIES
+    (gap?(P, msg(cons(xb, xs)), lo, hi) IFF gap?(P, msg(cons(xa, xs)), lo, hi))
+
+  V_sub: LEMMA wok?(P, msg(cons(xa, xs)), Y) AND wok?(P, msg(cons(xb, xs)), Y)
+    AND CL?(F, P, cons(xa, xs)) AND samegaps?(P, xs, xa, xb, Y)
+    AND cells_eq?(q3, F, Psi, P, xs, xa, xb, Y)
+    IMPLIES FORALL y: EXISTS (y1: real):
+      (Tx(q3, F, Psi, xs, xa)(y) IFF Tx(q3, F, Psi, xs, xb)(y1))
+
+  G_from: LEMMA (FORALL y: EXISTS (y1: real): (Tx(q3, F, Psi, xs, xa)(y) IFF Tx(q3, F, Psi, xs, xb)(y1)))
+    AND (FORALL y: EXISTS (y1: real): (Tx(q3, F, Psi, xs, xb)(y) IFF Tx(q3, F, Psi, xs, xa)(y1)))
+    IMPLIES (G(q2, q3, F, Psi, xs)(xa) IFF G(q2, q3, F, Psi, xs)(xb))
+
+  G_local: THEOREM ctx?(F, P, S, q, xs, x0) IMPLIES
+    EXISTS (d: posreal): FORALL x: S(x) AND abs(x - x0) < d IMPLIES
+      (G(q2, q3, F, Psi, xs)(x) IFF G(q2, q3, F, Psi, xs)(x0))
+
+  G_const_le: LEMMA conv?(S) AND inv?(P, S, q, xs) AND cert?(P, msg(cons(q, xs))) AND S(q)
+    AND CL?(F, P, cons(q, xs)) AND S(a) AND S(b) AND a <= b
+    IMPLIES (G(q2, q3, F, Psi, xs)(a) IFF G(q2, q3, F, Psi, xs)(b))
+
+  G_const: THEOREM conv?(S) AND inv?(P, S, q, xs) AND cert?(P, msg(cons(q, xs))) AND S(q)
+    AND CL?(F, P, cons(q, xs)) AND S(a) AND S(b)
+    IMPLIES (G(q2, q3, F, Psi, xs)(a) IFF G(q2, q3, F, Psi, xs)(b))
+END inner_const

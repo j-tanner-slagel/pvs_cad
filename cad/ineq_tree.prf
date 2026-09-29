@@ -1,0 +1,510 @@
+(|ineq_tree|
+ (|one_sl_at| 0
+  (|one_sl_at-0| "" 3998345410
+   ("" (SKEEP)
+    (("" (EXPAND "sl_of")
+      (("" (EXPAND "one_sl")
+        (("" (LEMMA "llast_one" ("l" "one_list"))
+          (("" (EXPAND "one_list")
+            (("" (ASSERT)
+              (("" (REPLACE -1)
+                (("" (REWRITE "meval_mconst")
+                  (("" (EXPAND "sign3") (("" (PROPAX) NIL NIL)) NIL)) NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|sl_of| CONST-DECL "SL" |branch_sgn| NIL)
+    (|llast_one| FORMULA-DECL NIL |root_dec| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|one_list| CONST-DECL "list[mpoly]" |tarski_many| NIL)
+    (|meval_mconst| FORMULA-DECL NIL |mpoly_def| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|sign3| CONST-DECL "Sign3" |sign3| |reals|)
+    (|one_sl| CONST-DECL "SL" |ineq_tree| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
+   SHOSTAK))
+ (|wtree_TCC1| 0
+  (|wtree_TCC1-1| NIL 3998345341 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|wtree| SUBTYPE "ps" "(list_adt[SL].cons?)" (35 25 35 27))))
+ (|wtree_TCC2| 0
+  (|wtree_TCC2-1| NIL 3998345341 ("" (TERMINATION-TCC) NIL NIL)
+   ((|length| DEF-DECL "nat" |list_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL))
+   NIL
+   (|wtree| TERMINATION "wtree(cdr[SL](ps))" #A((3) BASE-CHAR . "NIL")
+    (35 15 35 29))))
+ (|wtree_null| 0
+  (|wtree_null-0| "" 3998345409
+   ("" (EXPAND "wtree") (("" (PROPAX) NIL NIL)) NIL)
+   ((|wtree| DEF-DECL "btree[SL]" |ineq_tree| NIL)) SHOSTAK))
+ (|wtree_cons| 0
+  (|wtree_cons-0| "" 3998345409
+   ("" (SKEEP) (("" (EXPAND "wtree" 1 1) (("" (PROPAX) NIL NIL)) NIL)) NIL)
+   ((|wtree| DEF-DECL "btree[SL]" |ineq_tree| NIL)) SHOSTAK))
+ (|select_wtree| 0
+  (|select_wtree-0| "" 3998345411
+   ("" (INDUCT "ps")
+    (("1" (SKEEP)
+      (("1" (REWRITE "wtree_null")
+        (("1" (REWRITE "select_leaf")
+          (("1" (REWRITE "slists_null")
+            (("1" (REWRITE "qprod_null") (("1" (REWRITE "one_sl_at") NIL NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL)
+     ("2" (SKEEP)
+      (("2" (LABEL "ih" -1)
+        (("2" (SKEEP)
+          (("2" (INST "ih" "ys")
+            (("2" (REWRITE "wtree_cons")
+              (("2" (REWRITE "slists_cons")
+                (("2" (REWRITE "qprod_cons")
+                  (("2" (REWRITE "select_bbind")
+                    (("2" (REPLACE "ih")
+                      (("2" (REWRITE "sl_of_slist")
+                        (("2" (REWRITE "snormp_sel")
+                          (("2" (EXPAND "lmn") (("2" (PROPAX) NIL NIL)) NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|wtree_cons| FORMULA-DECL NIL |ineq_tree| NIL)
+    (|qprod_cons| FORMULA-DECL NIL |poly_rolle| NIL)
+    (|snormp_sel| FORMULA-DECL NIL |branch_sgn| NIL)
+    (|lmn| CONST-DECL "list[mpoly]" |tarski_two| NIL)
+    (|sl_of_slist| FORMULA-DECL NIL |branch_sgn| NIL)
+    (|lmul| CONST-DECL "list[mpoly]" |mpoly_prod| NIL)
+    (|snormp| DEF-DECL "btree[SL]" |branch_sgn| NIL)
+    (|select_bbind| FORMULA-DECL NIL |branch_map| NIL)
+    (|slists_cons| FORMULA-DECL NIL |ineq_ok| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|select_leaf| FORMULA-DECL NIL |branch_tree| NIL)
+    (|one_sl| CONST-DECL "SL" |ineq_tree| NIL)
+    (|qprod_null| FORMULA-DECL NIL |poly_rolle| NIL)
+    (|one_sl_at| FORMULA-DECL NIL |ineq_tree| NIL)
+    (|slists_null| FORMULA-DECL NIL |ineq_ok| NIL)
+    (|wtree_null| FORMULA-DECL NIL |ineq_tree| NIL)
+    (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (SL TYPE-EQ-DECL NIL |branch_sgn| NIL)
+    (|slists| CONST-DECL "list[list[mpoly]]" |many_tree| NIL)
+    (|qprod| DEF-DECL "list[mpoly]" |poly_rolle| NIL)
+    (|sl_of| CONST-DECL "SL" |branch_sgn| NIL)
+    (|wtree| DEF-DECL "btree[SL]" |ineq_tree| NIL)
+    (|select| DEF-DECL "T" |branch_tree| NIL)
+    (|btree| TYPE-DECL NIL |btree_adt| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   SHOSTAK))
+ (|itree_sound| 0
+  (|itree_sound-0| "" 3998345386
+   ("" (SKEEP)
+    (("" (EXPAND "itree")
+      (("" (REWRITE "select_bbind")
+        (("" (LEMMA "select_snormps")
+          (("" (INST -1 "Q" "ys")
+            (("" (REPLACE -1)
+              (("" (HIDE -1)
+                (("" (LEMMA "slists_slofs")
+                  (("" (INST -1 "Q" "ys")
+                    (("" (REPLACE -1)
+                      (("" (HIDE -1)
+                        (("" (LEMMA "posinfp_at")
+                          (("" (INST -1 "Q" "ys")
+                            (("" (REPLACE -1)
+                              (("" (HIDE -1)
+                                (("" (LEMMA "neginfp_at")
+                                  (("" (INST -1 "Q" "ys")
+                                    (("" (REPLACE -1)
+                                      (("" (HIDE -1)
+                                        (("" (LIFT-IF)
+                                          (("" (CASE "allcons(nlists(Q, ys))")
+                                            (("1"
+                                              (CASE
+                                                  "posinf(nlists(Q, ys), ys) OR neginf(nlists(Q, ys), ys)")
+                                              (("1" (ASSERT)
+                                                (("1" (REWRITE "select_leaf")
+                                                  (("1" (LEMMA "allok_nlists")
+                                                    (("1" (INST -1 "Q" "ys")
+                                                      (("1"
+                                                        (LEMMA "ineq_far"
+                                                         ("L" "nlists(Q, ys)"
+                                                          "ys" "ys"))
+                                                        (("1"
+                                                          (LEMMA
+                                                           "ex_allgt_nlists"
+                                                           ("Q" "Q" "ys" "ys"))
+                                                          (("1" (GROUND) NIL
+                                                            NIL))
+                                                          NIL))
+                                                        NIL))
+                                                      NIL))
+                                                    NIL))
+                                                  NIL))
+                                                NIL)
+                                               ("2" (ASSERT)
+                                                (("2" (REWRITE "select_bbind")
+                                                  (("2" (LEMMA "select_wtree")
+                                                    (("2"
+                                                      (INST -1 "slofs(Q, ys)"
+                                                       "ys")
+                                                      (("2" (REPLACE -1)
+                                                        (("2" (HIDE -1)
+                                                          (("2"
+                                                            (LEMMA
+                                                             "slists_slofs")
+                                                            (("2"
+                                                              (INST -1 "Q"
+                                                               "ys")
+                                                              (("2"
+                                                                (REPLACE -1)
+                                                                (("2" (HIDE -1)
+                                                                  (("2"
+                                                                    (REWRITE
+                                                                     "sl_of_slist")
+                                                                    (("2"
+                                                                      (LEMMA
+                                                                       "allok_nlists")
+                                                                      (("2"
+                                                                        (INST
+                                                                         -1 "Q"
+                                                                         "ys")
+                                                                        (("2"
+                                                                          (LEMMA
+                                                                           "ex_allgt_nlists"
+                                                                           ("Q"
+                                                                            "Q"
+                                                                            "ys"
+                                                                            "ys"))
+                                                                          (("2"
+                                                                            (LIFT-IF)
+                                                                            (("2"
+                                                                              (CASE
+                                                                                  "length(qprod(nlists(Q, ys), ys)) <= 2")
+                                                                              (("1"
+                                                                                (ASSERT)
+                                                                                (("1"
+                                                                                  (REWRITE
+                                                                                   "select_leaf")
+                                                                                  (("1"
+                                                                                    (LEMMA
+                                                                                     "ineq_small"
+                                                                                     ("L"
+                                                                                      "nlists(Q, ys)"
+                                                                                      "ys"
+                                                                                      "ys"))
+                                                                                    (("1"
+                                                                                      (GROUND)
+                                                                                      (("1"
+                                                                                        (REWRITE
+                                                                                         "select_leaf")
+                                                                                        NIL
+                                                                                        NIL))
+                                                                                      NIL))
+                                                                                    NIL))
+                                                                                  NIL))
+                                                                                NIL)
+                                                                               ("2"
+                                                                                (ASSERT)
+                                                                                (("2"
+                                                                                  (LEMMA
+                                                                                   "lderiv_big"
+                                                                                   ("L"
+                                                                                    "nlists(Q, ys)"
+                                                                                    "ys"
+                                                                                    "ys"))
+                                                                                  (("2"
+                                                                                    (LEMMA
+                                                                                     "dsl_ok"
+                                                                                     ("l"
+                                                                                      "qprod(nlists(Q, ys), ys)"
+                                                                                      "ys"
+                                                                                      "ys"))
+                                                                                    (("2"
+                                                                                      (LEMMA
+                                                                                       "qprod_len"
+                                                                                       ("L"
+                                                                                        "nlists(Q, ys)"
+                                                                                        "ys"
+                                                                                        "ys"))
+                                                                                      (("2"
+                                                                                        (ASSERT)
+                                                                                        (("2"
+                                                                                          (FLATTEN
+                                                                                           -3)
+                                                                                          (("2"
+                                                                                            (REPLACE
+                                                                                             -2)
+                                                                                            (("2"
+                                                                                              (HIDE
+                                                                                               -2)
+                                                                                              (("2"
+                                                                                                (ASSERT)
+                                                                                                (("2"
+                                                                                                  (LEMMA
+                                                                                                   "mcount_sound"
+                                                                                                   ("k"
+                                                                                                    "k"
+                                                                                                    "l0"
+                                                                                                    "lderiv(qprod(nlists(Q, ys), ys))"
+                                                                                                    "ps"
+                                                                                                    "slofs(Q, ys)"
+                                                                                                    "ys"
+                                                                                                    "ys"))
+                                                                                                  (("2"
+                                                                                                    (LEMMA
+                                                                                                     "slists_slofs")
+                                                                                                    (("2"
+                                                                                                      (INST
+                                                                                                       -1
+                                                                                                       "Q"
+                                                                                                       "ys")
+                                                                                                      (("2"
+                                                                                                        (REPLACE
+                                                                                                         -1)
+                                                                                                        (("2"
+                                                                                                          (HIDE
+                                                                                                           -1)
+                                                                                                          (("2"
+                                                                                                            (LEMMA
+                                                                                                             "dgs_le")
+                                                                                                            (("2"
+                                                                                                              (INST
+                                                                                                               -1
+                                                                                                               "nlists(Q, ys)")
+                                                                                                              (("2"
+                                                                                                                (LEMMA
+                                                                                                                 "mlen_nlists")
+                                                                                                                (("2"
+                                                                                                                  (INST
+                                                                                                                   -1
+                                                                                                                   "Q"
+                                                                                                                   "ys")
+                                                                                                                  (("2"
+                                                                                                                    (LEMMA
+                                                                                                                     "ineq_big"
+                                                                                                                     ("L"
+                                                                                                                      "nlists(Q, ys)"
+                                                                                                                      "ys"
+                                                                                                                      "ys"))
+                                                                                                                    (("2"
+                                                                                                                      (GROUND)
+                                                                                                                      NIL
+                                                                                                                      NIL))
+                                                                                                                    NIL))
+                                                                                                                  NIL))
+                                                                                                                NIL))
+                                                                                                              NIL))
+                                                                                                            NIL))
+                                                                                                          NIL))
+                                                                                                        NIL))
+                                                                                                      NIL))
+                                                                                                    NIL))
+                                                                                                  NIL))
+                                                                                                NIL))
+                                                                                              NIL))
+                                                                                            NIL))
+                                                                                          NIL))
+                                                                                        NIL))
+                                                                                      NIL))
+                                                                                    NIL))
+                                                                                  NIL))
+                                                                                NIL))
+                                                                              NIL))
+                                                                            NIL))
+                                                                          NIL))
+                                                                        NIL))
+                                                                      NIL))
+                                                                    NIL))
+                                                                  NIL))
+                                                                NIL))
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL))
+                                                      NIL))
+                                                    NIL))
+                                                  NIL))
+                                                NIL))
+                                              NIL)
+                                             ("2" (ASSERT)
+                                              (("2" (REWRITE "select_leaf")
+                                                (("2" (SPLIT 2)
+                                                  (("1" (PROPAX) NIL NIL)
+                                                   ("2" (SKOSIMP*)
+                                                    (("2"
+                                                      (LEMMA "slists_slofs")
+                                                      (("2" (INST -1 "Q" "ys")
+                                                        (("2"
+                                                          (LEMMA
+                                                           "allgt_nlists")
+                                                          (("2"
+                                                            (INST -1 "Q" "x!1"
+                                                             "ys")
+                                                            (("2"
+                                                              (LEMMA
+                                                               "allgt_allcons")
+                                                              (("2"
+                                                                (INST -1
+                                                                 "nlists(Q, ys)"
+                                                                 "x!1" "ys")
+                                                                (("2" (GROUND)
+                                                                  NIL NIL))
+                                                                NIL))
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL))
+                                                      NIL))
+                                                    NIL))
+                                                  NIL))
+                                                NIL))
+                                              NIL))
+                                            NIL))
+                                          NIL))
+                                        NIL))
+                                      NIL))
+                                    NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|itree| CONST-DECL "btree[bool]" |ineq_tree| NIL)
+    (|select_snormps| FORMULA-DECL NIL |many_tree| NIL)
+    (|slists_slofs| FORMULA-DECL NIL |many_tree| NIL)
+    (|posinfp_at| FORMULA-DECL NIL |ineq_ok| NIL)
+    (|neginfp_at| FORMULA-DECL NIL |ineq_ok| NIL)
+    (|allgt_nlists| FORMULA-DECL NIL |many_ok| NIL)
+    (|allgt_allcons| FORMULA-DECL NIL |many_ok| NIL)
+    (|neginf| CONST-DECL "bool" |poly_farinf| NIL)
+    (|posinf| CONST-DECL "bool" |poly_farinf| NIL)
+    (|select_leaf| FORMULA-DECL NIL |branch_tree| NIL)
+    (|ex_allgt_nlists| FORMULA-DECL NIL |ineq_ok| NIL)
+    (|ineq_far| FORMULA-DECL NIL |ineq_ok| NIL)
+    (|allok_nlists| FORMULA-DECL NIL |many_ok| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|even_plus_odd_is_odd| APPLICATION-JUDGEMENT "odd_int" |integers| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|even_times_int_is_even| APPLICATION-JUDGEMENT "even_int" |integers| NIL)
+    (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|slofs| CONST-DECL "list[SL]" |many_tree| NIL)
+    (|ineq_small| FORMULA-DECL NIL |ineq_ok| NIL)
+    (|odd_plus_even_is_odd| APPLICATION-JUDGEMENT "odd_int" |integers| NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|lderiv_big| FORMULA-DECL NIL |ineq_ok| NIL)
+    (|qprod_len| FORMULA-DECL NIL |ineq_ok| NIL)
+    (|lderiv| CONST-DECL "list[mpoly]" |earr_deriv| NIL)
+    (|mcount_sound| FORMULA-DECL NIL |many_tree| NIL)
+    (|ineq_big| FORMULA-DECL NIL |ineq_ok| NIL)
+    (|mlen_nlists| FORMULA-DECL NIL |many_ok| NIL)
+    (|dgs_le| FORMULA-DECL NIL |ineq_ok| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|dsl_ok| FORMULA-DECL NIL |root_dec| NIL)
+    (|qprod| DEF-DECL "list[mpoly]" |poly_rolle| NIL)
+    (|sl_of_slist| FORMULA-DECL NIL |branch_sgn| NIL)
+    (|select_wtree| FORMULA-DECL NIL |ineq_tree| NIL)
+    (|nlists| CONST-DECL "list[list[mpoly]]" |many_ok| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (SL TYPE-EQ-DECL NIL |branch_sgn| NIL)
+    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|snormps| DEF-DECL "btree[list[SL]]" |many_tree| NIL)
+    (|dsl| CONST-DECL "SL" |root_dec| NIL)
+    (|mcount| CONST-DECL "btree[bool]" |many_tree| NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (<= CONST-DECL "bool" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|wtree| DEF-DECL "btree[SL]" |ineq_tree| NIL)
+    (|bbind| DEF-DECL "btree[U]" |branch_map| NIL)
+    (TRUE CONST-DECL "bool" |booleans| NIL)
+    (|neginfp| CONST-DECL "bool" |ineq_ok| NIL)
+    (|posinfp| CONST-DECL "bool" |ineq_ok| NIL)
+    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (FALSE CONST-DECL "bool" |booleans| NIL)
+    (|bleaf| ADT-CONSTRUCTOR-DECL "[T -> (bleaf?)]" |btree_adt| NIL)
+    (|bleaf?| ADT-RECOGNIZER-DECL "[btree -> boolean]" |btree_adt| NIL)
+    (|slists| CONST-DECL "list[list[mpoly]]" |many_tree| NIL)
+    (|allcons| CONST-DECL "bool" |many_ok| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (IF CONST-DECL
+        "[boolean, T, T -> T]"
+        |if_def|
+        NIL)
+    (|btree| TYPE-DECL NIL |btree_adt| NIL)
+    (|select_bbind| FORMULA-DECL NIL |branch_map| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
+   SHOSTAK)))
+

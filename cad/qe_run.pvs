@@ -1,0 +1,40 @@
+qe_run: THEORY
+%----------------------------------------------------------------------------
+% Quantifier elimination run by the strategy (Phase 3).
+%
+% qe-exists reads a quantified formula whose matrix is any Boolean combination
+% of sign conditions, puts the matrix in disjunctive normal form, evaluates the
+% decision of qe_formula and adds the answer to the sequent, proved from
+% qe_sound.  These are the statements about the reals that the decision
+% procedure settles on its own.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING qe_formula, mpoly_embed
+
+  %% a root of x^2 - 1 where x is positive
+  q1: LEMMA EXISTS (x: real): x^2 - 1 = 0 AND x > 0
+
+  %% none of x^2 + 1
+  q2: LEMMA NOT (EXISTS (x: real): x^2 + 1 = 0 AND x > 0)
+
+  %% a Boolean combination: a point where one of two conditions holds
+  q3: LEMMA EXISTS (x: real): x^2 - 2 > 0 OR (x^3 - x = 0 AND x /= 0)
+
+  %% no equation at all: the conjunction of two strict inequalities
+  q4: LEMMA EXISTS (x: real): x > 0 AND 1 - x > 0
+
+  %% and one that has no solution
+  q5: LEMMA NOT (EXISTS (x: real): x > 1 AND 1 - x > 0)
+
+  %% a universally quantified statement
+  q6: LEMMA FORALL (x: real): x^2 + 1 > 0
+
+  %% the conflict-detection question of the paper, with numbers: an aircraft
+  %% at (5, 0) moving with velocity (-1, 1/2) relative to another, a lookahead
+  %% time of 10 and a protected zone of radius D.  With D = 3 there is a
+  %% conflict, with D = 2 there is none.
+  cd1: LEMMA EXISTS (t: real):
+        0 <= t AND t <= 10 AND (5 - t)^2 + (t/2)^2 < 9
+  cd2: LEMMA NOT (EXISTS (t: real):
+        0 <= t AND t <= 10 AND (5 - t)^2 + (t/2)^2 < 4)
+END qe_run

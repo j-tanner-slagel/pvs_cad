@@ -1,0 +1,61 @@
+qe_tree: THEORY
+%----------------------------------------------------------------------------
+% Quantifier elimination for one variable with symbolic parameters (Phase 3).
+%
+% qtree decides EXISTS x: feval(F, ys, x) for a formula F of qe_formula, a
+% disjunction of conjuncts, as a tree of sign conditions on the parameters:
+% the tree of the first conjunct, with every TRUE leaf kept and every FALSE
+% leaf replaced by the tree of the rest.  qtree_sound needs the syntactic
+% fuel bound tfuel(F) <= k alone.  qdecide is the same tree pruned
+% (btree_prune), and qe_branch is the form the strategy uses: a branch of the
+% pruned tree whose conditions hold at the parameters carries the answer
+% there, in both directions.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING conj_tree, qe_formula, btree_prune[bool], branch_map[bool, bool]
+
+  C: VAR Conj
+  F: VAR list[Conj]
+  ys: VAR list[real]
+  k: VAR nat
+  x: VAR real
+
+  %% the fuel a formula needs
+  cfuel2(C): nat = length(sqsum(C`ceqs)) + 2 * mlen(C`cgts) + 1
+  tfuel(F): RECURSIVE nat =
+    IF null?(F) THEN 0 ELSE max(cfuel2(car(F)), tfuel(cdr(F))) ENDIF
+  MEASURE length(F)
+  tfuel_null: LEMMA tfuel(null[Conj]) = 0
+  tfuel_cons: LEMMA tfuel(cons(C, F)) = max(cfuel2(C), tfuel(F))
+
+  %% a conjunct evaluates as conj_tree reads it
+  ceval_eqs: LEMMA ceval(C, ys, x) IFF (eqs_at(C`ceqs, ys, x) AND allgt(C`cgts, ys, x))
+  ex_ceval: LEMMA (EXISTS (x: real): ceval(C, ys, x)) IFF
+    (EXISTS (x: real): eqs_at(C`ceqs, ys, x) AND allgt(C`cgts, ys, x))
+
+  %% the tree
+  qtree(k, F): RECURSIVE btree[bool] =
+    IF null?(F) THEN bleaf(FALSE)
+    ELSE bbind(ctree(k, car(F)`ceqs, car(F)`cgts), LAMBDA (b: bool):
+           IF b THEN bleaf(TRUE) ELSE qtree(k, cdr(F)) ENDIF)
+    ENDIF
+  MEASURE length(F)
+  qtree_null: LEMMA qtree(k, null[Conj]) = bleaf(FALSE)
+  qtree_cons: LEMMA qtree(k, cons(C, F)) =
+    bbind(ctree(k, C`ceqs, C`cgts), LAMBDA (b: bool):
+      IF b THEN bleaf(TRUE) ELSE qtree(k, F) ENDIF)
+
+  qtree_sound: THEOREM FORALL (F: list[Conj]): FORALL (k: nat, ys: list[real]):
+    tfuel(F) <= k IMPLIES
+    (select(qtree(k, F), ys) IFF (EXISTS (x: real): feval(F, ys, x)))
+
+  %% the pruned tree, and what the strategy uses
+  qdecide(k, F): btree[bool] = prune(qtree(k, F))
+  qdecide_sound: THEOREM tfuel(F) <= k IMPLIES
+    (select(qdecide(k, F), ys) IFF (EXISTS (x: real): feval(F, ys, x)))
+
+  b: VAR branch_tree[bool].Branch
+  qe_branch: THEOREM tfuel(F) <= k AND member(b, branches(qdecide(k, F))) AND
+    branch_tree[bool].conds_hold(b`bconds, ys)
+    IMPLIES (b`bres IFF (EXISTS (x: real): feval(F, ys, x)))
+END qe_tree

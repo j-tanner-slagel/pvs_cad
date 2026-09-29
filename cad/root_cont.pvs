@@ -1,0 +1,72 @@
+root_cont: THEORY
+%----------------------------------------------------------------------------
+% The section of a gap moves continuously with the outer variable
+% (FINISH_PLAN stage S5d, claim B), by COUNTING and not by analysis.
+%
+% On a set S where the intrinsic reads of the walk over P keep their signs,
+% fix x0 in S and a gap (lo, hi] of P's product holding the single root beta0.
+% Some MEMBER g of P owns that root (own_root; the per-member walk certifies
+% member chains, not the product's).  For rationals a < beta0 < b inside the
+% gap at which no entry of g's chain vanishes (avoid), the count cnt(a, b) of
+% g is read through the oracle from intrinsic reads -- invariant on S -- and
+% entries at a and b -- nonzero at x0, hence persistent (msg_pers).  So near
+% x0 the count of g between a and b is still one (cnt_local), a root of g
+% lies there (cnt_pos), it is a root of the product, and it is THE root of
+% the gap (root_near).  a and b can be taken within any eta of beta0.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING walk_same, closed_pt
+
+  P: VAR list[list[mpoly]]
+  g: VAR list[mpoly]
+  xs: VAR list[real]
+  S: VAR [real -> bool]
+  q, x, x0, beta, beta0: VAR real
+  a, b, lo, hi: VAR rat
+  eta: VAR posreal
+
+  %% the S4 hypotheses for the family P on S, and a point of S
+  lev?(P, S, q, xs, x0): bool =
+    inv?(P, S, q, xs) AND cert?(P, msg(cons(q, xs))) AND S(x0) AND cons?(lives(P))
+
+  lev_cert: LEMMA lev?(P, S, q, xs, x0) IMPLIES cert?(P, msg(cons(x0, xs)))
+  lev_slc: LEMMA lev?(P, S, q, xs, x0) IMPLIES slc?(bk(P), msg(cons(x0, xs)), bprod(P))
+  lev_mok: LEMMA lev?(P, S, q, xs, x0) AND member(g, P) AND length(strip(g)) >= 2
+    IMPLIES slc?(bk(P), msg(cons(x0, xs)), strip(g))
+  lev_ird: LEMMA lev?(P, S, q, xs, x0) AND S(x) AND member(g, P) AND length(strip(g)) >= 2 IMPLIES
+    agree(msg(cons(x0, xs)), msg(cons(x, xs)), i_rd(bk(P), msg(cons(x0, xs)), strip(g)))
+
+  cnt_local: LEMMA lev?(P, S, q, xs, x0) AND member(g, P) AND length(strip(g)) >= 2 AND a < b
+    AND av?(schain(bk(P), msg(cons(x0, xs)), strip(g)), cons(x0, xs), a)
+    AND av?(schain(bk(P), msg(cons(x0, xs)), strip(g)), cons(x0, xs), b)
+    IMPLIES EXISTS (d: posreal): FORALL x: S(x) AND abs(x - x0) < d IMPLIES
+      cnt(bk(P), msg(cons(x, xs)), strip(g), a, b) = cnt(bk(P), msg(cons(x0, xs)), strip(g), a, b)
+      AND meval(mpol(strip(g)))(cons(a, cons(x, xs))) /= 0
+      AND meval(mpol(strip(g)))(cons(b, cons(x, xs))) /= 0
+
+  %% the member that owns the section: it vanishes there and has a main variable
+  own_root: LEMMA lev?(P, S, q, xs, x0) AND gapf?(P, cons(x0, xs), lo, hi, beta0)
+    IMPLIES EXISTS g: member(g, P) AND length(strip(g)) >= 2
+      AND meval(mpol(strip(g)))(cons(beta0, cons(x0, xs))) = 0
+
+  %% rational ends around the section, inside the gap, within eta, avoiding g's chain
+  ends_exist: LEMMA lev?(P, S, q, xs, x0) AND gapf?(P, cons(x0, xs), lo, hi, beta0)
+    AND member(g, P) AND length(strip(g)) >= 2
+    IMPLIES EXISTS a, b: lo < a AND a < beta0 AND beta0 < b AND b < hi
+      AND beta0 - a < eta AND b - beta0 < eta
+      AND av?(schain(bk(P), msg(cons(x0, xs)), strip(g)), cons(x0, xs), a)
+      AND av?(schain(bk(P), msg(cons(x0, xs)), strip(g)), cons(x0, xs), b)
+
+  cnt_one_gap: LEMMA lev?(P, S, q, xs, x0) AND gapf?(P, cons(x0, xs), lo, hi, beta0)
+    AND member(g, P) AND length(strip(g)) >= 2
+    AND meval(mpol(strip(g)))(cons(beta0, cons(x0, xs))) = 0
+    AND lo <= a AND a < beta0 AND beta0 < b AND b <= hi
+    AND meval(mpol(strip(g)))(cons(a, cons(x0, xs))) /= 0
+    AND meval(mpol(strip(g)))(cons(b, cons(x0, xs))) /= 0
+    IMPLIES cnt(bk(P), msg(cons(x0, xs)), strip(g), a, b) = 1
+
+  root_near: THEOREM lev?(P, S, q, xs, x0) AND gapf?(P, cons(x0, xs), lo, hi, beta0)
+    IMPLIES EXISTS (d: posreal): FORALL x, beta:
+      S(x) AND abs(x - x0) < d AND gapf?(P, cons(x, xs), lo, hi, beta)
+      IMPLIES abs(beta - beta0) < eta
+END root_cont

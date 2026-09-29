@@ -1,0 +1,454 @@
+(|snorm_ctx|
+ (|snormc_TCC1| 0
+  (|snormc_TCC1-0| "" 3998354423
+   ("" (SKEEP)
+    (("" (LEMMA "lbut_length") (("" (INST -1 "l") (("" (ASSERT) NIL NIL)) NIL))
+      NIL))
+    NIL)
+   ((|lbut_length| FORMULA-DECL NIL |mpoly_pdiv| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL))
+   SHOSTAK
+   (|snormc| TERMINATION "snormc(lbut(l), cx)" #A((3) BASE-CHAR . "NIL")
+    (23 46 23 65))))
+ (|snormc_TCC2| 0
+  (|snormc_TCC2-0| "" 3998354424
+   ("" (SKEEP)
+    (("" (LEMMA "lbut_length") (("" (INST -1 "l") (("" (ASSERT) NIL NIL)) NIL))
+      NIL))
+    NIL)
+   ((|lbut_length| FORMULA-DECL NIL |mpoly_pdiv| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL))
+   SHOSTAK
+   (|snormc| TERMINATION "snormc(lbut(l), cx)" #A((3) BASE-CHAR . "NIL")
+    (27 48 27 67))))
+ (|snormc_TCC3| 0
+  (|snormc_TCC3-0| "" 3998354425
+   ("" (SKEEP)
+    (("" (LEMMA "lbut_length") (("" (INST -1 "l") (("" (ASSERT) NIL NIL)) NIL))
+      NIL))
+    NIL)
+   ((|lbut_length| FORMULA-DECL NIL |mpoly_pdiv| NIL)
+    (NIL APPLICATION-JUDGEMENT "above(n)" |exp2| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL))
+   SHOSTAK
+   (|snormc| TERMINATION
+    "snormc(lbut(l), cons[SignCond[bool]](branch_tree[bool].zer(mnorm(llast(l))), cx))"
+    #A((3) BASE-CHAR . "NIL") (31 15 31 80))))
+ (|snormc_null| 0
+  (|snormc_null-0| "" 3998354426
+   ("" (SKEEP) (("" (EXPAND "snormc") (("" (ASSERT) NIL NIL)) NIL)) NIL)
+   ((|snormc| DEF-DECL "btree[SL]" |snorm_ctx| NIL)) SHOSTAK))
+ (|snormc_cst| 0
+  (|snormc_cst-0| "" 3998354427
+   ("" (SKEEP) (("" (EXPAND "snormc" 1 1) (("" (ASSERT) NIL NIL)) NIL)) NIL)
+   ((|snormc| DEF-DECL "btree[SL]" |snorm_ctx| NIL)) SHOSTAK))
+ (|snormc_forced| 0
+  (|snormc_forced-6| "" 3998354661
+   ("" (SKEEP)
+    (("" (EXPAND "snormc" 3 1)
+      (("" (LEMMA "forced2_range" ("c" "mnorm(llast(l))" "cx" "cx"))
+        (("" (ASSERT) (("" (GROUND) NIL NIL)) NIL)) NIL))
+      NIL))
+    NIL)
+   ((|snormc| DEF-DECL "btree[SL]" |snorm_ctx| NIL)
+    (NIL APPLICATION-JUDGEMENT "above(n)" |exp2| NIL)
+    (|Cx| TYPE-EQ-DECL NIL |snorm_ctx| NIL)
+    (|SignCond| TYPE-EQ-DECL NIL |branch_tree| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (|llast| DEF-DECL "mpoly" |mpoly_pdiv| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mnorm| DEF-DECL "mpoly" |mpoly_norm| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|forced2_range| FORMULA-DECL NIL |hutch_oracle| NIL))
+   SHOSTAK))
+ (|snormc_node| 0
+  (|snormc_node-4| "" 3998354580
+   ("" (SKEEP) (("" (EXPAND "snormc" 2 1) (("" (ASSERT) NIL NIL)) NIL)) NIL)
+   ((|snormc| DEF-DECL "btree[SL]" |snorm_ctx| NIL)) SHOSTAK))
+ (|msign_sl| 0
+  (|msign_sl-0| "" 3998354429
+   ("" (SKEEP) (("" (EXPAND "msign") (("" (PROPAX) NIL NIL)) NIL)) NIL)
+   ((|msign| CONST-DECL "Sign3" |branch_tree| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
+   SHOSTAK))
+ (|snormc_sel| 0
+  (|snormc_sel-3| "" 3998379523
+   ("" (MEASURE-INDUCT+ "length(l)" ("l"))
+    (("" (SKEEP)
+      (("" (LABEL "ih" -1)
+        (("" (CASE "null?(x!1)")
+          (("1" (LEMMA "snorm_null")
+            (("1" (INST -1 "x!1")
+              (("1" (ASSERT)
+                (("1" (REPLACE -1)
+                  (("1" (LEMMA "snormc_null")
+                    (("1" (INST -1 "cx" "x!1")
+                      (("1" (ASSERT)
+                        (("1" (REPLACE -1)
+                          (("1" (REWRITE "select_leaf[SL]")
+                            (("1" (REWRITE "select_leaf[list[mpoly]]")
+                              (("1" (REWRITE "sl_of_null") NIL NIL)) NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL)
+           ("2" (LEMMA "snorm_cons")
+            (("2" (INST -1 "x!1")
+              (("2" (ASSERT)
+                (("2" (REPLACE -1)
+                  (("2" (REWRITE "select_node[list[mpoly]]")
+                    (("2" (EXPAND "msign")
+                      (("2" (LEMMA "lbut_length")
+                        (("2" (INST -1 "x!1")
+                          (("2" (ASSERT)
+                            (("2" (INST "ih" "lbut(x!1)")
+                              (("2" (CASE "mcst?(mnorm(llast(x!1)))")
+                                (("1" (LEMMA "snormc_cst")
+                                  (("1" (INST -1 "cx" "x!1")
+                                    (("1" (ASSERT)
+                                      (("1" (REPLACE -1)
+                                        (("1"
+                                          (LEMMA "mcst_eval"
+                                           ("p" "mnorm(llast(x!1))" "xs" "ys"))
+                                          (("1" (ASSERT)
+                                            (("1" (REWRITE "meval_mnorm" -1)
+                                              (("1" (REPLACE -1)
+                                                (("1" (INST-CP "ih" "cx" "ys")
+                                                  (("1"
+                                                    (CASE
+                                                        "cst_val(mnorm(llast(x!1))) = 0")
+                                                    (("1" (REPLACE -1)
+                                                      (("1" (REWRITE "sign3_0")
+                                                        (("1" (ASSERT) NIL
+                                                          NIL))
+                                                        NIL))
+                                                      NIL)
+                                                     ("2"
+                                                      (CASE
+                                                          "cst_val(mnorm(llast(x!1))) > 0")
+                                                      (("1" (ASSERT)
+                                                        (("1"
+                                                          (REWRITE
+                                                           "select_leaf[SL]")
+                                                          (("1"
+                                                            (REWRITE
+                                                             "select_leaf[list[mpoly]]")
+                                                            (("1"
+                                                              (EXPAND "sl_of")
+                                                              (("1"
+                                                                (EXPAND
+                                                                 "sign3")
+                                                                (("1" (PROPAX)
+                                                                  NIL NIL))
+                                                                NIL))
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL)
+                                                       ("2" (ASSERT)
+                                                        (("2"
+                                                          (REWRITE
+                                                           "select_leaf[SL]")
+                                                          (("2"
+                                                            (REWRITE
+                                                             "select_leaf[list[mpoly]]")
+                                                            (("2"
+                                                              (EXPAND "sl_of")
+                                                              (("2"
+                                                                (EXPAND
+                                                                 "sign3")
+                                                                (("2" (PROPAX)
+                                                                  NIL NIL))
+                                                                NIL))
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL))
+                                                      NIL))
+                                                    NIL))
+                                                  NIL))
+                                                NIL))
+                                              NIL))
+                                            NIL))
+                                          NIL))
+                                        NIL))
+                                      NIL))
+                                    NIL))
+                                  NIL)
+                                 ("2" (INST-CP "ih" "cx" "ys")
+                                  (("2"
+                                    (CASE "forced2(mnorm(llast(x!1)), cx) = 2")
+                                    (("1" (LEMMA "snormc_node")
+                                      (("1" (INST -1 "cx" "x!1")
+                                        (("1" (ASSERT)
+                                          (("1" (REPLACE -1)
+                                            (("1" (REWRITE "select_node[SL]")
+                                              (("1" (REWRITE "msign_mnorm")
+                                                (("1" (EXPAND "msign")
+                                                  (("1"
+                                                    (CASE
+                                                        "sign3(meval(llast(x!1))(ys)) = 0")
+                                                    (("1" (ASSERT)
+                                                      (("1"
+                                                        (INST "ih"
+                                                         "cons(branch_tree[bool].zer(mnorm(llast(x!1))), cx)"
+                                                         "ys")
+                                                        (("1"
+                                                          (CASE
+                                                              "branch_tree[bool].conds_hold(cons(branch_tree[bool].zer(mnorm(llast(x!1))), cx), ys)")
+                                                          (("1" (ASSERT) NIL
+                                                            NIL)
+                                                           ("2"
+                                                            (REWRITE
+                                                             "conds_hold_cons")
+                                                            (("2"
+                                                              (EXPAND
+                                                               "cond_holds")
+                                                              (("2"
+                                                                (EXPAND "zer")
+                                                                (("2"
+                                                                  (EXPAND
+                                                                   "msign")
+                                                                  (("2"
+                                                                    (REWRITE
+                                                                     "meval_mnorm")
+                                                                    NIL NIL))
+                                                                  NIL))
+                                                                NIL))
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL))
+                                                      NIL)
+                                                     ("2" (ASSERT)
+                                                      (("2"
+                                                        (REWRITE
+                                                         "select_leaf[SL]")
+                                                        (("2"
+                                                          (REWRITE
+                                                           "select_leaf[SL]")
+                                                          (("2"
+                                                            (REWRITE
+                                                             "select_leaf[list[mpoly]]")
+                                                            (("2"
+                                                              (EXPAND "sl_of")
+                                                              (("2"
+                                                                (TYPEPRED
+                                                                 "sign3(meval(llast(x!1))(ys))")
+                                                                (("2" (GROUND)
+                                                                  NIL NIL))
+                                                                NIL))
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL))
+                                                      NIL))
+                                                    NIL))
+                                                  NIL))
+                                                NIL))
+                                              NIL))
+                                            NIL))
+                                          NIL))
+                                        NIL))
+                                      NIL)
+                                     ("2" (LEMMA "snormc_forced")
+                                      (("2" (INST -1 "cx" "x!1")
+                                        (("2" (ASSERT)
+                                          (("2" (REPLACE -1)
+                                            (("2"
+                                              (LEMMA "forced2_sound"
+                                               ("c" "mnorm(llast(x!1))" "cx"
+                                                "cx" "ys" "ys"))
+                                              (("2" (ASSERT)
+                                                (("2" (EXPAND "msign" -1)
+                                                  (("2"
+                                                    (REWRITE "meval_mnorm" -1)
+                                                    (("2"
+                                                      (LEMMA "forced2_range"
+                                                       ("c" "mnorm(llast(x!1))"
+                                                        "cx" "cx"))
+                                                      (("2" (LIFT-IF)
+                                                        (("2"
+                                                          (CASE
+                                                              "forced2(mnorm(llast(x!1)), cx) = 0")
+                                                          (("1" (ASSERT) NIL
+                                                            NIL)
+                                                           ("2"
+                                                            (CASE
+                                                                "forced2(mnorm(llast(x!1)), cx) = 1")
+                                                            (("1" (ASSERT)
+                                                              (("1"
+                                                                (REPLACE -3)
+                                                                (("1"
+                                                                  (REWRITE
+                                                                   "select_leaf[SL]")
+                                                                  (("1"
+                                                                    (REWRITE
+                                                                     "select_leaf[list[mpoly]]")
+                                                                    (("1"
+                                                                      (EXPAND
+                                                                       "sl_of")
+                                                                      (("1"
+                                                                        (PROPAX)
+                                                                        NIL
+                                                                        NIL))
+                                                                      NIL))
+                                                                    NIL))
+                                                                  NIL))
+                                                                NIL))
+                                                              NIL)
+                                                             ("2" (ASSERT)
+                                                              (("2"
+                                                                (REWRITE
+                                                                 "select_leaf[SL]")
+                                                                (("2"
+                                                                  (REWRITE
+                                                                   "select_leaf[list[mpoly]]")
+                                                                  (("2"
+                                                                    (EXPAND
+                                                                     "sl_of")
+                                                                    (("2"
+                                                                      (PROPAX)
+                                                                      NIL NIL))
+                                                                    NIL))
+                                                                  NIL))
+                                                                NIL))
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL))
+                                                      NIL))
+                                                    NIL))
+                                                  NIL))
+                                                NIL))
+                                              NIL))
+                                            NIL))
+                                          NIL))
+                                        NIL))
+                                      NIL))
+                                    NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|sl_of_null| FORMULA-DECL NIL |branch_sgn| NIL)
+    (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
+    (|select_leaf| FORMULA-DECL NIL |branch_tree| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|snormc_null| FORMULA-DECL NIL |snorm_ctx| NIL)
+    (|snorm_null| FORMULA-DECL NIL |branch_norm| NIL)
+    (|msign| CONST-DECL "Sign3" |branch_tree| NIL)
+    (|snormc_forced| FORMULA-DECL NIL |snorm_ctx| NIL)
+    (|forced2_sound| FORMULA-DECL NIL |hutch_oracle| NIL)
+    (|forced2_range| FORMULA-DECL NIL |hutch_oracle| NIL)
+    (|snormc_node| FORMULA-DECL NIL |snorm_ctx| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
+    (|zer| CONST-DECL "SignCond" |branch_tree| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|cond_holds| CONST-DECL "bool" |branch_tree| NIL)
+    (|conds_hold_cons| FORMULA-DECL NIL |branch_tree| NIL)
+    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|meval| DEF-DECL "real" |mpoly_def| NIL)
+    (|msign_mnorm| FORMULA-DECL NIL |branch_sgn| NIL)
+    (|forced2| CONST-DECL "int" |hutch_oracle| NIL)
+    (|snormc_cst| FORMULA-DECL NIL |snorm_ctx| NIL)
+    (|mcst_eval| FORMULA-DECL NIL |mpoly_cst| NIL)
+    (|meval_mnorm| FORMULA-DECL NIL |mpoly_norm| NIL)
+    (> CONST-DECL "bool" |reals| NIL)
+    (|sign3| CONST-DECL "Sign3" |sign3| |reals|)
+    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (NIL APPLICATION-JUDGEMENT "above(n)" |exp2| NIL)
+    (|sign3_0| FORMULA-DECL NIL |sign3| |reals|)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|cst_val| DEF-DECL "rat" |mpoly_cst| NIL)
+    (|mcst?| DEF-DECL "bool" |mpoly_cst| NIL)
+    (|mnorm| DEF-DECL "mpoly" |mpoly_norm| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|lbut_length| FORMULA-DECL NIL |mpoly_pdiv| NIL)
+    (|lbut| DEF-DECL "list[mpoly]" |mpoly_pdiv| NIL)
+    (|bleaf| ADT-CONSTRUCTOR-DECL "[T -> (bleaf?)]" |btree_adt| NIL)
+    (|bleaf?| ADT-RECOGNIZER-DECL "[btree -> boolean]" |btree_adt| NIL)
+    (|llast| DEF-DECL "mpoly" |mpoly_pdiv| NIL)
+    (|select_node| FORMULA-DECL NIL |branch_tree| NIL)
+    (|snorm_cons| FORMULA-DECL NIL |branch_norm| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (|SignCond| TYPE-EQ-DECL NIL |branch_tree| NIL)
+    (|Cx| TYPE-EQ-DECL NIL |snorm_ctx| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|conds_hold| CONST-DECL "bool" |branch_tree| NIL)
+    (SL TYPE-EQ-DECL NIL |branch_sgn| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (|btree| TYPE-DECL NIL |btree_adt| NIL)
+    (|select| DEF-DECL "T" |branch_tree| NIL)
+    (|snormc| DEF-DECL "btree[SL]" |snorm_ctx| NIL)
+    (|sl_of| CONST-DECL "SL" |branch_sgn| NIL)
+    (|snorm| DEF-DECL "btree[list[mpoly]]" |branch_norm| NIL)
+    (|wf_nat| FORMULA-DECL NIL |naturalnumbers| NIL)
+    (< CONST-DECL "bool" |reals| NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|naturalnumber| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|measure_induction| FORMULA-DECL NIL |measure_induction| NIL)
+    (|well_founded?| CONST-DECL "bool" |orders| NIL)
+    (|pred| TYPE-EQ-DECL NIL |defined_types| NIL))
+   SHOSTAK)))
+

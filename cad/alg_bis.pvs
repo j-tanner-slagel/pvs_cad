@@ -1,0 +1,161 @@
+alg_bis: THEORY
+%----------------------------------------------------------------------------
+% The lifting at an algebraic point, built on BISECTION alone (item A).
+%
+% alg_lift and alg_lift2 place the section points at the roots of
+% Res_x(p, f).  That works, but it leaves one step an argument rather than a
+% theorem: that the resultant's candidates CONTAIN every root of
+% f(., value(a)).  Proving it needs the classical resultant vanishing
+% property -- a determinant with a kernel vector -- which this library does
+% not have.
+%
+% It is not needed.  alg_sturm's count finds the roots by itself:
+%
+%   bwide   doubles an interval until acount = atotal, which acaptures turns
+%           into "every root is inside" -- no Cauchy bound, no magnitudes
+%   bint    splits until every gap holds at most one root of the PRODUCT,
+%           picking separators that are not roots (bpick)
+%   bwalk   reads a vector at every separator, and one more for each gap that
+%           holds a root: there a member is zero exactly when acount says it
+%           has a root in that gap
+%
+% So the whole lifting rests on acount_zero, acount_pos and acaptures, plus
+% sector_rep's svec_same (the vector is constant on an interval free of the
+% product's roots) and prodl_zero (the product vanishes exactly where some
+% member does).  No resultant, no discriminant, no mswap.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING alg_sturm2, cad_proj
+
+  a: VAR Alg
+  F: VAR list[list[mpoly]]
+  f: VAR list[mpoly]
+  n: VAR nat
+  lo, hi: VAR rat
+  rs: VAR list[rat]
+
+  %% The product must be taken over the LIVE members only.  A member with no
+  %% main variable contributes a constant to the fibre, but it also makes the
+  %% product vanish IDENTICALLY wherever that constant is zero -- and on
+  %% x^2 + y^2 - 2 the second member IS x^2 - 2, zero at exactly the sections.
+  %% Measured without this: the widening runs out of fuel at b = 2^24 and
+  %% bseps comes back (: -16777216, 16777216 :) with nothing between them.
+  lives(F): RECURSIVE list[list[mpoly]] =
+    IF null?(F) THEN null[list[mpoly]]
+    ELSIF live?(car(F)) THEN cons(car(F), lives(cdr(F)))
+    ELSE lives(cdr(F))
+    ENDIF
+  MEASURE length(F)
+
+  %% lmul pads: nn(l1, l2) is max(dg l1 + dg l2, dg(lmul(l1, l2))), and
+  %% measured, prodl of the one live member of x^2 + y^2 - 2 comes back as
+  %% (: x^2-2, 0, 1, 0 :) -- a STRUCTURAL trailing zero.  llast is then
+  %% mconst(0) and alc? refuses, correctly, because dg is 3 where the real
+  %% degree is 2.  Dropping structurally-zero trailing coefficients changes
+  %% no value at any valuation.
+  %% Structurally zero AFTER normalization.  With coefficients in one variable
+  %% the padding of lmul is mconst(0); one level up it is multiplied by an
+  %% mpol and comes back as mpol((: 0, ..., 0 :)), which the syntactic test
+  %% mconst?(u) AND mc(u) = 0 misses (measured on ex_three: bprod's llast was
+  %% such a term, slc? refused and wok? was FALSE).
+  zc?(u: mpoly): bool = mconst?(mnorm(u)) AND mc(mnorm(u)) = 0
+
+  strip(f): RECURSIVE list[mpoly] =
+    IF null?(f) THEN null[mpoly]
+    ELSIF zc?(llast(f)) THEN strip(lbut(f))
+    ELSE f
+    ENDIF
+  MEASURE length(f)
+
+  bprod(F): list[mpoly] = strip(prodl(lives(F)))
+
+  %% the chain fuel: at least as long as the product and every live member.
+  %% It was length(bprod(F)) + 2, which multiplies the whole family out at
+  %% every root count (bath_01: 4,668 products, 14 of 31 s in one sector's
+  %% tower).  Any bound serves: the certificates check slc?(bk(F), .., bprod(F))
+  %% and the members against it at run time (PERF_PLAN P7).
+  lsumk(F): RECURSIVE nat = IF null?(F) THEN 0 ELSE length(car(F)) + lsumk(cdr(F)) ENDIF
+  MEASURE length(F)
+  bk(F): nat = lsumk(lives(F)) + 2
+
+  %% a rational inside (lo, hi) that is NOT a root of the product
+  bpick(a, F, lo, hi, n): RECURSIVE rat =
+    LET m: rat = (lo + hi) / 2 IN
+    IF n = 0 OR asgn(a, bprod(F), m) /= 0 THEN m
+    ELSE bpick(a, F, lo, m, n - 1)
+    ENDIF
+  MEASURE n
+
+  %% interior separators: split until every gap holds at most one root
+  bint(a, F, lo, hi, n): RECURSIVE list[rat] =
+    IF n = 0 OR acount(bk(F), a, bprod(F), lo, hi) <= 1 THEN null[rat]
+    ELSE LET m: rat = bpick(a, F, lo, hi, n) IN
+         append(append(bint(a, F, lo, m, n - 1), (: m :)),
+                bint(a, F, m, hi, n - 1))
+    ENDIF
+  MEASURE n
+
+  %% widen until the interval holds every root and its ends are not roots
+  bwide(a, F, (b: posrat), n): RECURSIVE posrat =
+    IF n = 0 THEN b
+    ELSIF asgn(a, bprod(F), -b) /= 0 AND asgn(a, bprod(F), b) /= 0
+          AND acount(bk(F), a, bprod(F), -b, b) = atotal(bk(F), a, bprod(F))
+      THEN b
+    ELSE bwide(a, F, 2 * b, n - 1)
+    ENDIF
+  MEASURE n
+
+  bfuel: nat = 24
+
+  bseps(a, F): list[rat] =
+    IF null?(lives(F)) THEN (: 0 :)
+    ELSE LET b: posrat = bwide(a, F, 1, bfuel) IN
+         cons(-b, append(bint(a, F, -b, b, bfuel), (: b :)))
+    ENDIF
+
+  %% the vector at the section inside a gap that holds one root.  A member
+  %% that does NOT vanish there has no root in [lo, hi] at all -- lo is not a
+  %% root of the product, so not of it -- so its sign is the one at lo.
+  %% declared Sign3, so the map is a list[Sign3] outright.  Inlined in the
+  %% LAMBDA the literal 0 makes PVS infer number, and the TCC becomes an
+  %% every over a map instead of "0 is a Sign3".
+  bsg(a, F, f, lo, hi): Sign3 =
+    IF length(strip(f)) >= 2 AND acount(bk(F), a, strip(f), lo, hi) > 0 THEN 0
+    ELSE asgn(a, f, lo)
+    ENDIF
+
+  bsec(a, F, lo, hi): SV = map(LAMBDA (g: list[mpoly]): bsg(a, F, g, lo, hi))(F)
+
+  bwalk(a, F, rs): RECURSIVE SVL =
+    IF null?(rs) THEN null[SV]
+    ELSIF null?(cdr(rs)) THEN (: avec(a, F, car(rs)) :)
+    ELSE LET r1: rat = car(rs), r2: rat = car(cdr(rs)) IN
+         cons(avec(a, F, r1),
+              IF acount(bk(F), a, bprod(F), r1, r2) > 0
+                THEN cons(bsec(a, F, r1, r2), bwalk(a, F, cdr(rs)))
+              ELSE bwalk(a, F, cdr(rs))
+              ENDIF)
+    ENDIF
+  MEASURE length(rs)
+
+  %% THE LIFTING
+  svs_bis(F, a): SVL = bwalk(a, F, bseps(a, F))
+
+  %% ---- the condition: leading coefficients only ------------------------
+  bokF(a, F, (G: list[list[mpoly]])): RECURSIVE bool =
+    IF null?(G) THEN TRUE
+    ELSE (dg(strip(car(G))) = 0 OR alc?(bk(F), a, strip(car(G))))
+         AND bokF(a, F, cdr(G))
+    ENDIF
+  MEASURE length(G)
+
+  bok?(a, F): bool =
+    (null?(lives(F)) OR alc?(bk(F), a, bprod(F))) AND bokF(a, F, F)
+
+  %% ---- the two-quantifier decision on it -------------------------------
+  dec2c(q1: bool, q2: bool, (G: list[list[mpoly]]), (Psi: [SV -> bool])): bool =
+    qfoldS(q1, sects(rts(proj(G))),
+           LAMBDA (t: Sect): qfold(q2, svs_bis(G, sample(t)), Psi))
+
+  ok2c(F): bool = every(LAMBDA (t: Sect): bok?(sample(t), F))(sects(rts(proj(F))))
+END alg_bis

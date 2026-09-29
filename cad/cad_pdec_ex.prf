@@ -1,0 +1,24 @@
+(|cad_pdec_ex|
+ (|pdec_examples| 0
+  (|pdec_examples-0| "" 3998606940 ("" (EVAL-FORMULA) NIL NIL)
+   ((|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|bijective?| CONST-DECL "bool" |functions| NIL)
+    (|id| CONST-DECL "(bijective?[T, T])" |identity| NIL)
+    (TRUE CONST-DECL "bool" |booleans| NIL))
+   SHOSTAK))
+ (|pdec_controls| 0
+  (|pdec_controls-0| "" 3998606941
+   ("" (EVAL-EXPR "d_three_f`val")
+    (("" (EVAL-EXPR "d_circle_f`val") (("" (ASSERT) NIL NIL)) NIL)) NIL)
+   ((|d_circle_f| CONST-DECL "[# ok: bool, val: bool #]" |cad_pdec_ex| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (|d_three_f| CONST-DECL "[# ok: bool, val: bool #]" |cad_pdec_ex| NIL)
+    (FALSE CONST-DECL "bool" |booleans| NIL)
+    (TRUE CONST-DECL "bool" |booleans| NIL)
+    (|id| CONST-DECL "(bijective?[T, T])" |identity| NIL)
+    (|bijective?| CONST-DECL "bool" |functions| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   SHOSTAK)))
+

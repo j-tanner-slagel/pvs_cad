@@ -1,0 +1,595 @@
+(|mroot|
+ (|lev_pt1| 0
+  (|lev_pt1-0| "" 3999472432
+   ("" (SKEEP)
+    (("" (EXPAND "lev?")
+      (("" (EXPAND "pt1")
+        (("" (EXPAND "inv?")
+          (("" (ASSERT)
+            (("" (SKEEP)
+              (("" (EXPAND "agree")
+                (("" (SKEEP) (("" (REPLACE -3) (("" (PROPAX) NIL NIL)) NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|lev_pt1-1| NIL 3999472429 ("" (POSTPONE) NIL NIL)
+   (NIL (|pt1| CONST-DECL "[real -> bool]" |mroot| NIL)
+    (|agree| CONST-DECL "bool" |sg_norm| NIL)
+    (|inv?| CONST-DECL "bool" |walk_transfer| NIL)
+    (|lev?| CONST-DECL "bool" |root_cont| NIL))
+   SHOSTAK))
+ (|ents_nz_near| 0
+  (|ents_nz_near-0| "" 3999472612
+   ("" (SKEEP)
+    (("" (USE "ent_mem" :SUBST ("f" "f" "y0" "y" "cs" "cs"))
+      (("" (ASSERT)
+        ((""
+          (USE "ents_mem" :SUBST ("y0" "y" "u" "sub1(f, y)" "cs" "cs" "Y" "Y"))
+          (("" (ASSERT)
+            (("" (USE "av_mem" :SUBST ("cs" "cs" "ys" "vs0" "z" "y" "e" "f"))
+              (("" (ASSERT)
+                (("" (ASSERT)
+                  (("" (GROUND)
+                    (("" (EXPAND "agree" -7)
+                      (("" (INST -7 "sub1(f, y)")
+                        (("" (ASSERT)
+                          (("" (EXPAND "msg" -7)
+                            (("" (REWRITE "sub1_eval" -7)
+                              (("" (REWRITE "sub1_eval" -7)
+                                (("" (EXPAND "sign3" -7)
+                                  (("" (LIFT-IF -7) (("" (GROUND) NIL NIL))
+                                    NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|ents_nz_near-1| NIL 3999472607 ("" (POSTPONE) NIL NIL)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|agree| CONST-DECL "bool" |sg_norm| NIL)
+    (|sub1_eval| FORMULA-DECL NIL |sturm_sg| NIL)
+    (|sign3| CONST-DECL "Sign3" |sign3| |reals|)
+    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|msg| CONST-DECL "SG" |sg_norm| NIL)
+    (|av_mem| FORMULA-DECL NIL |sep_exist| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|sub1| DEF-DECL "mpoly" |sturm_sg| NIL)
+    (|ents_mem| FORMULA-DECL NIL |walk_rd| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|ent_mem| FORMULA-DECL NIL |walk_rd| NIL))
+   SHOSTAK))
+ (|cnt_mlocal| 0
+  (|cnt_mlocal-3| "" 3999472653
+   ("" (SKEEP)
+    (("" (NAME-REPLACE "ab" "cons[rat](a, cons[rat](b, null[rat]))" :HIDE? T)
+      ((""
+        (USE "ents_pz" :SUBST
+             ("cs" "schain(bk(G), msg(cons(x0, xs)), strip(g))" "vs"
+              "cons(x0, xs)" "Y" "ab"))
+        (("" (SPLIT -1)
+          (("1"
+            (USE "msg_mpers" :SUBST
+                 ("vs0" "cons(x0, xs)" "R"
+                  "ents_rd(schain(bk(G), msg(cons(x0, xs)), strip(g)), ab)"))
+            (("1" (ASSERT)
+              (("1" (SKOLEM -1 "d")
+                (("1" (INST 1 "d")
+                  (("1" (SKEEP)
+                    (("1" (INST -1 "vs1")
+                      (("1" (ASSERT)
+                        (("1"
+                          (USE "agree_sym" :SUBST
+                               ("sg1" "msg(vs1)" "sg2" "msg(cons(x0, xs))" "R"
+                                "ents_rd(schain(bk(G), msg(cons(x0, xs)), strip(g)), ab)"))
+                          (("1" (ASSERT)
+                            (("1" (EXPAND "wi_rd" -11)
+                              (("1" (REWRITE "agree_append" -11)
+                                (("1" (FLATTEN)
+                                  (("1"
+                                    (USE "mi_mem" :SUBST
+                                         ("G" "G" "g" "g" "F" "G" "sg1"
+                                          "msg(cons(x0, xs))" "sg2"
+                                          "msg(vs1)"))
+                                    (("1" (ASSERT)
+                                      (("1"
+                                        (USE "schain_hd" :SUBST
+                                             ("k" "bk(G)" "sg"
+                                              "msg(cons(x0, xs))" "f"
+                                              "strip(g)"))
+                                        (("1"
+                                          (USE "ents_nz_near" :SUBST
+                                               ("cs"
+                                                "schain(bk(G), msg(cons(x0, xs)), strip(g))"
+                                                "vs0" "cons(x0, xs)" "y" "a"
+                                                "f" "strip(g)" "Y" "ab" "vs1"
+                                                "vs1"))
+                                          (("1"
+                                            (USE "ents_nz_near" :SUBST
+                                                 ("cs"
+                                                  "schain(bk(G), msg(cons(x0, xs)), strip(g))"
+                                                  "vs0" "cons(x0, xs)" "y" "b"
+                                                  "f" "strip(g)" "Y" "ab" "vs1"
+                                                  "vs1"))
+                                            (("1"
+                                              (USE "cnt_det" :SUBST
+                                                   ("k" "bk(G)" "f" "strip(g)"
+                                                    "sg1" "msg(cons(x0, xs))"
+                                                    "sg2" "msg(vs1)" "Y" "ab"
+                                                    "y0" "a" "y1" "b"))
+                                              (("1" (EXPAND "e_rd" -1)
+                                                (("1" (REPLACE -9 :DIR RL)
+                                                  (("1"
+                                                    (CASE "cons?(strip(g))")
+                                                    (("1" (ASSERT) NIL NIL)
+                                                     ("2"
+                                                      (HIDE-ALL-BUT (-12 1))
+                                                      (("2" (GROUND)
+                                                        (("2" (REVEAL *)
+                                                          (("2"
+                                                            (EXPAND "length"
+                                                                    -11)
+                                                            (("2" (GROUND) NIL
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL))
+                                                      NIL))
+                                                    NIL))
+                                                  NIL))
+                                                NIL))
+                                              NIL))
+                                            NIL))
+                                          NIL))
+                                        NIL))
+                                      NIL))
+                                    NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL)
+           ("2" (SKEEP)
+            (("2" (EXPAND "member")
+              (("2" (EXPAND "member")
+                (("2" (EXPAND "member")
+                  (("2" (GROUND)
+                    (("2" (REPLACE -2 -1 :DIR RL) (("2" (GROUND) NIL NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|cnt_mlocal-1| NIL 3999472607 ("" (POSTPONE) NIL NIL)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|ents_pz| FORMULA-DECL NIL |walk_same| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
+    (|schain| CONST-DECL "list[list[mpoly]]" |sturm_sg| NIL)
+    (|bk| CONST-DECL "nat" |alg_bis| NIL) (|msg| CONST-DECL "SG" |sg_norm| NIL)
+    (|strip| DEF-DECL "list[mpoly]" |alg_bis| NIL)
+    (|ents_rd| DEF-DECL "list[mpoly]" |walk_rd| NIL)
+    (|msg_mpers| FORMULA-DECL NIL |mpar| NIL)
+    (|wi_rd| CONST-DECL "list[mpoly]" |walk_rd| NIL)
+    (|ents_nz_near| FORMULA-DECL NIL |mroot| NIL)
+    (|cnt_det| FORMULA-DECL NIL |walk_rd| NIL)
+    (|member| DEF-DECL "bool" |list_props| NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|e_rd| CONST-DECL "list[mpoly]" |walk_rd| NIL)
+    (|schain_hd| FORMULA-DECL NIL |walk_transfer| NIL)
+    (|mi_mem| FORMULA-DECL NIL |walk_rd| NIL)
+    (|agree_append| FORMULA-DECL NIL |sg_norm| NIL)
+    (|mi_rd| DEF-DECL "list[mpoly]" |walk_rd| NIL)
+    (|append| DEF-DECL "list[T]" |list_props| NIL)
+    (|pairs_rd| DEF-DECL "list[mpoly]" |walk_rd| NIL)
+    (IF CONST-DECL
+        "[boolean, T, T -> T]"
+        |if_def|
+        NIL)
+    (|lives| DEF-DECL "list[list[mpoly]]" |alg_bis| NIL)
+    (|llast| DEF-DECL "mpoly" |mpoly_pdiv| NIL)
+    (|bprod| CONST-DECL "list[mpoly]" |alg_bis| NIL)
+    (|agree_sym| FORMULA-DECL NIL |sg_norm| NIL)
+    (|nonneg_real| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (> CONST-DECL "bool" |reals| NIL)
+    (|posreal| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
+    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL))
+   SHOSTAK))
+ (|mroot_near| 0
+  (|mroot_near-0| "" 3999472713
+   ("" (SKEEP)
+    (("" (USE "lev_pt1" :SUBST ("G" "G" "x0" "x0" "xs" "xs"))
+      (("" (ASSERT)
+        ((""
+          (USE "own_root" :SUBST
+               ("P" "G" "S" "pt1(x0)" "q" "x0" "xs" "xs" "x0" "x0" "lo" "lo"
+                "hi" "hi" "beta0" "beta0"))
+          (("" (ASSERT)
+            (("" (SKOLEM -1 "gg")
+              (("" (FLATTEN)
+                ((""
+                  (USE "ends_exist" :SUBST
+                       ("P" "G" "S" "pt1(x0)" "q" "x0" "xs" "xs" "x0" "x0" "lo"
+                        "lo" "hi" "hi" "beta0" "beta0" "g" "gg" "eta" "eta"))
+                  (("" (ASSERT)
+                    (("" (SKOLEM -1 ("a" "b"))
+                      (("" (FLATTEN)
+                        ((""
+                          (USE "cnt_mlocal" :SUBST
+                               ("G" "G" "g" "gg" "x0" "x0" "xs" "xs" "a" "a"
+                                "b" "b"))
+                          (("" (ASSERT)
+                            (("" (SKOLEM -1 "d")
+                              (("" (INST 1 "d")
+                                (("" (SKEEP)
+                                  (("" (INST -1 "vs1")
+                                    (("" (ASSERT)
+                                      (("" (FLATTEN)
+                                        ((""
+                                          (USE "schain_hd" :SUBST
+                                               ("k" "bk(G)" "sg"
+                                                "msg(cons(x0, xs))" "f"
+                                                "strip(gg)"))
+                                          (("" (CASE "cons?(strip(gg))")
+                                            (("1" (LABEL "agw" -20)
+                                              (("1" (LABEL "g1" -21)
+                                                (("1" (LABEL "g0" -18)
+                                                  (("1"
+                                                    (USE "av_mem" :SUBST
+                                                         ("cs"
+                                                          "schain(bk(G), msg(cons(x0, xs)), strip(gg))"
+                                                          "ys" "cons(x0, xs)"
+                                                          "z" "a" "e"
+                                                          "strip(gg)"))
+                                                    (("1" (ASSERT)
+                                                      (("1"
+                                                        (USE "av_mem" :SUBST
+                                                             ("cs"
+                                                              "schain(bk(G), msg(cons(x0, xs)), strip(gg))"
+                                                              "ys"
+                                                              "cons(x0, xs)"
+                                                              "z" "b" "e"
+                                                              "strip(gg)"))
+                                                        (("1" (ASSERT)
+                                                          (("1"
+                                                            (USE "cnt_one_gap"
+                                                                 :SUBST
+                                                                 ("P" "G" "S"
+                                                                  "pt1(x0)" "q"
+                                                                  "x0" "xs"
+                                                                  "xs" "x0"
+                                                                  "x0" "lo"
+                                                                  "lo" "hi"
+                                                                  "hi" "beta0"
+                                                                  "beta0" "g"
+                                                                  "gg" "a" "a"
+                                                                  "b" "b"))
+                                                            (("1" (ASSERT)
+                                                              (("1"
+                                                                (USE "lev_mok"
+                                                                     :SUBST
+                                                                     ("P" "G"
+                                                                      "S"
+                                                                      "pt1(x0)"
+                                                                      "q" "x0"
+                                                                      "xs" "xs"
+                                                                      "x0" "x0"
+                                                                      "g"
+                                                                      "gg"))
+                                                                (("1" (ASSERT)
+                                                                  (("1"
+                                                                    (EXPAND
+                                                                     "wi_rd"
+                                                                     "agw")
+                                                                    (("1"
+                                                                      (REWRITE
+                                                                       "agree_append"
+                                                                       "agw")
+                                                                      (("1"
+                                                                        (FLATTEN)
+                                                                        (("1"
+                                                                          (USE
+                                                                           "mi_mem"
+                                                                           :SUBST
+                                                                           ("G"
+                                                                            "G"
+                                                                            "g"
+                                                                            "gg"
+                                                                            "F"
+                                                                            "G"
+                                                                            "sg1"
+                                                                            "msg(cons(x0, xs))"
+                                                                            "sg2"
+                                                                            "msg(vs1)"))
+                                                                          (("1"
+                                                                            (ASSERT)
+                                                                            (("1"
+                                                                              (USE
+                                                                               "slc_det"
+                                                                               :SUBST
+                                                                               ("k"
+                                                                                "bk(G)"
+                                                                                "f"
+                                                                                "strip(gg)"
+                                                                                "sg1"
+                                                                                "msg(cons(x0, xs))"
+                                                                                "sg2"
+                                                                                "msg(vs1)"))
+                                                                              (("1"
+                                                                                (ASSERT)
+                                                                                (("1"
+                                                                                  (USE
+                                                                                   "cnt_pos"
+                                                                                   :SUBST
+                                                                                   ("k"
+                                                                                    "bk(G)"
+                                                                                    "ys"
+                                                                                    "vs1"
+                                                                                    "f"
+                                                                                    "strip(gg)"
+                                                                                    "y0"
+                                                                                    "a"
+                                                                                    "y1"
+                                                                                    "b"))
+                                                                                  (("1"
+                                                                                    (EXPAND
+                                                                                     "ends?"
+                                                                                     -1)
+                                                                                    (("1"
+                                                                                      (ASSERT)
+                                                                                      (("1"
+                                                                                        (SKOLEM
+                                                                                         -1
+                                                                                         "zz")
+                                                                                        (("1"
+                                                                                          (FLATTEN)
+                                                                                          (("1"
+                                                                                            (USE
+                                                                                             "root_P"
+                                                                                             :SUBST
+                                                                                             ("g"
+                                                                                              "gg"
+                                                                                              "F"
+                                                                                              "G"
+                                                                                              "ys"
+                                                                                              "vs1"
+                                                                                              "z"
+                                                                                              "zz"))
+                                                                                            (("1"
+                                                                                              (ASSERT)
+                                                                                              (("1"
+                                                                                                (EXPAND
+                                                                                                 "gapf?"
+                                                                                                 "g1")
+                                                                                                (("1"
+                                                                                                  (FLATTEN)
+                                                                                                  (("1"
+                                                                                                    (ASSERT)
+                                                                                                    (("1"
+                                                                                                      (EXPAND
+                                                                                                       "abs")
+                                                                                                      (("1"
+                                                                                                        (LIFT-IF)
+                                                                                                        (("1"
+                                                                                                          (GROUND)
+                                                                                                          (("1"
+                                                                                                            (INST
+                                                                                                             -34
+                                                                                                             "zz")
+                                                                                                            (("1"
+                                                                                                              (ASSERT)
+                                                                                                              NIL
+                                                                                                              NIL))
+                                                                                                            NIL)
+                                                                                                           ("2"
+                                                                                                            (INST
+                                                                                                             -33
+                                                                                                             "zz")
+                                                                                                            (("2"
+                                                                                                              (ASSERT)
+                                                                                                              NIL
+                                                                                                              NIL))
+                                                                                                            NIL))
+                                                                                                          NIL))
+                                                                                                        NIL))
+                                                                                                      NIL))
+                                                                                                    NIL))
+                                                                                                  NIL))
+                                                                                                NIL))
+                                                                                              NIL))
+                                                                                            NIL))
+                                                                                          NIL))
+                                                                                        NIL))
+                                                                                      NIL))
+                                                                                    NIL))
+                                                                                  NIL))
+                                                                                NIL))
+                                                                              NIL))
+                                                                            NIL))
+                                                                          NIL))
+                                                                        NIL))
+                                                                      NIL))
+                                                                    NIL))
+                                                                  NIL))
+                                                                NIL))
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL))
+                                                      NIL))
+                                                    NIL))
+                                                  NIL))
+                                                NIL))
+                                              NIL)
+                                             ("2" (EXPAND "length" -12)
+                                              (("2" (LIFT-IF -12)
+                                                (("2" (GROUND) NIL NIL)) NIL))
+                                              NIL))
+                                            NIL))
+                                          NIL))
+                                        NIL))
+                                      NIL))
+                                    NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|mroot_near-1| NIL 3999472607 ("" (POSTPONE) NIL NIL)
+   ((|real_minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|msg| CONST-DECL "SG" |sg_norm| NIL) (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
+    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|bk| CONST-DECL "nat" |alg_bis| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|strip| DEF-DECL "list[mpoly]" |alg_bis| NIL)
+    (|schain_hd| FORMULA-DECL NIL |walk_transfer| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|schain| CONST-DECL "list[list[mpoly]]" |sturm_sg| NIL)
+    (|av_mem| FORMULA-DECL NIL |sep_exist| NIL)
+    (|cnt_one_gap| FORMULA-DECL NIL |root_cont| NIL)
+    (|lev_mok| FORMULA-DECL NIL |root_cont| NIL)
+    (|wi_rd| CONST-DECL "list[mpoly]" |walk_rd| NIL)
+    (|ends?| CONST-DECL "bool" |sturm_sg| NIL)
+    (|abs| CONST-DECL "{n: nonneg_real | n >= m AND n >= -m}" |real_defs| NIL)
+    (|minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (|gapf?| CONST-DECL "bool" |walk_ok| NIL)
+    (|root_P| FORMULA-DECL NIL |walk_transfer| NIL)
+    (|cnt_pos| FORMULA-DECL NIL |sturm_sg| NIL)
+    (|slc_det| FORMULA-DECL NIL |walk_rd| NIL)
+    (|mi_mem| FORMULA-DECL NIL |walk_rd| NIL)
+    (|agree_append| FORMULA-DECL NIL |sg_norm| NIL)
+    (|mi_rd| DEF-DECL "list[mpoly]" |walk_rd| NIL)
+    (|append| DEF-DECL "list[T]" |list_props| NIL)
+    (|pairs_rd| DEF-DECL "list[mpoly]" |walk_rd| NIL)
+    (|llast| DEF-DECL "mpoly" |mpoly_pdiv| NIL)
+    (|bprod| CONST-DECL "list[mpoly]" |alg_bis| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|cnt_mlocal| FORMULA-DECL NIL |mroot| NIL)
+    (|posreal| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (> CONST-DECL "bool" |reals| NIL)
+    (|nonneg_real| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|ends_exist| FORMULA-DECL NIL |root_cont| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|pt1| CONST-DECL "[real -> bool]" |mroot| NIL)
+    (|own_root| FORMULA-DECL NIL |root_cont| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|lev_pt1| FORMULA-DECL NIL |mroot| NIL))
+   SHOSTAK)))
+

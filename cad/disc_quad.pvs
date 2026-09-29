@@ -1,0 +1,31 @@
+disc_quad: THEORY
+%----------------------------------------------------------------------------
+% What the projection's discriminant evaluates to at degree 2 (last link for
+% the unconditional single-member result).
+%
+% fib1_det needs the sign of dsc = c1^2 - 4*c0*c2 of the SPECIALIZED
+% coefficients.  That sign is genuinely not determined by the coefficient
+% signs alone -- (1,1,1) gives dsc < 0 while (1,3,1) gives dsc > 0 -- so it
+% has to come from the projection, where disc lives.  The link is the 3x3
+% Sylvester determinant of (f, f'):
+%
+%     | c2   c1   c0 |
+%     | 2c2  c1   0  |   =  -c2 * (c1^2 - 4*c0*c2)
+%     | 0    2c2  c1 |
+%
+% so sign(disc) = -sign(c2)*sign(dsc), and with sign(c2) known from the
+% coefficients this pins sign(dsc) whenever c2 /= 0.  When c2 = 0 the
+% discriminant vanishes identically and dsc = c1^2, whose sign is fixed by
+% sign(c1) alone.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING psc_quad1
+
+  u0, u1, u2: VAR mpoly
+  x: VAR real
+
+  disc_quad_eval: LEMMA
+    meval(disc((: u0, u1, u2 :)))((: x :))
+      = -(meval(u2)((: x :)))
+        * dsc(meval(u2)((: x :)), meval(u1)((: x :)), meval(u0)((: x :)))
+END disc_quad

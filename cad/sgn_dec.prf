@@ -1,0 +1,612 @@
+(|sgn_dec|
+ (|score_sound| 0
+  (|score_sound-1| NIL 3998211831
+   ("" (SKEEP)
+    (("" (REWRITE "score_at")
+      (("" (LEMMA "sign_exists")
+        (("" (INST -1 "k" "l0" "q" "ys") (("" (GROUND) NIL NIL)) NIL)) NIL))
+      NIL))
+    NIL)
+   ((|sign_exists| FORMULA-DECL NIL |tarski_dec| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|score_at| FORMULA-DECL NIL |sign_tree| NIL)
+    (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL))
+   SHOSTAK))
+ (|tok2_at| 0
+  (|tok2_at-1| NIL 3998211849
+   ("" (SKEEP)
+    (("" (EXPAND "tok2")
+      (("" (EXPAND "tok")
+        (("" (LEMMA "cons_not_null")
+          (("" (INST -1 "q")
+            (("" (LEMMA "gsq_cons")
+              (("" (INST -1 "q" "ys")
+                (("" (LEMMA "gsq_lc")
+                  (("" (INST -1 "q" "ys")
+                    (("" (LEMMA "gsq_dg")
+                      (("" (INST -1 "q" "ys")
+                        (("" (LEMMA "len_dg")
+                          (("" (INST -1 "gsq(q, ys)")
+                            (("" (LEMMA "len_dg")
+                              (("" (INST -1 "q")
+                                (("" (EXPAND "qok") (("" (GROUND) NIL NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|tok| CONST-DECL "bool" |tarski_chain| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|gsq| CONST-DECL "list[mpoly]" |tarski_dec| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|even_times_int_is_even| APPLICATION-JUDGEMENT "even_int" |integers| NIL)
+    (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|qok| CONST-DECL "bool" |tarski_dec| NIL)
+    (|len_dg| FORMULA-DECL NIL |exists_dec| NIL)
+    (|gsq_dg| FORMULA-DECL NIL |tarski_dec| NIL)
+    (|gsq_lc| FORMULA-DECL NIL |tarski_dec| NIL)
+    (|gsq_cons| FORMULA-DECL NIL |tarski_dec| NIL)
+    (|cons_not_null| FORMULA-DECL NIL |exists_dec| NIL)
+    (|tok2| CONST-DECL "bool" |tarski_dec| NIL))
+   SHOSTAK))
+ (|ex_null_p| 0
+  (|ex_null_p-1| NIL 3998211867
+   ("" (SKEEP)
+    (("" (SPLIT)
+      (("1" (FLATTEN) (("1" (SKOSIMP*) (("1" (INST 1 "x!1") NIL NIL)) NIL))
+        NIL)
+       ("2" (FLATTEN)
+        (("2" (SKOSIMP*)
+          (("2" (INST 1 "x!1")
+            (("2" (LEMMA "snorm_pf")
+              (("2" (INST -1 "l0" "x!1" "ys")
+                (("2" (LEMMA "meval_null")
+                  (("2" (INST -1 "mpol(select(snorm(l0), ys))" "cons(x!1, ys)")
+                    (("2" (ASSERT) NIL NIL)) NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|mpol?| ADT-RECOGNIZER-DECL "[mpoly -> boolean]" |mpoly_adt| NIL)
+    (|mpol| ADT-CONSTRUCTOR-DECL "[list[mpoly] -> (mpol?)]" |mpoly_adt| NIL)
+    (|btree| TYPE-DECL NIL |btree_adt| NIL)
+    (|select| DEF-DECL "T" |branch_tree| NIL)
+    (|snorm| DEF-DECL "btree[list[mpoly]]" |branch_norm| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|meval_null| FORMULA-DECL NIL |mpoly_def| NIL)
+    (|snorm_pf| FORMULA-DECL NIL |pos_dec| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL))
+   SHOSTAK))
+ (|no_root_p| 0
+  (|no_root_p-1| NIL 3998211884
+   ("" (SKEEP)
+    (("" (SKOSIMP*)
+      (("" (LEMMA "length0_null")
+        (("" (INST -1 "select(snorm(l0), ys)")
+          (("" (LEMMA "snorm_lc")
+            (("" (INST -1 "l0" "ys")
+              (("" (LEMMA "pval_one")
+                (("" (INST -1 "select(snorm(l0), ys)" "x!1" "ys")
+                  (("" (LEMMA "snorm_pf")
+                    (("" (INST -1 "l0" "x!1" "ys") (("" (GROUND) NIL NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|length0_null| FORMULA-DECL NIL |mpoly_univ| NIL)
+    (|snorm_lc| FORMULA-DECL NIL |branch_norm| NIL)
+    (|pval_one| FORMULA-DECL NIL |root_dec| NIL)
+    (|snorm_pf| FORMULA-DECL NIL |pos_dec| NIL)
+    (|snorm| DEF-DECL "btree[list[mpoly]]" |branch_norm| NIL)
+    (|select| DEF-DECL "T" |branch_tree| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|btree| TYPE-DECL NIL |btree_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL))
+   SHOSTAK))
+ (|no_pos_q| 0
+  (|no_pos_q-1| NIL 3998211902
+   ("" (SKEEP)
+    (("" (SKOSIMP*)
+      (("" (LEMMA "snorm_pf")
+        (("" (INST -1 "q" "x!1" "ys")
+          (("" (LEMMA "meval_null")
+            (("" (INST -1 "mpol(select(snorm(q), ys))" "cons(x!1, ys)")
+              (("" (ASSERT) NIL NIL)) NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|snorm_pf| FORMULA-DECL NIL |pos_dec| NIL)
+    (|meval_null| FORMULA-DECL NIL |mpoly_def| NIL)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|snorm| DEF-DECL "btree[list[mpoly]]" |branch_norm| NIL)
+    (|select| DEF-DECL "T" |branch_tree| NIL)
+    (|btree| TYPE-DECL NIL |btree_adt| NIL)
+    (|mpol| ADT-CONSTRUCTOR-DECL "[list[mpoly] -> (mpol?)]" |mpoly_adt| NIL)
+    (|mpol?| ADT-RECOGNIZER-DECL "[mpoly -> boolean]" |mpoly_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL))
+   SHOSTAK))
+ (|gdec_sound| 0
+  (|gdec_sound-1| NIL 3998211934
+   ("" (SKEEP)
+    (("" (LEMMA "snorm_lc")
+      (("" (INST -1 "l0" "ys")
+        (("" (LABEL "lc0" -1)
+          (("" (LEMMA "snorm_lc")
+            (("" (INST -1 "q" "ys")
+              (("" (LABEL "lcq" -1)
+                (("" (LEMMA "length0_null")
+                  (("" (INST -1 "select(snorm(l0), ys)")
+                    (("" (LABEL "ln0" -1)
+                      (("" (LEMMA "length0_null")
+                        (("" (INST -1 "select(snorm(q), ys)")
+                          (("" (LABEL "lnq" -1)
+                            (("" (LEMMA "not_null_cons")
+                              (("" (INST -1 "select(snorm(l0), ys)")
+                                (("" (LABEL "nn0" -1)
+                                  (("" (LEMMA "not_null_cons")
+                                    (("" (INST -1 "select(snorm(q), ys)")
+                                      (("" (LABEL "nnq" -1)
+                                        (("" (LEMMA "snorm_length")
+                                          (("" (INST -1 "l0" "ys")
+                                            (("" (LEMMA "snorm_length")
+                                              (("" (INST -1 "q" "ys")
+                                                (("" (EXPAND "gdec")
+                                                  (("" (REWRITE "select_bbind")
+                                                    (("" (REWRITE "snormp_sel")
+                                                      ((""
+                                                        (LEMMA "sl_of_slist")
+                                                        ((""
+                                                          (INST -1
+                                                           "select(snorm(l0), ys)"
+                                                           "ys")
+                                                          (("" (LABEL "s1" -1)
+                                                            (("" (REPLACE "s1")
+                                                              ((""
+                                                                (CASE
+                                                                    "null?(select(snorm(l0), ys))")
+                                                                (("1" (ASSERT)
+                                                                  (("1"
+                                                                    (LEMMA
+                                                                     "edec_sound")
+                                                                    (("1"
+                                                                      (INST -1
+                                                                       "k" "q"
+                                                                       "ys")
+                                                                      (("1"
+                                                                        (LEMMA
+                                                                         "ex_null_p")
+                                                                        (("1"
+                                                                          (INST
+                                                                           -1
+                                                                           "l0"
+                                                                           "q"
+                                                                           "ys")
+                                                                          (("1"
+                                                                            (GROUND)
+                                                                            NIL
+                                                                            NIL))
+                                                                          NIL))
+                                                                        NIL))
+                                                                      NIL))
+                                                                    NIL))
+                                                                  NIL)
+                                                                 ("2"
+                                                                  (CASE
+                                                                      "length(select(snorm(l0), ys)) = 1")
+                                                                  (("1"
+                                                                    (ASSERT)
+                                                                    (("1"
+                                                                      (REWRITE
+                                                                       "select_leaf[bool]")
+                                                                      (("1"
+                                                                        (ASSERT)
+                                                                        (("1"
+                                                                          (LEMMA
+                                                                           "no_root_p")
+                                                                          (("1"
+                                                                            (INST
+                                                                             -1
+                                                                             "l0"
+                                                                             "q"
+                                                                             "ys")
+                                                                            (("1"
+                                                                              (GROUND)
+                                                                              NIL
+                                                                              NIL))
+                                                                            NIL))
+                                                                          NIL))
+                                                                        NIL))
+                                                                      NIL))
+                                                                    NIL)
+                                                                   ("2"
+                                                                    (ASSERT)
+                                                                    (("2"
+                                                                      (REWRITE
+                                                                       "select_bbind")
+                                                                      (("2"
+                                                                        (REWRITE
+                                                                         "snormp_sel")
+                                                                        (("2"
+                                                                          (LEMMA
+                                                                           "sl_of_slist")
+                                                                          (("2"
+                                                                            (INST
+                                                                             -1
+                                                                             "select(snorm(q), ys)"
+                                                                             "ys")
+                                                                            (("2"
+                                                                              (LABEL
+                                                                               "s2"
+                                                                               -1)
+                                                                              (("2"
+                                                                                (REPLACE
+                                                                                 "s2")
+                                                                                (("2"
+                                                                                  (CASE
+                                                                                      "null?(select(snorm(q), ys))")
+                                                                                  (("1"
+                                                                                    (ASSERT)
+                                                                                    (("1"
+                                                                                      (REWRITE
+                                                                                       "select_leaf[bool]")
+                                                                                      (("1"
+                                                                                        (ASSERT)
+                                                                                        (("1"
+                                                                                          (LEMMA
+                                                                                           "no_pos_q")
+                                                                                          (("1"
+                                                                                            (INST
+                                                                                             -1
+                                                                                             "l0"
+                                                                                             "q"
+                                                                                             "ys")
+                                                                                            (("1"
+                                                                                              (GROUND)
+                                                                                              NIL
+                                                                                              NIL))
+                                                                                            NIL))
+                                                                                          NIL))
+                                                                                        NIL))
+                                                                                      NIL))
+                                                                                    NIL)
+                                                                                   ("2"
+                                                                                    (ASSERT)
+                                                                                    (("2"
+                                                                                      (LEMMA
+                                                                                       "tok2_at")
+                                                                                      (("2"
+                                                                                        (INST
+                                                                                         -1
+                                                                                         "k"
+                                                                                         "select(snorm(l0), ys)"
+                                                                                         "select(snorm(q), ys)"
+                                                                                         "ys")
+                                                                                        (("2"
+                                                                                          (LEMMA
+                                                                                           "score_sound")
+                                                                                          (("2"
+                                                                                            (INST
+                                                                                             -1
+                                                                                             "k"
+                                                                                             "select(snorm(l0), ys)"
+                                                                                             "select(snorm(q), ys)"
+                                                                                             "ys")
+                                                                                            (("2"
+                                                                                              (LEMMA
+                                                                                               "snorm_ex2")
+                                                                                              (("2"
+                                                                                                (INST
+                                                                                                 -1
+                                                                                                 "l0"
+                                                                                                 "q"
+                                                                                                 "ys")
+                                                                                                (("2"
+                                                                                                  (GROUND)
+                                                                                                  NIL
+                                                                                                  NIL))
+                                                                                                NIL))
+                                                                                              NIL))
+                                                                                            NIL))
+                                                                                          NIL))
+                                                                                        NIL))
+                                                                                      NIL))
+                                                                                    NIL))
+                                                                                  NIL))
+                                                                                NIL))
+                                                                              NIL))
+                                                                            NIL))
+                                                                          NIL))
+                                                                        NIL))
+                                                                      NIL))
+                                                                    NIL))
+                                                                  NIL))
+                                                                NIL))
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL))
+                                                      NIL))
+                                                    NIL))
+                                                  NIL))
+                                                NIL))
+                                              NIL))
+                                            NIL))
+                                          NIL))
+                                        NIL))
+                                      NIL))
+                                    NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|btree| TYPE-DECL NIL |btree_adt| NIL)
+    (|select| DEF-DECL "T" |branch_tree| NIL)
+    (|snorm| DEF-DECL "btree[list[mpoly]]" |branch_norm| NIL)
+    (|select_bbind| FORMULA-DECL NIL |branch_map| NIL)
+    (IF CONST-DECL
+        "[boolean, T, T -> T]"
+        |if_def|
+        NIL)
+    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|edec| CONST-DECL "btree[bool]" |exists_dec| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|bleaf?| ADT-RECOGNIZER-DECL "[btree -> boolean]" |btree_adt| NIL)
+    (|bleaf| ADT-CONSTRUCTOR-DECL "[T -> (bleaf?)]" |btree_adt| NIL)
+    (FALSE CONST-DECL "bool" |booleans| NIL)
+    (|bbind| DEF-DECL "btree[U]" |branch_map| NIL)
+    (|snormp| DEF-DECL "btree[SL]" |branch_sgn| NIL)
+    (|score| CONST-DECL "btree[bool]" |sign_tree| NIL)
+    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (SL TYPE-EQ-DECL NIL |branch_sgn| NIL)
+    (|sl_of_slist| FORMULA-DECL NIL |branch_sgn| NIL)
+    (|edec_sound| FORMULA-DECL NIL |exists_dec| NIL)
+    (|ex_null_p| FORMULA-DECL NIL |sgn_dec| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|even_times_int_is_even| APPLICATION-JUDGEMENT "even_int" |integers| NIL)
+    (|snorm_ex2| FORMULA-DECL NIL |sign_tree| NIL)
+    (|score_sound| FORMULA-DECL NIL |sgn_dec| NIL)
+    (|tok2_at| FORMULA-DECL NIL |sgn_dec| NIL)
+    (|no_pos_q| FORMULA-DECL NIL |sgn_dec| NIL)
+    (|sl_of| CONST-DECL "SL" |branch_sgn| NIL)
+    (|no_root_p| FORMULA-DECL NIL |sgn_dec| NIL)
+    (|select_leaf| FORMULA-DECL NIL |branch_tree| NIL)
+    (|snormp_sel| FORMULA-DECL NIL |branch_sgn| NIL)
+    (|gdec| CONST-DECL "btree[bool]" |sgn_dec| NIL)
+    (|snorm_length| FORMULA-DECL NIL |branch_norm| NIL)
+    (|not_null_cons| FORMULA-DECL NIL |exists_dec| NIL)
+    (|length0_null| FORMULA-DECL NIL |mpoly_univ| NIL)
+    (|snorm_lc| FORMULA-DECL NIL |branch_norm| NIL))
+   SHOSTAK))
+ (|sign_branch| 0
+  (|sign_branch-1| NIL 3998211961
+   ("" (SKEEP)
+    (("" (LEMMA "branch_tree[bool].branch_sound")
+      (("" (INST -1 "b" "gdec(k, l0, q)" "ys")
+        (("" (ASSERT)
+          (("" (LEMMA "gdec_sound")
+            (("" (INST -1 "k" "l0" "q" "ys") (("" (ASSERT) NIL NIL)) NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   (NIL (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (|SignCond| TYPE-EQ-DECL NIL |branch_tree| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|Branch| TYPE-EQ-DECL NIL |branch_tree| NIL)
+    (|btree| TYPE-DECL NIL |btree_adt| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|gdec| CONST-DECL "btree[bool]" |sgn_dec| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL) NIL
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|gdec_sound| FORMULA-DECL NIL |sgn_dec| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|branch_sound| FORMULA-DECL NIL |branch_tree| NIL))
+   SHOSTAK))
+ (|nosign_branch| 0
+  (|nosign_branch-1| NIL 3998212010
+   ("" (SKEEP)
+    (("" (LEMMA "branch_tree[bool].branch_sound")
+      (("" (INST -1 "b" "gdec(k, l0, q)" "ys")
+        (("" (ASSERT)
+          (("" (LEMMA "gdec_sound")
+            (("" (INST -1 "k" "l0" "q" "ys")
+              (("" (ASSERT)
+                (("" (SKEEP) (("" (INST 1 "x") (("" (ASSERT) NIL NIL)) NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (|SignCond| TYPE-EQ-DECL NIL |branch_tree| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|Branch| TYPE-EQ-DECL NIL |branch_tree| NIL)
+    (|btree| TYPE-DECL NIL |btree_adt| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|gdec| CONST-DECL "btree[bool]" |sgn_dec| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|gdec_sound| FORMULA-DECL NIL |sgn_dec| NIL)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|branch_sound| FORMULA-DECL NIL |branch_tree| NIL))
+   SHOSTAK)))
+

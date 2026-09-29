@@ -1,0 +1,121 @@
+tower_univ: THEORY
+%----------------------------------------------------------------------------
+% The closure of a tower stays inside a finite universe fixed by the initial
+% tower, so with enough fuel it reaches a fixpoint (COMPLETENESS_PLAN C7,
+% part 3).
+%
+% A family grows only by the reads of the family below it (read_fam's RW),
+% and only by new lists (addnew).  So if the family below lies in a universe
+% U and has at most 2|U| members, it is one of the finitely many lists
+% wl(U, 2|U|), and the reads it can add lie in rwall(U).  From the innermost
+% level up, tul gives each level's universe: the level's initial family and
+% the reads of every family the level below can hold.  Every tower the
+% closure builds keeps this shape (tinv?: each family is its initial family
+% followed by new members of its universe, without repeats), so its size is
+% at most tbnd(T0) (tinv_size); a round that does not stop grows the size
+% (zipadd_grow).  With fuel beyond tbnd(T0), tclos_o returns a tower that one
+% more round leaves unchanged (tclos_fix), and so does lvln_o once u is
+% at least tbnd(T0) (lvln_fix).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING read_fam, decn_ok
+
+  F, P, A, B, U, R: VAR list[list[mpoly]]
+  x, a: VAR list[mpoly]
+  c: VAR mpoly
+  n, fuel, u: VAR nat
+  TW, T0, TR, T1, T2, BT: VAR Tower
+  TB: VAR list[CT]
+  od: VAR OD
+  tb: VAR CT
+  s: VAR Sect
+
+  %% ---- lists without repeats -------------------------------------------------------------
+  sub?(A, U): bool = FORALL x: member(x, A) IMPLIES member(x, U)
+  nd?(A): RECURSIVE bool = null?(A) OR (NOT member(car(A), cdr(A)) AND nd?(cdr(A)))
+  MEASURE length(A)
+  rem1(a, U): RECURSIVE list[list[mpoly]] =
+    IF null?(U) THEN U ELSIF car(U) = a THEN cdr(U) ELSE cons(car(U), rem1(a, cdr(U))) ENDIF
+  MEASURE length(U)
+  rem1_len: LEMMA FORALL U: member(a, U) IMPLIES length(rem1(a, U)) + 1 = length(U)
+  rem1_mem: LEMMA FORALL U: member(x, U) AND x /= a IMPLIES member(x, rem1(a, U))
+  nd_len: LEMMA FORALL A: FORALL U: nd?(A) AND sub?(A, U) IMPLIES length(A) <= length(U)
+  nd_app: LEMMA FORALL A: nd?(A) AND nd?(B) AND (FORALL x: member(x, B) IMPLIES NOT member(x, A))
+    IMPLIES nd?(append(A, B))
+
+  %% what addnew adds: new lists, once each
+  addnew_ext: LEMMA FORALL R: FORALL P: EXISTS B: addnew(P, R) = append(P, B) AND nd?(B) AND sub?(B, R)
+    AND (FORALL x: member(x, B) IMPLIES NOT member(x, P))
+  addnew_len: LEMMA length(addnew(P, R)) >= length(P)
+  addnew_same: LEMMA length(addnew(P, R)) = length(P) IMPLIES sub?(R, P)
+
+  %% ---- the families a universe allows ------------------------------------------------------
+  wl(U, n): RECURSIVE list[list[list[mpoly]]] =
+    IF n = 0 THEN (: null[list[mpoly]] :)
+    ELSE cons(null[list[mpoly]],
+              flat(map[list[mpoly], list[list[list[mpoly]]]]
+                     (LAMBDA x: map[list[list[mpoly]], list[list[mpoly]]](LAMBDA F: cons(x, F))(wl(U, n - 1)))
+                     (U)))
+    ENDIF
+  MEASURE n
+  wl_in: LEMMA FORALL F: FORALL n: sub?(F, U) AND length(F) <= n IMPLIES member(F, wl(U, n))
+
+  %% the reads of every family in U with at most 2|U| members
+  rwall(U): list[list[mpoly]] = flat(map(RW)(wl(U, 2 * length(U))))
+  rwall_in: LEMMA sub?(F, U) AND length(F) <= 2 * length(U) AND valid?(tb) AND member(c, wi_rd_t(F, od, tb))
+    IMPLIES member(as_list(rd_norm(c)), rwall(U))
+
+  %% ---- the universes of the levels ---------------------------------------------------------
+  tul(T0): RECURSIVE list[list[mpoly]] =
+    IF null?(T0) THEN null[list[mpoly]]
+    ELSIF null?(cdr(T0)) THEN car(T0)
+    ELSE append(car(T0), rwall(tul(cdr(T0))))
+    ENDIF
+  MEASURE length(T0)
+  tul_init: LEMMA cons?(T0) IMPLIES sub?(car(T0), tul(T0)) AND length(car(T0)) <= length(tul(T0))
+
+  %% each family: the initial family followed by new members of its universe
+  tinv?(T0, TW): RECURSIVE bool =
+    IF null?(T0) THEN null?(TW)
+    ELSE cons?(TW) AND
+      (EXISTS A: car(TW) = append(car(T0), A) AND nd?(A) AND sub?(A, tul(T0)))
+      AND tinv?(cdr(T0), cdr(TW))
+    ENDIF
+  MEASURE length(T0)
+  tinv_refl: LEMMA FORALL T0: tinv?(T0, T0)
+  tinv_car: LEMMA tinv?(T0, TW) AND cons?(T0) IMPLIES
+    sub?(car(TW), tul(T0)) AND length(car(TW)) <= 2 * length(tul(T0))
+
+  tbnd(T0): RECURSIVE nat =
+    IF null?(T0) THEN 0 ELSE length(car(T0)) + length(tul(T0)) + tbnd(cdr(T0)) ENDIF
+  MEASURE length(T0)
+  tinv_size: LEMMA FORALL T0: FORALL TW: tinv?(T0, TW) IMPLIES tsize(TW) <= tbnd(T0)
+
+  %% ---- the reads a round adds ----------------------------------------------------------------
+  tsub?(T1, T2): RECURSIVE bool =
+    null?(T1) OR (cons?(T2) AND sub?(car(T1), car(T2)) AND tsub?(cdr(T1), cdr(T2)))
+  MEASURE length(T1)
+  tsub_zipapp: LEMMA FORALL T1: FORALL T2: tsub?(T1, BT) AND tsub?(T2, BT) IMPLIES tsub?(zipapp(T1, T2), BT)
+  cellsr_sub: LEMMA FORALL (Y: list[rat]): FORALL (fr: [OD -> Tower]):
+    (FORALL od: tsub?(fr(od), BT)) IMPLIES tsub?(cellsr_o(fr, P, od, tb, Y), BT)
+
+  %% the level below's reads, level by level
+  rwt(T0): RECURSIVE Tower =
+    IF null?(T0) OR null?(cdr(T0)) THEN null[list[list[mpoly]]]
+    ELSE cons(rwall(tul(cdr(T0))), rwt(cdr(T0)))
+    ENDIF
+  MEASURE length(T0)
+  treads_sub: LEMMA FORALL T0: FORALL TW, TB, od: tinv?(T0, TW) AND vtb?(TB)
+    IMPLIES tsub?(treads_o(u, TW, TB, od), rwt(T0))
+
+  %% ---- a round keeps the shape and grows or stops ----------------------------------------------
+  zipadd_inv: LEMMA FORALL T0: FORALL TW, TR: tinv?(T0, TW) AND tsub?(TR, rwt(T0))
+    IMPLIES tinv?(T0, zipadd(TW, TR))
+  zipadd_grow: LEMMA FORALL TW: FORALL TR: tsize(zipadd(TW, TR)) >= tsize(TW)
+
+  fixp?(u, TW, od): bool = tsize(zipadd(TW, treads_o(u, TW, tables(u, TW, od), od))) = tsize(TW)
+  tclos_fix: LEMMA FORALL fuel: FORALL TW: tinv?(T0, TW) AND tsize(TW) + fuel > tbnd(T0) IMPLIES
+    tinv?(T0, tclos_o(u, fuel, TW, od)) AND fixp?(u, tclos_o(u, fuel, TW, od), od)
+  lvln_fix: THEOREM u >= tbnd(T0) IMPLIES
+    tinv?(T0, lvln_o(u, T0, s)) AND fixp?(u, lvln_o(u, T0, s), odS(s))
+END tower_univ

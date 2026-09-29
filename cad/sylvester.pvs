@@ -1,0 +1,53 @@
+sylvester: THEORY
+%----------------------------------------------------------------------------
+% The Sylvester matrix, the resultant and the discriminant (Phase 4).
+%
+% For coefficient lists f of degree m and g of degree n in the main
+% variable, syl(f, g) is the (m + n)-square matrix whose first n rows are the
+% coefficients of f shifted along, in descending order, and whose last m rows
+% are those of g.  res(f, g) is its determinant, an mpoly in the parameters
+% that the ground evaluator computes, and disc(f) is res(f, f') with the
+% conventional sign.  res_eval and disc_eval are the specializations: the
+% resultant of the evaluated lists is the evaluated resultant, since ring_det's
+% det_eval commutes with any entry function.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING ring_det, earr_deriv
+
+  f, g: VAR list[mpoly]
+  a, b, m, n: VAR nat
+  k: VAR int
+  ys: VAR list[real]
+
+  %% coefficient a of a list read in descending order at position b of a row
+  %% that starts at column a: entry (a, b) of the block of f is the
+  %% coefficient of x^(deg f - (b - a)) when a <= b <= a + deg f, else 0
+  coef_at(f, (k: int)): mpoly =
+    IF k >= 0 AND k < length(f) THEN nth(f, k) ELSE mconst(0) ENDIF
+  syl(f, g): Mat =
+    LAMBDA (a, b: nat):
+      IF a < dg(g) THEN coef_at(f, dg(f) - (b - a))
+      ELSE coef_at(g, dg(g) - (b - (a - dg(g))))
+      ENDIF
+  res(f, g): mpoly = det(dg(f) + dg(g), syl(f, g))
+
+  %% the real versions
+  rcoef_at((r: [nat -> real]), (d: nat), (k: int)): real =
+    IF k >= 0 AND k <= d THEN r(k) ELSE 0 ENDIF
+  rsyl((r: [nat -> real]), (m: nat), (s: [nat -> real]), (n: nat)): RMat =
+    LAMBDA (a, b: nat):
+      IF a < n THEN rcoef_at(r, m, m - (b - a))
+      ELSE rcoef_at(s, n, n - (b - (a - n)))
+      ENDIF
+  rres((r: [nat -> real]), (m: nat), (s: [nat -> real]), (n: nat)): real =
+    rdet(m + n, rsyl(r, m, s, n))
+
+  %% specialization: the resultant of the evaluated arrays
+  coef_at_earr: LEMMA meval(coef_at(f, k))(ys) = rcoef_at(earr(f, ys), dg(f), k)
+  syl_ev: LEMMA ev(syl(f, g), ys) = rsyl(earr(f, ys), dg(f), earr(g, ys), dg(g))
+  res_eval: THEOREM meval(res(f, g))(ys) = rres(earr(f, ys), dg(f), earr(g, ys), dg(g))
+
+  %% the discriminant
+  disc(f): mpoly = res(f, lderiv(f))
+  disc_eval: LEMMA meval(disc(f))(ys) = rres(earr(f, ys), dg(f), earr(lderiv(f), ys), dg(lderiv(f)))
+END sylvester

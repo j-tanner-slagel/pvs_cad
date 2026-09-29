@@ -1,0 +1,79 @@
+(|cad3_def|
+ (|xbads_TCC1| 0
+  (|xbads_TCC1-1| NIL 3999007840 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|xbads| SUBTYPE "ss" "(list_adt[sect_inv.Sect].cons?)" (27 18 27 20))))
+ (|xbads_TCC2| 0
+  (|xbads_TCC2-1| NIL 3999007840 ("" (TERMINATION-TCC) NIL NIL)
+   ((|length| DEF-DECL "nat" |list_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
+   NIL
+   (|xbads| TERMINATION "xbads(F, cdr[Sect](ss))" #A((3) BASE-CHAR . "NIL")
+    (27 28 27 45))))
+ (|xbads_TCC3| 0
+  (|xbads_TCC3-1| NIL 3999007840 ("" (TERMINATION-TCC) NIL NIL)
+   ((|length| DEF-DECL "nat" |list_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
+   NIL
+   (|xbads| TERMINATION "xbads(F, cdr[Sect](ss))" #A((3) BASE-CHAR . "NIL")
+    (28 66 28 83))))
+ (|xclos_TCC1| 0
+  (|xclos_TCC1-1| NIL 3999007840 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|rts| CONST-DECL "list[Alg]" |cad_lift| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   NIL (|xclos| SUBTYPE "fuel - 1" "nat" (37 58 37 66))))
+ (|xclos_TCC2| 0
+  (|xclos_TCC2-1| NIL 3999007840 ("" (TERMINATION-TCC) NIL NIL)
+   ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|sects| CONST-DECL "list[Sect]" |sect_inv| NIL)
+    (|gsects| DEF-DECL "list[Sect]" |sect_inv| NIL)
+    (|rts| CONST-DECL "list[Alg]" |cad_lift| NIL))
+   NIL
+   (|xclos| TERMINATION "xclos(fuel - 1, F, Q2)" #A((3) BASE-CHAR . "NIL")
+    (37 52 37 74))))
+ (|xcert?_TCC1| 0
+  (|xcert?_TCC1-0| "" 3999007862
+   ("" (SKEEP*)
+    (("" (HIDE -1) (("" (EXPAND "length" 2 2) (("" (ASSERT) NIL NIL)) NIL))
+      NIL))
+    NIL)
+   ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (TRUE CONST-DECL "bool" |booleans| NIL))
+   SHOSTAK
+   (|xcert?| TERMINATION "xcert?(F, cdr[Sect](ss))" #A((3) BASE-CHAR . "NIL")
+    (45 56 45 74)))))
+
