@@ -4518,3 +4518,32 @@ tools/import_paths.py reports theories, edges and path counts per directory.
   README rewritten, NOTICE.md (third-party material), tools/pvs-circular-deps.lisp and
   its README (the PVS 8.1 import-check fix), machine paths removed, the JAR draft PDF
   removed (cited by DOI).
+
+## 2026-09-29 — GAP_PLAN Tier 0: psc_det? is false; the record corrected
+
+- GAP_PLAN.md (new) is the roadmap from decide5's verified decision to a verified CAD in
+  the classical sense: Tier 0 correct the record, Tier 1 prove the run computes a CAD,
+  Tier 2 QE output, Tier 3 Brown's reduced McCallum projection on open cells, Tier 4
+  Collins only on a trigger.  Tiers 0 and 1 adopted.
+- psc_det_ce (4 formulas, gated): psc_det?, described since 2026-09-18 as the only open
+  statement of the projection route, is FALSE.  For f = y^2-3y+2, g = y-x, every member
+  of projc has the same sign at x = 1/2 and x = 3 (ce_svec, evaluation), but (0,+) is
+  realized over 1/2 (y = 1) and not over 3 (ce_fib_half, ce_fib_three); psc_det_false.
+  The resultant x^2-3x+2 is positive at both points and negative between: g's root
+  crosses both roots of f in between, which psc signs at two unrelated points cannot
+  see.  Stage E of ITEM1_PLAN cannot work; the open obligation of that route is the
+  sector-local delin_projc, which needs connectedness.  Nothing verified used
+  psc_det? (a hypothesis of delin_from_psc only; psc_det_quad stands).
+- Also corrected, by dated notes rather than rewrites: delin? is FIBRE-SET invariance,
+  weaker than classical delineability ((y^2-x)(y-5) realizes {-,0,+} on every fibre
+  while its root count is 1,2,3,2,3), so "delineability certified at run time"
+  (walk_transfer, top.pvs, the overview) now says fibre-set invariance; cad_proj's
+  operator is McCallum-shaped, not Collins'; projc has no reducta; NASALib's det IS a
+  Laplace expansion (ring_det, CAD_PLAN); cad_meas5's inv1? gives delin_projc for that
+  F, not psc_det?.  README, docs/cad_overview (rebuilt, 5 pages) and the paper notes now
+  say "CAD-based decision procedure" until Tier 1C proves the run's cells form a CAD.
+  Earlier entries here are left as written.
+- Whole library 3506/3506 (233 theories, 978 s), replayed from the committed tree 44232cf;
+  docs/cad_overview figures updated (233 theories, 3,506 formulas, 2,392 lemmas, 1,114
+  TCCs, 18,367 lines).  GAP_PLAN.md trimmed of the draft public replies.  This state is
+  the second public pvs_cad snapshot.

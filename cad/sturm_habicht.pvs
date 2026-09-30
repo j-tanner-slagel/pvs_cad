@@ -62,5 +62,8 @@ BEGIN
   %% Stage D turns sh_count into "same root count at x and y", and Stage E
   %% adds the pairwise resultants to get the same realizable sign vectors,
   %% which is psc_det?.
+  %% [Corrected 2026-09-29: Stage E cannot work as stated.  The order of the
+  %% roots of DIFFERENT members is not determined by psc signs at two
+  %% unrelated points, and psc_det? is false (psc_det_ce).]
   %%-------------------------------------------------------------------------
 END sturm_habicht

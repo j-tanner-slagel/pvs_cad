@@ -1,11 +1,14 @@
-# pvs_cad — a verified, complete CAD decision procedure for PVS
+# pvs_cad — a verified, complete CAD-based decision procedure for PVS
 
 pvs_cad is a [PVS](https://pvs.csl.sri.com) library that decides the first-order theory of the real
 numbers: prenex sentences built from polynomial equations and inequalities with rational
 coefficients, the connectives AND, OR, NOT, IMPLIES and IFF, and quantifiers over real variables.
-The procedure is cylindrical algebraic decomposition (CAD), written as an executable PVS function,
-and the library proves it **sound** (every answer is the truth) and **complete** (it always answers,
-given enough time). The proof strategy `(cad)` evaluates the procedure inside a proof and turns its
+The procedure works the way cylindrical algebraic decomposition (CAD) does, cell by cell over
+cylinders, and is written as an executable PVS function. The library proves it **sound** (every
+answer is the truth) and **complete** (it always answers, given enough time). What is not yet
+proved is that the cells a run visits form a CAD in the classical sense (connected cells over
+continuous, non-crossing root functions, every polynomial sign-invariant on every cell); the run
+certifies weaker invariants that suffice for correct answers. That proof is in progress. The proof strategy `(cad)` evaluates the procedure inside a proof and turns its
 answer into a PVS proof that the kernel checks.
 
 **Author:** J. Tanner Slagel.

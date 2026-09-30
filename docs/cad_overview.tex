@@ -44,7 +44,7 @@
 \begin{document}
 
 {\sffamily\small\bfseries\color{moss}PVS\_CAD \quad·\quad PVS 8.1 + NASALib \quad·\quad SEPTEMBER 2026}\par\vspace{6pt}
-{\fontsize{24}{29}\selectfont\bfseries A verified, complete CAD decision procedure in PVS}\par\vspace{8pt}
+{\fontsize{24}{29}\selectfont\bfseries A verified, complete CAD-based\\ decision procedure in PVS}\par\vspace{8pt}
 {\large\color{muted}An overview of the pvs\_cad library and the \texttt{(cad)} proof strategy}\par\vspace{8pt}
 {\large J.~Tanner Slagel{\renewcommand\thefootnote{*}\footnote{This report was written with Claude Code using Claude Opus 5.5. The pvs\_cad library was developed the same way, with Claude Fable 5.1 and then Opus 5 and Opus 5.5; every proof in it is checked by PVS. Claude Code: \url{https://claude.com/claude-code}.}}}\par\vspace{2pt}
 {\small\color{muted}Code and proofs: \url{https://github.com/j-tanner-slagel/pvs_cad}}\par\vspace{10pt}
@@ -52,10 +52,10 @@
 \textbf{In short.} pvs\_cad is a PVS library, together with a proof strategy \texttt{(cad)}, that decides the
 first-order theory of the real numbers: sentences built from polynomial equations and inequalities with rational
 coefficients, the connectives AND, OR, NOT, IMPLIES and IFF, and quantifiers \texttt{FORALL}/\texttt{EXISTS} over real
-variables, written in prenex form (every sentence has one). The procedure is cylindrical algebraic decomposition (CAD), written as an executable PVS function. The library
+variables, written in prenex form (every sentence has one). The procedure works in the manner of cylindrical algebraic decomposition (CAD), cell by cell over cylinders, and is written as an executable PVS function. The library
 proves it \emph{sound} (an answer is always the truth) and \emph{complete} (it always answers). Inside a proof,
 \texttt{(cad)} evaluates the procedure and turns the answer into a PVS proof that the kernel checks. The whole library,
-232 theories and 3,502 formulas, is proved.
+233 theories and 3,506 formulas, is proved.
 
 \section{What it looks like}
 Real PVS sessions, with the simplifier's internal messages cut. \texttt{(cad)} decides one closed formula where it stands.
@@ -176,7 +176,7 @@ Cauchy--Schwarz in the plane do not finish in two minutes. On a set of 100 gener
 98 were proved within 300\,s, and no answer disagreed with Z3.
 
 \section{How it was built}
-The library was built in stages in September 2026 (273 commits). Most stages also shipped a verified strategy of their own.
+The library was built in stages in September 2026 (275 commits). Most stages also shipped a verified strategy of their own.
 \begin{enumerate}[leftmargin=1.3em, itemsep=2pt, topsep=2pt]
 \item \textbf{Multivariate polynomials.} A normal form for multivariate polynomials over the rationals, proved unique, and
 reflection lemmas connecting it to PVS real expressions (strategies \texttt{mpoly-eq}, \texttt{mpoly-simp}).
@@ -189,11 +189,12 @@ Collins's projection.
 \item \textbf{A first cylindrical decision}, \texttt{decide}, proved correct for every sentence
 (\texttt{decide\_correct}). It was complete but exponential in the number of polynomials: a circle and a line did not
 finish in 15 minutes.
-\item \textbf{The fast CAD.} This is the procedure \texttt{(cad)} runs. Over each cell of the lower variables, it lifts to
+\item \textbf{The fast cylindrical decision.} This is the procedure \texttt{(cad)} runs. Over each cell of the lower variables, it lifts to
 the next variable by walking exact rational separators between that variable's roots. It reads the sign vector at each
 separator and at each root through Tarski queries at the cell's sample point, which may be algebraic. This builds one
 tower of cells per outer sector, for any number of levels. Soundness
-never assumes what it cannot check: delineability and separation are certified at run time, and a failed check sets
+never assumes what it cannot check: the signs of the polynomials each lifting step reads are certified constant on each
+sector at run time, which is proved to fix the set of sign vectors in every fibre over the sector, and a failed check sets
 \texttt{ok} to FALSE (\texttt{decw\_correct} for two quantifiers, \texttt{decn\_correct} for any number).
 \item \textbf{Completeness.} A review showed that the only way \texttt{ok} could be FALSE was a fixed search limit running
 out. Some searches were made total; the others share one fuel parameter $u$. The proof shows that every large enough $u$
@@ -209,10 +210,10 @@ non-computable measure ``least sufficient $u$'', which keeps it an ordinary exec
 \begin{center}\small
 \begin{tabular}{@{}l r@{\qquad}l r@{}}
 \toprule
-PVS theories (files) & 232 & Formulas proved, whole-library replay & 3,502 of 3,502\\
-Lines of PVS specification & 18,266 & \quad lemmas and theorems & 2,388\\
+PVS theories (files) & 233 & Formulas proved, whole-library replay & 3,506 of 3,506\\
+Lines of PVS specification & 18,367 & \quad lemmas and theorems & 2,392\\
 Lines of strategy code (Lisp) & 1,957 & \quad TCCs (type-correctness obligations) & 1,114\\
-Commits, September 2026 & 273 & Axioms added & none\\
+Commits, September 2026 & 275 & Axioms added & none\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -231,8 +232,9 @@ as we could find, no CAD formalization and no CAD-based decision tactic, and a L
 September 2026 lists CAD, delineability and Sturm theory among what Mathlib lacks~\cite{hex}; Lean's
 nonlinear tactics (\texttt{nlinarith}, \texttt{polyrith}) are heuristic or check certificates found by an
 external algebra system, and are not complete. To our knowledge (a survey of September 2026), pvs\_cad is
-the first executable, proof-producing CAD that is formally verified sound and complete and is usable as a
-tactic in an interactive prover.
+the first executable, proof-producing decision procedure of the CAD family that is formally verified sound and
+complete and is usable as a tactic in an interactive prover. That its cells form a CAD in the classical sense
+(connected, sign-invariant cells over continuous root functions) is not yet proved; that proof is in progress.
 
 \section{The main theorems}
 A sentence is encoded as data: \texttt{os} lists the quantifiers outermost first (\texttt{TRUE} for $\forall$,

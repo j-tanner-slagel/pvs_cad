@@ -15,6 +15,11 @@ delin_bridge: THEORY
 % dec2_sem consumes.  Chaining the two: psc_det?(F) alone implies the
 % two-quantifier projection decision is correct.
 %
+% [Corrected 2026-09-29: psc_det? is FALSE for some two-member families
+% (psc_det_ce: y^2-3y+2 and y-x at x = 1/2 and x = 3), so it is not the one
+% thing left to prove.  delin_from_psc stays a valid implication; the open
+% obligation of this route is the sector-local delin_projc.]
+%
 % The route through the sector's RATIONAL sample is forced: cell1's
 % svec_between, and hence sect_svec, compares an arbitrary real against a
 % rational, so two arbitrary points of a sector are compared by going through
@@ -30,6 +35,7 @@ BEGIN
   v: VAR SV
 
   %% THE REMAINING OBLIGATION, as a predicate rather than an assumption
+  %% [2026-09-29: false for some F, psc_det_ce.psc_det_false]
   psc_det?(F): bool =
     FORALL x, y: svec(projc(F), (: x :)) = svec(projc(F), (: y :))
       IMPLIES (FORALL v: fib(F, (: x :))(v) IFF fib(F, (: y :))(v))

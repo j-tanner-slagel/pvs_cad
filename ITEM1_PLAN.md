@@ -1,5 +1,12 @@
 # Item 1: proving psc_det?, the last correctness obligation
 
+> **Corrected 2026-09-29 (GAP_PLAN.md, Tier 0).** `psc_det?` is FALSE as a
+> universal statement: `psc_det_ce.psc_det_false` proves NOT psc_det?(F) for
+> F = (y^2-3y+2, y-x), compared at x = 1/2 and x = 3. Stage E below cannot work
+> as stated. This item's goal is replaced by the sector-local `delin_projc` and,
+> for the verified procedure, by GAP_PLAN.md Tier 1. The plan is kept as written
+> for the record.
+
 ## The target
 
     psc_det?(F):  svec(projc(F), (: x :)) = svec(projc(F), (: y :))
@@ -75,6 +82,9 @@ V(-inf) - V(+inf) of the chain, so C gives the same count at x and y.
 two members share a root; with C and D the ordered root structure is
 combinatorially identical, hence the same realizable sign vectors -- which is
 `psc_det?`.
+*[2026-09-29: false. res(f,g) can have the same sign at x and y while the
+roots of f and g cross twice in between (psc_det_ce), so the ordered root
+structure is not determined at two unrelated points.]*
 
 ## Discipline
 

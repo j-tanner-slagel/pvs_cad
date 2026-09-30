@@ -502,6 +502,9 @@ after Phase 5.
     refinement of the same chains and return as the size optimization of Phase 6.
     NASALib's `matrices@matrix_det` has no expansion, adjugate or kernel theory, so
     the resultant-common-factor theorem would need that built from scratch first.
+    *[Corrected 2026-09-29: NASALib's real `det` (matrix_props) IS a first-row
+    Laplace expansion, with multilinearity, `det_mult`, `det_transpose` and
+    `invertible_det`; adjugate and kernel are indeed missing.]*
 12. **Phase 5 route revised (2026-09-14, after croot_near).** The justification
     written into decision 11 is wrong: a constant number of distinct *real* roots
     with a nonvanishing leading coefficient does not give delineability. The

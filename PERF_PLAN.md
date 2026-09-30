@@ -119,5 +119,7 @@ a second (model search), 02, 05, 07 in about 12 s (a constant witness, then
 a two-variable decision), 08 in 5 s; the library examples in 0.8-3.9 s.
 Open: the Joukowsky family (09, 10) and Upper Half Plane (12), universal
 sentences with no witness to find; every published tool times out on them
-without a hand reformulation.  The certificate-size items above (resultant
+without a hand reformulation.  [2026-09-29: overstated -- a RegularChains CAD
+result on a Joukowski instance after mechanical negation and splitting is
+reported (Chen and Moreno Maza, ICMS 2014); check before citing.]  The certificate-size items above (resultant
 coincidences, squarefree reads, a smaller projection) are what they need.
