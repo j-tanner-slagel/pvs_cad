@@ -1138,6 +1138,122 @@ top: THEORY
 %                polynomial in the family. OPERATOR ONLY: the delineability
 %                argument that makes projection + lifting a correct CAD is
 %                not claimed here
+%   ---- THE RUN COMPUTES A CAD (GAP_PLAN.md Tier 1, 2026-09-29) ----
+%   cad_roots   the roots over a point as a sorted list: rootat? (zeros of the
+%                members not identically zero on the fibre), rl? (L lists them,
+%                strictly increasing; unique, rl_unique), rtl, nroot, rt.
+%                Wherever the walk's certificate holds the list exists and is
+%                the walk's gap roots over any passing separators (rtl_groots)
+%   cad_fibre   one fibre: the stack index sidx (twice the roots below, plus one
+%                at a root), one point per band (bpts), the sign vectors at the
+%                roots (rsvl) and on the bands (bsvl); the sign vector at a
+%                point is the entry its index names (sidx_root, sidx_band)
+%   cad_gpar    the walk's root lists at two points with the same gap pattern
+%                run in parallel: same length, same count below each
+%                separator, every band reached at a separator, same sign
+%                vectors, roots within eta (gr_near, from mroot_near)
+%   cad_local   near a certified point, with the reads agreeing, the stack is
+%                the same (loc_stack) and the roots move continuously
+%                (loc_cont) -- from near_cells and mroot_near
+%   cad_conn    connected sets (every locally constant property is constant)
+%                and continuity on a set; a segment of a line is connected
+%                (conn_line, from loc_const)
+%   cad_stack   DELINEABILITY (sign-invariant sense): delin_cl? (roots listed, constant
+%                count, continuous root functions, every member sign-invariant
+%                on every section and band).  stack_const: if the walk's
+%                certificate holds at a point p0 of a connected set and its
+%                reads at p0 keep their signs across the set, the family is
+%                delineable over it (delin_cl?) -- the run-time check becomes
+%                delineability
+%   cad_slab    a slab over a connected set is connected when its slices are
+%                intervals and a continuous section runs through them
+%   cad_stkc    every cell of a delineable stack is such a slab, hence
+%                connected (conn_stk), and the family has one sign vector on
+%                it (stk_sinv)
+%   cad_tower   a certified tower over a connected base cell is a CAD
+%                (tower_cad: cad_over?, every level delineable over every cell
+%                below it, every cell connected); its cells tcell partition the
+%                cylinder (tcell_cover, tcell_disj) and the top family is
+%                sign-invariant on each (top_sinv)
+%   cad_run     THE n-LEVEL RUN COMPUTES A CAD ADAPTED TO F: when decn_o's
+%                certificate holds, the cells rcell(s, A) (outer sector s,
+%                stack indices A) cover R^(k+1), are pairwise disjoint and
+%                connected, are the sections and bands of continuous root
+%                functions at every level, and every polynomial of F has one
+%                sign on each (cad_run); the outer sectors partition the line
+%                (sects_disj; sect_inv.sects_cover).  Every cell, at every
+%                level, is first-order definable (rcf_cells.rcell_fod_le; see
+%                cad_verified)
+%   cad_out     THE CAD AS DATA (executable): per sector, the tree of the
+%                walk's cells (kids: separators and root gaps with their stack
+%                indices; ctree), one record per path -- sector, stack
+%                indices, exact sample descriptor, F's sign vector read by the
+%                descriptor's own oracle
+%   cad_out_ok  the records are the CAD of cad_run: every record's sample lies
+%                in the cell its sector and indices name, with F's sign vector
+%                there, and every nonempty cell has a record (cad_out_ok; one
+%                level: kids_lvl, the children carry the stack indices of
+%                their points and every index up to 2 nroot occurs)
+%   cad_fold    deciding from the returned CAD (executable): the outer
+%                quantifier over the sectors, each inner one over the stack
+%                indices of the next level, Psi on the recorded sign vector
+%   cad_fold_ok ONE CAD DECIDES EVERY SENTENCE OVER F: a cylindrical
+%                decomposition (cad_over?) on whose top cells F is
+%                sign-invariant (fsinv?), given by sample records (recin?,
+%                reccov?), decides every formula over F that quantifies over
+%                its levels, at any point of the base (afold_sem, a theorem
+%                about any such tower); so the
+%                decomposition cad_out computes once decides every sentence with the same
+%                polynomials and variables, whatever its quantifiers and its
+%                Boolean combination of sign conditions (cad_decides)
+%   cad_sample  sample points: each record's sample is a point of R^(k+1)
+%                with the recorded signs (rec_pt); a sign condition holds
+%                somewhere iff at some record (cad_sat); the fold over a sector
+%                is the meaning of the rest of the sentence (all but the outer
+%                quantifier) with the outer variable at the sector's sample
+%                (cad_outer); for every F and at least two quantifiers some u
+%                gives such a decomposition (cad_complete)
+%   cad_out_ex  the unit circle: certificate at u = 0, the 13 cells in 15
+%                records with their stack indices and sign vectors, and
+%                cad_out_ok for that F
+%   rcf_fol     first-order formulas over the reals with polynomial sign
+%                atoms (Fm, fsem; variables are positions in the point list);
+%                a dummy variable at any depth (mins, meval_mins; shiftF,
+%                fsem_shift); fod?(n)(S): S is first-order definable in R^n
+%   rcf_cad_def the formulas of the cells (executable): rootF (a root over
+%                the point), geF (at least i roots below), sidxF (the stack
+%                index), stkF / cellF (stack and tower cells), cmpF / sectF
+%                (the sectors of the line)
+%   root_fol    rootF, geF and sidxF mean what they say at every point
+%                (rootF_ok, geF_ok, sidxF_ok -- the root lists exist
+%                everywhere, rl_all); stkF defines the stack cell (stkF_ok)
+%   rcf_cells   EVERY CELL OF THE RUN, AT EVERY LEVEL, IS FIRST-ORDER
+%                DEFINABLE (rcell_ok, rcell_fod; rcell_ok_le, rcell_fod_le for
+%                the lower levels), with no certificate needed; the sectors
+%                (sectF_ok, through each algebraic number's closed isolating
+%                interval) and tower cells over a definable base (cellF_ok);
+%                the graph of a root function over a definable cell is
+%                definable (sec_graph, graph_fod; applied to the run in
+%                cad_verified).  Definable = semi-algebraic by
+%                Tarski-Seidenberg, not itself formalized here
+%   cad_verified THE RUN COMPUTES A CAD ADAPTED TO F (BPR Def. 5.1, semi-
+%                algebraic in the sense of first-order definable; agreement
+%                with the quantifier-free sense is Tarski-Seidenberg, not
+%                formalized), RETURNED AS DATA: cad_of? -- the cells of R^(k+1) cover it and are
+%                disjoint; the cells of every level are connected and
+%                first-order definable; cylindrical over delineable families
+%                whose root functions have definable graphs; F sign-invariant
+%                on each cell of R^(k+1); and cad_out lists every nonempty
+%                cell at least once, and nothing else, with samples and sign
+%                vectors; cad_verified (under decn_o's certificate) and
+%                cad_exists (for every F in at least two variables, some u)
+%   cad_decide7_def the decision of (cad :cad-only? t) (executable): decide7 =
+%                decn_u (the verified CAD engine) for two or more quantifiers,
+%                decq2 (the sectors of the line) for one quantifier or none;
+%                no witness search
+%                and no two-variable fast path
+%   cad_decide7 decide7 is correct and complete (decide7_correct,
+%                decide7_decides)
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING eval_probe,
@@ -1363,6 +1479,29 @@ BEGIN
             cad_star_ex,
             cad_endgame,
             cad_endgame_ex,
+            cad_roots,
+            cad_fibre,
+            cad_gpar,
+            cad_local,
+            cad_conn,
+            cad_stack,
+            cad_slab,
+            cad_stkc,
+            cad_tower,
+            cad_run,
+            cad_out,
+            cad_out_ok,
+            cad_fold,
+            cad_fold_ok,
+            cad_sample,
+            cad_out_ex,
+            rcf_fol,
+            rcf_cad_def,
+            root_fol,
+            rcf_cells,
+            cad_verified,
+            cad_decide7_def,
+            cad_decide7,
             tarski_examples,
             pos_examples,
             qe_examples

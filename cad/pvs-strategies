@@ -1141,7 +1141,7 @@ computed here but is not trusted."
                              ,(if truth "TRUE" "FALSE"))
                      (delete ,ev) (label "cad" ,gl :push? t))))))))
 
-(defhelper cad-finish__ (gl ev ante &optional complete? decide?)
+(defhelper cad-finish__ (gl ev ante &optional complete? decide? (dec "decide5"))
   (let ((fexpr  (extra-get-formula gl))
          (pp     (when fexpr (cad-prefix fexpr)))
          (pre    (when pp (first pp)))
@@ -1155,9 +1155,9 @@ computed here but is not trusted."
          (fstr   (qe-list-str lists "null[list[mpoly]]"))
          (osstr  (format nil "(: ~{~a~^, ~} :)"
                          (loop for q in pre collect (if (cdr q) "TRUE" "FALSE"))))
-         (okstr  (unless decide? (format nil "decide5(reverse(~a), ~a, ~a)`ok" osstr fstr phistr)))
+         (okstr  (unless decide? (format nil "~a(reverse(~a), ~a, ~a)`ok" dec osstr fstr phistr)))
          (dstr   (format nil "decide(reverse(~a), ~a, ~a)" osstr fstr phistr))
-         (decstr (if decide? dstr (format nil "decide5(reverse(~a), ~a, ~a)`val" osstr fstr phistr)))
+         (decstr (if decide? dstr (format nil "~a(reverse(~a), ~a, ~a)`val" dec osstr fstr phistr)))
          ;; the decision record is ALREADY in the sequent, labelled EV by
          ;; cad-direct; read the flags off it instead of evaluating again
          (evf    (extra-get-formula ev))
@@ -1179,7 +1179,7 @@ computed here but is not trusted."
                                (length lists) mevs truth ante
                                (cad-atom-eqs body (loop for l in lists collect
                                                     (cdr (nth (position l lists :test #'equal) *cad-polys*))))
-                               (if decide? "decide_correct_os" "decide5_correct"))))
+                               (if decide? "decide_correct_os" (format nil "~a_correct" dec)))))
     (if (null evs)
         (printf "cad: could not read the decision record")
       (if okay
@@ -1189,10 +1189,10 @@ computed here but is not trusted."
               (then (printf "cad: the certificate did not pass; deciding by the complete decision of cad_decide (exponential)")
                     (discriminate (eval-expr dstr) !cdf)
                     (cad-finish__$ gl !cdf ante nil t)))
-          (printf "cad: the certificate of the decision did not pass (decide5`ok is FALSE), so there is no proof; the formula is unchanged.  (cad :complete? t) falls back to the complete but exponential decision")))))
+          (printf "cad: the certificate of the decision did not pass (~a`ok is FALSE), so there is no proof; the formula is unchanged.  (cad :complete? t) falls back to the complete but exponential decision" dec)))))
   "[pvs_cad] Internal: finishes (cad) for the sentence labelled GL from the decision record labelled EV (of decide5, or of decide when DECIDE?)." "")
 
-(defstep cad-direct (&optional (fnum 1) complete?)
+(defstep cad-direct (&optional (fnum 1) complete? (dec "decide5"))
   (let ((fexpr  (extra-get-formula fnum))
         (pp     (when fexpr (cad-prefix fexpr)))
         (pre    (when pp (first pp)))
@@ -1208,7 +1208,7 @@ computed here but is not trusted."
         (fstr   (unless bad (qe-list-str lists "null[list[mpoly]]")))
         (osstr  (unless bad (format nil "(: ~{~a~^, ~} :)"
                                     (loop for q in pre collect (if (cdr q) "TRUE" "FALSE")))))
-        (recstr (unless bad (format nil "decide5(reverse(~a), ~a, ~a)" osstr fstr phistr)))
+        (recstr (unless bad (format nil "~a(reverse(~a), ~a, ~a)" dec osstr fstr phistr)))
         ;; the side of the sentence decides the shape of the proof; after this
         ;; every formula is named by a fresh label, never by its position
         (fn     (extra-get-fnum fnum))
@@ -1219,7 +1219,7 @@ computed here but is not trusted."
           (printf "cad: the matrix is not a Boolean combination of polynomial sign conditions in the quantified variables")
         (with-fresh-labels ((!cdg fnum) (!cde))
           (then (discriminate (eval-expr recstr) !cde)
-                (cad-finish__$ !cdg !cde ante complete?))))))
+                (cad-finish__$ !cdg !cde ante complete? nil dec))))))
   "[pvs_cad] Decides the closed prenex formula FNUM, Q1 x1: ... Qn xn: PHI
 with each Qi FORALL or EXISTS over one real variable and PHI a Boolean
 combination of sign conditions on polynomials in the xi, by decide5 of
@@ -1769,7 +1769,7 @@ goal."
         (prop)
         (assert)))))
 
-(defhelper cad-seq__ (fnums budget)
+(defhelper cad-seq__ (fnums budget &optional cad-only?)
   (let ((cs      (cadstar-collect fnums))
         (used    (first cs))
         (skipped (second cs))
@@ -1784,22 +1784,24 @@ goal."
     (if (null used)
         (printf "cad*: no formula of the sequent is a polynomial formula over the reals")
       (let ((step `(then ,@(loop for u in used for lab in labs collect `(label ,lab ,(first u)))
-                         ,(cad-fact-case gstr gl (cadstar-use used labs gl) `(cad ,gl ,budget)))))
+                         ,(cad-fact-case gstr gl (cadstar-use used labs gl) `(cad ,gl ,budget nil ,cad-only?)))))
         (then (printf "~a~%cad*: deciding ~a" msg gstr)
               (else (finalize__$ step)
                     (printf "cad*: not proved; the sequent is unchanged"))))))
   "[pvs_cad] Internal: (cad *) for the formulas FNUMS." "")
 
-(defstep cad (&optional (fnum 1) (budget 10) complete?)
+(defstep cad (&optional (fnum 1) (budget 10) complete? cad-only?)
   (let ((multi (cadstar-multi? fnum))
         (fexpr (unless multi (extra-get-formula fnum)))
         (pp    (when fexpr (cad-prefix fexpr)))
         (pre   (when pp (first pp)))
         (body  (when pp (second pp)))
         (fn    (when fexpr (extra-get-fnum fnum)))
-        (plan  (when (and pre body (integerp fn))
+        (plan  (when (and pre body (integerp fn) (not cad-only?))
                  (cadw-plan fnum fexpr pre body budget (< fn 0)))))
-    (if multi (cad-seq__$ fnum budget) (if plan plan (cad-direct fnum complete?))))
+    (if multi (cad-seq__$ fnum budget cad-only?)
+      (if cad-only? (cad-direct fnum complete? "decide7")
+        (if plan plan (cad-direct fnum complete?)))))
   "[pvs_cad] Decides the closed prenex formula FNUM (a formula number or a
 label), Q1 x1: ... Qn xn: PHI, over the reals: in the consequent it is
 proved when it holds, in the antecedent it closes the goal when it fails;
@@ -1811,7 +1813,12 @@ not answer within BUDGET seconds (default 10), one existential position of
 the goal fixed to a small constant, the smaller sentence decided (BUDGET/2
 seconds each, 3 BUDGET in all), the goal closed by instantiation.  With
 COMPLETE?, when the certificate does not pass, the complete (exponential)
-decision of cad_decide answers instead (COMPLETENESS_PLAN C1).  Formulas
+decision of cad_decide answers instead (COMPLETENESS_PLAN C1).  With
+CAD-ONLY? (cad :cad-only? t) the answer comes only from the verified CAD
+engine: no witness search and no two-variable fast path; the sentence is
+decided by decide7 (cad_decide7_def: decn_o, whose run is a proved CAD
+(cad_verified), for two or more quantifiers, the sectors of the line for
+one), and the theory must also import cad_decide7.  Formulas
 are named by fresh labels throughout, never by position.  The theory must
 import cad_decide5 and mpoly_embed.
 

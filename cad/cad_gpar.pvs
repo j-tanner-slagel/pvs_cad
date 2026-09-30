@@ -1,0 +1,77 @@
+cad_gpar: THEORY
+%----------------------------------------------------------------------------
+% The walk's root lists at two points, gap by gap (GAP_PLAN.md Tier 1).
+%
+% Fix a family F and separators Y.  At two points ys0, ys1 where the same
+% gaps of Y hold a root (samepat?) and Y passes the separator checks at both
+% (wsep?), the two root lists groots run in parallel: same length (gr_len),
+% the same number of roots below every separator (gr_nlt), every band index
+% reached at some separator (gr_cover), the same sign vectors at the roots
+% when each gap's two roots see the same sign vector (gr_svl), and each root
+% close to its partner when the gap roots move continuously (gr_near).  The
+% *_w forms take the walk's own check wok? instead, which also covers a
+% family with no live member (no roots at all).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad_fibre, mroot
+
+  G, F: VAR list[list[mpoly]]
+  ys, ys0, ys1, xs: VAR list[real]
+  Y: VAR list[rat]
+  lo, hi, y0: VAR rat
+  x0, y, beta0, beta1: VAR real
+  i: VAR nat
+  eta: VAR posreal
+  sg: VAR SG
+
+  %% ---- separators ----------------------------------------------------------------------------
+  sep_nz: LEMMA FORALL Y: sepok?(F, sg, Y) AND member(y0, Y) IMPLIES nzat?(F, sg, y0, F)
+  sep_ge: LEMMA FORALL Y, hi: sepok?(F, sg, cons(hi, Y)) AND member(y0, cons(hi, Y)) IMPLIES hi <= y0
+
+  %% a gap's root lies strictly inside the gap
+  gap_lt: LEMMA memok?(F, msg(ys), F) AND gapok?(F, msg(ys), lo, hi)
+    AND nzat?(F, msg(ys), hi, F) AND gap?(F, msg(ys), lo, hi)
+    IMPLIES lo < secbeta(F, ys, lo, hi) AND secbeta(F, ys, lo, hi) < hi
+
+  %% ---- two points, one gap pattern -------------------------------------------------------------
+  samepat?(F, ys0, ys1, Y): bool = FORALL lo, hi: member(lo, Y) AND member(hi, Y)
+    IMPLIES (gap?(F, msg(ys1), lo, hi) IFF gap?(F, msg(ys0), lo, hi))
+  wsep?(F, ys, Y): bool = memok?(F, msg(ys), F) AND sepok?(F, msg(ys), Y)
+
+  samepat_cdr: LEMMA samepat?(F, ys0, ys1, cons(y0, Y)) IMPLIES samepat?(F, ys0, ys1, Y)
+
+  gr_len: LEMMA FORALL Y: samepat?(F, ys0, ys1, Y)
+    IMPLIES length(groots(F, ys1, Y)) = length(groots(F, ys0, Y))
+
+  gr_nlt_hd: LEMMA cons?(Y) AND wsep?(F, ys, Y) IMPLIES nlt(groots(F, ys, Y), car(Y)) = 0
+  gr_nlt: LEMMA FORALL Y: samepat?(F, ys0, ys1, Y) AND wsep?(F, ys0, Y) AND wsep?(F, ys1, Y)
+    AND member(y0, Y)
+    IMPLIES nlt(groots(F, ys1, Y), y0) = nlt(groots(F, ys0, Y), y0)
+
+  gr_cover: LEMMA FORALL Y, i: cons?(Y) AND wsep?(F, ys, Y) AND i <= length(groots(F, ys, Y))
+    IMPLIES EXISTS y0: member(y0, Y) AND nlt(groots(F, ys, Y), y0) = i
+
+  gr_svl: LEMMA FORALL Y: samepat?(F, ys0, ys1, Y) AND wsep?(F, ys0, Y) AND wsep?(F, ys1, Y)
+    AND (FORALL lo, hi, beta0, beta1: member(lo, Y) AND member(hi, Y)
+           AND gapf?(F, ys0, lo, hi, beta0) AND gapf?(F, ys1, lo, hi, beta1)
+           IMPLIES svec(G, cons(beta1, ys1)) = svec(G, cons(beta0, ys0)))
+    IMPLIES map(svat(G, ys1))(groots(F, ys1, Y)) = map(svat(G, ys0))(groots(F, ys0, Y))
+
+  %% two lists of reals, element by element within eta
+  L0, L1: VAR list[real]
+  close?(L1, L0, eta): RECURSIVE bool =
+    IF null?(L0) THEN null?(L1)
+    ELSE cons?(L1) AND abs(car(L1) - car(L0)) < eta AND close?(cdr(L1), cdr(L0), eta)
+    ENDIF
+  MEASURE length(L0)
+  close_len: LEMMA FORALL L0, L1: close?(L1, L0, eta) IMPLIES length(L1) = length(L0)
+  close_nth: LEMMA FORALL L0, L1, i: close?(L1, L0, eta) AND i < length(L0) IMPLIES
+    length(L1) = length(L0) AND abs(nth(L1, i) - nth(L0, i)) < eta
+
+  gr_near: LEMMA FORALL Y: cert?(F, msg(cons(x0, xs))) AND cons?(lives(F))
+    AND wsep?(F, cons(x0, xs), Y) IMPLIES
+    EXISTS (d: posreal): FORALL ys1: near?(ys1, cons(x0, xs), d)
+      AND agree(msg(cons(x0, xs)), msg(ys1), wi_rd(F, msg(cons(x0, xs))))
+      AND samepat?(F, cons(x0, xs), ys1, Y) AND wsep?(F, ys1, Y) IMPLIES
+      close?(groots(F, ys1, Y), groots(F, cons(x0, xs), Y), eta)
+END cad_gpar

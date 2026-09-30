@@ -1,0 +1,47 @@
+cad_sample: THEORY
+%----------------------------------------------------------------------------
+% Sample points from the CAD returned by cad_out (GAP_PLAN.md Tier 1C, the
+% plan's cad_path: points rather than the whole tree).
+%
+% rec_pt: every record's sample is a point of R^(k+1), and the recorded sign
+% vector is F's there.  cad_sat: a sign condition on F holds at some point
+% iff it holds at some record, whose sample is then such a point -- a
+% witness for an existential claim, a counterexample to a universal one.
+% cad_outer: at the outer quantifier, the fold over a sector is the meaning
+% of the rest of the sentence at that sector's sample, so a sector where a
+% FORALL fails (or an EXISTS holds) names a real number where it does.
+%
+% cad_complete: for every F and every prefix of at least two quantifiers
+% there is a u whose certificate holds (decn_complete), so cad_out at that u
+% is a cylindrical decomposition adapted to F (cad_run, cad_out_ok) that
+% decides every sentence over F with that many variables (cad_decides).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad_fold_ok, decn_complete
+
+  F: VAR list[list[mpoly]]
+  r: VAR ORec
+  p: VAR list[real]
+  m, u: VAR nat
+  qs, qs2: VAR list[bool]
+  Psi, Psi2: VAR [SV -> bool]
+
+  dropn_short: LEMMA FORALL m, p: length(p) < m IMPLIES dropn(m, p) = null
+
+  rec_pt: THEOREM decn_o(u, qs, F, Psi)`ok AND length(qs) >= 2 AND member(r, cad_out(u, qs, F))
+    IMPLIES length(den(r`rsod)) = length(qs) AND svec(F, den(r`rsod)) = r`rsv
+
+  cad_sat: THEOREM decn_o(u, qs, F, Psi)`ok AND length(qs) >= 2 IMPLIES
+    ((EXISTS p: length(p) = length(qs) AND Psi2(svec(F, p)))
+       IFF (EXISTS r: member(r, cad_out(u, qs, F)) AND Psi2(r`rsv)))
+
+  cad_outer: THEOREM decn_o(u, qs, F, Psi)`ok AND length(qs) >= 2 AND length(qs2) = length(qs)
+    AND member(r, cad_out(u, qs, F))
+    IMPLIES (afold(cdr(qs2), Psi2, secr(r`rsec, cad_out(u, qs, F)))
+               IFF sem(cdr(qs2), F, Psi2, (: value(sample(r`rsec)) :)))
+
+  cad_complete: THEOREM length(qs) >= 2 IMPLIES
+    EXISTS u: decn_o(u, qs, F, Psi)`ok AND
+      FORALL qs2, Psi2: length(qs2) = length(qs) IMPLIES
+        (cfold(qs2, Psi2, cad_out(u, qs, F)) IFF sem(qs2, F, Psi2, null[real]))
+END cad_sample

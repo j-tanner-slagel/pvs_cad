@@ -1,0 +1,88 @@
+cad_tower: THEORY
+%----------------------------------------------------------------------------
+% A certified tower of families builds a CAD over a connected base cell
+% (GAP_PLAN.md Tier 1B).
+%
+% A tower TW lists one family per level, the family of the lowest level
+% first; tlast(TW) is the family the sentence is about.  tcell(TW, C, A) is
+% the cell with stack indices A over the base cell C: the stack cell of
+% index car(A) of car(TW) over C, then the cell of the rest of the tower over
+% that, and so on.
+%
+% cad_over?(TW, C) says the tower decomposes the cylinder over C as a CAD:
+% each family is classically delineable over each cell below it (delin_cl?:
+% finitely many continuous non-crossing roots, the family sign-invariant on
+% every section and band) and every cell is connected.
+%
+% tower_cad: if the base cell is connected, the lowest family's reads keep
+% their signs across it (rdag?), and the tower's certificate CLF holds over
+% it -- what decide5 checks at run time -- then the tower is a CAD over C.
+% At each level the reads of the next family are members of the family
+% below (CLF's rdz?), which is sign-invariant on the new cell, so the reads
+% agree there (rdz_agree) and stack_const applies again.
+%
+% The cells partition the cylinder over C (tcell_cover, tcell_disj), each
+% nonempty stack has 2 nroot + 1 cells (sidx_le), and the top family has one
+% sign vector on every top cell (top_sinv).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad_stkc, tclf
+
+  TW: VAR Tower
+  G: VAR list[list[mpoly]]
+  C, C1: VAR [list[real] -> bool]
+  p, p1, q, p0: VAR list[real]
+  A, B: VAR list[nat]
+  a, m: VAR nat
+
+  tcell(TW, C, A): RECURSIVE [list[real] -> bool] =
+    IF null?(TW) OR null?(A) THEN C ELSE tcell(cdr(TW), stk(car(TW), C, car(A)), cdr(A)) ENDIF
+  MEASURE length(TW)
+
+  cad_over?(TW, C): RECURSIVE bool =
+    IF null?(TW) THEN TRUE
+    ELSE delin_cl?(car(TW), C) AND
+         FORALL a: conn?(stk(car(TW), C, a)) AND cad_over?(cdr(TW), stk(car(TW), C, a))
+    ENDIF
+  MEASURE length(TW)
+
+  clfc?(TW, C): bool = FORALL q: C(q) IMPLIES CLF(TW, q)
+
+  %% ---- an empty base -------------------------------------------------------------------
+  delin_empty: LEMMA (FORALL p: NOT C(p)) IMPLIES delin_cl?(G, C)
+  stk_empty: LEMMA (FORALL p: NOT C(p)) IMPLIES FORALL p: NOT stk(G, C, a)(p)
+  cad_empty: LEMMA FORALL TW: FORALL C: (FORALL p: NOT C(p)) IMPLIES cad_over?(TW, C)
+
+  %% ---- one level up ------------------------------------------------------------------------
+  stk_cons: LEMMA stk(G, C, a)(p) IMPLIES p = cons(car(p), cdr(p)) AND C(cdr(p))
+  clf_up: LEMMA cons?(TW) AND cons?(cdr(TW)) AND clfc?(TW, C) AND stk(car(TW), C, a)(p)
+    IMPLIES rdz?(car(cdr(TW)), car(TW), p) AND CLF(cdr(TW), p)
+  rdag_up: LEMMA cons?(TW) AND cons?(cdr(TW)) AND clfc?(TW, C) AND delin_cl?(car(TW), C)
+    AND stk(car(TW), C, a)(p0)
+    IMPLIES rdag?(car(cdr(TW)), stk(car(TW), C, a), p0)
+
+  tower_cad: THEOREM FORALL TW: FORALL C, p0: cons?(TW) AND conn?(C) AND C(p0)
+    AND rdag?(car(TW), C, p0) AND clfc?(TW, C) IMPLIES cad_over?(TW, C)
+
+  %% ---- the cells ------------------------------------------------------------------------------
+  tcell_conn: LEMMA FORALL TW: FORALL C, A: cad_over?(TW, C) AND conn?(C) AND length(A) <= length(TW)
+    IMPLIES conn?(tcell(TW, C, A))
+  top_sinv: LEMMA FORALL TW: FORALL C, A: cad_over?(TW, C) AND cons?(TW) AND length(A) = length(TW)
+    AND tcell(TW, C, A)(p) AND tcell(TW, C, A)(p1)
+    IMPLIES svec(tlast(TW), p) = svec(tlast(TW), p1)
+
+  %% points above the base: drop the m coordinates of the tower
+  len_tw: LEMMA cons?(TW) IMPLIES length(TW) = 1 + length(cdr(TW))
+  len_ad: LEMMA cons?(A) IMPLIES length(A) = 1 + length(cdr(A))
+  dropn(m, p): RECURSIVE list[real] =
+    IF m = 0 OR null?(p) THEN p ELSE dropn(m - 1, cdr(p)) ENDIF
+  MEASURE m
+  dropn_cdr: LEMMA FORALL m, p: cons?(dropn(m, p)) IMPLIES dropn(m + 1, p) = cdr(dropn(m, p))
+  dropn_len: LEMMA FORALL m, p: m <= length(p) IMPLIES length(dropn(m, p)) = length(p) - m
+  tcell_base: LEMMA FORALL TW: FORALL C, A: length(A) = length(TW) AND tcell(TW, C, A)(p)
+    IMPLIES C(dropn(length(TW), p))
+  tcell_cover: LEMMA FORALL TW: FORALL C, p: length(p) >= length(TW) AND C(dropn(length(TW), p))
+    IMPLIES EXISTS A: length(A) = length(TW) AND tcell(TW, C, A)(p)
+  tcell_disj: LEMMA FORALL TW: FORALL C, A, B: length(A) = length(TW) AND length(B) = length(TW)
+    AND tcell(TW, C, A)(p) AND tcell(TW, C, B)(p) IMPLIES A = B
+END cad_tower
