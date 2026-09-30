@@ -6,7 +6,9 @@ cad_meas5: THEORY
 % svs_det is already proved: sign functions agreeing on svs_srd give the same
 % svs_sg, and svs_sg_sound/complete say svs_sg IS the fibre set.  So if
 % inv1?(F, projc(F)) holds, psc_det? follows from machinery already proved and
-% item 1 collapses.  inv1? was measured FALSE for McCallum's proj; projc adds
+% item 1 collapses.  [Corrected 2026-09-29: inv1? gives delin? on each sector
+% of projc(F) -- the sector-local delin_projc for that F -- not psc_det?,
+% which compares unrelated points and is false in general (psc_det_ce).]  inv1? was measured FALSE for McCallum's proj; projc adds
 % the higher psc, which are exactly the coefficients of the remainder
 % sequence the reads come from.
 %----------------------------------------------------------------------------

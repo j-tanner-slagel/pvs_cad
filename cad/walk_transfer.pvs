@@ -5,7 +5,9 @@ walk_transfer: THEORY
 % realizable sign vectors of the fibre does not vary.
 %
 % This is delineability, certified at run time and proved without
-% subresultants.  The argument is local constancy plus connectedness:
+% subresultants.  [2026-09-29: more exactly, FIBRE-SET invariance, which is
+% weaker than classical delineability -- see cad_delin's header and
+% GAP_PLAN.md 1.3.]  The argument is local constancy plus connectedness:
 %
 %   at any point x0 of the set, separators Y exist that pass wok? and at
 %   which no chain entry vanishes                          (sep_exist)

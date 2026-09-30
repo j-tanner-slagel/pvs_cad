@@ -17,6 +17,15 @@ cad_delin: THEORY
 % UNIVARIATE families -- same psc signs give the same realizable sign-vector
 % set -- which is sign determination, algebraic, with no continuity of roots
 % and no connectedness in it.
+%
+% [Corrected 2026-09-29, GAP_PLAN.md.] Two statements above are wrong.
+% (1) delin? is FIBRE-SET invariance: the SET of realizable sign vectors is
+% constant along the sector.  Classical delineability (a constant number of
+% continuous, non-crossing root functions, each piece sign-invariant) implies
+% it but not conversely: (y^2-x)(y-5) realizes {-,0,+} on every fibre while
+% its root count is 1,2,3,2,3 across x = 0 and x = 25.  (2) The "univariate,
+% no continuity" reduction is false: psc_det_ce proves that equal psc signs
+% at two points do not give equal fibre sets.  Connectedness is needed.
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING cad_pdec
@@ -34,6 +43,8 @@ BEGIN
   fib(F, ys)(v): bool = EXISTS z: v = svec(F, cons(z, ys))
 
   %% DELINEABILITY on a sector: the fibre set does not vary along it.
+  %% [2026-09-29: this is fibre-set invariance, WEAKER than classical
+  %% delineability; see the header.  The name is kept so no proof changes.]
   %% This is what the projection is supposed to buy and what inv1? bought
   %% the read closure (by a different and much more expensive route).
   delin?(F, s): bool =
@@ -89,5 +100,11 @@ BEGIN
   %% cad_projc puts them in the operator; cad_meas3 measures that doing so
   %% costs no extra sectors.  The theorem itself is Phase 6's remaining
   %% mathematics.
+  %%
+  %% [Corrected 2026-09-29: the "equivalent" above is wrong.  The pointwise
+  %% statement (psc_det?) is FALSE (psc_det_ce); delin_projc is sector-local
+  %% and strictly weaker, still open, and needs a connectedness argument
+  %% (probably also normalized members: projc has no reducta).  This route is
+  %% conditional; decide5 does not use it.]
   %%-------------------------------------------------------------------------
 END cad_delin

@@ -1,6 +1,9 @@
 cad_proj: THEORY
 %----------------------------------------------------------------------------
 % The Collins projection operator (Phase 6, the standard route).
+% [Corrected 2026-09-29: proj below is McCALLUM-shaped (coefficients,
+% discriminants, pairwise resultants), not Collins'; the Collins-style
+% operator, psc chains without reducta, is cad_projc.]
 %
 % clos1 of cad_lift derives the level-below family by iterating "which
 % polynomials did the decision procedure read" to a fixpoint.  Answering that

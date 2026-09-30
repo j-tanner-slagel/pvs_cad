@@ -3,6 +3,8 @@ cad_projc: THEORY
 % Collins' projection: coefficients, plus the PRINCIPAL SUBRESULTANT
 % COEFFICIENT CHAINS of each member against its derivative and of each pair
 % (Phase 6, toward delineability).
+% [Note 2026-09-29: without Collins' REDUCTA -- the chains are of f itself,
+% not of its truncations -- so this is Collins-like, not Collins' operator.]
 %
 % cad_proj is McCallum's smaller operator -- coefficients, disc, pairwise res
 % -- which is disc(f) = res(f, f') = psc(f, f', 0) and res(f, g) = psc(f, g, 0)

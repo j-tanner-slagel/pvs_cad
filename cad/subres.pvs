@@ -26,6 +26,11 @@ subres: THEORY
 % Each psc is a det of a submatrix of the same Sylvester-style matrix, so
 % ring_det's det_eval -- which commutes with evaluation for ANY matrix --
 % gives the specialization theorem for free, as it does for res and disc.
+%
+% [Corrected 2026-09-29: the reduction "same psc signs => same realizable
+% sign-vector set" above is false between two unrelated points (psc_det_ce).
+% It can hold only along a connected set; continuity of roots is needed.
+% The subresultant definitions and theorems here are unaffected.]
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING sylvester

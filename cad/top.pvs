@@ -524,6 +524,17 @@ top: THEORY
 %                conditions the executable code checks (roots sorted, gaps
 %                separating, samples rational and inside their sector, root
 %                isolation converged)
+%   psc_det_ce   psc_det? is FALSE as a universal statement (2026-09-29,
+%                GAP_PLAN.md Tier 0). For f = y^2-3y+2 and g = y-x, every
+%                member of projc has the same sign at x = 1/2 and x = 3
+%                (ce_svec, by evaluation), but the fibre over 1/2 realizes
+%                (0,+) (y = 1) and the fibre over 3 does not, since f = 0 only
+%                at y = 1, 2 where g < 0 (ce_fib_half, ce_fib_three); so
+%                psc_det_false: NOT psc_det?(ceF). The order of the roots of
+%                DIFFERENT members is not fixed by psc signs at two unrelated
+%                points, only along a connected set. Nothing verified depends
+%                on psc_det? (a hypothesis of delin_from_psc only; the
+%                one-quadratic case psc_det_quad stands)
 %   mpoly_swap  exchanging the two variables of a bivariate mpoly (item A).
 %                mpoly's res eliminates the MAIN variable; lifting at an
 %                algebraic sample has to eliminate the SECOND one, because
@@ -663,8 +674,9 @@ top: THEORY
 %                persist, so nearby oracles agree on all the walk reads and
 %                walk_fib gives the same set.  fib_const: on a CONVEX such set
 %                it is constant.  Stated along ONE coordinate of a point
-%                cons(x, xs) (S5a); xs = null is the one-parameter case.  This is delineability certified at run time,
-%                with no subresultants; the entry reads are never certified,
+%                cons(x, xs) (S5a); xs = null is the one-parameter case.  This is fibre-set
+%                invariance certified at run time (weaker than classical
+%                delineability; GAP_PLAN.md 1.3), with no subresultants; the entry reads are never certified,
 %                because no constant separator stays clear of an unbounded or
 %                colliding root curve (measured: 164 roots and ok = FALSE)
 %   cad_fast_def  the FAST two-quantifier decision decw: sectors of the
@@ -1074,8 +1086,10 @@ top: THEORY
 %                set, and delin_from_psc turns that into delin? on every
 %                sector -- which is what dec2_sem consumes. Chaining them,
 %                psc_det? ALONE implies the two-quantifier projection decision
-%                is correct, so psc_det? is the only open statement and has no
-%                CAD machinery around it. The route goes through the sector's
+%                is correct. [Corrected 2026-09-29: psc_det? is FALSE for some
+%                two-member families (psc_det_ce), so it is not an open
+%                statement to prove; the open obligation of this route is the
+%                sector-local delin_projc, which needs connectedness.] The route goes through the sector's
 %                RATIONAL sample because cell1's svec_between, and so
 %                sect_svec, compares a real against a rational; at an at
 %                sector both points collapse to the root
@@ -1108,10 +1122,14 @@ top: THEORY
 %                represent one, so they enter the 3^|F| branch at once.
 %                Exact arithmetic in an algebraic extension is required
 %                STILL OPEN: delin_projc, that every sector of projc(F)
-%                satisfies delin? -- equivalently that two univariate
-%                families with the same psc signs realize the same sign
-%                vectors. That is the ONLY remaining correctness obligation
-%   cad_proj     the Collins/McCallum projection operator: all coefficients,
+%                satisfies delin?. [Corrected 2026-09-29: this was described
+%                as equivalent to "two univariate families with the same psc
+%                signs realize the same sign vectors"; that pointwise form is
+%                false (psc_det_ce), and delin_projc is strictly weaker. Note
+%                also that delin? is FIBRE-SET invariance, weaker than
+%                classical delineability (GAP_PLAN.md 1.3).] It concerns only
+%                this conditional projection route; decide5 does not use it
+%   cad_proj     the McCallum-shaped projection operator: all coefficients,
 %                the discriminant of each member of degree > 0, and the
 %                pairwise resultants. cad_lift derives the level-below family
 %                instead by iterating "which polynomials were read" to a
@@ -1240,6 +1258,7 @@ BEGIN
             psc_quad1,
             disc_quad,
             psc_det_quad,
+            psc_det_ce,
             sturm_habicht,
             cad_proj,
             cad_projc,

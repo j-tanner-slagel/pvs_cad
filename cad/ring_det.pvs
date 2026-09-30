@@ -12,6 +12,10 @@ ring_det: THEORY
 % specialize.  NASALib's matrices@matrix_det defines its determinant through
 % elementary matrices and proves nothing about expansions or kernels, so the
 % theory here is self-contained.
+% [Corrected 2026-09-29: that is wrong.  NASALib's det (matrix_props) is a
+% first-row Laplace expansion, with row multilinearity, det_mult,
+% det_transpose and invertible_det proved; there is no adjugate or kernel.
+% The theory here is self-contained by choice, not by necessity.]
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING mpoly_arith
