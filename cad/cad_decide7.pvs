@@ -1,0 +1,26 @@
+cad_decide7: THEORY
+%----------------------------------------------------------------------------
+% decide7, the decision of (cad :cad-only? t), is correct and complete:
+% decn_u_correct and decn_u_complete with two or more quantifiers,
+% decq2_correct and decq2_complete1 with fewer.  (cad :cad-only? t)
+% instantiates decide7_correct.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad_decide7_def, cad_decide5, complete1, cad_endgame
+
+  qs, os: VAR list[bool]
+  F: VAR list[list[mpoly]]
+  Psi: VAR [SV -> bool]
+  phi: VAR BF
+
+  L: VAR list[bool]
+  len_ge2: LEMMA length(L) >= 2 IMPLIES cons?(L) AND cons?(cdr(L))
+
+  decq7_correct: THEOREM decq7(qs, F, Psi)`ok IMPLIES
+    (decq7(qs, F, Psi)`val IFF sem(reverse(qs), F, Psi, null))
+  decq7_complete: THEOREM decq7(qs, F, Psi)`ok
+
+  decide7_correct: THEOREM decide7(reverse(os), F, phi)`ok IMPLIES
+    (decide7(reverse(os), F, phi)`val IFF fsem(os, F, phi, null))
+  decide7_decides: THEOREM decide7(reverse(os), F, phi)`val IFF fsem(os, F, phi, null)
+END cad_decide7

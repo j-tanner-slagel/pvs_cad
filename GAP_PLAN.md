@@ -7,10 +7,36 @@
 >   cad_meas5, walk_transfer, top.pvs, ITEM1_PLAN, CAD_PLAN, PERF_PLAN;
 >   README, docs/cad_overview and paper notes re-scoped to "CAD-based decision
 >   procedure" until Tier 1C.  Whole library 3506/3506; synced to the public `pvs_cad`.
-> - **Tier 1:** in progress (see the section and cad/PROGRESS.md).
+> - **Tier 1A/1B: done 2026-09-29.** Ten theories (cad_roots ... cad_run, 166 formulas):
+>   stack_const (sign-invariant reads imply classical delineability) and cad_run (the
+>   n-level run's cells form a cylindrical decomposition adapted to F; definability
+>   below).  Whole library 3672/3672.
+> - **Tier 1C: done 2026-09-30.** Six theories (cad_out, cad_out_ok, cad_fold,
+>   cad_fold_ok, cad_sample, cad_out_ex): cad_out returns the decomposition as records
+>   (sector, stack indices, exact sample, F's sign vector); cad_out_ok: they name, at least
+>   once each, exactly the nonempty cells of cad_run's decomposition; cad_decides: that one
+>   decomposition decides every sentence over F (any quantifiers over the same variables
+>   in the same order, any Boolean combination); cad_complete: one is always obtained.
+> - **Tier 1 cad_spec (first-order definability of the cells): done 2026-09-30.** Five
+>   theories (rcf_fol, rcf_cad_def, root_fol, rcf_cells, cad_verified): every cell of the
+>   run, at every level, is defined by a first-order formula over the reals with rational
+>   polynomial sign atoms (rcell_fod_le), and so is the graph of every root function over
+>   a cell of the run (graph_fod, applied in cad_verified).  cad_verified: under decn_o's
+>   certificate the run computes a CAD of R^(k+1) adapted to F in the sense of BPR Def. 5.1
+>   (semi-algebraic in the sense of first-order definable; its agreement with the
+>   quantifier-free definition is Tarski-Seidenberg, not formalized) -- cells cover and are disjoint,
+>   connected and definable at every level, cylindrical over delineable families, F
+>   sign-invariant -- returned as data (cad_out); cad_exists: some u always gives one.  "Definable" is first-order
+>   definability; semi-algebraic (quantifier-free) follows by Tarski-Seidenberg, which
+>   is not formalized here -- quantifier-free cell descriptions are Tier 2B/2C.
+> - **`(cad :cad-only? t)` and public wording: done 2026-09-30.** cad_decide7_def /
+>   cad_decide7 (5 formulas): decide7 = decn_u for two or more quantifiers, decq2 for
+>   fewer; decide7_correct, decide7_decides; `(cad :cad-only? t)` uses it.  README and
+>   docs/cad_overview say "verified CAD algorithm", scoped to decn_o in two or more
+>   variables, with the limits stated.  Open: the one-variable case as one theorem.
 
 *Final roadmap, 2026-09-29. It combines five research reports, four plans, three reviews, twelve claim verifications and one critique. Nothing was edited and no prover was run. Labels used below:*
-- *PROVED: the theory is in `cad/top.pvs`'s import closure with saved proofs. The whole library replays 3502/3502 (cad/PROGRESS.md:4516). This is relative to NASALib's saved proofs, which were not replayed here (§2.11).*
+- *PROVED: the theory is in `cad/top.pvs`'s import closure with saved proofs. The whole library replayed 3502/3502 as of 2026-09-29 (cad/PROGRESS.md:4516; for the current count see the status header). This is relative to NASALib's saved proofs, which were not replayed here (§2.11).*
 - *STATED: exists only as a predicate, a hypothesis or a comment.*
 - *PROPOSED: part of this roadmap. Every name below that is not already in the repository is a placeholder.*
 - *"Checked by reading": confirmed against the files for this report, but not checked by PVS.*
@@ -571,7 +597,7 @@ Some steps are class B, some class C.
 |---|---|---|
 | M1 | Two-level `delin_projc` (sector-local), assuming normalized members | 10–20 |
 | M2 | n levels with Collins reducta (`projcR`), and a projection decision | +4–8 |
-| M3 | `decide7` in `(cad)`, with fallback to decide5 | +2–4 |
+| M3 | `decide_collins` in `(cad)`, with fallback to decide5 | +2–4 |
 
 **Total:** about 16–32 days and 600–1500 formulas. That is 1.5–2× the Collins plan's own 380–770-formula scope, in line with CAD_PLAN's historical sizing (CAD_PLAN.md:422-423).
 
@@ -640,7 +666,7 @@ There are two routes:
 | T2C Guaranteed Tarski output (optional) | T2B | 3–7 | 100–200 | redoing closure completeness | Always a pure Tarski formula |
 | T3A Brown reduced McCallum, open cells | T0, T1B layer | 4.5–11.5 | 195–380 | persistence; gates: prototype, `persist1`, kernel | First (as far as found) proof of BM delineability on open cells; rational-sample G/F decision |
 | T3B BM inside `(cad)` | T3A | 2–4.5 (+Lisp) | 40–85 | multivariate gcd; gate: `bm_ok?` ≥ 80% | Verified route for ∃-strict and ∀-non-strict goals (speed unmeasured) |
-| T4 Collins M1–M3 | T1, T3A kernel | 16–32 | 600–1500 | gcd-degree theorem, clustered roots, reducta | Collins' theorem in PVS (second overall); decide7 possibly faster |
+| T4 Collins M1–M3 | T1, T3A kernel | 16–32 | 600–1500 | gcd-degree theorem, clustered roots, reducta | Collins' theorem in PVS (second overall); decide_collins possibly faster |
 
 ---
 
@@ -663,7 +689,6 @@ There are two routes:
 | + T3 | 12.5–26.5 | Brown's reduced McCallum on open cells |
 | + T2B | 14–29.5 | Full planned scope |
 
-**Scheduling.** Your SPLASH trip is on 10/4, and T0–T1 would straddle it. T0 and T1A (1.5–3 days) fit before it, and T1A's gate outcome is a natural point to pause.
 
 **Decisions that are yours** (CLAUDE.md rule 3):
 - the cofactor fallback for the kernel lemma;

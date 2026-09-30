@@ -1,0 +1,63 @@
+cad_stack: THEORY
+%----------------------------------------------------------------------------
+% CLASSICAL DELINEABILITY from sign-invariant reads (GAP_PLAN.md Tier 1).
+%
+% delin_cl?(G, C) is delineability in the classical sense, with the stack's
+% cells sign-invariant:
+%   - over every point p of C the roots of G (rootat?: zeros of the members
+%     not identically zero on the fibre) are finitely many, listed
+%     increasing by rtl(G, p);
+%   - their number is the same over every point of C;
+%   - the i-th root rt(G, ., i) is a continuous function on C;
+%   - every member of G has one sign on each piece of the stack: points of
+%     the fibres over C with the same stack index (sidx: band below the
+%     first root 0, first root 1, next band 2, ...) have the same sign
+%     vector.
+% So over C the zero set of G is the union of the graphs of nroot
+% continuous functions that never meet, and G is sign-invariant on each
+% graph and on each band between them: the stack of a CAD.
+%
+% stack_const: if C is connected and the reads of the walk for G keep their
+% signs throughout C (agree with those at one point p0 where the walk's
+% certificate holds), then G is classically delineable over C.  The walk,
+% its certificate and its reads are what decide5 runs and checks; the
+% theorem turns that run-time check into delineability.  Proof: the stack is
+% locally constant and the roots continuous (cad_local); a locally constant
+% stack on a connected set is constant (cad_conn).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad_local, cad_conn
+
+  G: VAR list[list[mpoly]]
+  C: VAR [list[real] -> bool]
+  p, q, p0, p1: VAR list[real]
+  y, z: VAR real
+  i: VAR nat
+
+  delin_cl?(G, C): bool =
+        (FORALL p: C(p) IMPLIES rl?(G, p)(rtl(G, p)))
+    AND (FORALL p, q: C(p) AND C(q) IMPLIES nroot(G, p) = nroot(G, q))
+    AND (FORALL i: cont_on?(LAMBDA p: rt(G, p, i), C))
+    AND (FORALL p, q, y, z: C(p) AND C(q) AND sidx(G, p, y) = sidx(G, q, z)
+           IMPLIES svec(G, cons(y, p)) = svec(G, cons(z, q)))
+
+  %% the hypothesis of stack_const, from any base point of C
+  rdag?(G, C, p0): bool = certz?(G, p0) AND
+    FORALL p: C(p) IMPLIES cons?(p) AND agree(msg(p0), msg(p), wrs(G, p0))
+
+  rdag_move: LEMMA rdag?(G, C, p0) AND C(p1) IMPLIES rdag?(G, C, p1)
+
+  %% the stack is the same over the whole connected set
+  stack_same: LEMMA conn?(C) AND C(p0) AND rdag?(G, C, p0) AND C(p) IMPLIES
+    rsvl(G, p) = rsvl(G, p0) AND bsvl(G, p) = bsvl(G, p0) AND nroot(G, p) = nroot(G, p0)
+
+  %% each root is continuous
+  eta: VAR posreal
+  loc_cont2: LEMMA certz?(G, p0) AND cons?(p0) IMPLIES EXISTS (d: posreal): FORALL p:
+    near?(p, p0, d) AND agree(msg(p0), msg(p), wrs(G, p0))
+    IMPLIES nroot(G, p) = nroot(G, p0) AND
+      (FORALL i: i < nroot(G, p0) IMPLIES abs(rt(G, p, i) - rt(G, p0, i)) < eta)
+  root_cont_on: LEMMA rdag?(G, C, p0) AND conn?(C) IMPLIES cont_on?(LAMBDA p: rt(G, p, i), C)
+
+  stack_const: THEOREM conn?(C) AND C(p0) AND rdag?(G, C, p0) IMPLIES delin_cl?(G, C)
+END cad_stack

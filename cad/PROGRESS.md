@@ -4547,3 +4547,157 @@ tools/import_paths.py reports theories, edges and path counts per directory.
   docs/cad_overview figures updated (233 theories, 3,506 formulas, 2,392 lemmas, 1,114
   TCCs, 18,367 lines).  GAP_PLAN.md trimmed of the draft public replies.  This state is
   the second public pvs_cad snapshot.
+
+## 2026-09-29 — GAP_PLAN Tier 1A/1B: the n-level run computes a CAD
+
+- Ten new theories, all gated; no existing proof changed.
+  - cad_roots / cad_fibre: the roots over a point as a sorted list (rtl; rootat? = zeros of
+    the members not identically zero on the fibre), the stack index sidx, the sign vectors
+    at the roots and on the bands (rsvl, bsvl); the sign vector at a point is the entry its
+    index names.
+  - cad_gpar / cad_local: near a certified point with agreeing reads the stack is the same
+    and every root moves continuously (from near_cells and mroot_near).
+  - cad_conn / cad_stack: connected sets; delin_cl?, CLASSICAL delineability (roots listed,
+    constant count, continuous root functions, every member sign-invariant on every section
+    and band); stack_const: if the walk's reads keep their signs across a connected set,
+    the family is classically delineable over it.  This turns decide5's run-time check
+    into delineability.
+  - cad_slab / cad_stkc: slabs over a connected set are connected; every cell of a
+    delineable stack is one.
+  - cad_tower: a certified tower over a connected base cell is a CAD (tower_cad); its
+    cells partition the cylinder and the top family is sign-invariant on each.
+  - cad_run: when decn_o's certificate holds, the cells (outer sector, stack indices)
+    cover R^(k+1), are pairwise disjoint and connected, are the sections and bands of
+    continuous root functions at every level, and F is sign-invariant on each (cad_run).
+    The outer sectors partition the line (sects_disj, new).
+- Tier 1A's two-variable trial run was skipped: the theorems are stated for any number of
+  variables from the start.  Root indexing is by sorted lists (rl?), not system_roots_enum.
+- Next: Tier 1C, the correspondence with the run's own cell descriptors and the CAD as
+  returned data; then public wording ("verified CAD" becomes true for decn_o).
+
+## 2026-09-30 — GAP_PLAN Tier 1C: the CAD as returned data; it decides every sentence over F
+
+- Six new theories (82 formulas: cad_out 13, cad_out_ok 27, cad_fold 9, cad_fold_ok 23,
+  cad_sample 6, cad_out_ex 4), each gated (three fresh runs + traces); no existing proof
+  changed.  Whole library 3754/3754 (249 theories, 1051 s).  decide5's n-level engine now
+  provably RETURNS its decomposition: finitely many connected cells partitioning
+  R^(k+1), cylindrical over continuous root functions, F sign-invariant, as data that
+  decides every sentence over F.  Still missing for a CAD in the sense of BPR Def. 5.1:
+  semi-algebraicity of the cells (first-order definability, the plan's cad_spec); the
+  1B entry and cad_run's header overstated this and are corrected (GAP_PLAN status,
+  cad_run comment, top.pvs).
+  - cad_out (executable): per sector of the run, the tree of the walk's cells -- kids lists
+    the separators (bands) and the root gaps (sections) of a level with their stack
+    indices; ctree follows them through the tower -- one record per path: sector, stack
+    indices, exact sample descriptor (OD), and F's sign vector read by the descriptor's
+    own oracle.  A band that holds several separators gets a record for each.
+  - cad_out_ok: when decn_o's certificate holds, every record's sample lies in the cell
+    (rcell) its sector and indices name, with F's sign vector there (osv_ok), and every
+    nonempty cell has a record (cad_out_ok).  One level: kids_lvl -- the walk's children
+    carry the stack indices of their points (twice the roots below, plus one at a root)
+    and every index up to 2 nroot occurs; the tree: ctree_in, ctree_cover.
+  - cad_fold (executable): a sentence is folded over the records -- the outer quantifier
+    over the sectors, each inner one over the stack indices of the next level, Psi on the
+    recorded sign vector at the leaf.
+  - cad_fold_ok: afold_sem, a theorem about ANY cad_over? tower: when records lie in the
+    cells their addresses name with F's sign vectors, every nonempty cell has one, and F
+    has one sign vector per top cell, the fold of the inner quantifiers is their meaning
+    at every point of the base cell (at each level the records' next indices are exactly
+    the stack indices over the point: rec_idx, idx_rec, lvl_all, lvl_some).  cad_decides:
+    when decn_o's certificate holds, the CAD computed ONCE by cad_out decides every
+    sentence with the same polynomials and number of variables, whatever its quantifiers
+    and Boolean combination of sign conditions.
+  - cad_sample: every record's sample is a point of R^(k+1) with the recorded signs
+    (rec_pt); a sign condition holds somewhere iff at some record (cad_sat: witnesses and
+    counterexamples); the fold over a sector is the sentence's meaning at the sector's
+    sample (cad_outer); and cad_complete: for every F and prefix of at least two
+    quantifiers some u makes the certificate hold (decn_complete), so a CAD that decides
+    every sentence over F is always obtained.
+  - cad_out_ex: the unit circle -- certificate at u = 0 (2 s), 13 cells in 15 records, the
+    recorded indices and sign vectors, and cad_out_ok for that F.
+- The plan's tfold_fusion (fold = innern_o) was not needed: the fold is proved correct
+  directly from the CAD properties (cad_run + cad_out_ok), so it holds for any CAD given
+  as records.  Checked on the circle: cfold agrees with decn_o on 16 sentences (4
+  prefixes x 4 sign conditions), each right by hand.
+- Scope: decn_o (decide5's n-level engine: three or more quantifiers, and the fallback at
+  two).  decw (the two-quantifier fast path) and decq2 are not covered (GAP_PLAN §9).
+- Lesson: lemmas taking cdr of a list generate TCCs the typechecker leaves open
+  (cad_out_mem_TCC1, sector_fold_TCC1, cad_outer_TCC1 failed first gates); run proveit -f
+  once before gating.
+- Next: semi-algebraicity of the cells (first-order definability; estimate 80-100
+  lemmas) before any public "CAD" wording -- both with the user's approval; Tier 1D
+  optional.
+
+## 2026-09-30 — GAP_PLAN Tier 1 cad_spec: every cell is first-order definable; the run computes a CAD
+
+- Five new theories (51 formulas: rcf_fol 19, rcf_cad_def 8, root_fol 13, rcf_cells 9,
+  cad_verified 2), each gated (three fresh runs + traces); no existing proof changed.
+  Whole library 3805/3805 (254 theories, 1110 s).  With them the run's output meets
+  Basu-Pollack-Roy Def. 5.1: cad_verified (under decn_o's certificate) and cad_exists (some u
+  always) state the whole definition in one predicate, cad_of?.
+  - rcf_fol: a first-order language over the reals -- Fm (ftrue, fsg(p, t) = "p has sign t",
+    fnot, fand, fex), fsem; variables are positions in the point list, head innermost, as in
+    meval and sem.  mins(p, d) inserts a dummy variable at depth d of a polynomial and
+    meval_mins proves it is evaluation with that entry deleted (pdel), for every point list;
+    shiftF / fsem_shift lift that to formulas.  fod?(n)(S): S is definable in R^n.
+  - rcf_cad_def (executable): rootF (a root over the point: rootat? as a formula, the
+    "not identically zero" part under its own fex), geF(G, i) (at least i roots below),
+    sidxF (the stack index), stkF / cellF (stack and tower cells), cmpF / sectF (the sectors).
+  - root_fol: rootF_ok, geF_ok (i <= nlt of the root list; witness the i-th root via nlt_mem,
+    nth_below), sidxF_ok (parity via hf_even/hf_odd/odd_even), stkF_ok.  The root lists exist
+    at EVERY point (rl_all, from rtl_ok and certz_all), so none of this needs a certificate.
+  - rcf_cells: meval_pmc (an algebraic number's polynomial as an mpoly, any tail), cmpF_ok
+    (the root is unique in its CLOSED isolating interval, value_char), sectF_ok, scell_ok,
+    cellF_ok (every tower, every definable base, every address no longer than the tower),
+    rcell_ok / rcell_fod (every cell of the run is definable), sec_graph / graph_fod (the graph
+    of the i-th root function over a cell is the stack cell 2i+1, hence definable).
+  - cad_verified: cad_of?(u, qs, F) -- cells cover R^(k+1), are disjoint, connected and
+    first-order definable, cylindrical over delineable families (cad_over?), F sign-invariant
+    on each, and cad_out lists exactly the nonempty cells with a sample and F's sign vector.
+- "Definable" is first-order definability with rational polynomial sign atoms.  Semi-algebraic
+  in the quantifier-free sense follows by Tarski-Seidenberg, which is not formalized here;
+  quantifier-free cell descriptions are GAP_PLAN Tier 2B/2C.  Scope as before: decn_o.
+- Design: mapped and adversarially reviewed by a 4-agent workflow before proving (it caught
+  the closed interval of Alg values and cut the plan from an 80-100 lemma estimate to ~20).
+- PVS 8.1 bug: a datatype field of NASALib type Sign3 crashes the positivity check
+  (OCCURS-POSITIVELY?*); the atom's sign is an int instead (~/ITP_notes).
+- Lesson again: new definitions generate TCCs (mins_TCC3; cad_of? took cdr of a possibly empty
+  list and had to be guarded) -- the quick proveit pass before gating caught both.
+
+## 2026-09-30 — (cad :cad-only? t); cad_of? at every level; public wording reviewed
+
+- (cad :cad-only? t): the decision only through the verified CAD engine.  cad_decide7_def /
+  cad_decide7 (5 formulas, gated): decide7 = decn_u (decn_o from u = 0, raising u) for two or
+  more quantifiers, decq2 for fewer; decq7_correct, decq7_complete, decide7_correct,
+  decide7_decides.  pvs-strategies: cad-direct and cad-finish__ take the decision name
+  (default decide5, so (cad) is unchanged); (cad) and (cad *) take :cad-only?, which skips
+  the witness search and the two-level fast path and runs cad-direct with decide7.
+- Timing, (cad) against (cad :cad-only? t), whole proofs, one at a time on a separate
+  server (scratch/time_cadonly.sh; 300 s cap):
+  - the 54 library examples (cad_examples 1-4, cad_endgame_ex, cad_demo, cad_bath): all
+    proved both ways, 0.3-5.9 s each with (cad) (95.5 s in all), 0.8-4.5 s with :cad-only?
+    (88.7 s in all) -- the shortcuts buy nothing there;
+  - Bath 01-04 (existential): (cad) 0.4 / 13.3 / 0.6 / 0.5 s by witness search; :cad-only?
+    over 300 s on each -- there the witness search is what decides;
+  - Bath 08 (false): FALSE both ways, 6.1 s / 1.8 s;
+  - Bath 05 and 07 (false), stated as goals: over 300 s both ways -- a false goal cannot use
+    the witness search.  In their refutation form ((...) IMPLIES FALSE, (then (flatten) (cad
+    -1)), as bath_08_false in cad_bath and as measured at 9c910b7): (cad) 13.1 s and 13.4 s
+    (11.8 / 12.2 s then), :cad-only? over 240 s.  No regression.
+- cad_of? strengthened after an adversarial review of the public text (3 reviewers + merge):
+  connectedness and first-order definability of the cells at EVERY level (rcf_cells
+  rcell_ok_le, rcell_fod_le), and definability of the graph of every root function of the run
+  over a cell of the level below (graph_fod applied in cad_verified), so "BPR Def. 5.1, with
+  first-order definable in place of semi-algebraic" is exact.  Two new index TCCs (run_shape).
+- Public wording (README, docs/cad_overview, rebuilt, 6 pages): "a verified CAD algorithm and
+  a verified, complete decision procedure"; scope (decn_o, two or more variables), the
+  certificate hypothesis, cad_out as a companion function (at least one record per nonempty
+  cell), "same variables, same order" for cad_decides, delineability in the sign-invariant
+  sense (delin_cl?), NASALib's saved proofs in the trusted base, the Rocq comparison
+  (Vermande proves Collins's projection delineating), "multivariate" in the novelty
+  sentence, the Motzkin sentence, the one-variable case and quantifier elimination as open.
+  top.pvs descriptions, cad_run's header, GAP_PLAN status, setup.sh's library list corrected.
+- Gates: cad_decide7, rcf_cells, cad_verified (three fresh runs + traces each; cad_decide7_def
+  has no formulas).  Whole library 3814/3814 (256 theories, 1184 s), including every (cad)
+  proof under the changed strategies.  Overview figures: 256 theories, 3,814 formulas (2,609
+  lemmas and theorems, 1,205 TCCs), 20,133 lines of PVS, 1,964 lines of strategies.

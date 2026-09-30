@@ -1,0 +1,1375 @@
+(|cad_local|
+ (|sep_noroot| 0
+  (|sep_noroot-2| "" 3999724265
+   ("" (SKEEP)
+    (("" (LEMMA "rtl_ok" ("G" "G" "p" "p"))
+      (("" (ASSERT)
+        (("" (EXPAND "rl?" -1)
+          (("" (FLATTEN)
+            (("" (INST -2 "y0")
+              (("" (LEMMA "rootat_P" ("G" "G" "p" "p" "Y" "Y" "y" "y0"))
+                (("" (ASSERT)
+                  (("" (CASE "null?(lives(zf(G, p)))")
+                    (("1"
+                      (LEMMA "bprod_null" ("F" "zf(G, p)" "ys" "p" "z" "y0"))
+                      (("1" (EXPAND "P") (("1" (ASSERT) NIL NIL)) NIL)) NIL)
+                     ("2" (EXPAND "wok?" -5)
+                      (("2" (FLATTEN)
+                        (("2"
+                          (LEMMA "sep_nz"
+                           ("Y" "Y" "F" "zf(G, p)" "sg" "msg(p)" "y0" "y0"))
+                          (("2"
+                            (LEMMA "nzat_P"
+                             ("F" "zf(G, p)" "ys" "p" "y0" "y0"))
+                            (("2" (GROUND) NIL NIL)) NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|sep_noroot-0| "" 3999724251
+   ("" (SKEEP)
+    (("" (LEMMA "rtl_ok" ("G" "G" "p" "p"))
+      (("" (ASSERT)
+        (("" (EXPAND "rl?" -1)
+          (("" (FLATTEN)
+            (("" (INST -2 "y0")
+              (("" (LEMMA "rootat_P" ("G" "G" "p" "p" "Y" "Y" "y" "y0"))
+                (("" (ASSERT)
+                  (("" (CASE "null?(lives(zf(G, p)))")
+                    (("1"
+                      (LEMMA "bprod_null" ("F" "zf(G, p)" "ys" "p" "z" "y0"))
+                      (("1" (EXPAND "P") (("1" (ASSERT) NIL NIL)) NIL)) NIL)
+                     ("2" (EXPAND "wok?" -5)
+                      (("2" (FLATTEN)
+                        (("2"
+                          (LEMMA "sep_nz"
+                           ("Y" "Y" "F" "zf(G, p)" "sg" "msg(p)" "y0" "y0"))
+                          (("2"
+                            (LEMMA "nzat_P"
+                             ("F" "zf(G, p)" "ys" "p" "y0" "y0"))
+                            (("2" (ASSERT) (("2" (POSTPONE) NIL NIL)) NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|sep_noroot-1| NIL 3999724250 ("" (POSTPONE) NIL NIL)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|rootat_P| FORMULA-DECL NIL |cad_roots| NIL)
+    (|zf| CONST-DECL "list[list[mpoly]]" |zfam| NIL)
+    (|lives| DEF-DECL "list[list[mpoly]]" |alg_bis| NIL)
+    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (P CONST-DECL "real" |walk_ok| NIL)
+    (|bprod_null| FORMULA-DECL NIL |walk_ok| NIL)
+    (|nzat_P| FORMULA-DECL NIL |walk_ok| NIL)
+    (|msg| CONST-DECL "SG" |sg_norm| NIL) (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
+    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|sep_nz| FORMULA-DECL NIL |cad_gpar| NIL)
+    (|wok?| CONST-DECL "bool" |walk_def| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|rl?| CONST-DECL "bool" |cad_roots| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|rtl_ok| FORMULA-DECL NIL |cad_roots| NIL))
+   SHOSTAK))
+ (|bsvl_sep_TCC1| 0
+  (|bsvl_sep_TCC1-0| "" 3999724250 ("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK
+   (|bsvl_sep| SUBTYPE "nlt(rtl(G, p), y0)" "below[length[SV](bsvl(G, p))]"
+    (38 49 38 67)))
+  (|bsvl_sep_TCC1-1| NIL 3999724206 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL))
+   NIL
+   (|bsvl_sep| SUBTYPE "nlt(rtl(G, p), y0)" "below[length[SV](bsvl(G, p))]"
+    (38 49 38 67))))
+ (|bsvl_sep| 0
+  (|bsvl_sep-0| "" 3999724251
+   ("" (SKEEP)
+    (("" (LEMMA "sep_noroot" ("G" "G" "p" "p" "Y" "Y" "y0" "y0"))
+      (("" (ASSERT)
+        ((""
+          (LEMMA "sidx_band"
+           ("G" "G" "p" "p" "y" "y0" "i" "nlt(rtl(G, p), y0)"))
+          (("" (EXPAND "sidx" -1) (("" (PROPAX) NIL NIL)) NIL)) NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|bsvl_sep-1| NIL 3999724251 ("" (POSTPONE) NIL NIL)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|sidx| CONST-DECL "nat" |cad_fibre| NIL)
+    (|rtl| CONST-DECL "list[real]" |cad_roots| NIL)
+    (|nlt| DEF-DECL "nat" |cad_fibre| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|sidx_band| FORMULA-DECL NIL |cad_fibre| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|sep_noroot| FORMULA-DECL NIL |cad_local| NIL))
+   SHOSTAK))
+ (|sw_rtl| 0
+  (|sw_rtl-0| "" 3999724252
+   ("" (SKEEP)
+    (("" (EXPAND "same_walk?")
+      (("" (FLATTEN)
+        (("" (LEMMA "rtl_groots" ("G" "G" "p" "p0" "Y" "Y"))
+          (("" (LEMMA "rtl_groots" ("G" "G" "p" "p" "Y" "Y"))
+            (("" (REPLACE -7 -1) (("" (ASSERT) NIL NIL)) NIL)) NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|sw_rtl-1| NIL 3999724252 ("" (POSTPONE) NIL NIL)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|rtl_groots| FORMULA-DECL NIL |cad_roots| NIL)
+    (|same_walk?| CONST-DECL "bool" |cad_local| NIL))
+   SHOSTAK))
+ (|nroot_eq| 0
+  (|nroot_eq-0| "" 3999724253
+   ("" (SKEEP)
+    (("" (LEMMA "sw_rtl" ("G" "G" "p0" "p0" "p" "p" "Y" "Y"))
+      (("" (ASSERT)
+        (("" (FLATTEN)
+          (("" (EXPAND "nroot")
+            (("" (REPLACE -1)
+              (("" (REPLACE -2)
+                (("" (EXPAND "same_walk?")
+                  (("" (FLATTEN)
+                    ((""
+                      (LEMMA "gr_len"
+                       ("Y" "Y" "F" "zf(G, p0)" "ys0" "p0" "ys1" "p"))
+                      (("" (ASSERT) NIL NIL)) NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|nroot_eq-1| NIL 3999724252 ("" (POSTPONE) NIL NIL)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|nroot| CONST-DECL "nat" |cad_roots| NIL)
+    (|gr_len| FORMULA-DECL NIL |cad_gpar| NIL)
+    (|zf| CONST-DECL "list[list[mpoly]]" |zfam| NIL)
+    (|same_walk?| CONST-DECL "bool" |cad_local| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|sw_rtl| FORMULA-DECL NIL |cad_local| NIL))
+   SHOSTAK))
+ (|rsvl_eq| 0
+  (|rsvl_eq-0| "" 3999724283
+   ("" (SKEEP)
+    (("" (LEMMA "sw_rtl" ("G" "G" "p0" "p0" "p" "p" "Y" "Y"))
+      (("" (ASSERT)
+        (("" (FLATTEN)
+          (("" (EXPAND "rsvl")
+            (("" (REPLACE -1)
+              (("" (REPLACE -2)
+                (("" (EXPAND "same_walk?")
+                  (("" (FLATTEN)
+                    (("" (CASE "null?(lives(zf(G, p0)))")
+                      (("1"
+                        (LEMMA "groots_nolive"
+                         ("F" "zf(G, p0)" "ys" "p" "Y" "Y"))
+                        (("1"
+                          (LEMMA "groots_nolive"
+                           ("F" "zf(G, p0)" "ys" "p0" "Y" "Y"))
+                          (("1" (ASSERT)
+                            (("1" (REPLACE -1)
+                              (("1" (REPLACE -2)
+                                (("1" (EXPAND "map") (("1" (PROPAX) NIL NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL)
+                       ("2"
+                        (LEMMA "gr_svl"
+                         ("Y" "Y" "F" "zf(G, p0)" "ys0" "p0" "ys1" "p" "G"
+                          "G"))
+                        (("2" (EXPAND "wsep?" -1)
+                          (("2" (EXPAND "wok?") (("2" (GROUND) NIL NIL)) NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|rsvl_eq-1| NIL 3999724282 ("" (POSTPONE) NIL NIL)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|rsvl| CONST-DECL "list[SV]" |cad_fibre| NIL)
+    (|gr_svl| FORMULA-DECL NIL |cad_gpar| NIL)
+    (|wok?| CONST-DECL "bool" |walk_def| NIL)
+    (|wsep?| CONST-DECL "bool" |cad_gpar| NIL)
+    (|groots_nolive| FORMULA-DECL NIL |cad_roots| NIL)
+    (|map| ADT-DEF-DECL "list[T1]" |list_adt_map| NIL)
+    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|lives| DEF-DECL "list[list[mpoly]]" |alg_bis| NIL)
+    (|zf| CONST-DECL "list[list[mpoly]]" |zfam| NIL)
+    (|same_walk?| CONST-DECL "bool" |cad_local| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|sw_rtl| FORMULA-DECL NIL |cad_local| NIL))
+   SHOSTAK))
+ (|bsvl_eq| 0
+  (|bsvl_eq-2| "" 3999724375
+   ("" (SKEEP)
+    (("" (LABEL "sw" -1)
+      (("" (LEMMA "sw_rtl" ("G" "G" "p0" "p0" "p" "p" "Y" "Y"))
+        (("" (ASSERT)
+          (("" (FLATTEN)
+            (("" (LABEL "r1" -1)
+              (("" (LABEL "r0" -2)
+                (("" (LEMMA "nroot_eq" ("G" "G" "p0" "p0" "p" "p" "Y" "Y"))
+                  (("" (ASSERT)
+                    (("" (LABEL "ne" -1)
+                      (("" (COPY "sw")
+                        (("" (EXPAND "same_walk?" -1)
+                          (("" (FLATTEN)
+                            (("" (LABEL "c0" -1)
+                              (("" (LABEL "c1" -2)
+                                (("" (LABEL "wk0" -3)
+                                  (("" (LABEL "wk1" -4)
+                                    (("" (LABEL "zfe" -5)
+                                      (("" (LABEL "sp" -6)
+                                        (("" (LABEL "ss" -7)
+                                          (("" (LABEL "sg" -8)
+                                            ((""
+                                              (CASE
+                                                  "wok?(zf(G, p), msg(p), Y)")
+                                              (("1" (LABEL "wkp" -1)
+                                                (("1"
+                                                  (REWRITE
+                                                   "list_extensionality")
+                                                  (("1" (SPLIT 1)
+                                                    (("1" (EXPAND "bsvl")
+                                                      (("1"
+                                                        (REWRITE "map_length")
+                                                        (("1"
+                                                          (REWRITE
+                                                           "map_length")
+                                                          (("1"
+                                                            (REWRITE
+                                                             "bpts_len")
+                                                            (("1"
+                                                              (REWRITE
+                                                               "bpts_len")
+                                                              (("1"
+                                                                (EXPAND "nroot"
+                                                                        "ne")
+                                                                (("1" (ASSERT)
+                                                                  NIL NIL))
+                                                                NIL))
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL))
+                                                      NIL)
+                                                     ("2" (SKEEP)
+                                                      (("2" (TYPEPRED "n")
+                                                        (("2" (COPY "wk0")
+                                                          (("2"
+                                                            (EXPAND "wok?" -1)
+                                                            (("2" (FLATTEN)
+                                                              (("2"
+                                                                (CASE
+                                                                    "null?(lives(zf(G, p0)))")
+                                                                (("1"
+                                                                  (LEMMA
+                                                                   "groots_nolive"
+                                                                   ("F"
+                                                                    "zf(G, p0)"
+                                                                    "ys" "p"
+                                                                    "Y" "Y"))
+                                                                  (("1"
+                                                                    (LEMMA
+                                                                     "groots_nolive"
+                                                                     ("F"
+                                                                      "zf(G, p0)"
+                                                                      "ys" "p0"
+                                                                      "Y" "Y"))
+                                                                    (("1"
+                                                                      (ASSERT)
+                                                                      (("1"
+                                                                        (LEMMA
+                                                                         "bsvl_sep"
+                                                                         ("G"
+                                                                          "G"
+                                                                          "p"
+                                                                          "p"
+                                                                          "Y"
+                                                                          "Y"
+                                                                          "y0"
+                                                                          "car(Y)"))
+                                                                        (("1"
+                                                                          (LEMMA
+                                                                           "bsvl_sep"
+                                                                           ("G"
+                                                                            "G"
+                                                                            "p"
+                                                                            "p0"
+                                                                            "Y"
+                                                                            "Y"
+                                                                            "y0"
+                                                                            "car(Y)"))
+                                                                          (("1"
+                                                                            (INST
+                                                                             "ss"
+                                                                             "car(Y)")
+                                                                            (("1"
+                                                                              (EXPAND
+                                                                               "member")
+                                                                              (("1"
+                                                                                (EXPAND
+                                                                                 "nroot")
+                                                                                (("1"
+                                                                                  (REPLACE
+                                                                                   "r1")
+                                                                                  (("1"
+                                                                                    (REPLACE
+                                                                                     "r0")
+                                                                                    (("1"
+                                                                                      (EXPAND
+                                                                                       "nlt")
+                                                                                      (("1"
+                                                                                        (EXPAND
+                                                                                         "length")
+                                                                                        (("1"
+                                                                                          (ASSERT)
+                                                                                          (("1"
+                                                                                            (FLATTEN)
+                                                                                            (("1"
+                                                                                              (CASE
+                                                                                                  "n = 0")
+                                                                                              (("1"
+                                                                                                (REPLACE
+                                                                                                 -1)
+                                                                                                (("1"
+                                                                                                  (ASSERT)
+                                                                                                  NIL
+                                                                                                  NIL))
+                                                                                                NIL)
+                                                                                               ("2"
+                                                                                                (REPLACE
+                                                                                                 -1)
+                                                                                                (("2"
+                                                                                                  (ASSERT)
+                                                                                                  (("2"
+                                                                                                    (TYPEPRED
+                                                                                                     "n")
+                                                                                                    (("2"
+                                                                                                      (EXPAND
+                                                                                                       "bsvl"
+                                                                                                       -1)
+                                                                                                      (("2"
+                                                                                                        (REWRITE
+                                                                                                         "map_length"
+                                                                                                         -1)
+                                                                                                        (("2"
+                                                                                                          (REWRITE
+                                                                                                           "bpts_len"
+                                                                                                           -1)
+                                                                                                          (("2"
+                                                                                                            (REPLACE
+                                                                                                             "r1"
+                                                                                                             -1)
+                                                                                                            (("2"
+                                                                                                              (EXPAND
+                                                                                                               "length"
+                                                                                                               -1)
+                                                                                                              (("2"
+                                                                                                                (ASSERT)
+                                                                                                                NIL
+                                                                                                                NIL))
+                                                                                                              NIL))
+                                                                                                            NIL))
+                                                                                                          NIL))
+                                                                                                        NIL))
+                                                                                                      NIL))
+                                                                                                    NIL))
+                                                                                                  NIL))
+                                                                                                NIL))
+                                                                                              NIL))
+                                                                                            NIL))
+                                                                                          NIL))
+                                                                                        NIL))
+                                                                                      NIL))
+                                                                                    NIL))
+                                                                                  NIL))
+                                                                                NIL))
+                                                                              NIL))
+                                                                            NIL))
+                                                                          NIL))
+                                                                        NIL))
+                                                                      NIL))
+                                                                    NIL))
+                                                                  NIL)
+                                                                 ("2"
+                                                                  (LEMMA
+                                                                   "gr_cover"
+                                                                   ("Y" "Y" "i"
+                                                                    "n" "F"
+                                                                    "zf(G, p0)"
+                                                                    "ys" "p0"))
+                                                                  (("2"
+                                                                    (EXPAND
+                                                                     "wsep?"
+                                                                     -1)
+                                                                    (("2"
+                                                                      (EXPAND
+                                                                       "nroot")
+                                                                      (("2"
+                                                                        (REPLACE
+                                                                         "r1")
+                                                                        (("2"
+                                                                          (LEMMA
+                                                                           "bsvl_sep"
+                                                                           ("G"
+                                                                            "G"
+                                                                            "p"
+                                                                            "p"
+                                                                            "Y"
+                                                                            "Y"
+                                                                            "y0"
+                                                                            "car(Y)"))
+                                                                          (("1"
+                                                                            (EXPAND
+                                                                             "nroot"
+                                                                             -1)
+                                                                            (("1"
+                                                                              (REPLACE
+                                                                               "r1"
+                                                                               -1)
+                                                                              (("1"
+                                                                                (GROUND)
+                                                                                (("1"
+                                                                                  (SKOLEM
+                                                                                   -5
+                                                                                   "y1")
+                                                                                  (("1"
+                                                                                    (FLATTEN)
+                                                                                    (("1"
+                                                                                      (LEMMA
+                                                                                       "gr_nlt"
+                                                                                       ("Y"
+                                                                                        "Y"
+                                                                                        "F"
+                                                                                        "zf(G, p0)"
+                                                                                        "ys0"
+                                                                                        "p0"
+                                                                                        "ys1"
+                                                                                        "p"
+                                                                                        "y0"
+                                                                                        "y1"))
+                                                                                      (("1"
+                                                                                        (EXPAND
+                                                                                         "wsep?"
+                                                                                         -1)
+                                                                                        (("1"
+                                                                                          (EXPAND
+                                                                                           "wok?"
+                                                                                           "wk1")
+                                                                                          (("1"
+                                                                                            (LEMMA
+                                                                                             "bsvl_sep"
+                                                                                             ("G"
+                                                                                              "G"
+                                                                                              "p"
+                                                                                              "p"
+                                                                                              "Y"
+                                                                                              "Y"
+                                                                                              "y0"
+                                                                                              "y1"))
+                                                                                            (("1"
+                                                                                              (LEMMA
+                                                                                               "bsvl_sep"
+                                                                                               ("G"
+                                                                                                "G"
+                                                                                                "p"
+                                                                                                "p0"
+                                                                                                "Y"
+                                                                                                "Y"
+                                                                                                "y0"
+                                                                                                "y1"))
+                                                                                              (("1"
+                                                                                                (INST
+                                                                                                 "ss"
+                                                                                                 "y1")
+                                                                                                (("1"
+                                                                                                  (REPLACE
+                                                                                                   "r1")
+                                                                                                  (("1"
+                                                                                                    (REPLACE
+                                                                                                     "r0")
+                                                                                                    (("1"
+                                                                                                      (GROUND)
+                                                                                                      NIL
+                                                                                                      NIL))
+                                                                                                    NIL))
+                                                                                                  NIL))
+                                                                                                NIL))
+                                                                                              NIL))
+                                                                                            NIL))
+                                                                                          NIL))
+                                                                                        NIL))
+                                                                                      NIL))
+                                                                                    NIL))
+                                                                                  NIL)
+                                                                                 ("2"
+                                                                                  (EXPAND
+                                                                                   "member"
+                                                                                   1)
+                                                                                  (("2"
+                                                                                    (PROPAX)
+                                                                                    NIL
+                                                                                    NIL))
+                                                                                  NIL)
+                                                                                 ("3"
+                                                                                  (LEMMA
+                                                                                   "bsvl_sep"
+                                                                                   ("G"
+                                                                                    "G"
+                                                                                    "p"
+                                                                                    "p"
+                                                                                    "Y"
+                                                                                    "Y"
+                                                                                    "y0"
+                                                                                    "car(Y)"))
+                                                                                  (("3"
+                                                                                    (EXPAND
+                                                                                     "nroot"
+                                                                                     -1)
+                                                                                    (("3"
+                                                                                      (REPLACE
+                                                                                       "r1"
+                                                                                       -1)
+                                                                                      (("3"
+                                                                                        (LEMMA
+                                                                                         "gr_len"
+                                                                                         ("Y"
+                                                                                          "Y"
+                                                                                          "F"
+                                                                                          "zf(G, p0)"
+                                                                                          "ys0"
+                                                                                          "p0"
+                                                                                          "ys1"
+                                                                                          "p"))
+                                                                                        (("3"
+                                                                                          (EXPAND
+                                                                                           "member"
+                                                                                           2)
+                                                                                          (("3"
+                                                                                            (PROPAX)
+                                                                                            NIL
+                                                                                            NIL))
+                                                                                          NIL))
+                                                                                        NIL))
+                                                                                      NIL))
+                                                                                    NIL))
+                                                                                  NIL))
+                                                                                NIL))
+                                                                              NIL))
+                                                                            NIL)
+                                                                           ("2"
+                                                                            (PROPAX)
+                                                                            NIL
+                                                                            NIL))
+                                                                          NIL))
+                                                                        NIL))
+                                                                      NIL))
+                                                                    NIL))
+                                                                  NIL))
+                                                                NIL))
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL))
+                                                      NIL))
+                                                    NIL))
+                                                  NIL))
+                                                NIL)
+                                               ("2" (REPLACE "zfe")
+                                                (("2" (PROPAX) NIL NIL)) NIL))
+                                              NIL))
+                                            NIL))
+                                          NIL))
+                                        NIL))
+                                      NIL))
+                                    NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|bsvl_eq-0| "" 3999724326
+   ("" (SKEEP)
+    (("" (LABEL "sw" -1)
+      (("" (LEMMA "sw_rtl" ("G" "G" "p0" "p0" "p" "p" "Y" "Y"))
+        (("" (ASSERT)
+          (("" (FLATTEN)
+            (("" (LABEL "r1" -1)
+              (("" (LABEL "r0" -2)
+                (("" (LEMMA "nroot_eq" ("G" "G" "p0" "p0" "p" "p" "Y" "Y"))
+                  (("" (ASSERT)
+                    (("" (LABEL "ne" -1)
+                      (("" (COPY "sw")
+                        (("" (EXPAND "same_walk?" -1)
+                          (("" (FLATTEN)
+                            (("" (LABEL "c0" -1)
+                              (("" (LABEL "c1" -2)
+                                (("" (LABEL "wk0" -3)
+                                  (("" (LABEL "wk1" -4)
+                                    (("" (LABEL "zfe" -5)
+                                      (("" (LABEL "sp" -6)
+                                        (("" (LABEL "ss" -7)
+                                          (("" (LABEL "sg" -8)
+                                            ((""
+                                              (REWRITE "list_extensionality")
+                                              (("" (SPLIT 1)
+                                                (("1" (EXPAND "bsvl")
+                                                  (("1" (REWRITE "map_length")
+                                                    (("1"
+                                                      (REWRITE "map_length")
+                                                      (("1"
+                                                        (REWRITE "bpts_len")
+                                                        (("1"
+                                                          (REWRITE "bpts_len")
+                                                          (("1"
+                                                            (EXPAND "nroot"
+                                                                    "ne")
+                                                            (("1" (ASSERT) NIL
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL))
+                                                      NIL))
+                                                    NIL))
+                                                  NIL)
+                                                 ("2" (SKEEP)
+                                                  (("2"
+                                                    (LEMMA "bsvl_sep"
+                                                     ("G" "G" "p" "p0" "Y" "Y"
+                                                      "y0" "car(Y)"))
+                                                    (("1" (POSTPONE) NIL NIL)
+                                                     ("2" (POSTPONE) NIL NIL))
+                                                    NIL))
+                                                  NIL))
+                                                NIL))
+                                              NIL))
+                                            NIL))
+                                          NIL))
+                                        NIL))
+                                      NIL))
+                                    NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|bsvl_eq-1| NIL 3999724302 ("" (POSTPONE) NIL NIL)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|sw_rtl| FORMULA-DECL NIL |cad_local| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|rtl| CONST-DECL "list[real]" |cad_roots| NIL)
+    (|bpts| CONST-DECL "list[real]" |cad_fibre| NIL)
+    (|svat| CONST-DECL "SV" |cad_fibre| NIL)
+    (|map_length| FORMULA-DECL NIL |more_map_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|bpts_len| FORMULA-DECL NIL |cad_fibre| NIL)
+    (|nroot| CONST-DECL "nat" |cad_roots| NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (>= CONST-DECL "bool" |reals| NIL) (< CONST-DECL "bool" |reals| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|lives| DEF-DECL "list[list[mpoly]]" |alg_bis| NIL)
+    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|car| ADT-ACCESSOR-DECL "[(cons?) -> T]" |list_adt| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|bsvl_sep| FORMULA-DECL NIL |cad_local| NIL)
+    (|nlt| DEF-DECL "nat" |cad_fibre| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|member| DEF-DECL "bool" |list_props| NIL)
+    (|groots_nolive| FORMULA-DECL NIL |cad_roots| NIL)
+    (|wsep?| CONST-DECL "bool" |cad_gpar| NIL)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|gr_nlt| FORMULA-DECL NIL |cad_gpar| NIL)
+    (|gr_len| FORMULA-DECL NIL |cad_gpar| NIL)
+    (|gr_cover| FORMULA-DECL NIL |cad_gpar| NIL)
+    (|list_extensionality| FORMULA-DECL NIL |more_list_props| |structures|)
+    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (|bsvl| CONST-DECL "list[SV]" |cad_fibre| NIL)
+    (|msg| CONST-DECL "SG" |sg_norm| NIL)
+    (|zf| CONST-DECL "list[list[mpoly]]" |zfam| NIL)
+    (|wok?| CONST-DECL "bool" |walk_def| NIL)
+    (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
+    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|same_walk?| CONST-DECL "bool" |cad_local| NIL)
+    (|nroot_eq| FORMULA-DECL NIL |cad_local| NIL))
+   SHOSTAK))
+ (|sw_near| 0
+  (|sw_near-0| "" 3999724555
+   ("" (SKEEP)
+    (("" (COPY -1)
+      (("" (EXPAND "certz?" -1)
+        (("" (LEMMA "wok_exist" ("F" "zf(G, p0)" "ys" "p0"))
+          (("" (ASSERT)
+            (("" (SKOLEM -1 "Y")
+              (("" (FLATTEN)
+                (("" (LEMMA "near_cells" ("F" "G" "vs0" "p0" "Y" "Y"))
+                  (("" (ASSERT)
+                    (("" (SKOLEM -1 "d")
+                      (("" (LABEL "nc" -1)
+                        (("" (INST 1 "Y" "d")
+                          (("" (SPLIT 1)
+                            (("1" (PROPAX) NIL NIL)
+                             ("2" (SKEEP)
+                              (("2" (INST "nc" "p")
+                                (("2" (ASSERT)
+                                  (("2" (FLATTEN)
+                                    (("2"
+                                      (LEMMA "wrs_det"
+                                       ("ws0" "p0" "ws1" "p" "F" "G"))
+                                      (("2" (ASSERT)
+                                        (("2" (FLATTEN)
+                                          (("2" (EXPAND "same_walk?")
+                                            (("2" (EXPAND "samepat?")
+                                              (("2" (ASSERT)
+                                                (("2" (SPLIT 1)
+                                                  (("1" (PROPAX) NIL NIL)
+                                                   ("2" (PROPAX) NIL NIL)
+                                                   ("3" (PROPAX) NIL NIL))
+                                                  NIL))
+                                                NIL))
+                                              NIL))
+                                            NIL))
+                                          NIL))
+                                        NIL))
+                                      NIL))
+                                    NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|sw_near-1| NIL 3999724550 ("" (POSTPONE) NIL NIL)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|certz?| CONST-DECL "bool" |zfam| NIL)
+    (|same_walk?| CONST-DECL "bool" |cad_local| NIL)
+    (|samepat?| CONST-DECL "bool" |cad_gpar| NIL)
+    (|wrs_det| FORMULA-DECL NIL |zfam| NIL) (>= CONST-DECL "bool" |reals| NIL)
+    (|nonneg_real| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (> CONST-DECL "bool" |reals| NIL)
+    (|posreal| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (|near_cells| FORMULA-DECL NIL |mwalk| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|zf| CONST-DECL "list[list[mpoly]]" |zfam| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|wok_exist| FORMULA-DECL NIL |walk_transfer| NIL))
+   SHOSTAK))
+ (|loc_stack| 0
+  (|loc_stack-2| "" 3999725020
+   ("" (SKEEP)
+    (("" (LEMMA "sw_near" ("G" "G" "p0" "p0"))
+      (("" (ASSERT)
+        (("" (SKOLEM -1 ("Y" "d"))
+          (("" (FLATTEN)
+            (("" (INST 1 "d")
+              (("" (SKEEP)
+                (("" (INST -2 "p")
+                  (("" (ASSERT)
+                    (("" (LEMMA "rsvl_eq" ("G" "G" "p0" "p0" "p" "p" "Y" "Y"))
+                      ((""
+                        (LEMMA "bsvl_eq" ("G" "G" "p0" "p0" "p" "p" "Y" "Y"))
+                        (("" (ASSERT)
+                          (("" (EXPAND "same_walk?" -4) (("" (PROPAX) NIL NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|loc_stack-0| "" 3999724565
+   ("" (SKEEP)
+    (("" (LEMMA "sw_near" ("G" "G" "p0" "p0"))
+      (("" (ASSERT)
+        (("" (SKOLEM -1 ("Y" "d"))
+          (("" (FLATTEN)
+            (("" (INST 1 "d")
+              (("" (SKEEP)
+                (("" (INST -2 "p")
+                  (("" (ASSERT)
+                    (("" (LEMMA "rsvl_eq" ("G" "G" "p0" "p0" "p" "p" "Y" "Y"))
+                      ((""
+                        (LEMMA "bsvl_eq" ("G" "G" "p0" "p0" "p" "p" "Y" "Y"))
+                        (("" (ASSERT)
+                          (("" (ASSERT) (("" (POSTPONE) NIL NIL)) NIL)) NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|loc_stack-1| NIL 3999724564 ("" (POSTPONE) NIL NIL)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|bsvl_eq| FORMULA-DECL NIL |cad_local| NIL)
+    (|same_walk?| CONST-DECL "bool" |cad_local| NIL)
+    (|rsvl_eq| FORMULA-DECL NIL |cad_local| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|nonneg_real| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (> CONST-DECL "bool" |reals| NIL)
+    (|posreal| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|sw_near| FORMULA-DECL NIL |cad_local| NIL))
+   SHOSTAK))
+ (|loc_cont| 0
+  (|loc_cont-0| "" 3999725073
+   ("" (SKEEP)
+    (("" (LABEL "cz" -1)
+      (("" (LEMMA "sw_near" ("G" "G" "p0" "cons(x0, xs)"))
+        (("" (ASSERT)
+          (("" (SKOLEM -1 ("Y" "d1"))
+            (("" (FLATTEN)
+              (("" (LABEL "wk" -1)
+                (("" (LABEL "sw" -2)
+                  (("" (CASE "null?(lives(zf(G, cons(x0, xs))))")
+                    (("1" (INST 1 "d1")
+                      (("1" (SKEEP)
+                        (("1" (INST "sw" "p")
+                          (("1" (ASSERT)
+                            (("1"
+                              (LEMMA "nroot_eq"
+                               ("G" "G" "p0" "cons(x0, xs)" "p" "p" "Y" "Y"))
+                              (("1" (ASSERT)
+                                (("1"
+                                  (LEMMA "sw_rtl"
+                                   ("G" "G" "p0" "cons(x0, xs)" "p" "p" "Y"
+                                    "Y"))
+                                  (("1" (ASSERT)
+                                    (("1" (FLATTEN)
+                                      (("1"
+                                        (LEMMA "groots_nolive"
+                                         ("F" "zf(G, cons(x0, xs))" "ys"
+                                          "cons(x0, xs)" "Y" "Y"))
+                                        (("1" (ASSERT)
+                                          (("1" (SKEEP)
+                                            (("1" (EXPAND "nroot")
+                                              (("1" (REPLACE -3)
+                                                (("1" (REPLACE -1)
+                                                  (("1" (EXPAND "length")
+                                                    (("1" (ASSERT) NIL NIL))
+                                                    NIL))
+                                                  NIL))
+                                                NIL))
+                                              NIL))
+                                            NIL))
+                                          NIL))
+                                        NIL))
+                                      NIL))
+                                    NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL)
+                     ("2" (COPY "wk")
+                      (("2" (EXPAND "wok?" -1)
+                        (("2" (FLATTEN)
+                          (("2" (SPLIT -3)
+                            (("1" (PROPAX) NIL NIL)
+                             ("2" (FLATTEN)
+                              (("2" (COPY "cz")
+                                (("2" (EXPAND "certz?" -1)
+                                  (("2"
+                                    (LEMMA "gr_near"
+                                     ("Y" "Y" "F" "zf(G, cons(x0, xs))" "x0"
+                                      "x0" "xs" "xs" "eta" "eta"))
+                                    (("2" (EXPAND "wsep?" -1)
+                                      (("2" (ASSERT)
+                                        (("2" (SKOLEM -1 "d2")
+                                          (("2" (LABEL "gn" -1)
+                                            (("2" (INST 2 "min(d1, d2)")
+                                              (("2" (SKEEP 2)
+                                                (("2" (LABEL "np" -1)
+                                                  (("2" (LABEL "ap" -2)
+                                                    (("2"
+                                                      (CASE
+                                                          "min(d1, d2) <= d1 AND min(d1, d2) <= d2")
+                                                      (("1" (FLATTEN)
+                                                        (("1"
+                                                          (LEMMA "near_mono"
+                                                           ("vs0"
+                                                            "cons(x0, xs)"
+                                                            "vs1" "p" "d"
+                                                            "min(d1, d2)" "d1"
+                                                            "d1"))
+                                                          (("1"
+                                                            (LEMMA "near_mono"
+                                                             ("vs0"
+                                                              "cons(x0, xs)"
+                                                              "vs1" "p" "d"
+                                                              "min(d1, d2)"
+                                                              "d1" "d2"))
+                                                            (("1" (ASSERT)
+                                                              (("1"
+                                                                (INST "sw" "p")
+                                                                (("1" (ASSERT)
+                                                                  (("1"
+                                                                    (LABEL
+                                                                     "swp" -1)
+                                                                    (("1"
+                                                                      (LEMMA
+                                                                       "wrs_wi"
+                                                                       ("F" "G"
+                                                                        "vs0"
+                                                                        "cons(x0, xs)"
+                                                                        "vs1"
+                                                                        "p"))
+                                                                      (("1"
+                                                                        (ASSERT)
+                                                                        (("1"
+                                                                          (FLATTEN)
+                                                                          (("1"
+                                                                            (LEMMA
+                                                                             "nroot_eq"
+                                                                             ("G"
+                                                                              "G"
+                                                                              "p0"
+                                                                              "cons(x0, xs)"
+                                                                              "p"
+                                                                              "p"
+                                                                              "Y"
+                                                                              "Y"))
+                                                                            (("1"
+                                                                              (ASSERT)
+                                                                              (("1"
+                                                                                (LEMMA
+                                                                                 "sw_rtl"
+                                                                                 ("G"
+                                                                                  "G"
+                                                                                  "p0"
+                                                                                  "cons(x0, xs)"
+                                                                                  "p"
+                                                                                  "p"
+                                                                                  "Y"
+                                                                                  "Y"))
+                                                                                (("1"
+                                                                                  (ASSERT)
+                                                                                  (("1"
+                                                                                    (FLATTEN)
+                                                                                    (("1"
+                                                                                      (LABEL
+                                                                                       "r1"
+                                                                                       -1)
+                                                                                      (("1"
+                                                                                        (LABEL
+                                                                                         "r0"
+                                                                                         -2)
+                                                                                        (("1"
+                                                                                          (COPY
+                                                                                           "swp")
+                                                                                          (("1"
+                                                                                            (ASSERT)
+                                                                                            (("1"
+                                                                                              (CASE
+                                                                                                  "samepat?(zf(G, cons(x0, xs)), cons(x0, xs), p, Y) AND memok?(zf(G, cons(x0, xs)), msg(p), zf(G, cons(x0, xs))) AND sepok?(zf(G, cons(x0, xs)), msg(p), Y)")
+                                                                                              (("1"
+                                                                                                (FLATTEN)
+                                                                                                (("1"
+                                                                                                  (INST
+                                                                                                   "np"
+                                                                                                   "p")
+                                                                                                  (("1"
+                                                                                                    (ASSERT)
+                                                                                                    (("1"
+                                                                                                      (SKEEP)
+                                                                                                      (("1"
+                                                                                                        (LEMMA
+                                                                                                         "close_nth"
+                                                                                                         ("L0"
+                                                                                                          "groots(zf(G, cons(x0, xs)), cons(x0, xs), Y)"
+                                                                                                          "L1"
+                                                                                                          "groots(zf(G, cons(x0, xs)), p, Y)"
+                                                                                                          "i"
+                                                                                                          "i"
+                                                                                                          "eta"
+                                                                                                          "eta"))
+                                                                                                        (("1"
+                                                                                                          (EXPAND
+                                                                                                           "rt")
+                                                                                                          (("1"
+                                                                                                            (EXPAND
+                                                                                                             "nroot")
+                                                                                                            (("1"
+                                                                                                              (REPLACE
+                                                                                                               "r1")
+                                                                                                              (("1"
+                                                                                                                (REPLACE
+                                                                                                                 "r0")
+                                                                                                                (("1"
+                                                                                                                  (ASSERT)
+                                                                                                                  NIL
+                                                                                                                  NIL))
+                                                                                                                NIL))
+                                                                                                              NIL))
+                                                                                                            NIL))
+                                                                                                          NIL))
+                                                                                                        NIL))
+                                                                                                      NIL))
+                                                                                                    NIL))
+                                                                                                  NIL))
+                                                                                                NIL)
+                                                                                               ("2"
+                                                                                                (EXPAND
+                                                                                                 "same_walk?"
+                                                                                                 "sw")
+                                                                                                (("2"
+                                                                                                  (FLATTEN)
+                                                                                                  (("2"
+                                                                                                    (EXPAND
+                                                                                                     "wok?")
+                                                                                                    (("2"
+                                                                                                      (GROUND)
+                                                                                                      NIL
+                                                                                                      NIL))
+                                                                                                    NIL))
+                                                                                                  NIL))
+                                                                                                NIL))
+                                                                                              NIL))
+                                                                                            NIL))
+                                                                                          NIL))
+                                                                                        NIL))
+                                                                                      NIL))
+                                                                                    NIL))
+                                                                                  NIL))
+                                                                                NIL))
+                                                                              NIL))
+                                                                            NIL))
+                                                                          NIL))
+                                                                        NIL))
+                                                                      NIL))
+                                                                    NIL))
+                                                                  NIL))
+                                                                NIL))
+                                                              NIL))
+                                                            NIL))
+                                                          NIL))
+                                                        NIL)
+                                                       ("2" (EXPAND "min")
+                                                        (("2" (LIFT-IF)
+                                                          (("2" (GROUND) NIL
+                                                            NIL))
+                                                          NIL))
+                                                        NIL))
+                                                      NIL))
+                                                    NIL))
+                                                  NIL))
+                                                NIL))
+                                              NIL))
+                                            NIL))
+                                          NIL))
+                                        NIL))
+                                      NIL))
+                                    NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|loc_cont-1| NIL 3999725042 ("" (POSTPONE) NIL NIL)
+   ((|real_minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|sw_near| FORMULA-DECL NIL |cad_local| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
+    (|zf| CONST-DECL "list[list[mpoly]]" |zfam| NIL)
+    (|lives| DEF-DECL "list[list[mpoly]]" |alg_bis| NIL)
+    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|groots_nolive| FORMULA-DECL NIL |cad_roots| NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|nroot| CONST-DECL "nat" |cad_roots| NIL)
+    (|sw_rtl| FORMULA-DECL NIL |cad_local| NIL)
+    (|nroot_eq| FORMULA-DECL NIL |cad_local| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|nonneg_real| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (> CONST-DECL "bool" |reals| NIL)
+    (|posreal| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (|certz?| CONST-DECL "bool" |zfam| NIL)
+    (|wsep?| CONST-DECL "bool" |cad_gpar| NIL)
+    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|sepok?| DEF-DECL "bool" |walk_def| NIL)
+    (|msg| CONST-DECL "SG" |sg_norm| NIL)
+    (|memok?| DEF-DECL "bool" |walk_def| NIL)
+    (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
+    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|samepat?| CONST-DECL "bool" |cad_gpar| NIL)
+    (|rt| CONST-DECL "real" |cad_roots| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|close_nth| FORMULA-DECL NIL |cad_gpar| NIL)
+    (|groots| DEF-DECL "list[real]" |cad_roots| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|same_walk?| CONST-DECL "bool" |cad_local| NIL)
+    (|wrs_wi| FORMULA-DECL NIL |mwalk| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|near_mono| FORMULA-DECL NIL |mpar| NIL)
+    (|posreal_min| APPLICATION-JUDGEMENT "{z: posreal | z <= x AND z <= y}"
+     |real_defs| NIL)
+    (<= CONST-DECL "bool" |reals| NIL)
+    (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL)
+    (|gr_near| FORMULA-DECL NIL |cad_gpar| NIL)
+    (|wok?| CONST-DECL "bool" |walk_def| NIL))
+   SHOSTAK)))
+

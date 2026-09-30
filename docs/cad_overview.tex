@@ -44,7 +44,7 @@
 \begin{document}
 
 {\sffamily\small\bfseries\color{moss}PVS\_CAD \quad·\quad PVS 8.1 + NASALib \quad·\quad SEPTEMBER 2026}\par\vspace{6pt}
-{\fontsize{24}{29}\selectfont\bfseries A verified, complete CAD-based\\ decision procedure in PVS}\par\vspace{8pt}
+{\fontsize{24}{29}\selectfont\bfseries A verified CAD algorithm and\\ decision procedure in PVS}\par\vspace{8pt}
 {\large\color{muted}An overview of the pvs\_cad library and the \texttt{(cad)} proof strategy}\par\vspace{8pt}
 {\large J.~Tanner Slagel{\renewcommand\thefootnote{*}\footnote{This report was written with Claude Code using Claude Opus 5.5. The pvs\_cad library was developed the same way, with Claude Fable 5.1 and then Opus 5 and Opus 5.5; every proof in it is checked by PVS. Claude Code: \url{https://claude.com/claude-code}.}}}\par\vspace{2pt}
 {\small\color{muted}Code and proofs: \url{https://github.com/j-tanner-slagel/pvs_cad}}\par\vspace{10pt}
@@ -52,10 +52,18 @@
 \textbf{In short.} pvs\_cad is a PVS library, together with a proof strategy \texttt{(cad)}, that decides the
 first-order theory of the real numbers: sentences built from polynomial equations and inequalities with rational
 coefficients, the connectives AND, OR, NOT, IMPLIES and IFF, and quantifiers \texttt{FORALL}/\texttt{EXISTS} over real
-variables, written in prenex form (every sentence has one). The procedure works in the manner of cylindrical algebraic decomposition (CAD), cell by cell over cylinders, and is written as an executable PVS function. The library
-proves it \emph{sound} (an answer is always the truth) and \emph{complete} (it always answers). Inside a proof,
+variables, written in prenex form (every sentence has one). Its n-level engine is an executable PVS function that
+computes a cylindrical algebraic decomposition (CAD) in two or more variables, and the library proves that it does
+whenever its run-time certificate holds, which some value of its search-effort parameter $u$ always achieves: the cells
+cover $\mathbb{R}^n$, are disjoint, connected and first-order definable at every level, stack in cylinders over
+continuous, strictly ordered root functions with definable graphs, and carry one sign vector of the input polynomials
+each; a companion executable function, \texttt{cad\_out}, returns the cells of the same run as data (one or more records
+per nonempty cell), and that CAD decides every sentence over those polynomials in the same variables, in the same order.
+The decision procedure \texttt{(cad)} runs, \texttt{decide5}, which uses this engine for three or more variables and as
+the fallback at two, is proved \emph{sound} (an answer is always the truth) and \emph{complete} (it always answers).
+Inside a proof,
 \texttt{(cad)} evaluates the procedure and turns the answer into a PVS proof that the kernel checks. The whole library,
-233 theories and 3,506 formulas, is proved.
+256 theories and 3,814 formulas, is proved.
 
 \section{What it looks like}
 Real PVS sessions, with the simplifier's internal messages cut. \texttt{(cad)} decides one closed formula where it stands.
@@ -77,7 +85,7 @@ Four quantifiers, the quadratic formula as an existence theorem:
 \end{Verbatim}
 \end{termbox}
 
-Motzkin's polynomial~\cite{motzkin} is nonnegative, although it is not a sum of squares, so sum-of-squares certificates cannot prove it:
+Motzkin's polynomial~\cite{motzkin} is nonnegative although it is not itself a sum of squares, so no plain sum-of-squares decomposition proves it:
 \begin{termbox}
 \begin{Verbatim}[commandchars=\\«», fontsize=\footnotesize]
 \Dm«b_motzkin :»
@@ -149,9 +157,10 @@ sequent. It collects the polynomial hypotheses and goals, replaces non-polynomia
 \texttt{f(x)} by universally quantified reals, and decides the implication. The combined formula enters the proof by
 \texttt{case}, so both branches are checked by PVS.
 
-The trusted base is the PVS kernel plus the ground evaluator that runs \texttt{decide5}, the same base as NASALib's
-Sturm and Tarski strategies; beyond that, one trusts the specification: that the semantics \texttt{fsem} and the
-theorem statements (last section) say what is intended. The strategy code (1,957 lines of Lisp) is not trusted: it only chooses proof steps.
+The trusted base is the PVS kernel plus the ground evaluator that runs \texttt{decide5} (\texttt{decide7} under
+\texttt{(cad :cad-only? t)}), the same base as NASALib's Sturm and Tarski strategies, and NASALib's saved proofs of the
+theorems the library imports, which were not replayed here; beyond that, one trusts the specification: that the semantics \texttt{fsem} and the
+theorem statements (last section) say what is intended. The strategy code (1,964 lines of Lisp) is not trusted: it only chooses proof steps.
 
 \section{What it decides in practice}
 CAD is doubly exponential in the worst case, so completeness means ``always answers, given time''. Some measured
@@ -176,7 +185,7 @@ Cauchy--Schwarz in the plane do not finish in two minutes. On a set of 100 gener
 98 were proved within 300\,s, and no answer disagreed with Z3.
 
 \section{How it was built}
-The library was built in stages in September 2026 (275 commits). Most stages also shipped a verified strategy of their own.
+The library was built in stages in September 2026 (279 commits). Most stages also shipped a verified strategy of their own.
 \begin{enumerate}[leftmargin=1.3em, itemsep=2pt, topsep=2pt]
 \item \textbf{Multivariate polynomials.} A normal form for multivariate polynomials over the rationals, proved unique, and
 reflection lemmas connecting it to PVS real expressions (strategies \texttt{mpoly-eq}, \texttt{mpoly-simp}).
@@ -184,12 +193,13 @@ reflection lemmas connecting it to PVS real expressions (strategies \texttt{mpol
 Sturm and Tarski libraries (\texttt{alg-roots}).
 \item \textbf{Branching quantifier elimination.} One-variable quantifier elimination with parametric sign conditions
 (\texttt{qe-exists}, \texttt{poly-sign}).
-\item \textbf{Resultants and subresultants}: determinants, the resultant, and the subresultant theory behind
-Collins's projection.
+\item \textbf{Resultants and subresultants}: determinants, the resultant, and the principal subresultant coefficients
+with their specialization property; the Collins- and McCallum-shaped projection operators built from them are defined but
+not proved delineating, and the decision procedure does not use them.
 \item \textbf{A first cylindrical decision}, \texttt{decide}, proved correct for every sentence
 (\texttt{decide\_correct}). It was complete but exponential in the number of polynomials: a circle and a line did not
 finish in 15 minutes.
-\item \textbf{The fast cylindrical decision.} This is the procedure \texttt{(cad)} runs. Over each cell of the lower variables, it lifts to
+\item \textbf{The fast cylindrical decision.} This is the procedure \texttt{(cad)} runs for two or more quantifiers. Over each cell of the lower variables, it lifts to
 the next variable by walking exact rational separators between that variable's roots. It reads the sign vector at each
 separator and at each root through Tarski queries at the cell's sample point, which may be algebraic. This builds one
 tower of cells per outer sector, for any number of levels. Soundness
@@ -201,19 +211,27 @@ out. Some searches were made total; the others share one fuel parameter $u$. The
 makes every check pass. Two
 facts carry it. First, each search stops at its first success, so a larger $u$ changes nothing once $u$ suffices.
 Second, the closures that add sign reads draw them from a finite set built level by level from \texttt{F}, so they reach
-a fixpoint (\texttt{decn\_complete}). \texttt{decide5} raises $u$ until the checks pass; it terminates on the
-non-computable measure ``least sufficient $u$'', which keeps it an ordinary executable PVS function
+a fixpoint (\texttt{decn\_complete}). \texttt{decn\_u}, which \texttt{decide5} calls, raises $u$ until the checks pass; it terminates on a
+non-computable measure, the distance to a bound beyond which every $u$ suffices (\texttt{ubound}, chosen by
+\texttt{epsilon}), which keeps it an ordinary executable PVS function
 (\texttt{decn\_u\_complete}, then \texttt{decide5\_decides}).
+\item \textbf{The CAD.} The run-time checks were then shown to give delineability in the sign-invariant sense
+(\texttt{delin\_cl?}): if the walk's certificate holds at one point of a connected set and the signs it reads there hold
+across the set, the family's roots over the set are continuous and never cross, and the family has one sign vector on each
+section and band (\texttt{stack\_const}). On that rest the proofs that the run's cells form a CAD (\texttt{cad\_run}),
+that \texttt{cad\_out} returns them as data which decides every sentence over \texttt{F} in the same variables
+(\texttt{cad\_out\_ok}, \texttt{cad\_decides}), and that every cell and every root function's graph is first-order
+definable (\texttt{rcell\_fod\_le}, \texttt{graph\_fod}); \texttt{cad\_verified} puts them together.
 \end{enumerate}
 
 \section{The library in numbers}
 \begin{center}\small
 \begin{tabular}{@{}l r@{\qquad}l r@{}}
 \toprule
-PVS theories (files) & 233 & Formulas proved, whole-library replay & 3,506 of 3,506\\
-Lines of PVS specification & 18,367 & \quad lemmas and theorems & 2,392\\
-Lines of strategy code (Lisp) & 1,957 & \quad TCCs (type-correctness obligations) & 1,114\\
-Commits, September 2026 & 275 & Axioms added & none\\
+PVS theories (files) & 256 & Formulas proved, whole-library replay & 3,814 of 3,814\\
+Lines of PVS specification & 20,133 & \quad lemmas and theorems & 2,609\\
+Lines of strategy code (Lisp) & 1,964 & \quad TCCs (type-correctness obligations) & 1,205\\
+Commits, September 2026 & 279 & Axioms added & none\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -223,18 +241,30 @@ It builds on NASALib's \texttt{Sturm} and \texttt{Tarski} (univariate root count
 Tarski showed that the first-order theory of the real numbers is decidable~\cite{tarski}, and Collins's
 cylindrical algebraic decomposition~\cite{collins} made the decision practical; this library builds on the
 PVS~\cite{pvs} libraries of NASALib~\cite{nasalib}, in particular the univariate Sturm and Tarski decision
-procedures of Narkawicz, Mu\~noz and Dutle~\cite{nmd}. A formal correctness proof of CAD exists in
-Rocq~\cite{vermande}, stated for an abstract real closed field; it is a correctness proof, not an executable
-procedure used as a tactic. Isabelle/HOL has a verified, complete multivariate quantifier elimination
-procedure~\cite{kosaian}, exported to executable code; its authors report that without virtual substitution
-it ``appears to hang on all but the simplest univariate examples''. Lean's Mathlib~\cite{mathlib} has, as far
+procedures of Narkawicz, Mu\~noz and Dutle~\cite{nmd}. A formal correctness proof of Collins's CAD, including the
+delineability of Collins's projection, exists in Rocq~\cite{vermande}, over an abstract real closed field; it is a
+correctness proof, not an executable procedure used as a tactic. Isabelle/HOL has a verified, complete multivariate quantifier elimination
+procedure~\cite{kosaian}, exported to executable code; its authors report that, without virtual substitution, it is
+impractical beyond the simplest univariate examples. Lean's Mathlib~\cite{mathlib} has, as far
 as we could find, no CAD formalization and no CAD-based decision tactic, and a Lean project's roadmap from
 September 2026 lists CAD, delineability and Sturm theory among what Mathlib lacks~\cite{hex}; Lean's
 nonlinear tactics (\texttt{nlinarith}, \texttt{polyrith}) are heuristic or check certificates found by an
 external algebra system, and are not complete. To our knowledge (a survey of September 2026), pvs\_cad is
-the first executable, proof-producing decision procedure of the CAD family that is formally verified sound and
-complete and is usable as a tactic in an interactive prover. That its cells form a CAD in the classical sense
-(connected, sign-invariant cells over continuous root functions) is not yet proved; that proof is in progress.
+the first multivariate decision procedure of the CAD family that is executable, proof-producing, formally verified
+sound and complete, and usable as a tactic in an interactive prover, and its engine is proved to compute a CAD in
+the sense of Basu, Pollack and Roy's Def.~5.1. What is proved, and what is not:
+\begin{itemize}[leftmargin=1.3em, itemsep=1pt, topsep=2pt]
+\item ``Semi-algebraic'' is used in the sense of definable by a first-order formula over the reals, a standard
+definition; that it agrees with the quantifier-free definition Basu, Pollack and Roy use is the Tarski--Seidenberg
+theorem, which is not formalized here. General quantifier elimination with free variables, which comes next, would
+give quantifier-free cell descriptions directly.
+\item Delineability is proved for the polynomial families the run builds and checks, not for a named projection
+operator (Collins, McCallum, Brown--McCallum).
+\item The CAD theorem covers the n-level engine in two or more variables; for one variable the sectors of the line
+have the CAD properties, proved piece by piece but not yet as one theorem.
+\item \texttt{(cad)} also answers some goals by a witness search or a two-level method, whose answers are proved
+correct too; \texttt{(cad :cad-only? t)} uses only the CAD engine (the sectors of the line in one variable).
+\end{itemize}
 
 \section{The main theorems}
 A sentence is encoded as data: \texttt{os} lists the quantifiers outermost first (\texttt{TRUE} for $\forall$,
@@ -256,15 +286,10 @@ fsem(os, F, phi, ys): \Kw{RECURSIVE} bool =
 The decision procedure \texttt{decide5} returns a record: \texttt{val}, its verdict, and \texttt{ok}, a flag that is
 TRUE when its run-time checks passed. Three theorems say everything about it:
 
-\begin{thmbox}{Soundness \Cm{\normalfont(cad\_decide5.pvs)}}
+\begin{thmbox}{Soundness \Cm{\normalfont(cad\_decide5.pvs)} and completeness \Cm{\normalfont(complete\_all.pvs)}}
 \begin{Verbatim}
-decide5_correct: \Kw{THEOREM} decide5(reverse(os), F, phi)`ok \Kw{IMPLIES}
-  (decide5(reverse(os), F, phi)`val \Kw{IFF} fsem(os, F, phi, null))
-\end{Verbatim}
-\end{thmbox}
-\vspace{-4pt}
-\begin{thmbox}{Completeness \Cm{\normalfont(complete\_all.pvs)}}
-\begin{Verbatim}
+decide5_correct:  \Kw{THEOREM} decide5(reverse(os), F, phi)`ok \Kw{IMPLIES}
+                    (decide5(reverse(os), F, phi)`val \Kw{IFF} fsem(os, F, phi, null))
 decide5_complete: \Kw{THEOREM} decide5(reverse(os), F, phi)`ok
 decide5_decides:  \Kw{THEOREM} decide5(reverse(os), F, phi)`val \Kw{IFF} fsem(os, F, phi, null)
 \end{Verbatim}
@@ -275,8 +300,21 @@ prenex sentence with any number of quantifiers. \texttt{decide5} is a total func
 its termination obligations. So the procedure always terminates, always passes its own checks, and always returns the
 truth of the sentence.
 
+\texttt{cad\_of?(u, qs, F)} states the conditions of a CAD adapted to \texttt{F} for the cells of the engine
+\texttt{decn\_o} (covering and disjoint in $\mathbb{R}^n$; connected and first-order definable at every level; delineable
+cylinders with definable root graphs; one sign vector each), returned as data (\texttt{cad\_out}).
+\texttt{(cad :cad-only? t)} uses \texttt{decide7} (\texttt{cad\_decide7.pvs}), whose \texttt{decide7\_correct} and
+\texttt{decide7\_decides} have the statements above with \texttt{decide7} in place of \texttt{decide5}.
 
-\begin{thebibliography}{99}\small
+\begin{thmbox}{The CAD \Cm{\normalfont(cad\_verified.pvs)}}
+\begin{Verbatim}
+cad_verified: \Kw{THEOREM} decn_o(u, qs, F, Psi)`ok \Kw{AND} length(qs) >= 2 \Kw{IMPLIES} cad_of?(u, qs, F)
+cad_exists:   \Kw{THEOREM} length(qs) >= 2 \Kw{IMPLIES} \Kw{EXISTS} u: cad_of?(u, qs, F)
+\end{Verbatim}
+\end{thmbox}
+
+
+\begin{thebibliography}{99}\footnotesize
 \setlength\itemsep{1pt}
 \bibitem{tarski} A.~Tarski. \emph{A Decision Method for Elementary Algebra and Geometry}. RAND Corporation, 1948;
   2nd ed., University of California Press, 1951.

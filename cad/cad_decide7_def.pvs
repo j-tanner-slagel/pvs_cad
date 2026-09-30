@@ -1,0 +1,27 @@
+cad_decide7_def: THEORY
+%----------------------------------------------------------------------------
+% The decision behind (cad :cad-only? t): the verified CAD engine for two or
+% more quantifiers, the sectors of the line for fewer.  Executable.
+%
+% A sentence with two or more quantifiers goes to decn_u: decn_o, the
+% n-level engine whose run is a proved cylindrical algebraic decomposition
+% (cad_verified), from u = 0, raising u until its certificate holds
+% (decide_u_def).  With one quantifier or none it goes to decq2, which
+% decides on the sectors of the line (their CAD properties are proved piece
+% by piece, not as one theorem).  Unlike decide5 (cad_decide5_def) there is
+% no two-level fast path (decw), and the strategy (cad :cad-only? t) does no
+% witness search.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad_decide5_def
+
+  qs: VAR list[bool]
+  F: VAR list[list[mpoly]]
+  Psi: VAR [SV -> bool]
+  phi: VAR BF
+
+  decq7(qs, F, Psi): [# ok: bool, val: bool #] =
+    IF length(qs) >= 2 THEN decn_u(reverse(qs), F, Psi, 0) ELSE decq2(qs, F, Psi) ENDIF
+
+  decide7(qs, F, phi): [# ok: bool, val: bool #] = decq7(qs, F, LAMBDA (v: SV): bfsv(phi, v))
+END cad_decide7_def

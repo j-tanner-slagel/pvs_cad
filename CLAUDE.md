@@ -5,8 +5,10 @@ development repository: the private `pvs_cad-dev`, branch `main`). Nothing in th
 `tools/env.sh`); always `git pull` first, because work moves between machines (an old copy
 on an external drive is stale). The goal and the phased plan are in
 `CAD_PLAN.md` and the endgame in `FINISH_PLAN.md`; read them first in every session.
-The CURRENT goal (set 2026-09-27) is verified completeness of (cad): `COMPLETENESS_PLAN.md`,
-whose last section is the handoff state -- read it before anything else. The reference paper is
+The CURRENT goal (set 2026-09-29) is `GAP_PLAN.md`: close the gap between decide5 and a
+verified CAD in the classical sense. Its status header records what is done (Tiers 0, 1A-1C and
+the cad_spec semi-algebraicity stage, 2026-09-30) -- read it before anything else. The previous
+goal, verified completeness of (cad) (`COMPLETENESS_PLAN.md`), was reached 2026-09-28. The reference paper is
 Narkawicz, Muñoz, Dutle, J. Automated Reasoning 54 (2015), doi 10.1007/s10817-015-9320-x
 (Sturm/Tarski decision procedures in PVS).
 The PVS library being built lives in `cad/` (one theory per concern, `top.pvs` with

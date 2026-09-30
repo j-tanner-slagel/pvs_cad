@@ -15,7 +15,7 @@ echo "NASALIB     $NASALIB  ($("$NASALIB/nasalib-version" 2>/dev/null))"
 echo "SCRATCH     $SCRATCH"
 echo "python      $CAD_PY ($("$CAD_PY" -c 'import websockets; print("websockets", websockets.__version__)'))"
 "$PROVEIT" --version 2>&1 | head -1
-for lib in Sturm Tarski mult_poly Bernstein reals analysis structures complex; do
+for lib in reals Sturm Tarski structures analysis complex mult_poly matrices interval_arith; do
   [ -d "$NASALIB/$lib" ] || echo "MISSING NASALib library: $lib"
 done
 echo "setup OK"
