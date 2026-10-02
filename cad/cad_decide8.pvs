@@ -1,0 +1,23 @@
+cad_decide8: THEORY
+%----------------------------------------------------------------------------
+% decide8 is correct and always answers (COLLINS_PLAN.md M-I): the Collins
+% run by decc_u_correct / decc_u_complete, fewer quantifiers by decq2 (as
+% cad_decide7).  decide8_correct is the lemma (cad) instantiates when the
+% theory imports cad_decide8.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad_decide8_def, cad_decide7, decc_u
+
+  qs, os: VAR list[bool]
+  F: VAR list[list[mpoly]]
+  Psi: VAR [SV -> bool]
+  phi: VAR BF
+
+  decq8_correct: THEOREM decq8(qs, F, Psi)`ok IMPLIES
+    (decq8(qs, F, Psi)`val IFF sem(reverse(qs), F, Psi, null))
+  decq8_complete: THEOREM decq8(qs, F, Psi)`ok
+
+  decide8_correct: THEOREM decide8(reverse(os), F, phi)`ok IMPLIES
+    (decide8(reverse(os), F, phi)`val IFF fsem(os, F, phi, null))
+  decide8_decides: THEOREM decide8(reverse(os), F, phi)`val IFF fsem(os, F, phi, null)
+END cad_decide8

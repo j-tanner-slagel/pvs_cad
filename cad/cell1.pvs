@@ -16,7 +16,7 @@ cell1: THEORY
 % whose product polynomial would have the degree of the whole family.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING alg_order, alg_fast, sector_rep, far_sign, structures@more_list_props[Alg]
+  IMPORTING alg_order, alg_fast, alg_sortc, sector_rep, far_sign, structures@more_list_props[Alg]
 
   l, f: VAR list[mpoly]
   F: VAR list[list[mpoly]]
@@ -101,9 +101,14 @@ BEGIN
     ELSE cons(car(rs), ins(a, cdr(rs)))
     ENDIF
   MEASURE length(rs)
-  sortu(rs): RECURSIVE list[Alg] =
-    IF null?(rs) THEN null[Alg] ELSE ins(car(rs), sortu(cdr(rs))) ENDIF
+  %% the specification: insertion sort by cmpf; sortu evaluates alg_sortc_def's
+  %% sortsep, the same sort with each Sturm chain computed once (sortf_eq),
+  %% with every two neighbours then separated (sepall: the same values, sortu_vl;
+  %% QE_PLAN.md 12, fix 3)
+  sortu0(rs): RECURSIVE list[Alg] =
+    IF null?(rs) THEN null[Alg] ELSE ins(car(rs), sortu0(cdr(rs))) ENDIF
   MEASURE length(rs)
+  sortu(rs): list[Alg] = sortsep(rs)
   incr?(rs): RECURSIVE bool =
     IF null?(rs) OR null?(cdr(rs)) THEN TRUE
     ELSE value(car(rs)) < value(car(cdr(rs))) AND incr?(cdr(rs))
@@ -114,6 +119,26 @@ BEGIN
   ins_head: LEMMA FORALL rs: cons?(ins(a, rs)) AND (car(ins(a, rs)) = a OR (cons?(rs) AND car(ins(a, rs)) = car(rs)))
   ins_incr: LEMMA FORALL rs: incr?(rs) IMPLIES incr?(ins(a, rs))
   ins_vals: LEMMA FORALL rs: vals(ins(a, rs))(z) IFF (z = value(a) OR vals(rs)(z))
+  sortu0_incr: LEMMA FORALL rs: incr?(sortu0(rs))
+  sortu0_vals: LEMMA FORALL rs: vals(sortu0(rs))(z) IFF vals(rs)(z)
+  ca: VAR CA
+  cl: VAR list[CA]
+  mapa_cons: LEMMA map(LAMBDA (e: CA): e`a)(cons(ca, cl)) = cons(ca`a, map(LAMBDA (e: CA): e`a)(cl))
+  insc_map: LEMMA FORALL cl: map(LAMBDA (e: CA): e`a)(insc(ca, cl)) = ins(ca`a, map(LAMBDA (e: CA): e`a)(cl))
+  sortf_eq: LEMMA FORALL rs: sortf(rs) = sortu0(rs)
+  vlist(rs): list[real] = map(LAMBDA (a: Alg): value(a))(rs)
+  vlist_cons: LEMMA vlist(cons(a, rs)) = cons(value(a), vlist(rs))
+  vl: VAR list[real]
+  incrv(vl): RECURSIVE bool =
+    IF null?(vl) OR null?(cdr(vl)) THEN TRUE ELSE car(vl) < car(cdr(vl)) AND incrv(cdr(vl)) ENDIF
+  MEASURE length(vl)
+  incr_v: LEMMA FORALL rs: incr?(rs) = incrv(vlist(rs))
+  memr_cons: LEMMA member(z, cons(x, vl)) IFF (z = x OR member(z, vl))
+  vals_v: LEMMA FORALL rs: vals(rs)(z) IFF member(z, vlist(rs))
+  incr_vl: LEMMA FORALL rs1: FORALL rs2: vlist(rs1) = vlist(rs2) IMPLIES (incr?(rs1) IFF incr?(rs2))
+  vals_vl: LEMMA FORALL rs1: FORALL rs2: vlist(rs1) = vlist(rs2) IMPLIES (vals(rs1)(z) IFF vals(rs2)(z))
+  vl_map: LEMMA FORALL cl: vlist(map(LAMBDA (e: CA): e`a)(cl)) = map(LAMBDA (e: CA): value(e`a))(cl)
+  sortu_vl: LEMMA vlist(sortu(rs)) = vlist(sortu0(rs))
   sortu_incr: LEMMA FORALL rs: incr?(sortu(rs))
   sortu_vals: LEMMA FORALL rs: vals(sortu(rs))(z) IFF vals(rs)(z)
 

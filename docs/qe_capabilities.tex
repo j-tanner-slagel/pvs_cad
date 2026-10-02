@@ -1,0 +1,339 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper, margin=0.85in, top=0.9in, bottom=0.95in, headsep=16pt]{geometry}
+\usepackage{libertinus}
+\usepackage[scale=0.82]{sourcecodepro}
+\usepackage[table]{xcolor}
+\usepackage{fvextra, booktabs, longtable, enumitem, titlesec, fancyhdr, microtype, amsmath, array}
+\usepackage[most]{tcolorbox}
+\usepackage{needspace}
+\usepackage[hidelinks]{hyperref}
+
+% J.T.S. palette
+\definecolor{ink}{HTML}{1E2B24}
+\definecolor{muted}{HTML}{56645B}
+\definecolor{accent}{HTML}{2B5E8C}
+\definecolor{accentsoft}{HTML}{DCE6EF}
+\definecolor{moss}{HTML}{4F6E4C}
+\definecolor{mosssoft}{HTML}{E1EADC}
+\definecolor{sand}{HTML}{CDBF9E}
+\definecolor{surfalt}{HTML}{E7EDE3}
+\definecolor{panel}{HTML}{F7F9F5}
+\definecolor{rulec}{HTML}{D2DACD}
+\definecolor{warn}{HTML}{8A6410}
+\color{ink}
+
+\newcommand\Rl[1]{\textcolor{accent}{\textbf{#1}}}
+\newcommand\Ms[1]{\textcolor{moss}{\textbf{#1}}}
+\newcommand\Dm[1]{\textcolor{muted}{#1}}
+
+\fvset{fontsize=\footnotesize, breaklines, breakanywhere, breakindent=2.5em,
+  breaksymbolleft={\tiny\textcolor{sand}{\ensuremath{\hookrightarrow}}}}
+
+\newtcolorbox{termbox}{breakable, enhanced, colback=panel, colframe=rulec, boxrule=0.4pt,
+  borderline west={2.2pt}{0pt}{sand}, arc=2pt, left=7pt, right=5pt, top=4pt, bottom=4pt,
+  before skip=6pt, after skip=10pt}
+\newtcolorbox{thmbox}[1]{breakable, enhanced, colback=accentsoft!45, colframe=accent!55, boxrule=0.5pt,
+  arc=2pt, left=8pt, right=8pt, top=5pt, bottom=5pt, before skip=8pt, after skip=10pt,
+  title={\sffamily\small\bfseries #1}, coltitle=white, colbacktitle=accent, fonttitle=\sffamily}
+\newtcolorbox{keybox}{enhanced, colback=mosssoft!55, colframe=moss!45, boxrule=0.5pt, arc=2pt,
+  left=9pt, right=9pt, top=6pt, bottom=6pt, before skip=8pt, after skip=8pt}
+
+\newcommand\cmdtag[1]{\colorbox{accentsoft}{\textcolor{accent}{\ttfamily\bfseries #1}}}
+\newcommand\proved{\textcolor{moss}{\textbf{proved}}}
+\newcommand\onestep{\textcolor{moss}{\textbf{one step}}}
+\newcommand\stepok{\textcolor{accent}{\textbf{step}}}
+
+\titleformat{\section}{\sffamily\Large\bfseries\color{ink}}{}{0pt}{}[\vspace{2pt}{\color{sand}\titlerule[0.8pt]}]
+\titlespacing*{\section}{0pt}{20pt}{9pt}
+\titleformat{\subsection}{\sffamily\large\bfseries\color{ink}}{}{0pt}{}
+\titlespacing*{\subsection}{0pt}{14pt}{5pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand\headrulewidth{0pt}
+\fancyhead[L]{\sffamily\small\color{muted}Quantifier elimination in pvs\_cad}
+\fancyhead[R]{\sffamily\small\color{muted}\thepage}
+
+\setlength\parindent{0pt}
+\setlength\emergencystretch{3em}
+\setlength\parskip{5pt}
+\newcommand\code[1]{\mbox{\texttt{#1}}}
+% no hyphenation (and no break at a hyphen) inside typewriter identifiers
+\makeatletter
+\AddToHook{selectfont}{\edef\jts@f{\f@family}\edef\jts@t{\ttdefault}%
+  \ifx\jts@f\jts@t\hyphenchar\font=-1\relax\fi}
+\makeatother
+\renewcommand\arraystretch{1.25}
+
+\begin{document}
+\thispagestyle{empty}
+\begin{flushleft}
+{\sffamily\small\bfseries\color{moss}\MakeUppercase{pvs\_cad \quad·\quad PVS 8.1 \quad·\quad 2 October 2026}}\par\vspace{8pt}
+{\fontsize{27}{33}\selectfont\bfseries What quantifier elimination can do}\par\vspace{10pt}
+{\large\color{muted} Verified procedures that turn a formula with quantifiers over the reals into an equivalent
+formula without them, and a proof command that uses them inside PVS proofs: the theorems, fourteen examples with
+the answers as the prover prints them, and what is and is not covered.}
+\end{flushleft}
+\vspace{4pt}
+
+\begin{keybox}
+\textbf{In one line.} Give \texttt{qe8} a formula such as $\exists t.\; t^2 + a t + b = 0$ and it computes a
+formula in $a, b$ alone, here a case split on the sign of $b$ that reads
+$b<0 \lor b=0 \lor (b>0 \land a^2-4b \ge 0)$, which is equivalent to $a^2 \ge 4b$. That the computed formula has
+no quantifiers and holds at exactly the same points as the input is a \textbf{theorem proved in PVS}:
+\texttt{qe8\_complete} (and \texttt{qe\_complete} for \texttt{qe}) for every prenex formula with at least one
+quantifier and one or more free variables, and \texttt{qelim\_ok} with \texttt{qelim\_qf} for every first-order
+formula, with its quantifiers anywhere and any number of free variables, none included.
+\end{keybox}
+
+\section{What is proved}
+
+\begin{thmbox}{qe8.qe8\_complete \quad (Tarski--Seidenberg, computed)}
+\begin{Verbatim}[fontsize=\small]
+qe8_complete: THEOREM cons?(os) AND length(pt) = m IMPLIES
+  qf?(qe8(m, os, F, phi)`out) AND
+  (qfsem(qe8(m, os, F, phi)`out)(pt) IFF fsem(os, F, phi, pt))
+\end{Verbatim}
+\end{thmbox}
+
+In words: for every number $m \ge 1$ of free variables (\texttt{m} is a \texttt{posnat}), every prenex formula
+\[
+  Q_1 x_1 \; Q_2 x_2 \cdots Q_n x_n.\;\; \varphi(y_1,\dots,y_m,\,x_1,\dots,x_n) \qquad (n \ge 1,\; Q_i \in \{\forall,\exists\})
+\]
+whose matrix $\varphi$ is any Boolean combination of sign conditions ($<0$, $=0$, $>0$, and so $\le,\ge,\ne$) on
+polynomials with rational coefficients, and every point $y \in \mathbb{R}^m$: the formula \texttt{qe8} computes is
+quantifier-free and holds at $y$ exactly when the input formula does. The hypotheses only fix the shape (at least
+one quantifier, \texttt{cons?(os)}; a point with $m$ coordinates): \texttt{qe8} always succeeds and always returns
+a quantifier-free formula. \texttt{qe8} runs the Collins CAD (\texttt{docs/collins\_cad.pdf}); \texttt{qe\_all}'s
+\texttt{qe\_complete} states the same for \texttt{qe}, the first procedure, which runs the read-closure engine.
+
+\begin{thmbox}{qelim\_ok.qelim\_ok \quad (every first-order formula, quantifiers anywhere)}
+\begin{Verbatim}[fontsize=\small]
+qelim_qf: LEMMA FORALL phi: FORALL m: qf?(qelim(phi, m))
+qelim_ok: THEOREM FORALL phi: FORALL m, pt: length(pt) = m
+  IMPLIES (fsem(qelim(phi, m))(pt) IFF fsem(phi)(pt))
+\end{Verbatim}
+\end{thmbox}
+Here \texttt{phi} is any first-order formula over the reals (\texttt{rcf\_fol}'s \texttt{Fm}: \texttt{TRUE}, sign conditions on
+polynomials with rational coefficients, \texttt{NOT}, \texttt{AND} and \texttt{EXISTS}, from which the other
+connectives and \texttt{FORALL} are built), with its quantifiers anywhere, and $m$ is any natural number, $0$
+included. \texttt{qelim} removes the quantifiers from the inside out: under each \texttt{EXISTS} the body is made
+quantifier-free first, and then that one quantifier is eliminated by \texttt{qe8}, with the variables in scope as
+free variables, or decided by \texttt{decide8} when there are none. No prenex form is needed.
+\texttt{gform\_ok}'s \texttt{qe\_g\_ok} states the same for formulas written with PVS's own comparisons and
+connectives (\texttt{qe\_g(g, m) = qelim(g2f(g), m)}), and \texttt{fod\_qfd} (every first-order definable set is
+quantifier-free definable) follows from \texttt{qelim\_ok}.
+
+{\small
+\begin{longtable}{@{}>{\ttfamily}p{0.2\textwidth} p{0.74\textwidth}@{}}
+\toprule
+\textsf{\small\bfseries Theorem} & \textsf{\small\bfseries What it says}\\
+\midrule
+qe8\_correct & for every $m\ge1$ and at least one quantifier: \texttt{qe8}'s answer holds at a point of $\mathbb{R}^m$ iff the quantified formula does; \texttt{(cad-qe)} instantiates it for prenex input under \texttt{IMPORTING pvs\_cad}\\
+qe8\_isqf & the answer is always quantifier-free (the flag is always set)\\
+qe1cc\_bf & one free variable: \texttt{qe1cc}, over one Collins run, always answers, quantifier-free and equivalent (each sector of the free line described exactly, \texttt{epc\_ok})\\
+qe2cd\_bf & two or more free variables: over the Collins tower with derivative-closed free levels (\texttt{ctwd}), \texttt{qe2cd} always answers, quantifier-free and equivalent\\
+ents\_sep & Thom's lemma at work: when the free families are closed under the derivative, different cells always have different sign patterns\\
+qelim\_ok & every first-order formula, quantifiers anywhere, any $m \ge 0$: \texttt{qelim}'s answer, quantifier-free by \texttt{qelim\_qf}, holds exactly where the formula does\\
+qe\_g\_ok & the same for formulas written with PVS's comparisons and connectives (\texttt{gform\_def}); \texttt{(cad-qe)} instantiates it for every formula its prenex route does not take (quantifiers inside connectives, binders over subtypes of the reals)\\
+qe\_correct,\newline qe\_complete & the statements of \texttt{qe8\_correct} and \texttt{qe8\_complete} for \texttt{qe} (\texttt{qe\_all}), which runs the read-closure engine; \texttt{(cad-qe)} uses \texttt{qe} when the theory imports \texttt{qe\_all} and not \texttt{qe8}\\
+qe2c\_ev & \texttt{qe}'s derivative-closed run succeeds for every large enough fuel parameter (the closure stops in a finite universe)\\
+\bottomrule
+\end{longtable}}
+
+\textbf{What you trust.} The PVS kernel, which checks every step; PVS's ground evaluator, which runs \texttt{qe8},
+\texttt{qe\_g} or \texttt{qe} on the concrete input inside the proof (proof by reflection); NASALib's saved proofs
+of the theorems the library imports (from \texttt{reals}, \texttt{Sturm}, \texttt{Tarski}, \texttt{structures},
+\texttt{analysis}, \texttt{complex}, \texttt{matrices}, \texttt{mult\_poly} and \texttt{interval\_arith}, and
+through them from other NASALib libraries such as \texttt{ints}, \texttt{power} and \texttt{trig}), which were not
+replayed here; and the reading of the statements: that \texttt{fsem} and \texttt{gsem} (the meaning of
+the quantified formula) and \texttt{qfsem} (the meaning of the answer) say what is intended. The procedures and
+the strategy code are not trusted; the procedures' correctness is the theorems.
+
+\textbf{Size.} The quantifier elimination described here is 45 theories of the library (\texttt{cad/top.pvs},
+2 October 2026) with 550 proved formulas: the first procedure \texttt{qe} (26 theories, with
+\texttt{qe\_all} and its examples \texttt{qe\_cad\_ex}), merged answers (\texttt{qe\_mrg\_def}, \texttt{qe\_mrg}),
+\texttt{qe8} over the Collins run (13 theories, from \texttt{qe1c\_def} to \texttt{qe8\_ex}), \texttt{qelim}
+(\texttt{qelim\_def}, \texttt{qelim\_ok}) and formulas as PVS writes them (\texttt{gform\_def}, \texttt{gform\_ok}).
+It is built on the verified CAD library (cylindrical algebraic decomposition, sound and complete decision).
+
+\section{Using it in a proof: \texttt{(cad-qe)}}
+
+\cmdtag{(cad-qe FNUM)} takes a hypothesis or goal with at least one free real term, evaluates the elimination once
+inside PVS, prints the answer (\texttt{cad-qe: \dots}), and replaces the formula by the answer. In a theory that
+imports \texttt{pvs\_cad}, a prenex formula (one real per quantifier; grouped binders go through the nested form)
+is eliminated by \texttt{qe8} and the replacement is justified by \texttt{qe8\_correct}; a formula of any other
+shape is eliminated by \texttt{qe\_g}, justified by \texttt{qe\_g\_ok}. In a theory that imports \texttt{qe\_all}
+and not \texttt{qe8} (as \texttt{qe\_cad\_ex} does), it evaluates \texttt{qe}, justified by \texttt{qe\_correct}.
+Nothing is assumed. A real session (1 October 2026, \texttt{IMPORTING pvs\_cad}; the printed \texttt{cad-qe:} line is
+one long line, wrapped here), proving that $t^2+at+b=0$ has a
+real root exactly when $a^2\ge 4b$ (the direction ``$\Rightarrow$''):
+
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+w_quad.1 :
+{-1}   EXISTS (t: real): t ^ 2 + a * t + b = 0
+  |-------
+{1}   a ^ 2 >= 4 * b
+
+Rule? \Rl«(cad-qe -1)»
+\Ms«cad-qe: ((b < 0) OR ((b = 0) OR ((b > 0) AND ((4*b + (-1)*a^2 = 0) OR»
+\Ms«        (4*b + (-1)*a^2 < 0)))))»
+length_null rewrites
+length[list[mpoly]]((: :))
+to 0
+Eliminating the quantifiers of -1,
+this simplifies to:
+w_quad.1 :
+{-1}   ((b < 0) OR
+        ((b = 0) OR
+          ((b > 0) AND
+            ((4 * b + (-1) * a ^ 2 = 0) OR (4 * b + (-1) * a ^ 2 < 0)))))
+  |-------
+{1}   a ^ 2 >= 4 * b
+\end{Verbatim}
+\end{termbox}
+The quantifier is gone; what is left is plain arithmetic, finished with $a^2\ge0$ (3\,s for the
+elimination). The other direction is the same command on the goal. The whole lemma is proved in the library:
+\texttt{q8\_quad} in \texttt{qe8\_ex} (through \texttt{qe8}) and \texttt{qe\_quad} in \texttt{qe\_cad\_ex} (through
+\texttt{qe}).
+
+\section{Examples}
+Captured on 1 October 2026 in a theory that imports \texttt{pvs\_cad}; every input here is prenex, so
+\texttt{(cad-qe)} eliminates by \texttt{qe8}. Answers are as \texttt{(cad-qe)} prints them, except that parentheses that do
+not change the reading (around atoms and around nested disjunctions) are dropped (the transcripts show them). ``Reads as'' is a hand
+simplification for the reader; the proved statement is about the printed answer. Times are wall-clock for the
+elimination step on an M-series Mac. \proved: the \texttt{IFF} lemma is proved in the library, through
+\texttt{qe8} in \texttt{qe8\_ex} (\texttt{q8\_sqrt}, \texttt{q8\_disc}, \texttt{q8\_disc2}, \texttt{q8\_eq2},
+\texttt{q8\_quad}) and through \texttt{qe} in \texttt{qe\_cad\_ex} (\texttt{qe\_sqrt}, \texttt{qe\_disc},
+\texttt{qe\_disc2}, \texttt{qe\_eq2}, \texttt{qe\_quad}); the first row's lemma, \texttt{qe\_win}, only through
+\texttt{qe}. \onestep: the goal is proved by \texttt{(cad-qe)} alone; \stepok: the elimination step is shown (it is
+a proved step; closing the arithmetic afterwards was not attempted).
+
+{\small
+\begin{longtable}{@{}p{0.255\textwidth} >{\raggedright\arraybackslash}p{0.345\textwidth} p{0.125\textwidth} r l@{}}
+\toprule
+\textsf{\small\bfseries Input} & \textsf{\small\bfseries Answer, as printed} & \textsf{\small\bfseries Reads as} & \textsf{\small\bfseries Time} & \\
+\midrule
+\endhead
+\multicolumn{5}{@{}l}{\sffamily\small\bfseries\color{moss} One free variable}\\[2pt]
+$\exists t\in[0,10].\; (5-t)^2 + (t/2)^2 < D^2$ \newline {\footnotesize\color{muted} a moving point comes within $D$} &
+\texttt{125/4 + (-25/4)*D\^{}2 < 0} & $D^2 > 5$ & 3\,s & \proved\\
+$\exists t.\; t^2 = D$ & \texttt{(-4)*D = 0 OR (-4)*D < 0} & $D \ge 0$ & 2\,s & \proved\\
+$\forall x.\; x^2 + b x + 1 > 0$ & \texttt{4 + (-1)*b\^{}2 > 0} & $b^2 < 4$ & 2\,s & \proved\\
+$\exists x\, \exists y.\; x^2 + y^2 < D$ \newline {\footnotesize\color{muted} two bound variables} & \texttt{(-256)*D < 0} & $D > 0$ & 2\,s & \proved\\
+$\exists x.\; x > 0 \land x^2 < c$ & \texttt{(-1)*c < 0} & $c > 0$ & 2\,s & \stepok\\
+$\forall x\, \exists y.\; y^2 = x^2 + c$ \newline {\footnotesize\color{muted} alternating quantifiers} & \texttt{(-256)*c = 0 OR (-256)*c < 0} & $c \ge 0$ & 2\,s & \stepok\\
+$\exists x.\; x^4 - 2x^2 = c$ \newline {\footnotesize\color{muted} degree 4} & \texttt{(-64) + (-64)*c = 0 OR (-64) + (-64)*c < 0} & $c \ge -1$ & 2\,s & \stepok\\
+$\exists x.\; x^3 - 3x = c$ & \texttt{TRUE} & always & 2\,s & \onestep\\
+\addlinespace
+\multicolumn{5}{@{}l}{\sffamily\small\bfseries\color{moss} Two free variables}\\[2pt]
+$\exists t.\; t = a \land t = b$ & \texttt{TRUE AND (-1)*b + a = 0} & $a = b$ & 3\,s & \proved\\
+$\exists t.\; t^2 + a t + b = 0$ & \texttt{(b < 0) OR (b = 0) OR (b > 0 AND (4*b + (-1)*a\^{}2 = 0 OR 4*b + (-1)*a\^{}2 < 0))} & $a^2 \ge 4b$ & 3\,s & \proved\\
+$\exists t.\; t^2 + a t + b < 0$ & \texttt{(b < 0) OR (b = 0 AND 4*b + (-1)*a\^{}2 < 0) OR (b > 0 AND 4*b + (-1)*a\^{}2 < 0)} & $a^2 > 4b$ & 3\,s & \stepok\\
+$\forall t.\; t^2 + a t + b \ge 0$ & \texttt{(b = 0 AND 4*b + (-1)*a\^{}2 = 0) OR (b > 0 AND (4*b + (-1)*a\^{}2 > 0 OR 4*b + (-1)*a\^{}2 = 0))} & $a^2 \le 4b$ & 3\,s & \stepok\\
+$\exists t.\; t > 0 \land t^2 + a t + b = 0$ \newline {\footnotesize\color{muted} a positive root} & \texttt{(b < 0) OR (b = 0 AND (-2)*a > 0) OR (b > 0 AND ((4*b + (-1)*a\^{}2 < 0 AND (-2)*a > 0) OR (4*b + (-1)*a\^{}2 = 0 AND (-2)*a > 0)))} & $b<0$, or $a<0$ and $a^2\ge4b$ & 4\,s & \stepok\\
+\addlinespace
+\multicolumn{5}{@{}l}{\sffamily\small\bfseries\color{moss} Three free variables}\\[2pt]
+$\exists x.\; a x^2 + b x + c = 0$ \newline {\footnotesize\color{muted} the general quadratic} & 1,187 characters, below & solvable & 8\,s & \stepok\\
+\bottomrule
+\end{longtable}}
+
+\subsection{A positive root, in the prover}
+The same kind of session (the \texttt{cad-qe:} line wrapped):
+\begin{termbox}
+\begin{Verbatim}[commandchars=\\«»]
+s_pos.1 :
+{-1}   EXISTS (t: real): t > 0 AND t ^ 2 + a * t + b = 0
+  |-------
+{1}   b < 0
+{2}   (a < 0 AND a ^ 2 >= 4 * b)
+
+Rule? \Rl«(cad-qe -1)»
+\Ms«cad-qe: ((b < 0) OR (((b = 0) AND ((-2)*a > 0)) OR ((b > 0) AND»
+\Ms«        (((4*b + (-1)*a^2 < 0) AND ((-2)*a > 0)) OR ((4*b + (-1)*a^2 = 0) AND»
+\Ms«        ((-2)*a > 0))))))»
+length_singleton rewrites
+length[list[mpoly]]
+      ((: (: mpol((: mpol((: mconst(0), mconst(1) :)) :)),
+             mpol((: mconst(0), mconst(1) :)), mconst(1) :) :))
+to 1
+Eliminating the quantifiers of -1,
+this simplifies to:
+s_pos.1 :
+{-1}   ((b < 0) OR
+        (((b = 0) AND ((-2) * a > 0)) OR
+          ((b > 0) AND
+            (((4 * b + (-1) * a ^ 2 < 0) AND ((-2) * a > 0)) OR
+              ((4 * b + (-1) * a ^ 2 = 0) AND ((-2) * a > 0))))))
+  |-------
+{1}   b < 0
+{2}   (a < 0 AND a ^ 2 >= 4 * b)
+\end{Verbatim}
+\end{termbox}
+
+\subsection{Three free variables: the general quadratic}
+$\exists x.\; a x^2 + b x + c = 0$, eliminated in 8\,s. The answer is correct but long: a disjunction of
+19 cases over the cells of the decomposition (the sectors of $c$, then of $b$, then of $a$), each described by
+sign conditions on $a$, $b$, $c$ and one more polynomial; as a whole it is equivalent to
+$(a \ne 0 \land b^2 \ge 4ac) \lor (a = 0 \land (b \ne 0 \lor c = 0))$. In the answer below (1,187 characters,
+captured with the table) that polynomial is printed \texttt{((-1)*b\^{}2)*a + (4*c)*a\^{}2}, that is,
+$4ca^2 - ab^2 = -a\,(b^2 - 4ac)$: minus $a$ times the discriminant $b^2 - 4ac$.
+\begin{termbox}
+\VerbatimInput[fontsize=\scriptsize]{s_gen_answer.txt}
+\end{termbox}
+
+\section{How it works}
+\begin{enumerate}[leftmargin=1.3em, itemsep=3pt]
+\item \textbf{One Collins run} on all the variables, free ones outermost (\texttt{qe8}). Its cells form a
+cylindrical algebraic decomposition with no certificate (\texttt{col\_cad\_run}); the walk over it, whose
+certificate is checked at run time and holds once its effort parameter is large enough (it is raised until then),
+gives the truth values at exact sample points. (\texttt{qe} runs the read-closure engine instead.)
+\item \textbf{The outermost free variable} is cut into sectors (points and open intervals). Each sector gets an
+exact quantifier-free description: a rational endpoint is written directly, an irrational algebraic one by a
+polynomial that has it as its only root in a small interval (\texttt{qe\_ep}; proved always possible,
+\texttt{epc\_ok}).
+\item \textbf{Over each sector}, the cells in the remaining free variables are given the truth value of the
+quantified part and the signs of the polynomials there. When equal signs mean equal truth values, the answer for
+the sector is the disjunction of the true sign patterns, over a subset of the polynomials that still tells the
+cells apart (chosen greedily). With one free variable the sectors themselves are these cells; when their signs do
+not tell them apart, the answer is the disjunction of the true sectors' exact descriptions. With one free variable,
+either way, the answer is replaced by its merged form, in which each run of consecutive true sectors is one interval,
+when that has fewer sign conditions (\texttt{qe\_mrg}); with two or more free variables answers are not merged.
+\item \textbf{When they do not} (two or more free variables), \texttt{qe8} runs the Collins tower whose free
+families are closed under the formal derivative (\texttt{ctwd}). By Thom's lemma, different cells then always have
+different sign patterns (\texttt{ents\_sep}), so the answer is always quantifier-free. (\texttt{qe} instead adds
+derivatives to the free families of its run until nothing new appears; that this stops is proved: every
+polynomial it can produce lies in one finite set fixed by the input.)
+\item \textbf{Formulas of any shape} (\texttt{qelim}, \texttt{qe\_g}): the quantifiers are removed from the inside
+out. Under each \texttt{EXISTS} the body is made quantifier-free first; its sign atoms become the family of a
+prenex formula with one quantifier, which \texttt{qe8} eliminates (\texttt{decide8} decides it when no variable is
+free). \texttt{FORALL} is \texttt{NOT EXISTS NOT}.
+\end{enumerate}
+
+\section{Limits}
+\begin{itemize}[leftmargin=1.3em, itemsep=3pt]
+\item \textbf{Input shape.} First-order formulas over sign conditions on polynomials with rational coefficients.
+\texttt{qe} and \texttt{qe8} take prenex formulas with at least one quantifier and one or more free variables
+(\texttt{qe\_complete}, \texttt{qe8\_complete}). \texttt{qelim} (\texttt{qelim\_ok}) takes every such formula,
+quantifiers anywhere, with any number of free variables, none included; it eliminates from the inside out, so no
+prenex conversion is needed. \texttt{(cad-qe)} needs at least one free real term. In a theory that imports
+\texttt{pvs\_cad} (or \texttt{gform\_ok}) it takes a formula of any shape through \texttt{qe\_g}
+(\texttt{qe\_g\_ok}): quantifiers inside \texttt{NOT}, \texttt{AND}, \texttt{OR},
+\texttt{IMPLIES} and \texttt{IFF} (grouped binders included there), and binders over \texttt{real}, \texttt{posreal}, \texttt{nnreal},
+\texttt{negreal}, \texttt{npreal} and \texttt{nzreal}; a binder over any other type (\texttt{nat}, \texttt{int},
+\texttt{rat}, \texttt{\{x: real | \dots\}}) is refused. A grouped prenex formula goes through its nested form
+(\texttt{qe8}, or \texttt{qe} when only \texttt{qe\_all} is imported), with either import; with only \texttt{qe\_all} or \texttt{qe8} imported, \texttt{(cad-qe)} takes
+prenex formulas over \texttt{real}.
+\item \textbf{Answers are not minimal.} They are disjunctions over cells and sectors; the $a,b,c$ example
+shows how long they get. Shortening them further is output polish, not correctness.
+\item \textbf{Cost} is the cost of the CAD run: 2 to 8\,s for the examples here; runs with
+several bound and free variables together can take minutes (measured with \texttt{qe}: \texttt{QE\_PLAN.md},
+section 12).
+\item \textbf{Where it is.} In \texttt{cad/}; in the imports of \texttt{cad/top.pvs}, which describes every
+theory: \texttt{qe\_ldd} to \texttt{qe\_cad\_ex} (\texttt{qe}, with \texttt{qe\_mrg\_def} and \texttt{qe\_mrg}),
+\texttt{qe1c\_def} to \texttt{qe8\_ex} (\texttt{qe8}), \texttt{qelim\_def}, \texttt{qelim\_ok}, \texttt{gform\_def},
+\texttt{gform\_ok}.
+\end{itemize}
+
+\end{document}

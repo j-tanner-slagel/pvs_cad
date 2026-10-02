@@ -1,0 +1,456 @@
+(|det_fast_def|
+ (|dsubs_TCC1| 0
+  (|dsubs_TCC1-2| "" 3999859316 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK (|dsubs| SUBTYPE "n - lo" "naturalnumber" (30 26 30 32)))
+  (|dsubs_TCC1-0| "" 3999858966 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL))
+   SHOSTAK (|dsubs| SUBTYPE "n - lo" "naturalnumber" (30 26 30 32)))
+  (|dsubs_TCC1-1| NIL 3999858956 ("" (SUBTYPE-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL))
+   NIL (|dsubs| SUBTYPE "n - lo" "naturalnumber" (30 26 30 32))))
+ (|dsubs_TCC2| 0
+  (|dsubs_TCC2-2| "" 3999859316 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK (|dsubs| SUBTYPE "m - 1" "nat" (28 73 28 78)))
+  (|dsubs_TCC2-0| "" 3999858967 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL))
+   SHOSTAK (|dsubs| SUBTYPE "m - 1" "nat" (28 73 28 78)))
+  (|dsubs_TCC2-1| NIL 3999858956 ("" (TERMINATION-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL))
+   NIL (|dsubs| SUBTYPE "m - 1" "nat" (28 73 28 78))))
+ (|dsubs_TCC3| 0
+  (|dsubs_TCC3-2| "" 3999859317 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK
+   (|dsubs| TERMINATION "dsubs(lo + 1, n, m - 1)" #A((3) BASE-CHAR . "NIL")
+    (28 56 28 79)))
+  (|dsubs_TCC3-0| "" 3999858967 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL))
+   SHOSTAK
+   (|dsubs| TERMINATION "dsubs(lo + 1, n, m - 1)" #A((3) BASE-CHAR . "NIL")
+    (28 56 28 79)))
+  (|dsubs_TCC3-1| NIL 3999858956 ("" (SUBTYPE-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL))
+   NIL
+   (|dsubs| TERMINATION "dsubs(lo + 1, n, m - 1)" #A((3) BASE-CHAR . "NIL")
+    (28 56 28 79))))
+ (|dcols_TCC1| 0
+  (|dcols_TCC1-2| "" 3999859317 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK
+   (|dcols| TERMINATION "dcols(lo + 1, n)" #A((3) BASE-CHAR . "NIL")
+    (33 78 33 94)))
+  (|dcols_TCC1-0| "" 3999858967 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL))
+   SHOSTAK
+   (|dcols| TERMINATION "dcols(lo + 1, n)" #A((3) BASE-CHAR . "NIL")
+    (33 78 33 94)))
+  (|dcols_TCC1-1| NIL 3999858956 ("" (SUBTYPE-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL))
+   NIL
+   (|dcols| TERMINATION "dcols(lo + 1, n)" #A((3) BASE-CHAR . "NIL")
+    (33 78 33 94))))
+ (|drem_TCC1| 0
+  (|drem_TCC1-2| "" 3999859318 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK (|drem| SUBTYPE "S" "(list_adt[nat].cons?)" (38 44 38 45)))
+  (|drem_TCC1-0| "" 3999858968 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   SHOSTAK (|drem| SUBTYPE "S" "(list_adt[nat].cons?)" (38 44 38 45)))
+  (|drem_TCC1-1| NIL 3999858956 ("" (SUBTYPE-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   NIL (|drem| SUBTYPE "S" "(list_adt[nat].cons?)" (38 44 38 45))))
+ (|drem_TCC2| 0
+  (|drem_TCC2-2| "" 3999859318 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK (|drem| SUBTYPE "S" "(list_adt[nat].cons?)" (38 61 38 62)))
+  (|drem_TCC2-0| "" 3999858969 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   SHOSTAK (|drem| SUBTYPE "S" "(list_adt[nat].cons?)" (38 61 38 62)))
+  (|drem_TCC2-1| NIL 3999858956 ("" (SUBTYPE-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   NIL (|drem| SUBTYPE "S" "(list_adt[nat].cons?)" (38 61 38 62))))
+ (|drem_TCC3| 0
+  (|drem_TCC3-3| "" 3999859318 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK (|drem| SUBTYPE "b - 1" "nat" (38 78 38 83)))
+  (|drem_TCC3-2| "" 3999858980
+   ("" (SKEEP*)
+    (("" (ASSERT) (("" (EXPAND "length" 3 2) (("" (ASSERT) NIL NIL)) NIL))
+      NIL))
+    NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL))
+   SHOSTAK (|drem| SUBTYPE "b - 1" "nat" (38 78 38 83)))
+  (|drem_TCC3-0| "" 3999858969
+   ("" (SKEEP*) (("" (ASSERT) (("" (POSTPONE) NIL NIL)) NIL)) NIL) NIL SHOSTAK
+   (|drem| SUBTYPE "b - 1" "nat" (38 78 38 83)))
+  (|drem_TCC3-1| NIL 3999858956 ("" (TERMINATION-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL))
+   NIL (|drem| SUBTYPE "b - 1" "nat" (38 78 38 83))))
+ (|drem_TCC4| 0
+  (|drem_TCC4-0| "" 3999859319
+   ("" (SKEEP*) (("" (EXPAND "length" 3 2) (("" (ASSERT) NIL NIL)) NIL)) NIL)
+   NIL SHOSTAK
+   (|drem| TERMINATION "drem(cdr[nat](S), b - 1)" #A((3) BASE-CHAR . "NIL")
+    (38 65 38 84)))
+  (|drem_TCC4-1| NIL 3999859306 ("" (TERMINATION-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL))
+   NIL
+   (|drem| TERMINATION "drem(cdr[nat](S), b - 1)" #A((3) BASE-CHAR . "NIL")
+    (38 65 38 84))))
+ (|dleq_TCC1| 0
+  (|dleq_TCC1-0| "" 3999861876 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK (|dleq| SUBTYPE "S1" "(list_adt[nat].cons?)" (47 13 47 15)))
+  (|dleq_TCC1-1| NIL 3999861869 ("" (SUBTYPE-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   NIL (|dleq| SUBTYPE "S1" "(list_adt[nat].cons?)" (47 13 47 15))))
+ (|dleq_TCC2| 0
+  (|dleq_TCC2-0| "" 3999861876 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK (|dleq| SUBTYPE "S2" "(list_adt[nat].cons?)" (47 23 47 25)))
+  (|dleq_TCC2-1| NIL 3999861869 ("" (SUBTYPE-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   NIL (|dleq| SUBTYPE "S2" "(list_adt[nat].cons?)" (47 23 47 25))))
+ (|dleq_TCC3| 0
+  (|dleq_TCC3-2| "" 3999861888
+   ("" (SKEEP*)
+    (("" (ASSERT) (("" (EXPAND "length" 3 2) (("" (ASSERT) NIL NIL)) NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK
+   (|dleq| TERMINATION "dleq(cdr[nat](S1), cdr[nat](S2))"
+    #A((3) BASE-CHAR . "NIL") (47 31 47 53)))
+  (|dleq_TCC3-0| "" 3999861877
+   ("" (SKEEP*) (("" (ASSERT) (("" (POSTPONE) NIL NIL)) NIL)) NIL) NIL SHOSTAK
+   (|dleq| TERMINATION "dleq(cdr[nat](S1), cdr[nat](S2))"
+    #A((3) BASE-CHAR . "NIL") (47 31 47 53)))
+  (|dleq_TCC3-1| NIL 3999861869 ("" (TERMINATION-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL))
+   NIL
+   (|dleq| TERMINATION "dleq(cdr[nat](S1), cdr[nat](S2))"
+    #A((3) BASE-CHAR . "NIL") (47 31 47 53))))
+ (|dlook_TCC1| 0
+  (|dlook_TCC1-3| "" 3999861877 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK (|dlook| SUBTYPE "T" "(list_adt[DEnt].cons?)" (54 46 54 47)))
+  (|dlook_TCC1-2| "" 3999859319 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   SHOSTAK (|dlook| SUBTYPE "T" "(list_adt[DEnt].cons?)" (54 46 54 47)))
+  (|dlook_TCC1-0| "" 3999858970 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   SHOSTAK (|dlook| SUBTYPE "T" "(list_adt[DEnt].cons?)" (54 46 54 47)))
+  (|dlook_TCC1-1| NIL 3999858956 ("" (SUBTYPE-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   NIL (|dlook| SUBTYPE "T" "(list_adt[DEnt].cons?)" (54 46 54 47))))
+ (|dlook_TCC2| 0
+  (|dlook_TCC2-4| "" 3999861878
+   ("" (SKEEP*) (("" (EXPAND "length" 3 2) (("" (ASSERT) NIL NIL)) NIL)) NIL)
+   NIL SHOSTAK
+   (|dlook| TERMINATION "dlook(S, cdr[DEnt](T))" #A((3) BASE-CHAR . "NIL")
+    (54 74 54 90)))
+  (|dlook_TCC2-3| "" 3999859320
+   ("" (SKEEP*) (("" (EXPAND "length" 3 2) (("" (ASSERT) NIL NIL)) NIL)) NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL))
+   SHOSTAK
+   (|dlook| TERMINATION "dlook(S, cdr[DEnt](T))" #A((3) BASE-CHAR . "NIL")
+    (54 74 54 90)))
+  (|dlook_TCC2-2| "" 3999858984
+   ("" (SKEEP*)
+    (("" (ASSERT) (("" (EXPAND "length" 3 2) (("" (ASSERT) NIL NIL)) NIL))
+      NIL))
+    NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL))
+   SHOSTAK
+   (|dlook| TERMINATION "dlook(S, cdr[DEnt](T))" #A((3) BASE-CHAR . "NIL")
+    (54 74 54 90)))
+  (|dlook_TCC2-0| "" 3999858970
+   ("" (SKEEP*) (("" (ASSERT) (("" (POSTPONE) NIL NIL)) NIL)) NIL) NIL SHOSTAK
+   (|dlook| TERMINATION "dlook(S, cdr[DEnt](T))" #A((3) BASE-CHAR . "NIL")
+    (54 74 54 90)))
+  (|dlook_TCC2-1| NIL 3999858956 ("" (TERMINATION-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL))
+   NIL
+   (|dlook| TERMINATION "dlook(S, cdr[DEnt](T))" #A((3) BASE-CHAR . "NIL")
+    (54 74 54 90))))
+ (|dxrow_TCC1| 0
+  (|dxrow_TCC1-2| "" 3999859320 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK
+   (|dxrow| SUBTYPE "length[nat](S) - b" "naturalnumber" (63 33 63 46)))
+  (|dxrow_TCC1-0| "" 3999858971 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL))
+   SHOSTAK
+   (|dxrow| SUBTYPE "length[nat](S) - b" "naturalnumber" (63 33 63 46)))
+  (|dxrow_TCC1-1| NIL 3999858956 ("" (SUBTYPE-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL))
+   NIL (|dxrow| SUBTYPE "length[nat](S) - b" "naturalnumber" (63 33 63 46))))
+ (|dxrow_TCC2| 0
+  (|dxrow_TCC2-2| "" 3999859321 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK (|dxrow| SUBTYPE "b" "below[length[nat](S)]" (61 45 61 46)))
+  (|dxrow_TCC2-0| "" 3999858971 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL))
+   SHOSTAK (|dxrow| SUBTYPE "b" "below[length[nat](S)]" (61 45 61 46)))
+  (|dxrow_TCC2-1| NIL 3999858956 ("" (SUBTYPE-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL))
+   NIL (|dxrow| SUBTYPE "b" "below[length[nat](S)]" (61 45 61 46))))
+ (|dxrow_TCC3| 0
+  (|dxrow_TCC3-2| "" 3999859321 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK
+   (|dxrow| TERMINATION "dxrow(M, r, S, T, b + 1)" #A((3) BASE-CHAR . "NIL")
+    (61 74 61 98)))
+  (|dxrow_TCC3-0| "" 3999858972 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL))
+   SHOSTAK
+   (|dxrow| TERMINATION "dxrow(M, r, S, T, b + 1)" #A((3) BASE-CHAR . "NIL")
+    (61 74 61 98)))
+  (|dxrow_TCC3-1| NIL 3999858956 ("" (TERMINATION-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL))
+   NIL
+   (|dxrow| TERMINATION "dxrow(M, r, S, T, b + 1)" #A((3) BASE-CHAR . "NIL")
+    (61 74 61 98))))
+ (|dtab_TCC1| 0
+  (|dtab_TCC1-2| "" 3999859321 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK (|dtab| SUBTYPE "n - m" "nat" (69 49 69 54)))
+  (|dtab_TCC1-0| "" 3999858972 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
+   SHOSTAK (|dtab| SUBTYPE "n - m" "nat" (69 49 69 54)))
+  (|dtab_TCC1-1| NIL 3999858956 ("" (SUBTYPE-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
+   NIL (|dtab| SUBTYPE "n - m" "nat" (69 49 69 54))))
+ (|dtab_TCC2| 0
+  (|dtab_TCC2-2| "" 3999859322 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK (|dtab| SUBTYPE "m - 1" "upto(det_fast_def.n)" (68 28 68 33)))
+  (|dtab_TCC2-0| "" 3999858973 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL))
+   SHOSTAK (|dtab| SUBTYPE "m - 1" "upto(det_fast_def.n)" (68 28 68 33)))
+  (|dtab_TCC2-1| NIL 3999858956 ("" (SUBTYPE-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL))
+   NIL (|dtab| SUBTYPE "m - 1" "upto(det_fast_def.n)" (68 28 68 33))))
+ (|dtab_TCC3| 0
+  (|dtab_TCC3-2| "" 3999859322 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK
+   (|dtab| TERMINATION "dtab(n, M, m - 1)" #A((3) BASE-CHAR . "NIL")
+    (68 17 68 34)))
+  (|dtab_TCC3-0| "" 3999858973 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL))
+   SHOSTAK
+   (|dtab| TERMINATION "dtab(n, M, m - 1)" #A((3) BASE-CHAR . "NIL")
+    (68 17 68 34)))
+  (|dtab_TCC3-1| NIL 3999858956 ("" (TERMINATION-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL))
+   NIL
+   (|dtab| TERMINATION "dtab(n, M, m - 1)" #A((3) BASE-CHAR . "NIL")
+    (68 17 68 34))))
+ (|detf_TCC1| 0
+  (|detf_TCC1-2| "" 3999859323 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK (|detf| SUBTYPE "n" "upto(det_fast_def.n)" (73 52 73 53)))
+  (|detf_TCC1-0| "" 3999858973 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL))
+   SHOSTAK (|detf| SUBTYPE "n" "upto(det_fast_def.n)" (73 52 73 53)))
+  (|detf_TCC1-1| NIL 3999858956 ("" (SUBTYPE-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL))
+   NIL (|detf| SUBTYPE "n" "upto(det_fast_def.n)" (73 52 73 53)))))
+

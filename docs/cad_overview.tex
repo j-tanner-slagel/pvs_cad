@@ -41,151 +41,225 @@
 \setlength\emergencystretch{3em}
 \pagestyle{plain}
 
+\makeatletter
+% typewriter identifiers are not hyphenated or broken at their hyphens
+\AddToHook{selectfont}{\edef\jts@f{\f@family}\edef\jts@t{\ttdefault}%
+  \ifx\jts@f\jts@t\hyphenchar\font=-1\relax\fi}
+\makeatother
+
 \begin{document}
 
-{\sffamily\small\bfseries\color{moss}PVS\_CAD \quad·\quad PVS 8.1 + NASALib \quad·\quad SEPTEMBER 2026}\par\vspace{6pt}
+{\sffamily\small\bfseries\color{moss}PVS\_CAD \quad·\quad PVS 8.1 + NASALib \quad·\quad OCTOBER 2026}\par\vspace{6pt}
 {\fontsize{24}{29}\selectfont\bfseries A verified CAD algorithm and\\ decision procedure in PVS}\par\vspace{8pt}
-{\large\color{muted}An overview of the pvs\_cad library and the \texttt{(cad)} proof strategy}\par\vspace{8pt}
+{\large\color{muted}An overview of the pvs\_cad library and its proof strategies \texttt{(cad)} and \texttt{(cad-qe)}}\par\vspace{8pt}
 {\large J.~Tanner Slagel{\renewcommand\thefootnote{*}\footnote{This report was written with Claude Code using Claude Opus 5.5. The pvs\_cad library was developed the same way, with Claude Fable 5.1 and then Opus 5 and Opus 5.5; every proof in it is checked by PVS. Claude Code: \url{https://claude.com/claude-code}.}}}\par\vspace{2pt}
 {\small\color{muted}Code and proofs: \url{https://github.com/j-tanner-slagel/pvs_cad}}\par\vspace{10pt}
 
-\textbf{In short.} pvs\_cad is a PVS library, together with a proof strategy \texttt{(cad)}, that decides the
-first-order theory of the real numbers: sentences built from polynomial equations and inequalities with rational
-coefficients, the connectives AND, OR, NOT, IMPLIES and IFF, and quantifiers \texttt{FORALL}/\texttt{EXISTS} over real
-variables, written in prenex form (every sentence has one). Its n-level engine is an executable PVS function that
-computes a cylindrical algebraic decomposition (CAD) in two or more variables, and the library proves that it does
-whenever its run-time certificate holds, which some value of its search-effort parameter $u$ always achieves: the cells
-cover $\mathbb{R}^n$, are disjoint, connected and first-order definable at every level, stack in cylinders over
-continuous, strictly ordered root functions with definable graphs, and carry one sign vector of the input polynomials
-each; a companion executable function, \texttt{cad\_out}, returns the cells of the same run as data (one or more records
-per nonempty cell), and that CAD decides every sentence over those polynomials in the same variables, in the same order.
-The decision procedure \texttt{(cad)} runs, \texttt{decide5}, which uses this engine for three or more variables and as
-the fallback at two, is proved \emph{sound} (an answer is always the truth) and \emph{complete} (it always answers).
-Inside a proof,
-\texttt{(cad)} evaluates the procedure and turns the answer into a PVS proof that the kernel checks. The whole library,
-256 theories and 3,814 formulas, is proved.
+\textbf{In short.} pvs\_cad is a PVS library, with the proof strategies \texttt{(cad)} and \texttt{(cad-qe)}, that
+decides the first-order theory of the real numbers and eliminates quantifiers: formulas built from polynomial equations
+and inequalities with rational coefficients, the connectives AND, OR, NOT, IMPLIES and IFF, and quantifiers over real
+variables. Two executable PVS functions compute a cylindrical algebraic decomposition (CAD). For the cells built from
+Collins's projection operator the library proves, for every family of polynomials in every number of variables and with
+no run-time certificate, that the cells of $\mathbb{R}^n$ cover it and are disjoint, that the cells of every level are
+connected and first-order definable and stack in cylinders over continuous, strictly ordered root functions with
+definable graphs, and that each cell of $\mathbb{R}^n$ carries one sign vector of the input polynomials
+(\texttt{col\_cells}); \texttt{col\_found} returns this CAD as data, at least one record with an exact sample point for
+every nonempty cell of $\mathbb{R}^n$ and none for any other, and those records decide every sentence over the
+polynomials in the same variables, in the same order. The n-level engine, built first, computes such a
+CAD in two or more variables whenever its run-time certificate holds, which some value of its search-effort parameter
+$u$ always achieves (\texttt{cad\_verified}). A set is definable by a first-order formula with rational coefficients
+exactly when a quantifier-free one defines it (\texttt{fod\_qfd}, Tarski--Seidenberg over $\mathbb{Q}$), and every cell
+of both CADs, at every level, is quantifier-free definable (\texttt{cad\_sa}). In a theory that imports
+\texttt{pvs\_cad}, \texttt{(cad)} decides a closed prenex formula over \texttt{real} whose atoms compare polynomials in its
+bound variables by \texttt{decide8}, the Collins run (after a witness search), and any other first-order formula over the
+reals, one with other real terms included, by \texttt{decide\_g}; without \texttt{cad\_decide8} it uses \texttt{decide5},
+built on the n-level engine.
+All three are proved \emph{sound} (an answer is always the truth) and \emph{complete} (they always answer).
+\texttt{(cad-qe)} replaces a formula with free variables by a quantifier-free one that holds at exactly the same points.
+Inside a proof, the strategies evaluate the procedure and turn its answer into a PVS proof that the kernel checks. The
+whole library, 355 theories and 5,183 formulas, is proved.
+
+\textbf{Using it.} A theory needs one line, \texttt{IMPORTING pvs\_cad}. Then, in a proof:
+\begin{center}\small
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.29\textwidth} X@{}}
+\toprule
+\mbox{\texttt{(cad)}} & decide the goal, a first-order sentence over the reals: a TRUE goal is proved; otherwise it stays,
+labelled \texttt{cad}, with a message saying it is FALSE\\
+\mbox{\texttt{(cad -1)}}, \mbox{\texttt{(cad 2)}}, \mbox{\texttt{(cad (-1 3))}} & the same on a chosen hypothesis or goal (a FALSE hypothesis
+closes the goal), or on several formulas together\\
+\mbox{\texttt{(cad *)}}, \mbox{\texttt{(cad +)}}, \mbox{\texttt{(cad -)}} & decide the sequent as a whole (the hypotheses imply the goals), or
+the goals or the hypotheses alone; other real terms, such as $f(c)$ or $\sqrt{c}$, become unknowns\\
+\mbox{\texttt{(cad-qe)}}, \mbox{\texttt{(cad-qe -1)}} & replace a goal or hypothesis with free real terms by an equivalent
+quantifier-free formula\\
+\mbox{\texttt{(cad :cad-only? t)}}, \mbox{\texttt{(cad-direct)}} & answer only through the verified CAD engine; decide without the
+witness search\\
+\bottomrule
+\end{tabularx}
+\end{center}
+Formulas are taken as written: grouped binders, quantifiers inside NOT, AND, OR, IMPLIES and IFF, PVS's synonyms for the
+connectives, and binders over \texttt{posreal}, \texttt{nnreal}, \texttt{negreal}, \texttt{npreal} and \texttt{nzreal}.
+\texttt{cad/cad\_showcase.pvs} has 43 commented examples, each with its proof and its time, and
+\texttt{cad/cad\_forms\_ex.pvs} 64 regression lemmas.
 
 \section{What it looks like}
-Real PVS sessions, with the simplifier's internal messages cut. \texttt{(cad)} decides one closed formula where it stands.
-Four quantifiers, the quadratic formula as an existence theorem:
+Real PVS sessions, recorded on 1 October 2026 in \texttt{cad\_showcase}, which imports \texttt{pvs\_cad}, with the
+prover's commentary and the simplifier's internal messages cut. The quadratic formula as an existence theorem, written
+with a grouped binder (\texttt{(cad)} proves it from its nested form; the timing table below gives the whole proof of
+that nested form, \texttt{d\_quad\_suf}):
 \begin{termbox}
 \begin{Verbatim}[commandchars=\\«», fontsize=\footnotesize]
-\Dm«d_quad_suf :»
+\Dm«quadratic_formula :»
 \Dm«  |-------»
-\Dm«{1}»   FORALL (a: real):
-        FORALL (b: real):
-          FORALL (c: real):
-            EXISTS (x: real):
-              a /= 0 AND b ^ 2 >= 4 * a * c IMPLIES
-               a * x ^ 2 + b * x + c = 0
+\Dm«{1}»   FORALL (a, b, c: real):
+        EXISTS (x: real):
+          a /= 0 AND b ^ 2 >= 4 * a * c IMPLIES a * x ^ 2 + b * x + c = 0
 \Rl«Rule? (cad)»
 \Ms«Deciding 1 by cylindrical decision, witness first,»
 \Qd«Q.E.D.»
-\Dm«Real time = 2.109 secs.»
+\Dm«Real time = 5.297 secs.»
 \end{Verbatim}
 \end{termbox}
 
-Motzkin's polynomial~\cite{motzkin} is nonnegative although it is not itself a sum of squares, so no plain sum-of-squares decomposition proves it:
+Continuity of $x^2$ at 0, the epsilon--delta way: three alternating quantifiers, binders over \texttt{posreal} and an
+implication inside, taken as written:
 \begin{termbox}
 \begin{Verbatim}[commandchars=\\«», fontsize=\footnotesize]
-\Dm«b_motzkin :»
+\Dm«sq_continuous :»
 \Dm«  |-------»
-\Dm«{1}»   FORALL (x: real):
-        FORALL (y: real):
-          x ^ 4 * y ^ 2 + x ^ 2 * y ^ 4 - 3 * x ^ 2 * y ^ 2 + 1 >= 0
+\Dm«{1}»   FORALL (e: posreal):
+        EXISTS (d: posreal):
+          FORALL (x: real): -d < x AND x < d IMPLIES x ^ 2 < e
 \Rl«Rule? (cad)»
 \Ms«Deciding 1 by cylindrical decision, witness first,»
 \Qd«Q.E.D.»
-\Dm«Real time = 1.135 secs.»
+\Dm«Real time = 1.81 secs.»
 \end{Verbatim}
 \end{termbox}
 
-\texttt{(cad *)} works on a whole sequent. After \texttt{(skeep)} the facts sit in the sequent over skolem constants. The
-strategy says which formulas it uses and which it skips, which terms become unknown reals, and which sentence it decides.
-Here \texttt{member(x, l)} is not about reals and is skipped, while \texttt{f(x)} and \texttt{length(l)} become unknown
-reals; that \texttt{length(l)} is nonnegative comes from its type:
+\texttt{(cad *)} works on a whole sequent. After \texttt{(skeep)} the facts sit in the sequent over skolem constants;
+\texttt{f(x)} and \texttt{length(l)} become unknown reals, and that \texttt{length(l)} is nonnegative comes from its
+type. The strategy says which formulas it uses, which terms become unknowns, and which sentence it decides:
 \begin{termbox}
 \begin{Verbatim}[commandchars=\\«», fontsize=\footnotesize]
-\Dm«s_fun :»
+\Dm«unknown_terms :»
 \Dm«  |-------»
-\Dm«{1}»   FORALL (x: real, l: list[real]):
-        f(x) > x ^ 2 AND member(x, l) AND length(l) = 3 IMPLIES f(x) > -1
+\Dm«{1}»   FORALL (f: [real -> real], l: list[real], x: real):
+        f(x) > x ^ 2 AND length(l) = 3 IMPLIES f(x) + length(l) > 2
 \Rl«Rule? (skeep)»
 \Dm«{-1}»  f(x) > x ^ 2
-\Dm«{-2}»  member(x, l)
-\Dm«{-3}»  length(l) = 3
+\Dm«{-2}»  length(l) = 3
 \Dm«  |-------»
-\Dm«{1}»   f(x) > -1
+\Dm«{1}»   f(x) + length(l) > 2
 \Rl«Rule? (cad *)»
-\Ms«cad*: using (-1 -3 1), skipping (-2); unknown reals: cadv_1 = f(x), cadv_2 = x, cadv_3 = length(l)»
-\Ms«cad*: deciding FORALL (cadv_1: real): FORALL (cadv_2: real): FORALL (cadv_3: real): (((cadv_3 >= 0)) IMPLIES (((cadv_1 > (cadv_2 ^ 2)) AND (cadv_3 = (3))) IMPLIES ((cadv_1 > (-1)))))»
+\Ms«cad*: using (-1 -2 1), skipping nothing; unknown reals: cadv_1 = f(x), cadv_2 = x, cadv_3 = length(l)»
+\Ms«cad*: deciding FORALL (cadv_1: real): FORALL (cadv_2: real): FORALL (cadv_3: real): (((cadv_3 >= 0)) IMPLIES (((cadv_1 > (cadv_2 ^ 2)) AND (cadv_3 = (3))) IMPLIES (((cadv_1 + cadv_3) > (2)))))»
 \Ms«Deciding * by cylindrical decision, witness first,»
 \Qd«Q.E.D.»
-\Dm«Real time = 1.819 secs.»
+\Dm«Real time = 2.292 secs.»
 \end{Verbatim}
 \end{termbox}
 
-A term that is not a polynomial: \texttt{sqrt(x)} becomes an unknown real, and the fact that it is nonnegative, which comes from its type, is added to the sentence. \texttt{(cad)} alone could not take this goal in any form:
+Quantifier elimination inside a proof: \texttt{(cad-qe -1)} prints the quantifier-free answer and replaces the
+hypothesis by it, with a proof that the two are equivalent; \texttt{(cad *)} finishes:
 \begin{termbox}
 \begin{Verbatim}[commandchars=\\«», fontsize=\footnotesize]
-\Dm«s_sqrt :»
+\Dm«qe_then_cad :»
 \Dm«  |-------»
-\Dm«{1}»   FORALL (x: nnreal, a: real):
-        a = sqrt(x) AND a * a = x AND a > 1 IMPLIES x > 1
+\Dm«{1}»   FORALL (a, b: real):
+        (EXISTS (t: real): t ^ 2 + a * t + b = 0) AND b > 0 IMPLIES
+         a ^ 2 >= 4 * b
 \Rl«Rule? (skeep)»
-\Dm«{-1}»  a = sqrt(x)
-\Dm«{-2}»  a * a = x
-\Dm«{-3}»  a > 1
+\Dm«{-1}»  EXISTS (t: real): t ^ 2 + a * t + b = 0
+\Dm«{-2}»  b > 0
 \Dm«  |-------»
-\Dm«{1}»   x > 1
+\Dm«{1}»   a ^ 2 >= 4 * b
+\Rl«Rule? (cad-qe -1)»
+\Ms«cad-qe: ((b < 0) OR ((b = 0) OR ((b > 0) AND ((4*b + (-1)*a^2 = 0) OR (4*b + (-1)*a^2 < 0)))))»
+\Ms«Eliminating the quantifiers of -1,»
+\Dm«{-1}»  ((b < 0) OR
+        ((b = 0) OR
+          ((b > 0) AND
+            ((4 * b + (-1) * a ^ 2 = 0) OR (4 * b + (-1) * a ^ 2 < 0)))))
+\Dm«{-2}»  b > 0
+\Dm«  |-------»
+\Dm«{1}»   a ^ 2 >= 4 * b
 \Rl«Rule? (cad *)»
-\Ms«cad*: using (-1 -2 -3 1), skipping nothing; unknown reals: cadv_1 = a, cadv_2 = sqrt(x), cadv_3 = x»
-\Ms«cad*: deciding FORALL (cadv_1: real): FORALL (cadv_2: real): FORALL (cadv_3: real): (((cadv_2 >= 0) AND (cadv_3 >= 0)) IMPLIES (((cadv_1 = cadv_2) AND ((cadv_1 * cadv_1) = cadv_3) AND (cadv_1 > (1))) IMPLIES ((cadv_3 > (1)))))»
+\Ms«cad*: using (-1 -2 1), skipping nothing; unknown reals: cadv_1 = b, cadv_2 = a»
+\Ms«cad*: deciding FORALL (cadv_1: real): FORALL (cadv_2: real): ((((cadv_1 < (0)) OR ((cadv_1 = (0)) OR ((cadv_1 > (0)) AND (((((4) * cadv_1) + ((-1) * (cadv_2 ^ 2))) = (0)) OR ((((4) * cadv_1) + ((-1) * (cadv_2 ^ 2))) < (0)))))) AND (cadv_1 > (0))) IMPLIES (((cadv_2 ^ 2) >= ((4) * cadv_1))))»
 \Ms«Deciding * by cylindrical decision, witness first,»
 \Qd«Q.E.D.»
-\Dm«Real time = 2.602 secs.»
+\Dm«Real time = 4.596 secs.»
 \end{Verbatim}
 \end{termbox}
 
 \section{How a proof by \texttt{(cad)} works}
-The strategy follows the reflection template of Narkawicz, Muñoz and Dutle's univariate Sturm and Tarski strategies in NASALib~\cite{nasalib,nmd}. \texttt{(cad)} reads the goal and computes its encoding as data \texttt{(os, F, phi)}: the quantifier prefix, the polynomials' coefficient lists and the Boolean skeleton (see ``The main theorems''). It then runs
-\texttt{decide5} in PVS's ground evaluator and instantiates \texttt{decide5\_correct} with that data. Unfolding
-\texttt{fsem}, the semantics, turns the result back into the original formula: each quantifier is matched, and one reflection lemma per
-polynomial (\texttt{peval\_pnorm}) shows that the coefficient list evaluates to the polynomial as written. A FALSE
-sentence is reported and left in place, and a false hypothesis closes the goal. \texttt{(cad *)} extends this to a whole
-sequent. It collects the polynomial hypotheses and goals, replaces non-polynomial real terms such as \texttt{sqrt(x)} or
-\texttt{f(x)} by universally quantified reals, and decides the implication. The combined formula enters the proof by
-\texttt{case}, so both branches are checked by PVS.
+The strategy follows the reflection template of Narkawicz, Muñoz and Dutle's univariate Sturm and Tarski strategies in
+NASALib~\cite{nasalib,nmd}. \texttt{(cad)} reads the goal and computes its encoding as data \texttt{(os, F, phi)}: the
+quantifier prefix, the polynomials' coefficient lists and the Boolean skeleton (see ``The main theorems''). It then runs
+the decision in PVS's ground evaluator (\texttt{decide8}, the Collins run, in a theory that imports
+\texttt{cad\_decide8}, as \texttt{pvs\_cad} does; \texttt{decide5} in one that imports \texttt{cad\_decide5} but not
+\texttt{cad\_decide8}) and
+instantiates its correctness theorem (\texttt{decide8\_correct} or \texttt{decide5\_correct}) with that data. Unfolding
+\texttt{fsem}, the semantics, turns the result back into the original formula: each quantifier is matched, and one
+reflection lemma per polynomial (\texttt{peval\_pnorm}) shows that the coefficient list evaluates to the polynomial as
+written. A FALSE sentence is reported and left in place, and a false hypothesis closes the goal. Before deciding a
+prenex sentence, \texttt{(cad)} looks for a witness: a model search proves a goal whose quantifiers are all existential
+(or refutes a hypothesis whose quantifiers are all universal) by instantiating a point, and with three or more
+quantifiers, when the decision is slow, one variable (existential in a goal, universal in a hypothesis being refuted)
+is fixed to a small constant and the smaller sentence decided. Grouped binders such as \texttt{FORALL (x, y: real)} are decided through the nested form, and a goal
+\texttt{NOT A} as the hypothesis \texttt{A}. In a theory that imports \texttt{pvs\_cad}, a formula of any other shape
+(quantifiers inside connectives; binders over \texttt{posreal}, \texttt{nnreal}, \texttt{negreal}, \texttt{npreal} or
+\texttt{nzreal}) is encoded as a term \texttt{g} of a datatype that mirrors PVS's connectives; \texttt{(cad)} evaluates \texttt{decide\_g(g)}, instantiates \texttt{decide\_g\_ok}, unfolds the semantics
+\texttt{gsem}, which then has the formula's own shape, and closes the goal connective by connective. \texttt{(cad-qe)}
+does the same for a formula with free real terms (skolem constants, say): it evaluates \texttt{qe8} (\texttt{qe} in a
+theory that does not import \texttt{qe8}), or \texttt{qe\_g} for other shapes, and replaces the formula by the
+quantifier-free answer, proved equivalent from \texttt{qe8\_correct}, \texttt{qe\_correct} or \texttt{qe\_g\_ok}.
+\texttt{(cad *)} collects the polynomial hypotheses and goals of a whole sequent, replaces non-polynomial real terms
+such as \texttt{sqrt(x)} or \texttt{f(x)} by universally quantified reals, and decides the implication, which enters
+the proof by \texttt{case}, so both branches are checked by PVS.
 
-The trusted base is the PVS kernel plus the ground evaluator that runs \texttt{decide5} (\texttt{decide7} under
-\texttt{(cad :cad-only? t)}), the same base as NASALib's Sturm and Tarski strategies, and NASALib's saved proofs of the
-theorems the library imports, which were not replayed here; beyond that, one trusts the specification: that the semantics \texttt{fsem} and the
-theorem statements (last section) say what is intended. The strategy code (1,964 lines of Lisp) is not trusted: it only chooses proof steps.
+The trusted base is the PVS kernel plus the ground evaluator that runs the procedure (\texttt{decide8},
+\texttt{decide\_g}, \texttt{qe8} or \texttt{qe\_g} in a theory that imports \texttt{pvs\_cad}; \texttt{decide5},
+\texttt{decide7} or \texttt{qe} in one that imports only \texttt{cad\_decide5}, \texttt{cad\_decide7} and
+\texttt{qe\_all}), the same base as NASALib's Sturm and Tarski strategies. It also includes NASALib's saved proofs of the
+theorems the library imports, which were not replayed here. Beyond that, one trusts the specification: that the
+semantics (\texttt{fsem}, \texttt{gsem}, \texttt{qfsem}) and the theorem statements (last section) say what is intended.
+The strategy code (3,371 lines of Lisp) is not trusted: it only chooses proof steps.
 
 \section{What it decides in practice}
-CAD is doubly exponential in the worst case, so completeness means ``always answers, given time''. Some measured
-times for complete proofs (PVS's own timing, one M-series Mac):
+CAD is doubly exponential in the worst case, so completeness means ``always answers, given time''. Measured times for
+complete proofs on one M-series Mac: with \texttt{decide5}, in theories that import \texttt{cad\_decide5}, on
+28 September 2026 (PVS's own timing); with \texttt{IMPORTING pvs\_cad} (\texttt{decide8}, the Collins run) on
+1 October 2026 (wall clock of the proof command, through \texttt{pvs-cli}):
 \begin{center}\small
-\begin{tabularx}{\textwidth}{@{}X l r@{}}
+\begin{tabularx}{\textwidth}{@{}X l r r@{}}
 \toprule
-Sentence & Shape & Time\\
+Sentence & Shape & \texttt{decide5} & \texttt{pvs\_cad}\\
 \midrule
-Wilkinson's $(x-1)\cdots(x-20)$, expanded, is positive for $x<1$ (coefficients to $2.4\times10^{18}$) & $\forall$, degree 20 & 2.9\,s\\
-Chebyshev $T_{10}$ stays in $[-1,1]$ on $[-1,1]$ & $\forall$, degree 10 & 2.0\,s\\
-Motzkin's polynomial is nonnegative (not a sum of squares) & $\forall\forall$, degree 6 & 1.1\,s\\
-Every depressed cubic $x^3+px+q$ has a real root & $\forall\forall\exists$ & 0.8\,s\\
-Quadratic formula: $a\neq0 \wedge b^2\ge 4ac \Rightarrow \exists x\colon ax^2+bx+c=0$ & $\forall\forall\forall\exists$ & 2.1\,s\\
-$\forall x\,\exists y\,\forall z\colon z^4+yz^2+y\ge x$ & $\forall\exists\forall$ & 22.9\,s\\
-No real root of $z^2+bz+c$ implies $b^2<4c$, by \texttt{(cad *)} on a sequent & quantified hypothesis & 1.3\,s\\
+Wilkinson's $(x-1)\cdots(x-20)$, expanded, is positive for $x<1$ (coefficients to $2.4\times10^{18}$) & $\forall$, degree 20 & 2.9\,s & 3.2\,s\\
+Chebyshev $T_{10}$ stays in $[-1,1]$ on $[-1,1]$ & $\forall$, degree 10 & 2.0\,s & 2.7\,s\\
+Motzkin's polynomial is nonnegative (not a sum of squares~\cite{motzkin}) & $\forall\forall$, degree 6 & 1.1\,s & 1.7\,s\\
+Every depressed cubic $x^3+px+q$ has a real root & $\forall\forall\exists$ & 0.8\,s & 1.5\,s\\
+Quadratic formula: $a\neq0 \wedge b^2\ge 4ac \Rightarrow \exists x\colon ax^2+bx+c=0$ & $\forall\forall\forall\exists$ & 2.1\,s & 3.2\,s\\
+$\forall x\,\exists y\,\forall z\colon z^4+yz^2+y\ge x$ & $\forall\exists\forall$ & 22.9\,s & 8.3\,s\\
+No real root of $z^2+bz+c$ implies $b^2<4c$, by \texttt{(cad *)} on a sequent & quantified hypothesis & 1.3\,s & 2.0\,s\\
 \bottomrule
 \end{tabularx}
 \end{center}
-The limits show up with three or four variables at degree 3 to 4: AM--GM for three or four variables and
-Cauchy--Schwarz in the plane do not finish in two minutes. On a set of 100 generated sentences with 1 to 6 quantifiers,
-98 were proved within 300\,s, and no answer disagreed with Z3.
+With \texttt{decide5} the limits show up with three or four variables at degree 3 to 4: AM--GM for three or four
+variables and Cauchy--Schwarz in the plane did not finish in two minutes (28 September 2026). With
+\texttt{pvs\_cad} AM--GM for three variables takes 3.4\,s and Cauchy--Schwarz in the plane 2.2\,s, while AM--GM for
+four variables still does not finish in two minutes (1 October 2026). On 100 generated sentences with 1 to 6 quantifiers, \texttt{(cad)} with \texttt{decide5}
+proved 98 within 300\,s, and no answer disagreed with Z3 (27 September 2026). On 68 \texttt{(cad)} and \texttt{(cad-qe)}
+proofs from the library's example theories, proofs with the Collins imports (\texttt{decide8}, \texttt{qe8}) took
+0.6--0.8\,s longer on average than with \texttt{decide5} and \texttt{qe} (0.77\,s in a first run, 0.59\,s in a re-run with the
+strategy fixes of this release), partly because of the larger imported context;
+on some problems with several quantifiers the Collins decision was faster by more than an order of magnitude (23 to
+more than 450 times) and on others slower (1 October 2026; \texttt{docs/collins\_cad.pdf}).
 
 \section{How it was built}
-The library was built in stages in September 2026 (279 commits). Most stages also shipped a verified strategy of their own.
+The library was built in stages from 9 September to 2 October 2026 (298
+commits). Most stages also shipped a proof strategy of their own.
 \begin{enumerate}[leftmargin=1.3em, itemsep=2pt, topsep=2pt]
 \item \textbf{Multivariate polynomials.} A normal form for multivariate polynomials over the rationals, proved unique, and
 reflection lemmas connecting it to PVS real expressions (strategies \texttt{mpoly-eq}, \texttt{mpoly-simp}).
@@ -194,44 +268,66 @@ Sturm and Tarski libraries (\texttt{alg-roots}).
 \item \textbf{Branching quantifier elimination.} One-variable quantifier elimination with parametric sign conditions
 (\texttt{qe-exists}, \texttt{poly-sign}).
 \item \textbf{Resultants and subresultants}: determinants, the resultant, and the principal subresultant coefficients
-with their specialization property; the Collins- and McCallum-shaped projection operators built from them are defined but
-not proved delineating, and the decision procedure does not use them.
+with their specialization property. Two projection operators built from them are defined but not proved delineating:
+a McCallum-shaped one (\texttt{cad\_proj}), from which the decisions of item 6 start their read closures (their
+soundness rests on run-time checks instead), and a Collins-like one without reducta (\texttt{cad\_projc}). Collins's
+own operator, with reducta (the N-reducta projection), is proved delineating in item 10.
 \item \textbf{A first cylindrical decision}, \texttt{decide}, proved correct for every sentence
 (\texttt{decide\_correct}). It was complete but exponential in the number of polynomials: a circle and a line did not
 finish in 15 minutes.
-\item \textbf{The fast cylindrical decision.} This is the procedure \texttt{(cad)} runs for two or more quantifiers. Over each cell of the lower variables, it lifts to
-the next variable by walking exact rational separators between that variable's roots. It reads the sign vector at each
-separator and at each root through Tarski queries at the cell's sample point, which may be algebraic. This builds one
-tower of cells per outer sector, for any number of levels. Soundness
-never assumes what it cannot check: the signs of the polynomials each lifting step reads are certified constant on each
-sector at run time, which is proved to fix the set of sign vectors in every fibre over the sector, and a failed check sets
+\item \textbf{The fast cylindrical decision}, which \texttt{decide5} uses for two or more quantifiers; \texttt{(cad)}
+runs \texttt{decide5} in a theory that does not import \texttt{cad\_decide8}. Over each cell of the lower variables, it
+lifts to the next variable by walking exact rational separators between that variable's roots, and reads the sign
+vector at each separator and root through Tarski queries at the cell's sample point, which may be algebraic. Soundness
+never assumes what it cannot check: the signs each lifting step reads are certified constant on each sector at run
+time, which is proved to fix the set of sign vectors in every fibre over the sector, and a failed check sets
 \texttt{ok} to FALSE (\texttt{decw\_correct} for two quantifiers, \texttt{decn\_correct} for any number).
-\item \textbf{Completeness.} A review showed that the only way \texttt{ok} could be FALSE was a fixed search limit running
-out. Some searches were made total; the others share one fuel parameter $u$. The proof shows that every large enough $u$
-makes every check pass. Two
-facts carry it. First, each search stops at its first success, so a larger $u$ changes nothing once $u$ suffices.
-Second, the closures that add sign reads draw them from a finite set built level by level from \texttt{F}, so they reach
-a fixpoint (\texttt{decn\_complete}). \texttt{decn\_u}, which \texttt{decide5} calls, raises $u$ until the checks pass; it terminates on a
-non-computable measure, the distance to a bound beyond which every $u$ suffices (\texttt{ubound}, chosen by
-\texttt{epsilon}), which keeps it an ordinary executable PVS function
+\item \textbf{Completeness.} A review showed that the only way \texttt{ok} could be FALSE was a fixed search limit
+running out. Some searches were made total; the others share one fuel parameter $u$, and every large enough $u$ makes
+every check pass: each search stops at its first success, so a larger $u$ changes nothing once $u$ suffices, and the
+closures that add sign reads draw them from a finite set built level by level from \texttt{F}, so they reach a fixpoint
+(\texttt{decn\_complete}). \texttt{decn\_u}, which \texttt{decide5} calls, raises
+$u$ until the checks pass; it terminates on a non-computable measure, the distance to a bound beyond which every $u$
+suffices (\texttt{ubound}, chosen by \texttt{epsilon}), which keeps it an ordinary executable PVS function
 (\texttt{decn\_u\_complete}, then \texttt{decide5\_decides}).
-\item \textbf{The CAD.} The run-time checks were then shown to give delineability in the sign-invariant sense
-(\texttt{delin\_cl?}): if the walk's certificate holds at one point of a connected set and the signs it reads there hold
-across the set, the family's roots over the set are continuous and never cross, and the family has one sign vector on each
-section and band (\texttt{stack\_const}). On that rest the proofs that the run's cells form a CAD (\texttt{cad\_run}),
-that \texttt{cad\_out} returns them as data which decides every sentence over \texttt{F} in the same variables
-(\texttt{cad\_out\_ok}, \texttt{cad\_decides}), and that every cell and every root function's graph is first-order
-definable (\texttt{rcell\_fod\_le}, \texttt{graph\_fod}); \texttt{cad\_verified} puts them together.
+\item \textbf{The CAD.} The run-time checks give delineability in the sign-invariant sense (\texttt{delin\_cl?}): if the
+walk's certificate holds at one point of a connected set and the signs it reads there hold across the set, the family's
+roots over the set are continuous and never cross, and the family has one sign vector on each section and band
+(\texttt{stack\_const}). From this, the run's cells form a CAD (\texttt{cad\_run}), \texttt{cad\_out} returns them as
+data that decides every sentence over \texttt{F} in the same variables (\texttt{cad\_out\_ok}, \texttt{cad\_decides}),
+and every cell and root function's graph is first-order definable (\texttt{rcell\_fod\_le}, \texttt{graph\_fod});
+\texttt{cad\_verified} puts them together.
+\item \textbf{Quantifier elimination.} For every prenex formula with at least one quantifier and $m \ge 1$ free
+variables, \texttt{qe} returns a quantifier-free formula that holds at exactly the same points of $\mathbb{R}^m$
+(\texttt{qe\_complete}). With two or more free variables, when the plain run's answer is not quantifier-free, \texttt{qe}
+falls back to a run whose free levels are closed under the derivative, where Thom's lemma separates the cells.
+\texttt{(cad-qe)} uses \texttt{qe} in a theory that does not import \texttt{qe8}.
+\item \textbf{Collins's projection.} Collins's N-reducta projection (\texttt{projn}, executable) is proved delineating
+for every input, by the subresultant theorem and the continuity of complex roots in the coefficients
+(\texttt{collins\_stack}, \texttt{projn\_ok}). The cells built from its tower form a CAD adapted to the family in every
+number of variables, with no run-time certificate (\texttt{col\_cells}), which \texttt{col\_found} returns as data
+(\texttt{col\_found\_cad}). \texttt{decide8} decides on that tower, and \texttt{qe8} eliminates quantifiers on it or on
+one whose free levels are closed under the derivative (\texttt{decide8\_decides}, \texttt{qe8\_complete}).
+\item \textbf{Tarski--Seidenberg.} \texttt{qelim} eliminates the quantifiers of every first-order formula from the inside
+out, each existential quantifier by \texttt{qe8}, or by \texttt{decide8} when no variable is free (\texttt{qelim\_qf},
+\texttt{qelim\_ok}). So a set is first-order definable over $\mathbb{Q}$ exactly when it is quantifier-free definable
+(\texttt{fod\_qfd}), and every cell of both CADs is (\texttt{cad\_sa}).
+\item \textbf{Formulas as written.} A datatype \texttt{Gm} mirrors PVS's connectives; \texttt{decide\_g} decides its
+sentences and \texttt{qe\_g} eliminates its quantifiers, both through \texttt{qelim} (\texttt{decide\_g\_ok},
+\texttt{qe\_g\_ok}). With \texttt{IMPORTING pvs\_cad}, the one import \texttt{(cad)} and \texttt{(cad-qe)} need, \texttt{(cad)}, \texttt{(cad *)}
+and \texttt{(cad-qe)} take formulas as written: grouped binders, quantifiers inside NOT, AND, OR, IMPLIES and IFF, and
+binders over \texttt{posreal}, \texttt{nnreal}, \texttt{negreal}, \texttt{npreal} and \texttt{nzreal} (a binder over any
+other type, such as \texttt{nat}, is refused).
 \end{enumerate}
 
 \section{The library in numbers}
 \begin{center}\small
 \begin{tabular}{@{}l r@{\qquad}l r@{}}
 \toprule
-PVS theories (files) & 256 & Formulas proved, whole-library replay & 3,814 of 3,814\\
-Lines of PVS specification & 20,133 & \quad lemmas and theorems & 2,609\\
-Lines of strategy code (Lisp) & 1,964 & \quad TCCs (type-correctness obligations) & 1,205\\
-Commits, September 2026 & 279 & Axioms added & none\\
+PVS theories & 355 & Formulas proved, whole-library replay & 5,183 of 5,183\\
+Lines of PVS (358 files, with the datatypes) & 26,864 & \quad lemmas and theorems & 3,553\\
+Lines of strategy code (Lisp) & 3,371 & \quad TCCs (type-correctness obligations) & 1,630\\
+Commits, from 9 September 2026 & 298 & Axioms added & none\\
 \bottomrule
 \end{tabular}
 \end{center}
@@ -241,33 +337,51 @@ It builds on NASALib's \texttt{Sturm} and \texttt{Tarski} (univariate root count
 Tarski showed that the first-order theory of the real numbers is decidable~\cite{tarski}, and Collins's
 cylindrical algebraic decomposition~\cite{collins} made the decision practical; this library builds on the
 PVS~\cite{pvs} libraries of NASALib~\cite{nasalib}, in particular the univariate Sturm and Tarski decision
-procedures of Narkawicz, Mu\~noz and Dutle~\cite{nmd}. A formal correctness proof of Collins's CAD, including the
-delineability of Collins's projection, exists in Rocq~\cite{vermande}, over an abstract real closed field; it is a
-correctness proof, not an executable procedure used as a tactic. Isabelle/HOL has a verified, complete multivariate quantifier elimination
-procedure~\cite{kosaian}, exported to executable code; its authors report that, without virtual substitution, it is
-impractical beyond the simplest univariate examples. Lean's Mathlib~\cite{mathlib} has, as far
-as we could find, no CAD formalization and no CAD-based decision tactic, and a Lean project's roadmap from
-September 2026 lists CAD, delineability and Sturm theory among what Mathlib lacks~\cite{hex}; Lean's
-nonlinear tactics (\texttt{nlinarith}, \texttt{polyrith}) are heuristic or check certificates found by an
-external algebra system, and are not complete. To our knowledge (a survey of September 2026), pvs\_cad is
-the first multivariate decision procedure of the CAD family that is executable, proof-producing, formally verified
-sound and complete, and usable as a tactic in an interactive prover, and its engine is proved to compute a CAD in
-the sense of Basu, Pollack and Roy's Def.~5.1. What is proved, and what is not:
+procedures of Narkawicz, Mu\~noz and Dutle~\cite{nmd}. Earlier quantifier elimination for the reals with
+machine-checked answers includes, by methods other than CAD, Cohen and Mahboubi's in Coq~\cite{cohenmahboubi},
+McLaughlin and Harrison's proof-producing procedure in HOL Light~\cite{mclaughlin}, and a verified, complete
+multivariate procedure in Isabelle/HOL~\cite{kosaian}, exported to executable code, whose authors report that without
+virtual substitution it is impractical beyond the simplest univariate examples. Mahboubi implemented CAD in Coq without a
+completed correctness proof~\cite{mahboubi}. A formal correctness proof of Collins's CAD, including the delineability
+of Collins's projection, exists in Rocq~\cite{vermande}, over an abstract real closed field; it is a correctness proof,
+not an executable procedure used as a tactic. Lean's Mathlib~\cite{mathlib} has, as far as we could find, no CAD
+formalization and no CAD-based decision tactic, and a Lean project's roadmap from September 2026 lists CAD,
+delineability and Sturm theory among what Mathlib lacks~\cite{hex}; Lean's nonlinear tactics (\texttt{nlinarith},
+\texttt{polyrith}) are heuristic or check certificates found by an external algebra system, and are not complete. To
+our knowledge (a survey of September 2026), pvs\_cad is the first multivariate decision procedure of the CAD family
+that is executable, proof-producing, formally verified sound and complete, and usable as a tactic in an interactive
+prover. The theorems about both its CADs (for the n-level engine, whenever its certificate holds) state the conditions
+of Basu, Pollack and Roy's Def.~5.1, in two respects only indirectly: the partition is stated for the cells of
+$\mathbb{R}^n$, and at lower levels it follows from the stack construction (\texttt{tcell\_cover}, \texttt{tcell\_disj})
+without being restated; finiteness comes through the records of \texttt{cad\_out} and \texttt{col\_found}, at least one
+for every nonempty cell. What is proved, and what is not:
 \begin{itemize}[leftmargin=1.3em, itemsep=1pt, topsep=2pt]
-\item ``Semi-algebraic'' is used in the sense of definable by a first-order formula over the reals, a standard
-definition; that it agrees with the quantifier-free definition Basu, Pollack and Roy use is the Tarski--Seidenberg
-theorem, which is not formalized here. General quantifier elimination with free variables, which comes next, would
-give quantifier-free cell descriptions directly.
-\item Delineability is proved for the polynomial families the run builds and checks, not for a named projection
-operator (Collins, McCallum, Brown--McCallum).
-\item The CAD theorem covers the n-level engine in two or more variables; for one variable the sectors of the line
-have the CAD properties, proved piece by piece but not yet as one theorem.
-\item \texttt{(cad)} also answers some goals by a witness search or a two-level method, whose answers are proved
-correct too; \texttt{(cad :cad-only? t)} uses only the CAD engine (the sectors of the line in one variable).
+\item ``Semi-algebraic'' holds in two senses. The CAD theorems state that every cell, at every level, and every root
+function's graph over a cell is defined by a first-order formula whose atoms are sign conditions on polynomials with
+rational coefficients. \texttt{fod\_qfd} (\texttt{qelim\_ok.pvs}) proves that a set is defined by such a formula exactly
+when a Boolean combination of such sign conditions defines it without quantifiers (Tarski--Seidenberg over
+$\mathbb{Q}$), and \texttt{cad\_sa.pvs} states this for every cell, at every level, of both CADs and for the Collins
+CAD's root graphs (\texttt{col\_cells\_sa}, \texttt{cad\_cells\_sa}). Sets so defined over $\mathbb{Q}$ are
+semi-algebraic in Basu, Pollack and Roy's sense, whose definition also allows real coefficients and so admits more sets
+($\{\pi\}$, for one). No tool prints the quantifier-free definitions of the cells; the theorems say that they exist.
+\item For the n-level engine, delineability is proved for the polynomial families the run builds and checks. For
+Collins's N-reducta projection it is proved for every input (\texttt{collins\_stack}, \texttt{col\_stack.pvs});
+\texttt{projn\_ok} ties it to the executable operator \texttt{projn}, whose tower \texttt{decide8} and \texttt{qe8} use.
+McCallum's and Brown--McCallum's smaller projections are not proved delineating (the n-level engine starts its read
+closure from a McCallum-shaped operator, \texttt{cad\_proj}, but its correctness does not rest on it), and Lazard's is
+not done. Delineability is in the sign-invariant sense (\texttt{delin\_cl?}): root multiplicities are not tracked.
+\item The Collins CAD theorems cover every number of variables, one included (\texttt{col\_cells}; in one variable the
+cells are the sectors of the real roots of \texttt{F}, \texttt{col\_cad\_line}, the sectors over which
+\texttt{decide8} and \texttt{decide5} decide one-variable sentences); the n-level engine's theorems (\texttt{cad\_verified}) are stated for two or more.
+\item The CAD theorems cover the n-level engine and the Collins run. \texttt{(cad)} also has shortcuts they do not
+cover: the witness search and, with \texttt{decide5}, the two-level method \texttt{decw} for two variables; their answers
+are proved correct too.
+\texttt{(cad :cad-only? t)} uses neither: it decides by \texttt{decide8} in a theory that imports \texttt{cad\_decide8}
+and by \texttt{decide7} (the n-level engine) otherwise, and by \texttt{decide\_g} for formulas of other shapes.
 \end{itemize}
 
 \section{The main theorems}
-A sentence is encoded as data: \texttt{os} lists the quantifiers outermost first (\texttt{TRUE} for $\forall$,
+A prenex sentence is encoded as data: \texttt{os} lists the quantifiers outermost first (\texttt{TRUE} for $\forall$,
 \texttt{FALSE} for $\exists$), \texttt{F} lists the polynomials (exact rational coefficients), and \texttt{phi} is the
 Boolean skeleton, whose atoms say ``polynomial $i$ has sign $s$''. Its meaning is defined by recursion on the prefix, with
 the real quantifiers of PVS itself:
@@ -283,11 +397,14 @@ fsem(os, F, phi, ys): \Kw{RECURSIVE} bool =
 \end{Verbatim}
 \end{thmbox}
 
-The decision procedure \texttt{decide5} returns a record: \texttt{val}, its verdict, and \texttt{ok}, a flag that is
-TRUE when its run-time checks passed. Three theorems say everything about it:
+The decision procedures return a record: \texttt{val}, the verdict, and \texttt{ok}, a flag that is TRUE when the
+run-time checks passed. \texttt{decide8} is the Collins run; \texttt{decide5} is built on the n-level engine:
 
-\begin{thmbox}{Soundness \Cm{\normalfont(cad\_decide5.pvs)} and completeness \Cm{\normalfont(complete\_all.pvs)}}
+\begin{thmbox}{Soundness and completeness \Cm{\normalfont(cad\_decide8.pvs; cad\_decide5.pvs, complete\_all.pvs)}}
 \begin{Verbatim}
+decide8_correct:  \Kw{THEOREM} decide8(reverse(os), F, phi)`ok \Kw{IMPLIES}
+                    (decide8(reverse(os), F, phi)`val \Kw{IFF} fsem(os, F, phi, null))
+decide8_decides:  \Kw{THEOREM} decide8(reverse(os), F, phi)`val \Kw{IFF} fsem(os, F, phi, null)
 decide5_correct:  \Kw{THEOREM} decide5(reverse(os), F, phi)`ok \Kw{IMPLIES}
                     (decide5(reverse(os), F, phi)`val \Kw{IFF} fsem(os, F, phi, null))
 decide5_complete: \Kw{THEOREM} decide5(reverse(os), F, phi)`ok
@@ -295,23 +412,91 @@ decide5_decides:  \Kw{THEOREM} decide5(reverse(os), F, phi)`val \Kw{IFF} fsem(os
 \end{Verbatim}
 \end{thmbox}
 
-There are no hypotheses: \texttt{os}, \texttt{F} and \texttt{phi} are arbitrary, so the result covers every closed
-prenex sentence with any number of quantifiers. \texttt{decide5} is a total function, and PVS generated and proved
-its termination obligations. So the procedure always terminates, always passes its own checks, and always returns the
-truth of the sentence.
+There are no hypotheses: \texttt{os}, \texttt{F} and \texttt{phi} are arbitrary, so the theorems cover every closed
+prenex sentence with any number of quantifiers. Both procedures are total functions, and PVS generated and proved their
+termination obligations, so each always terminates and returns the truth of the sentence. \texttt{(cad :cad-only? t)}
+uses \texttt{decide8} in a theory that imports \texttt{cad\_decide8}, otherwise \texttt{decide7}
+(\texttt{cad\_decide7.pvs}), whose \texttt{decide7\_correct} and \texttt{decide7\_decides} have the statements above
+with \texttt{decide7} in place of \texttt{decide5}.
 
-\texttt{cad\_of?(u, qs, F)} states the conditions of a CAD adapted to \texttt{F} for the cells of the engine
-\texttt{decn\_o} (covering and disjoint in $\mathbb{R}^n$; connected and first-order definable at every level; delineable
-cylinders with definable root graphs; one sign vector each), returned as data (\texttt{cad\_out}).
-\texttt{(cad :cad-only? t)} uses \texttt{decide7} (\texttt{cad\_decide7.pvs}), whose \texttt{decide7\_correct} and
-\texttt{decide7\_decides} have the statements above with \texttt{decide7} in place of \texttt{decide5}.
+Quantifiers anywhere need another formula type, \texttt{rcf\_fol}'s \texttt{Fm} (\texttt{ftrue}, sign atoms
+\texttt{fsg(p, s)}, \texttt{fnot}, \texttt{fand}, \texttt{fex}; variables are positions in a point). Its semantics
+\texttt{fsem(phi)(pt)} is a different function from \texttt{fsem(os, F, phi, ys)} above; \texttt{qfsem} is the same
+semantics under another name, and \texttt{qf?(phi)} says that \texttt{phi} has no \texttt{fex}. \texttt{gform\_def}'s
+\texttt{Gm} mirrors PVS's connectives (TRUE, FALSE, the six comparisons of two polynomials, NOT, AND, OR, IMPLIES, IFF, FORALL,
+EXISTS) and its meaning \texttt{gsem(g)(pt)} is written with them; \texttt{decide\_g(g)} and \texttt{qe\_g(g, m)} apply
+\texttt{qelim} to its translation into \texttt{Fm}. \texttt{qelim} works from the inside out: each \texttt{fex} by
+\texttt{qe8}, or by \texttt{decide8} when no variable is free.
 
-\begin{thmbox}{The CAD \Cm{\normalfont(cad\_verified.pvs)}}
-\begin{Verbatim}
-cad_verified: \Kw{THEOREM} decn_o(u, qs, F, Psi)`ok \Kw{AND} length(qs) >= 2 \Kw{IMPLIES} cad_of?(u, qs, F)
-cad_exists:   \Kw{THEOREM} length(qs) >= 2 \Kw{IMPLIES} \Kw{EXISTS} u: cad_of?(u, qs, F)
+In the theorems below on \texttt{g} and \texttt{qelim} the formula is arbitrary and \texttt{m}, where it occurs, is any
+natural number (\texttt{m = 0}: a sentence). In \texttt{qe8\_complete}, \texttt{m} is a positive natural number and \texttt{cons?(os)}
+asks for at least one quantifier: every prenex formula with at least one quantifier and $m \ge 1$ free variables;
+\texttt{qe\_complete} (\texttt{qe\_all.pvs}) states the same for \texttt{qe}, built on the n-level engine. The atoms'
+polynomials have rational coefficients and the formulas have no parameters, so \texttt{fod\_qfd} is the
+Tarski--Seidenberg theorem for formulas over $\mathbb{Q}$.
+
+\begin{thmbox}{Any shape, quantifier elimination, Tarski--Seidenberg \Cm{\normalfont(gform\_ok, qe8, qelim\_ok, rcf\_fol)}}
+\begin{Verbatim}[fontsize=\footnotesize]
+decide_g_ok:  \Kw{THEOREM} decide_g(g) \Kw{IFF} gsem(g)(null)
+qe_g_qf:      \Kw{LEMMA} qf?(qe_g(g, m))
+qe_g_ok:      \Kw{THEOREM} length(pt) = m \Kw{IMPLIES} (fsem(qe_g(g, m))(pt) \Kw{IFF} gsem(g)(pt))
+qe8_complete: \Kw{THEOREM} cons?(os) \Kw{AND} length(pt) = m \Kw{IMPLIES}
+    qf?(qe8(m, os, F, phi)`out) \Kw{AND} (qfsem(qe8(m, os, F, phi)`out)(pt) \Kw{IFF} fsem(os, F, phi, pt))
+qelim_qf:     \Kw{LEMMA} \Kw{FORALL} phi: \Kw{FORALL} m: qf?(qelim(phi, m))
+qelim_ok:     \Kw{THEOREM} \Kw{FORALL} phi: \Kw{FORALL} m, pt: length(pt) = m
+    \Kw{IMPLIES} (fsem(qelim(phi, m))(pt) \Kw{IFF} fsem(phi)(pt))
+fod?(n)(S): bool = \Kw{EXISTS} phi: \Kw{FORALL} pt: length(pt) = n \Kw{IMPLIES} (S(pt) \Kw{IFF} fsem(phi)(pt))
+qfd?(n)(S): bool = \Kw{EXISTS} phi: qf?(phi) \Kw{AND} \Kw{FORALL} pt: length(pt) = n \Kw{IMPLIES} (S(pt) \Kw{IFF} fsem(phi)(pt))
+fod_qfd:      \Kw{THEOREM} fod?(n)(S) \Kw{IFF} qfd?(n)(S)
 \end{Verbatim}
 \end{thmbox}
+
+\begin{thmbox}{The Collins CAD \Cm{\normalfont(col\_stack.pvs, col\_line.pvs, col\_found\_ok.pvs, cad\_sa.pvs)}}
+\begin{Verbatim}[fontsize=\footnotesize]
+collins_stack: \Kw{THEOREM} conn?(C) \Kw{AND} C(p0) \Kw{AND} colh?(G, C) \Kw{IMPLIES} delin_cl?(G, C)
+col_cells:     \Kw{THEOREM} ccells?(k, F)
+col_found_cad: \Kw{THEOREM} cons?(qs) \Kw{IMPLIES} cfound?(qs, F, col_found(qs, F)`frecs)
+col_cells_sa: \Kw{THEOREM}
+      (\Kw{FORALL} s, A: member(s, csects(k, F)) \Kw{AND} length(A) <= k
+         \Kw{IMPLIES} qfd?(1 + length(A))(ccell(k, F)(s, A)))
+  \Kw{AND} (\Kw{FORALL} s, A, i: member(s, csects(k, F)) \Kw{AND} length(A) < k
+         \Kw{AND} (\Kw{FORALL} q: ccell(k, F)(s, A)(q) \Kw{IMPLIES} i < nroot(nth(ctw(F, k), length(A)), q))
+         \Kw{IMPLIES} qfd?(2 + length(A))
+           (\Kw{LAMBDA} p: cons?(p) \Kw{AND} ccell(k, F)(s, A)(cdr(p))
+                      \Kw{AND} car(p) = rt(nth(ctw(F, k), length(A)), cdr(p), i)))
+\end{Verbatim}
+\end{thmbox}
+
+\texttt{colh?(G, C)} says that Collins's projection of \texttt{G} has one sign on \texttt{C}: the leading coefficients
+of the kept reducta, their principal subresultant coefficients with their derivatives, and those of pairs of members;
+\texttt{projn\_ok} (\texttt{cad\_projn.pvs}) derives it from the sign-invariance of the executable operator
+\texttt{projn}. \texttt{ccells?(k, F)} states, for the cells \texttt{ccell(k, F)(s, A)} built from the tower
+\texttt{ctw(F, k)} of Collins projections of a family \texttt{F} in $k+1$ variables, that the cells of $\mathbb{R}^{k+1}$
+cover it and are pairwise disjoint, that every cell at every level is connected and first-order definable, that over
+each sector of the line every level is delineable over every cell below it, that the graph of every root function over a
+cell is definable, and that \texttt{F} has one sign vector on every cell of $\mathbb{R}^{k+1}$; \texttt{col\_cells} has no
+hypothesis: the cells form a CAD with no run-time check (\texttt{col\_found} and \texttt{decide8} still check their walk's
+certificate while they raise $u$, which always ends, \texttt{decc\_complete}). \texttt{cfound?(qs, F, L)} adds the records \texttt{L}: each lies in its cell, with an
+exact sample point and \texttt{F}'s signs there, and every nonempty cell of $\mathbb{R}^n$, $n$ = \texttt{length(qs)},
+has at least one; by \texttt{col\_found\_decides} they decide every sentence over \texttt{F} in the same variables, in
+the same order. \texttt{col\_cells\_sa} states that every cell, at every level, and every root function's graph over a
+cell is quantifier-free definable.
+
+\begin{thmbox}{The n-level engine's CAD \Cm{\normalfont(cad\_verified.pvs, cad\_sa.pvs)}}
+\begin{Verbatim}[fontsize=\footnotesize]
+cad_verified: \Kw{THEOREM} decn_o(u, qs, F, Psi)`ok \Kw{AND} length(qs) >= 2 \Kw{IMPLIES} cad_of?(u, qs, F)
+cad_exists:   \Kw{THEOREM} length(qs) >= 2 \Kw{IMPLIES} \Kw{EXISTS} u: cad_of?(u, qs, F)
+cad_cells_sa: \Kw{THEOREM} cad_of?(u, qs, F) \Kw{AND} member(s, runsects(u, length(cdr(qs)), F))
+  \Kw{AND} length(A) <= length(cdr(qs))
+  \Kw{IMPLIES} qfd?(1 + length(A))(rcell(u, length(cdr(qs)), F)(s, A))
+\end{Verbatim}
+\end{thmbox}
+
+\texttt{cad\_of?(u, qs, F)} states the same conditions as \texttt{ccells?} for the cells \texttt{rcell(u, k, F)(s, A)}
+of the n-level engine \texttt{decn\_o}, where $k+1$ = \texttt{length(qs)} and each sector of the line has a tower of its
+own, with the records of \texttt{cad\_out}: at least one, with a sample point and
+\texttt{F}'s signs, for every nonempty cell of $\mathbb{R}^n$, and none for any other. \texttt{cad\_cells\_sa}: whenever
+\texttt{cad\_of?} holds, every cell, at every level, is quantifier-free definable.
 
 
 \begin{thebibliography}{99}\footnotesize
@@ -326,10 +511,16 @@ cad_exists:   \Kw{THEOREM} length(qs) >= 2 \Kw{IMPLIES} \Kw{EXISTS} u: cad_of?(u
 \bibitem{nmd} A.~Narkawicz, C.~Mu\~noz, A.~Dutle. Formally-verified decision procedures for univariate
   polynomial computation based on Sturm's and Tarski's theorems. \emph{Journal of Automated Reasoning}
   54:285--326, 2015. \url{https://doi.org/10.1007/s10817-015-9320-x}
-\bibitem{vermande} Q.~Vermande. Cylindrical algebraic decomposition in Coq/Rocq. In \emph{CPP 2026},
-  pages 45--58. ACM, 2026. \url{https://doi.org/10.1145/3779031.3779100}
+\bibitem{cohenmahboubi} C.~Cohen, A.~Mahboubi. Formal proofs in real algebraic geometry: from ordered fields to
+  quantifier elimination. \emph{Logical Methods in Computer Science} 8(1:02), 2012.
+\bibitem{mclaughlin} S.~McLaughlin, J.~Harrison. A proof-producing decision procedure for real arithmetic. In
+  \emph{CADE-20}, LNCS 3632, pages 295--314. Springer, 2005.
 \bibitem{kosaian} K.~Kosaian, Y.~K. Tan, A.~Platzer. A first complete algorithm for real quantifier
   elimination in Isabelle/HOL. In \emph{CPP 2023}. ACM, 2023. \url{https://arxiv.org/abs/2209.10978}
+\bibitem{mahboubi} A.~Mahboubi. Implementing the cylindrical algebraic decomposition within the Coq system.
+  \emph{Mathematical Structures in Computer Science} 17(1), 2007.
+\bibitem{vermande} Q.~Vermande. Cylindrical algebraic decomposition in Coq/Rocq. In \emph{CPP 2026},
+  pages 45--58. ACM, 2026. \url{https://doi.org/10.1145/3779031.3779100}
 \bibitem{mathlib} The mathlib Community. The Lean mathematical library. In \emph{CPP 2020}. ACM, 2020.
 \bibitem{hex} Hex project (Lean), roadmap for the real algebraic geometry behind CAD, issue 10300,
   September 2026. \url{https://github.com/kim-em/hex-dev/issues/10300}

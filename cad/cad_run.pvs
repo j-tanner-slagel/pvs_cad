@@ -26,10 +26,12 @@ cad_run: THEORY
 % stack has 2 nroot + 1 cells), built from sections and bands of continuous
 % root functions as in Basu-Pollack-Roy, Def. 5.1.  BPR also require
 % semi-algebraic cells: every cell, at every level, is first-order
-% definable (rcf_cells, rcell_fod_le), and cad_verified states the whole
-% definition, semi-algebraic in the sense of first-order definable (its
-% agreement with the quantifier-free sense is the Tarski-Seidenberg theorem,
-% which is not formalized here).  (Before
+% definable (rcf_cells, rcell_fod_le), and cad_verified states the
+% definition (the partition for R^(k+1); at lower levels it follows from
+% cad_tower's tcell_cover / tcell_disj and is not restated), semi-algebraic
+% in the sense of first-order definable (the
+% quantifier-free sense follows by qelim_ok's fod_qfd, the Tarski-Seidenberg
+% theorem, and cad_sa's cad_cells_sa states it for these cells).  (Before
 % 2026-09-30 this comment claimed Def. 5.1 without that.)
 % Completeness (decn_complete, decide_u) makes the certificate hold for
 % every large enough u, so such a decomposition is always obtained.

@@ -101,7 +101,9 @@ BEGIN
   %% [not done in 120 s]
   b7_root: LEMMA FORALL (x: real): EXISTS (y: real): y^7 - x*y^3 + x^5 = 0
 
-  %% the heart curve (x^2 + y^2 - 1)^3 <= x^2 y^3 lies in x^2 + y^2 <= 2 -- TRUE
+  %% the heart curve (x^2 + y^2 - 1)^3 <= x^2 y^3 lies in x^2 + y^2 <= 2 -- FALSE: at
+  %% (x, y) = (9/10, 11/10) the hypothesis holds (1.061208 <= 1.07811) and x^2 + y^2 = 101/50 > 2
+  %% (the comment said TRUE until 2026-10-01)
   %% [not done in 120 s]
   b6_heart: LEMMA FORALL (x: real): FORALL (y: real): (x^2 + y^2 - 1)^3 <= x^2*y^3 IMPLIES x^2 + y^2 <= 2
 

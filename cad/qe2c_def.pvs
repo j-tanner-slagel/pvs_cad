@@ -1,0 +1,64 @@
+qe2c_def: THEORY
+%----------------------------------------------------------------------------
+% Quantifier elimination for m >= 2 free variables from a derivative-closed
+% run (QE_PLAN.md section 11, 2C).  Executable.
+%
+% The run starts from an initial tower T whose first d = m - 1 families (the
+% free levels) are grown by the formal derivatives (dvs) of the free
+% families of every sector's closed tower (aug1), until a round adds nothing
+% (augT, fuel from u).  dclok checks, per sector, that the closed free
+% families are closed under lderiv (dclx?); with it every sector's
+% signatures separate (qe2_sep), so the answer is quantifier-free.
+% qe2c_c is qe2_c on the run from T (runT_def); qe2c_o runs it when the
+% certificate and the check hold.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING qe2_def, runT_def
+
+  u, d, n: VAR nat
+  m: VAR posnat
+  qb: VAR list[bool]
+  F, G: VAR list[list[mpoly]]
+  Psi: VAR [SV -> bool]
+  T, TW: VAR Tower
+  TWs: VAR list[Tower]
+
+  %% ---- the derivative closure of the free levels (no proof needed for the answer) --------
+  dvs(G): list[list[mpoly]] = map(lderiv)(filter(LAMBDA (g: list[mpoly]): length(g) >= 2)(G))
+  taug(T, TW, d): RECURSIVE Tower =
+    IF d = 0 OR null?(T) OR null?(TW) THEN T
+    ELSE cons(addnew(car(T), dvs(car(TW))), taug(cdr(T), cdr(TW), d - 1)) ENDIF
+  MEASURE d
+  augall(T, TWs, d): RECURSIVE Tower =
+    IF null?(TWs) THEN T ELSE augall(taug(T, car(TWs), d), cdr(TWs), d) ENDIF
+  MEASURE length(TWs)
+  aug1(u, d, T): Tower = augall(T, map(LAMBDA (s: Sect): runtwT(u, T)(s))(runsectsT(u, T)), d)
+  augT(u, d, n, T): RECURSIVE Tower =
+    IF n = 0 THEN T
+    ELSE LET T1 = aug1(u, d, T) IN IF tsize(T1) = tsize(T) THEN T ELSE augT(u, d, n - 1, T1) ENDIF
+    ENDIF
+  MEASURE n
+
+  %% ---- the check ------------------------------------------------------------------------------
+  dclx?(G): bool = every(LAMBDA (g: list[mpoly]): length(g) < 2 OR member(lderiv(g), G))(G)
+  dclok(u, d, T): bool =
+    every(LAMBDA (s: Sect): every(dclx?)(ttake(runtwT(u, T)(s), d)))(runsectsT(u, T))
+
+  %% ---- the answer -----------------------------------------------------------------------------
+  qe2c_c(u, m, qb, T, Psi): QER =
+    LET R = cad_outT(u, T, tlast(T)),
+        parts = map(LAMBDA (s: Sect):
+                      LET so = secout(m, qb, Psi, s, runtwT(u, T)(s), secr(s, R)) IN
+                      IF so = ffalse THEN ffalse
+                      ELSIF so = ftrue THEN liftF(sectX(s), m - 1)
+                      ELSE fand(liftF(sectX(s), m - 1), so) ENDIF)
+                   (runsectsT(u, T)),
+        o = f_orl(filter(LAMBDA (f: Fm): f /= ffalse)(parts)) IN
+    (# ok := TRUE, qf := qf?(o), out := o #)
+
+  qe2c_T(u, m, qb, F): Tower = augT(u, m - 1, cfuel + u, tw0(m - 1 + length(qb), F))
+  qe2c_o(u, m, qb, F, Psi): QER =
+    LET T = qe2c_T(u, m, qb, F) IN
+    IF m >= 2 AND cons?(qb) AND runokT(u, T) AND dclok(u, m - 1, T) THEN qe2c_c(u, m, qb, T, Psi)
+    ELSE qbad ENDIF
+END qe2c_def

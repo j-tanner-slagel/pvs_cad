@@ -80,6 +80,13 @@ Each example is a real PVS session on the pvs\_cad library, fed from a script to
 The typed commands are put back after each \texttt{Rule?} prompt (a scripted session does not echo them), and
 library-loading messages are cut. Nothing else is changed.
 
+\textbf{Note (1 October 2026).} These transcripts were recorded on 28 September 2026 in theories that import
+\texttt{cad\_decide5}, so \texttt{(cad)} ran \texttt{decide5} and instantiated \texttt{decide5\_correct}, and the times
+are those of that run. In a theory that imports \texttt{pvs\_cad}, \texttt{(cad)} runs \texttt{decide8}, the Collins run,
+on prenex formulas over \texttt{real} and \texttt{decide\_g} on formulas of any other shape, and instantiates
+\texttt{decide8\_correct} or \texttt{decide\_g\_ok}; \texttt{(cad *)} there also takes formulas that are not prenex. The
+messages and times in such a theory can differ from those below.
+
 \begin{description}[leftmargin=1.2em, style=nextline, itemsep=4pt]
 \item[The sequent] Formulas above the turnstile \texttt{|-------} are hypotheses (antecedents), numbered $-1, -2, \dots$;
 formulas below it are goals (consequents), numbered $1, 2, \dots$. The sequent claims: if every hypothesis holds, at least one goal holds.
@@ -89,12 +96,13 @@ Names such as \texttt{!CDG\_1} or \texttt{cadsf\_465} after a number are labels 
 then any Boolean combination of polynomial comparisons. A true goal is proved; a false hypothesis closes the goal; otherwise the formula stays, labelled \texttt{cad}, with a message saying TRUE or FALSE.
 \item[\texttt{(cad *)}] works on the whole sequent. It keeps every formula it can use, turns other real terms (\texttt{sqrt(x)}, \texttt{f(x)}, \texttt{length(l)}) into unknown reals,
 forms $\forall\,\text{unknowns}\colon (\bigwedge\text{hypotheses}) \Rightarrow (\bigvee\text{goals})$, and decides that with (cad).
-\item[What is trusted] Every step is checked by PVS. What remains to trust is the specification (that the semantics \texttt{fsem} and the theorem statements say what is intended) and PVS itself: its kernel, and its ground evaluator running \texttt{decide5}, the executable decision procedure, whose soundness (\texttt{decide5\_correct}) and completeness (\texttt{decide5\_decides}) are proved in the library.
+\item[What is trusted] Every step is checked by PVS. What remains to trust is the specification (that the semantics \texttt{fsem} and the theorem statements say what is intended), PVS itself (its kernel, and its ground evaluator running the executable decision procedure, in these transcripts \texttt{decide5}, whose soundness, \texttt{decide5\_correct}, and completeness, \texttt{decide5\_decides}, are proved in the library), and NASALib's saved proofs of the theorems the library imports, which were not replayed.
 \end{description}
 
 \clearpage
 \section{The examples}
-Times are PVS's own report (real time) for the whole proof, on an M-series Mac, all in one session.
+Times are PVS's own report (real time) for the whole proof, measured with \texttt{decide5} (theories importing
+\texttt{cad\_decide5}) on 28 September 2026, on an M-series Mac, all in one session.
 
 {\small
 \begin{longtable}{@{}l p{0.37\textwidth} l r l@{}}
@@ -993,7 +1001,7 @@ Recording and printing every step makes it slower: 3.4\,s instead of 0.5\,s.
 \end{termbox}
 
 \item \textbf{Translate the sentence to data and run the decision.} The quantifier prefix becomes \code{(: FALSE :)}
-(FALSE for $\exists$), the polynomial $x^2 - 2$ becomes its coefficient list \code{(: mconst(-2), mconst(0), mconst(1) :)},
+(FALSE for $\exists$), the polynomial $x^2 - 2$ becomes its coefficient list \texttt{(: mconst(-2), mconst(0), mconst(1) :)},
 and the matrix becomes \code{batom(0, 0)}: ``polynomial number 0 has sign 0''. \texttt{eval-expr} runs \texttt{decide5} on
 this data in PVS's ground evaluator, the one trusted computation, and adds the result as a hypothesis:
 the certificate passed (\texttt{ok}) and the sentence is true (\texttt{val}).
@@ -1682,7 +1690,7 @@ this simplifies to:
 \section*{About this document}
 \small
 Source: the pvs\_cad library, theories \texttt{cad\_demo}, \texttt{cad\_limits}, \texttt{cad\_limits2}, \texttt{cad\_limits3} and
-\texttt{cad\_star\_ex}, plus a one-lemma scratch theory for the false (cad *) example. Traces captured on 28 September 2026 with PVS~8.1
+\texttt{cad\_star\_ex} (each imports \texttt{cad\_decide5}), plus a one-lemma scratch theory for the false (cad *) example. Traces captured on 28 September 2026 with PVS~8.1
 and NASALib, from two scripted \texttt{pvs -raw} sessions. Cut from the transcripts: library loading, strategy-file compilation and
 rewrite-rule installation messages, the Lisp REPL prompts, and the tag ``Top: no parent rule'' that PVS~8.1 appends to goal names in raw mode. Continuation lines of PVS's ``Replacing \dots\ with \dots'' messages, indented by up to 100 columns, are indented by 64.
 \end{document}

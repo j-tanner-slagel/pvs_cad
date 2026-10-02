@@ -1,0 +1,31 @@
+qe2c_full: THEORY
+%----------------------------------------------------------------------------
+% QE for m >= 2 free variables is complete: always quantifier-free
+% (QE_PLAN.md section 11, 2C).
+%
+% qe2c_u always succeeds (qe2c_u_ok, by qe2c_u's measure) and returns one
+% of the runs qe2c_o (qe2c_u_eq); with qe2c_ok's qe2c_correct, qe2c's
+% answer is quantifier-free and holds at a point of R^m exactly when the
+% prenex formula does (qe2c_bf).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING qe2c_u_def
+
+  u: VAR nat
+  m: VAR posnat
+  qb, os: VAR list[bool]
+  F: VAR list[list[mpoly]]
+  Psi: VAR [SV -> bool]
+  bphi: VAR BF
+  pt: VAR list[real]
+
+  qe2c_u_ok: THEOREM m >= 2 AND cons?(qb) IMPLIES qe2c_u(m, qb, F, Psi, u)`ok
+  qe2c_u_eq: LEMMA EXISTS (u2: nat): qe2c_u(m, qb, F, Psi, u) = qe2c_o(u2, m, qb, F, Psi)
+  qe2c_flag: LEMMA qe2c_o(u, m, qb, F, Psi)`ok IMPLIES
+    qe2c_o(u, m, qb, F, Psi)`qf = qf?(qe2c_o(u, m, qb, F, Psi)`out)
+  qe2c_isqf: THEOREM m >= 2 AND cons?(os) IMPLIES qe2c(m, os, F, bphi)`qf
+  qe2c_bf: THEOREM m >= 2 AND cons?(os) AND length(pt) = m IMPLIES
+    qe2c(m, os, F, bphi)`ok AND qf?(qe2c(m, os, F, bphi)`out)
+    AND (qfsem(qe2c(m, os, F, bphi)`out)(pt) IFF fsem(os, F, bphi, pt))
+  qe2c_bf_qf: THEOREM qe2c(m, os, F, bphi)`qf IMPLIES qf?(qe2c(m, os, F, bphi)`out)
+END qe2c_full

@@ -1,0 +1,70 @@
+runT_ok: THEORY
+%----------------------------------------------------------------------------
+% The run from a given initial tower is a CAD with records, under its
+% certificate (QE_PLAN.md section 11, 2C).
+%
+% The facts cad_run, cad_out_ok and cad_fold_ok prove for decn_o's run
+% (tw0(k, F) as the initial tower), for any initial tower T0 with runokT:
+% each sector's closed tower is a CAD over the sector (sectorT_cad, from the
+% sector's certificate by tower_cad), the records lie in their cells with
+% the sign vector of F (cad_outT_in) and name every nonempty cell
+% (cad_outT_cov), F = tlast(T0) keeps its signs on every cell
+% (sectorT_fsinv), and so the records of one sector satisfy what afold_sem
+% needs (sectorT_recs).  The proofs are those of the originals, which used
+% the initial tower only through its length and last family.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING runT_def, cad_fold_ok, innern_sem
+
+  u, n: VAR nat
+  T0: VAR Tower
+  F: VAR list[list[mpoly]]
+  s: VAR Sect
+  A: VAR list[nat]
+  p1, p2: VAR list[real]
+  o: VAR ORec
+  x: VAR real
+
+  %% a quantifier list of a given length (innern_sem needs one)
+  tq(n): RECURSIVE list[bool] = IF n = 0 THEN null[bool] ELSE cons(TRUE, tq(n - 1)) ENDIF
+  MEASURE n
+  tq_len: LEMMA length(tq(n)) = n
+
+  runT_ok1: LEMMA runokT(u, T0) AND member(s, runsectsT(u, T0))
+    IMPLIES sok2?(s) AND scok?(u)(scof(u, T0, s)) AND in?(s, value(sample(s)))
+  runT_shape: LEMMA cons?(T0) IMPLIES
+    cons?(runtwT(u, T0)(s)) AND length(runtwT(u, T0)(s)) = length(T0)
+      AND tlast(runtwT(u, T0)(s)) = tlast(T0)
+  sectorT_inv: LEMMA runokT(u, T0) AND cons?(T0) AND member(s, runsectsT(u, T0))
+    IMPLIES invz?(car(runtwT(u, T0)(s)), insec(s), value(sample(s)), null[real])
+      AND CLF(runtwT(u, T0)(s), (: value(sample(s)) :))
+  sectorT_cad: LEMMA runokT(u, T0) AND cons?(T0) AND member(s, runsectsT(u, T0))
+    IMPLIES cad_over?(runtwT(u, T0)(s), scell(s))
+  sectorT_okt: LEMMA runokT(u, T0) AND member(s, runsectsT(u, T0))
+    IMPLIES okt?(u, runtwT(u, T0)(s), tables(u, runtwT(u, T0)(s), odS(s)), odS(s))
+      AND scell(s)(den(odS(s)))
+  sectorT_of: LEMMA EXISTS s: member(s, runsectsT(u, T0)) AND in?(s, x)
+
+  %% ---- the records ------------------------------------------------------------------------------
+  cad_outT_mem: LEMMA member(o, cad_outT(u, T0, F)) IFF
+    EXISTS s, (r: CRec): member(s, runsectsT(u, T0))
+      AND member(r, ctree(u, runtwT(u, T0)(s), tables(u, runtwT(u, T0)(s), odS(s)), odS(s)))
+      AND o = (# rsec := s, radr := r`adr, rsod := r`sod, rsv := osv_of(F, r`sod) #)
+  cad_outT_in: LEMMA runokT(u, T0) AND cons?(T0) AND member(o, cad_outT(u, T0, F)) IMPLIES
+    member(o`rsec, runsectsT(u, T0)) AND length(o`radr) = length(T0)
+      AND tcell(runtwT(u, T0)(o`rsec), scell(o`rsec), o`radr)(den(o`rsod))
+      AND o`rsv = svec(F, den(o`rsod))
+  cad_outT_wf: LEMMA runokT(u, T0) AND cons?(T0) AND member(o, cad_outT(u, T0, F)) IMPLIES wf?(o`rsod)
+  cad_outT_cov: LEMMA runokT(u, T0) AND cons?(T0) AND member(s, runsectsT(u, T0)) AND length(A) = length(T0)
+    AND (EXISTS (q: list[real]): tcell(runtwT(u, T0)(s), scell(s), A)(q))
+    IMPLIES EXISTS o: member(o, cad_outT(u, T0, F)) AND o`rsec = s AND o`radr = A
+  sectorT_fsinv: LEMMA runokT(u, T0) AND cons?(T0) AND member(s, runsectsT(u, T0)) AND length(A) = length(T0)
+    AND tcell(runtwT(u, T0)(s), scell(s), A)(p1) AND tcell(runtwT(u, T0)(s), scell(s), A)(p2)
+    IMPLIES svec(tlast(T0), p1) = svec(tlast(T0), p2)
+  sectorT_recs: LEMMA runokT(u, T0) AND cons?(T0) AND tlast(T0) = F AND member(s, runsectsT(u, T0))
+    IMPLIES cad_over?(runtwT(u, T0)(s), scell(s))
+      AND recin?(runtwT(u, T0)(s), scell(s), F, secr(s, cad_outT(u, T0, F)))
+      AND reccov?(runtwT(u, T0)(s), scell(s), secr(s, cad_outT(u, T0, F)))
+      AND fsinv?(runtwT(u, T0)(s), scell(s), F)
+      AND length(runtwT(u, T0)(s)) = length(T0)
+END runT_ok

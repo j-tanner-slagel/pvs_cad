@@ -1,7 +1,10 @@
 (|cad_pdec_ex|
  (|pdec_examples| 0
+  (|pdec_examples-1| "" 3999822562 ("" (EVAL-FORMULA) NIL NIL) NIL SHOSTAK)
   (|pdec_examples-0| "" 3998606940 ("" (EVAL-FORMULA) NIL NIL)
-   ((|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+   ((|real_times_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (|int_times_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|bijective?| CONST-DECL "bool" |functions| NIL)
     (|id| CONST-DECL "(bijective?[T, T])" |identity| NIL)

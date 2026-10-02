@@ -45,9 +45,21 @@ BEGIN
   rat_alg_alg: LEMMA alg?(rat_alg(r))
   rat_alg_value: LEMMA value(rat_alg(r)) = r
 
+  %% the root is in the left half [lb, mid]: a zero at lb or at mid, or a sign
+  %% change between them, decides at once (the root is the only one in
+  %% [lb, ub]); otherwise the root count.  Measured 2026-10-01 (QE_PLAN.md
+  %% 12): the count recomputes the Sturm chain of p at every bisection, which
+  %% was most of the outer closure's time on a quadratic three-quantifier QE
+  lhalf?(a: Alg): bool =
+    LET l = polylist(a`p)(a`lb), m = polylist(a`p)(mid(a)) IN
+    l = 0 OR m = 0 OR (l < 0 AND m > 0) OR (l > 0 AND m < 0) OR nroots(a`p, a`lb, mid(a)) = 1
+  half_one: LEMMA alg?(a) AND a`lb <= x AND x <= mid(a) AND polylist(a`p)(x) = 0 IMPLIES
+    nroots(a`p, a`lb, mid(a)) = 1
+  lhalf_def: LEMMA alg?(a) IMPLIES (lhalf?(a) IFF nroots(a`p, a`lb, mid(a)) = 1)
+
   %% one bisection step: keep the half that contains the root
   refine(a: Alg): alg =
-    IF nroots(a`p, a`lb, mid(a)) = 1 THEN a WITH [ub := mid(a)] ELSE a WITH [lb := mid(a)] ENDIF
+    IF lhalf?(a) THEN a WITH [ub := mid(a)] ELSE a WITH [lb := mid(a)] ENDIF
 
   %% if the left half does not isolate the root, the root is strictly right of the midpoint
   refine_lo: LEMMA alg?(a) AND nroots(a`p, a`lb, mid(a)) /= 1 IMPLIES value(a) > mid(a)

@@ -1,0 +1,56 @@
+(|qe2c_def|
+ (|taug_TCC1| 0
+  (|taug_TCC1-1| NIL 3999795005 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|taug| SUBTYPE "T"
+    "(list_adt[list_adt[list_adt[mpoly_adt.mpoly].list].list].cons?)"
+    (30 25 30 26))))
+ (|taug_TCC2| 0
+  (|taug_TCC2-1| NIL 3999795005 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|taug| SUBTYPE "TW"
+    "(list_adt[list_adt[list_adt[mpoly_adt.mpoly].list].list].cons?)"
+    (30 37 30 39))))
+ (|taug_TCC3| 0
+  (|taug_TCC3-1| NIL 3999795005 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|taug| SUBTYPE "d - 1" "nat" (30 66 30 71))))
+ (|taug_TCC4| 0
+  (|taug_TCC4-1| NIL 3999795005 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+   (|taug| TERMINATION
+    "taug(cdr[list[list[mpoly]]](T), cdr[list[list[mpoly]]](TW), d - 1)"
+    #A((3) BASE-CHAR . "NIL") (30 44 30 72))))
+ (|augall_TCC1| 0
+  (|augall_TCC1-1| NIL 3999795005 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|augall| SUBTYPE "TWs" "(list_adt[Tower].cons?)" (33 49 33 52))))
+ (|augall_TCC2| 0
+  (|augall_TCC2-1| NIL 3999795005 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+   (|augall| TERMINATION
+    "augall(taug(T, car[Tower](TWs), d), cdr[Tower](TWs), d)"
+    #A((3) BASE-CHAR . "NIL") (33 30 33 71))))
+ (|augT_TCC1| 0
+  (|augT_TCC1-1| NIL 3999795005 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|augT| SUBTYPE "n - 1" "nat" (38 82 38 87))))
+ (|augT_TCC2| 0
+  (|augT_TCC2-0| "" 3999795013
+   ("" (SKEEP) (("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL)) NIL) NIL SHOSTAK
+   (|augT| TERMINATION "augT(u, d, n - 1, T1)" #A((3) BASE-CHAR . "NIL")
+    (38 71 38 92)))
+  (|augT_TCC2-1| NIL 3999795005 ("" (TERMINATION-TCC) NIL NIL)
+   ((|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
+   NIL
+   (|augT| TERMINATION "augT(u, d, n - 1, T1)" #A((3) BASE-CHAR . "NIL")
+    (38 71 38 92))))
+ (|qe2c_c_TCC1| 0
+  (|qe2c_c_TCC1-1| NIL 3999795005 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|qe2c_c| SUBTYPE "m - 1" "nat" (53 60 53 65))))
+ (|qe2c_c_TCC2| 0
+  (|qe2c_c_TCC2-1| NIL 3999795005 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|qe2c_c| SUBTYPE "m - 1" "nat" (54 48 54 53))))
+ (|qe2c_T_TCC1| 0
+  (|qe2c_T_TCC1-1| NIL 3999795005 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|qe2c_T| SUBTYPE "m - 1" "nat" (59 39 59 44))))
+ (|qe2c_T_TCC2| 0
+  (|qe2c_T_TCC2-1| NIL 3999795005 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|qe2c_T| SUBTYPE "m - 1 + length[bool](qb)" "nat" (59 61 59 79)))))
+

@@ -1,0 +1,324 @@
+\documentclass[11pt]{article}
+\usepackage[letterpaper, margin=0.85in, top=0.9in, bottom=0.95in, headsep=16pt]{geometry}
+\usepackage{libertinus}
+\usepackage[scale=0.82]{sourcecodepro}
+\usepackage[table]{xcolor}
+\usepackage{fvextra, booktabs, longtable, enumitem, titlesec, fancyhdr, microtype, amsmath, array}
+\usepackage[most]{tcolorbox}
+\usepackage{needspace}
+\usepackage[hidelinks]{hyperref}
+
+% J.T.S. palette
+\definecolor{ink}{HTML}{1E2B24}
+\definecolor{muted}{HTML}{56645B}
+\definecolor{accent}{HTML}{2B5E8C}
+\definecolor{accentsoft}{HTML}{DCE6EF}
+\definecolor{moss}{HTML}{4F6E4C}
+\definecolor{mosssoft}{HTML}{E1EADC}
+\definecolor{sand}{HTML}{CDBF9E}
+\definecolor{surfalt}{HTML}{E7EDE3}
+\definecolor{panel}{HTML}{F7F9F5}
+\definecolor{rulec}{HTML}{D2DACD}
+\definecolor{warn}{HTML}{8A6410}
+\color{ink}
+
+\newcommand\Rl[1]{\textcolor{accent}{\textbf{#1}}}
+\newcommand\Ms[1]{\textcolor{moss}{\textbf{#1}}}
+\newcommand\Dm[1]{\textcolor{muted}{#1}}
+
+\fvset{fontsize=\footnotesize, breaklines, breakanywhere, breakindent=2.5em,
+  breaksymbolleft={\tiny\textcolor{sand}{\ensuremath{\hookrightarrow}}}}
+
+\newtcolorbox{termbox}{breakable, enhanced, colback=panel, colframe=rulec, boxrule=0.4pt,
+  borderline west={2.2pt}{0pt}{sand}, arc=2pt, left=7pt, right=5pt, top=4pt, bottom=4pt,
+  before skip=6pt, after skip=10pt}
+\newtcolorbox{thmbox}[1]{breakable, enhanced, colback=accentsoft!45, colframe=accent!55, boxrule=0.5pt,
+  arc=2pt, left=8pt, right=8pt, top=5pt, bottom=5pt, before skip=8pt, after skip=10pt,
+  title={\sffamily\small\bfseries #1}, coltitle=white, colbacktitle=accent, fonttitle=\sffamily}
+\newtcolorbox{keybox}{enhanced, colback=mosssoft!55, colframe=moss!45, boxrule=0.5pt, arc=2pt,
+  left=9pt, right=9pt, top=6pt, bottom=6pt, before skip=8pt, after skip=8pt}
+
+\newcommand\cmdtag[1]{\colorbox{accentsoft}{\textcolor{accent}{\ttfamily\bfseries #1}}}
+\newcommand\proved{\textcolor{moss}{\textbf{proved}}}
+\newcommand\onestep{\textcolor{moss}{\textbf{one step}}}
+\newcommand\stepok{\textcolor{accent}{\textbf{step}}}
+
+\titleformat{\section}{\sffamily\Large\bfseries\color{ink}}{}{0pt}{}[\vspace{2pt}{\color{sand}\titlerule[0.8pt]}]
+\titlespacing*{\section}{0pt}{20pt}{9pt}
+\titleformat{\subsection}{\sffamily\large\bfseries\color{ink}}{}{0pt}{}
+\titlespacing*{\subsection}{0pt}{14pt}{5pt}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand\headrulewidth{0pt}
+\fancyhead[L]{\sffamily\small\color{muted}Collins' projection in pvs\_cad}
+\fancyhead[R]{\sffamily\small\color{muted}\thepage}
+
+\setlength\parindent{0pt}
+\setlength\emergencystretch{3em}
+\setlength\parskip{5pt}
+\newcommand\code[1]{\mbox{\texttt{#1}}}
+% no hyphenation (and no break at a hyphen) inside typewriter identifiers
+\makeatletter
+\AddToHook{selectfont}{\edef\jts@f{\f@family}\edef\jts@t{\ttdefault}%
+  \ifx\jts@f\jts@t\hyphenchar\font=-1\relax\fi}
+\makeatother
+\renewcommand\arraystretch{1.25}
+
+\begin{document}
+\thispagestyle{empty}
+\begin{flushleft}
+{\sffamily\small\bfseries\color{moss}\MakeUppercase{pvs\_cad \quad·\quad PVS 8.1 \quad·\quad 2 October 2026}}\par\vspace{8pt}
+{\fontsize{27}{33}\selectfont\bfseries Collins' projection, verified}\par\vspace{10pt}
+{\large\color{muted} The cylindrical algebraic decomposition of pvs\_cad, built from Collins' projection: the
+theorem that the projections form a CAD, the decision procedure and the quantifier elimination that read truth
+values off it, what they cost on the benchmarks, and where the limits are.}
+\end{flushleft}
+\vspace{4pt}
+
+\begin{keybox}
+\textbf{In one line.} For every family of polynomials in any number $n$ of variables, the cells built from Collins'
+projection are \textbf{proved} to form a cylindrical algebraic decomposition adapted to the family --- with no
+certificate checked at run time --- and every cell is defined without quantifiers by sign conditions on polynomials
+with rational coefficients, so it is semi-algebraic in the sense of Basu--Pollack--Roy. An executable function
+returns that CAD as data: at least one record, each with an exact sample point, for every nonempty cell of
+$\mathbb{R}^n$, and none for any other. The decision
+procedure built on it (\texttt{decide8}) is \textbf{proved} sound and complete, and its quantifier elimination
+(\texttt{qe8}) is \textbf{proved} to return a quantifier-free equivalent of every prenex formula with at least one
+quantifier and one or more free variables; \texttt{qelim}, built on both, does the same for every first-order
+formula. \texttt{(cad)} and \texttt{(cad-qe)} use them in a theory that imports \texttt{pvs\_cad}.
+\end{keybox}
+
+\section{What is proved}
+
+\begin{thmbox}{col\_stack.collins\_stack \quad (delineability from Collins' projection)}
+\begin{Verbatim}[fontsize=\small]
+collins_stack: THEOREM conn?(C) AND C(p0) AND colh?(G, C) IMPLIES delin_cl?(G, C)
+\end{Verbatim}
+\end{thmbox}
+If $C$ is connected and nonempty and Collins' N-reducta projection of the family $G$ is sign-invariant on $C$
+(\code{colh?}: the leading coefficients of the kept reducta, the principal subresultant coefficients
+$\mathrm{psc}_j(f, f')$, and $\mathrm{psc}_j(f, g)$ for pairs each have one sign on $C$), then $G$ is
+\emph{delineable} over $C$ in the sign-invariant sense (\code{delin\_cl?}; root multiplicities are not tracked):
+over each point of $C$, the real roots of the members not identically zero on its fibre are the values of a
+constant number of continuous, strictly ordered functions on $C$, and every member has one sign on each section and band
+between them. This is Collins' delineability theorem, the basis of Collins' original algorithm (the smaller
+projections of McCallum, Brown and Lazard rest on different theorems); here it is proved from the definitions
+(subresultant theorem, continuity of the roots of a polynomial in its coefficients, connectedness).
+
+\begin{thmbox}{col\_run.col\_cad\_run \quad (the projections form a CAD)}
+\begin{Verbatim}[fontsize=\small]
+col_cad_run: THEOREM k >= 1 IMPLIES
+      (FORALL p: length(p) = k + 1 IMPLIES
+         EXISTS s, A: ... ccell(k, F)(s, A)(p))                     % cover
+  AND (... ccell(k, F)(s1, A1)(p) AND ccell(k, F)(s2, A2)(p)
+         IMPLIES s1 = s2 AND A1 = A2)                              % disjoint
+  AND (... conn?(ccell(k, F)(s, A))
+         AND fod?(1 + length(A))(ccell(k, F)(s, A)))                % connected, definable
+  AND (FORALL s: member(s, csects(k, F))
+         IMPLIES cad_over?(ctw(F, k), scell(s)))                    % delineable
+  AND (... the graph of every root function is definable ...)
+  AND (... ccell(k, F)(s, A)(p1) AND ccell(k, F)(s, A)(p2)
+         IMPLIES svec(F, p1) = svec(F, p2))                         % F sign-invariant
+\end{Verbatim}
+\end{thmbox}
+For every family $F$ in $k+1$ variables: project $k$ times, $P_k = F$ and $P_{j-1} = \mathrm{proj}(P_j)$
+(\code{ctw(F, k)} is the tower $P_1, \dots, P_k$), cut the line of the outermost variable at the real roots of the
+$k$-th projection $P_0$ (\code{pbot}, \code{csects}), and build the stacks. The cells of $\mathbb{R}^{k+1}$ cover it
+and are disjoint; the cells of every level are connected and first-order definable; every level is delineable over
+every cell below it, and the graphs of its root functions are definable; and every polynomial of $F$ has one sign
+on every cell of $\mathbb{R}^{k+1}$. Nothing is checked at run time: the statement has no hypothesis but
+$k \ge 1$, and \code{col\_cells} adds $k = 0$, one variable, where the cells are the sectors of the roots of $F$.
+\code{col\_verified} adds the data: when the walk's certificate holds (two or more variables), the run returns at
+least one record for every nonempty cell of $\mathbb{R}^{k+1}$ and none for any other, each with a sample point in
+its cell and $F$'s signs there; \code{col\_found} raises the run's effort until the certificate holds, and
+\code{col\_found\_cad} says it always returns the CAD as data, in every number of variables, one included. These
+are the conditions of Basu--Pollack--Roy's Def.~5.1 for a CAD adapted to $F$, with the partition stated for
+$\mathbb{R}^{k+1}$ (at lower levels it follows from the stack construction, \code{tcell\_cover} and
+\code{tcell\_disj}, and is not restated) and its finiteness given by the records. First-order definable sets
+(formulas with rational coefficients, no parameters) are exactly the quantifier-free definable ones
+(\code{fod\_qfd}, Tarski--Seidenberg, proved for every first-order formula), so every cell is semi-algebraic in
+the sense of Basu--Pollack--Roy; indeed it is defined by a Boolean combination of sign conditions on polynomials
+with rational coefficients (\code{col\_cells\_sa}), where their definition allows real coefficients.
+
+{\small
+\begin{longtable}{@{}>{\ttfamily}p{0.22\textwidth} p{0.72\textwidth}@{}}
+\toprule
+\textsf{\small\bfseries Theorem} & \textsf{\small\bfseries What it says}\\
+\midrule
+ctw\_cad & over any connected set on which the $k$-th projection is sign-invariant, the tower of projections is a CAD\\
+col\_cad\_run & the projections form a CAD of $\mathbb{R}^{k+1}$ adapted to $F$, for every $F$ and $k\ge1$\\
+col\_cells & the same for every $k$, one variable included\\
+col\_verified & under the walk's certificate, the run's records name that CAD's cells of $\mathbb{R}^{k+1}$, at least one per nonempty cell, with a sample and $F$'s signs in each\\
+col\_found\_cad & \texttt{col\_found}, with the search for the run's effort built in, always returns the CAD as data\\
+col\_found\_decides & its records decide every sentence over $F$ in the same variables, in the same order\\
+fod\_qfd & a set is first-order definable exactly when it is quantifier-free definable (Tarski--Seidenberg)\\
+col\_cells\_sa & every cell at every level, and every root graph, is quantifier-free definable over $\mathbb{Q}$, hence semi-algebraic\\
+decc\_correct & the decision over the Collins tower, when certified, is the truth of the sentence\\
+decc\_complete & for at least two quantifiers some run is certified\\
+decide8\_decides & \texttt{decide8} decides every closed prenex formula: its value is the truth (sound and complete)\\
+qe8\_complete & quantifier elimination by the Collins run: a quantifier-free equivalent of every prenex formula with at least one quantifier and $m \ge 1$ free variables\\
+qelim\_ok & \texttt{qelim} (with \texttt{qelim\_qf}): a quantifier-free equivalent of every first-order formula, quantifiers anywhere, any $m \ge 0$\\
+pstower\_cad & over any connected set on which the projection of its lowest family is sign-invariant, a tower whose families \emph{contain} the projections of the next is a CAD (used for derivative-closed free levels)\\
+detf\_det & the determinant computed with each minor once ($n\,2^n$ products) is the Laplace determinant ($n!$)\\
+\bottomrule
+\end{longtable}}
+
+\textbf{What you trust.} The PVS kernel; its ground evaluator, which runs the procedures on the concrete input
+inside the proof (proof by reflection); NASALib's saved proofs of the theorems the library imports (from
+\texttt{reals}, \texttt{Sturm}, \texttt{Tarski}, \texttt{structures}, \texttt{analysis}, \texttt{complex},
+\texttt{matrices}, \texttt{mult\_poly} and \texttt{interval\_arith}, and through them from other NASALib libraries
+such as \texttt{ints}, \texttt{power} and \texttt{trig}), which were not replayed here; and the reading
+of the statements (\code{fsem}, \code{gsem}, \code{svec}, \code{delin\_cl?}, \code{cad\_over?} say what is
+intended). The procedures and the strategy code are not trusted; the procedures' correctness is the theorems.
+
+\textbf{Size.} The Collins work is 58 theories with 698 proved formulas (theorems, lemmas and type-correctness
+conditions) in 3,362 lines of PVS. The whole library has 355 theories and
+5,183 proved formulas, all replayed by \texttt{proveit} from a clean copy
+(2 October 2026, 37 minutes).
+
+\section{Using it}
+
+{\raggedright In a theory, write \texttt{IMPORTING pvs\_cad} (\texttt{cad/pvs\_cad.pvs} imports
+\texttt{cad\_decide8}, \texttt{qe8}, \texttt{gform\_ok}, \texttt{mpoly\_embed} and \texttt{cad\_endgame}).
+\cmdtag{(cad)} and \cmdtag{(cad-direct)} then decide a closed formula. A prenex one (one real per quantifier;
+grouped binders are decided through the nested form) is decided by \texttt{decide8}: the Collins run for two or
+more quantifiers, the sectors of the line for one; the proof instantiates \texttt{decide8\_correct}. A formula of
+any other shape (quantifiers inside \texttt{NOT}, \texttt{AND}, \texttt{OR}, \texttt{IMPLIES} or \texttt{IFF};
+binders over \texttt{posreal}, \texttt{nnreal}, \texttt{negreal}, \texttt{npreal} or \texttt{nzreal}) is decided by
+\texttt{decide\_g}, which eliminates its quantifiers from the inside out with \texttt{qe8} and \texttt{decide8}; the
+proof instantiates \texttt{decide\_g\_ok}. \cmdtag{(cad :cad-only? t)} answers only through these decisions; with
+one quantifier that is the sectors of the line, not the Collins run. \cmdtag{(cad-qe FNUM)} eliminates the
+quantifiers of a formula with free variables by \texttt{qe8} (\texttt{qe8\_correct}), or, for a formula of any
+other shape, by \texttt{qe\_g} (\texttt{qe\_g\_ok}). \texttt{(cad)} also has shortcuts that \texttt{(cad-direct)}
+and \texttt{(cad :cad-only? t)} skip: a witness search, which proves a goal whose quantifiers are all existential
+(or refutes a hypothesis whose quantifiers are all universal) by one point; with two or more quantifiers, a constant
+for one variable (existential in a goal, universal in a refuted hypothesis) that settles the matrix outright; and, with three or more, when the full decision
+does not answer within 10 s, one variable fixed to a constant and the smaller sentence decided. With
+\texttt{cad\_decide5} imported instead of \texttt{cad\_decide8}, the decision is the read-closure \texttt{decide5}
+(\texttt{decide7} under \texttt{:cad-only?}).\par}
+\begin{termbox}
+\begin{Verbatim}
+c8_l3_quad: LEMMA FORALL (c: real): EXISTS (x1: real): EXISTS (x2: real): EXISTS (x3: real):
+  (x1^2 <= 1 AND x2^2 <= 1 AND x3^2 <= 1 AND x1 + x2 + x3 >= c) OR c > 3
+Rule? (cad-direct)
+Q.E.D.                      [about 5 s; the read-closure decision did not finish in 600 s]
+\end{Verbatim}
+\end{termbox}
+{\small\color{muted} \texttt{c8\_l3\_quad} is in \texttt{cad\_decide8\_ex}, which imports \texttt{cad\_decide8};
+the transcript is abridged (the step's messages are left out).}
+
+\section{What it costs}
+
+\textbf{The decision alone} (\texttt{decc\_o}, the Collins run, against \texttt{decn\_o}, the read-closure run,
+both at $u = 0$; \code{(cad-mx)} measurements on 1 October 2026, wall clock on one machine; ``$>$'' marks a run
+stopped at that time):
+
+{\small
+\begin{longtable}{@{}>{\ttfamily}p{0.15\textwidth} c p{0.38\textwidth} r r@{}}
+\toprule
+\textsf{\small\bfseries Formula} & \textsf{\small\bfseries quantifiers} & \textsf{\small\bfseries shape} & \textsf{\small\bfseries Collins} & \textsf{\small\bfseries read closure}\\
+\midrule
+t\_circle & 2 & $\forall x\,\exists y.\; x^2+y^2=1 \lor x^2>1$ & 0.1 s & 0.0 s\\
+t\_sphere & 3 & the same in three variables & 0.1 s & 0.2 s\\
+e4\_above & 4 & $\forall x\,y\,z\;\exists w.\; w>x \land w>y \land w>z$ & 2.1 s & 0.9 s\\
+e4\_between & 4 & the same with $w<z$ (false) & 0.2 s & 0.4 s\\
+k2\_lin & 3 & box $[-1,1]^2$ against $x_1+x_2 \ge c$, $c$ universal & 0.1 s & 0.2 s\\
+l2\_quad & 3 & the same with $x_i^2 \le 1$ & 0.1 s & 0.8 s\\
+k3\_lin & 4 & box $[-1,1]^3$ against $x_1+x_2+x_3 \ge c$ & 0.5 s & 11.5 s\\
+l3\_quad & 4 & the same with $x_i^2 \le 1$ & 0.7 s & $>$600 s\\
+bath\_01 & 3 & ball and cylinder (Bath CAD bank) & 0.2 s & $>$90 s\\
+bath\_08 & 3 & Random B, Gr\"obner form (false) & 0.8 s & 1.1 s\\
+bath\_02\textrm{--}05, 07, 09, 10, 12 & 3--4 & the other Bath problems & $>$90 s & $>$90 s\\
+\bottomrule
+\end{longtable}}
+
+\textbf{Every proof of the example theories}, replayed through \texttt{(cad)}, \texttt{(cad-direct)} or
+\texttt{(cad-qe)}, including the witness search and the reconstruction of the proof: as they are, importing
+\texttt{cad\_decide5} (\texttt{qe\_all} for \texttt{qe\_cad\_ex}), and with \texttt{cad\_decide8} (\texttt{qe8} for
+\texttt{qe\_cad\_ex}) added to their imports. Measured on 1 October 2026 with the strategies of that day, before
+the changes for formulas as people write them:
+
+{\small
+\begin{longtable}{@{}>{\ttfamily}p{0.2\textwidth} r r r@{}}
+\toprule
+\textsf{\small\bfseries Theory} & \textsf{\small\bfseries proofs} & \textsf{\small\bfseries cad\_decide5 / qe\_all} & \textsf{\small\bfseries cad\_decide8 / qe8}\\
+\midrule
+cad\_examples\textrm{, }cad\_examples2\textrm{--4} & 28 & 69.1 s & 90.2 s\\
+cad\_endgame\_ex & 18 & 31.0 s & 43.0 s\\
+cad\_star\_ex & 15 & 39.9 s & 49.5 s\\
+cad\_bath & 1 & 9.5 s & 10.2 s\\
+qe\_cad\_ex & 6 & 42.0 s & 51.1 s\\
+\midrule
+all & 68 & 191.5 s, 68 proved & 244.0 s, 68 proved\\
+\bottomrule
+\end{longtable}}
+
+In that run every proof went through either way, and again in a re-run after the strategy fixes of this release (68 of 68 with
+each import, 1 October 2026). The whole \texttt{(cad -1)} proof of \texttt{cad\_bath.bath\_08\_false} (Bath 08,
+``Random B, Gr\"obner form'', false) is one of them: 9.5\,s as it is and 10.2\,s with \texttt{cad\_decide8}. On these
+small examples, in that first run, a proof took 0.77 s longer on average with \texttt{cad\_decide8} or \texttt{qe8}
+imported: 0.1--1.3 s for a \texttt{(cad)} or \texttt{(cad-direct)} proof, 0.5--2.5 s for a \texttt{(cad-qe)} proof (in the
+re-run after the strategy fixes, 0.59 s on average: 166.7 s against 206.9 s for the 68 proofs). Part of that is
+the larger imported context, not the Collins run: a sentence with one quantifier runs the same decision,
+\texttt{decq2}, under either import, and the 16 one-quantifier proofs of \texttt{cad\_endgame\_ex} are 0.2--1.1 s
+slower (0.64 s on average). On some problems with several quantifiers the Collins run is faster by more than an
+order of magnitude (\texttt{k3\_lin}: 23 times; \texttt{bath\_01} and \texttt{l3\_quad}: more than 450 times, and
+the whole proof of \texttt{l3\_quad} through \texttt{(cad-direct)} takes about 5 s, against more than 600 s for the
+read-closure decision alone); on others it is slower (\texttt{e4\_above}: 2.1 s against 0.9 s).
+
+
+\section{How it works}
+\begin{enumerate}[leftmargin=1.3em, itemsep=3pt]
+\item \textbf{The projection} (\code{projn}): for each polynomial of the family, the leading coefficients of its
+kept reducta (its coefficients from the top down to the first that is a nonzero constant) and the principal
+subresultant coefficients $\mathrm{psc}_j(f, f')$ of each kept reductum $f$; for every pair of polynomials,
+$\mathrm{psc}_j(f, g)$ for their kept reducta $f$ and $g$; normalized, without constants and repetitions. The
+psc are determinants of Sylvester-type matrices, computed with every minor once (\code{detf}).
+\item \textbf{Delineability} (\code{collins\_stack}): over a connected set where the projection is sign-invariant,
+the number of distinct roots is constant (equal psc patterns of $(f, f')$ give equal numbers of distinct roots),
+the roots move continuously (lower semicontinuity of the roots in the coefficients), one root stays in each small
+disc, and common roots of two members stay common (the subresultant $S_\kappa$); so the root functions are
+continuous and never cross.
+\item \textbf{The tower}: projecting $k$ times gives $P_{k-1}, \dots, P_0$ below $P_k = F$; over each sector of
+the roots of $P_0$ the stacks of $P_1, \dots, P_k$ form the CAD (\code{ctw\_cad}), because each level's
+projection is sign-invariant on the cells of the level below.
+\item \textbf{Truth values} come from the verified walk of the read-closure engine, over exact algebraic sample
+points: it passes the sections and bands of each level and folds the quantifiers. Its certificate only checks the answers of
+the sign oracle at the samples; delineability no longer depends on it.
+\end{enumerate}
+
+\section{Limits}
+\begin{itemize}[leftmargin=1.3em, itemsep=3pt]
+\item \textbf{The size of Collins' projection.} It contains psc of every pair of polynomials and of every kept
+reductum. On \texttt{bath\_04} (one polynomial in three variables, of degree 4 in its main variable) the first
+projection has 11 polynomials and the second 569; isolating their real roots is where the time goes, and most
+problems of the Bath bank do not finish in 90 s with either engine. The remedies are known and are not done here:
+a smaller projection (McCallum's or Brown's; \texttt{cad\_proj} defines a McCallum-shaped operator, not proved delineating; the read-closure engine
+starts from it, under its run-time certificate), equational constraints, square-free factors. Measured with
+\texttt{decide5} (\texttt{cad\_decide5}), September 2026: \texttt{(cad)} settles Bath 01, 03 and 04 by a model
+search, and Bath 02 --- and 05 and 07, refuted as hypotheses --- by fixing one variable to a constant and deciding
+the smaller sentence, after the full decision does not answer within its 10 s budget. With \texttt{cad\_decide8}
+imported (\texttt{IMPORTING pvs\_cad}, 1 October 2026) the same six are settled the same way: Bath 01, 03 and 04 in
+0.5--0.6\,s, Bath 02, 05 and 07 in about 12\,s each (whole proofs; the smaller sentences are decided by
+\texttt{decide8}).
+\item \textbf{Universal sentences with many polynomials} (the Joukowsky problems \texttt{bath\_09}, \texttt{10}
+and \texttt{12}) get no help from a witness search, and their decision does not finish in 90 s with either
+engine.
+\item \textbf{Quantifier elimination with two or more free variables} first answers by sign conditions on the
+projection polynomials of the plain tower; when they do not tell the true cells from the false ones (two cells
+with the same signs and different truth values), \texttt{qe8} runs the Collins tower whose free families are
+closed under the derivative (\texttt{ctwd}), where by Thom's lemma they always do. The answer is always
+quantifier-free; the derivative-closed tower is larger, so such problems cost more.
+\item \textbf{Determinants} are computed with every minor once: $n\,2^n$ products instead of $n!$; a
+fraction-free elimination would be cubic.
+\item \textbf{Where it is.} The theories are in \texttt{cad/}: the \texttt{col\_*}, \texttt{decc\_*},
+\texttt{cad\_decide8*}, \texttt{qe1c\_*}, \texttt{qe2cc\_*}, \texttt{qe2cd\_*}, \texttt{ctwd*}, \texttt{twrun\_*},
+\texttt{qe8*} and \texttt{qelim\_*} files and \texttt{cad\_sa}, with the algebra they rest on (\texttt{sres\_*},
+\texttt{cpoly\_*}, \texttt{croot\_*}, \texttt{ev\_near}, \texttt{rdet\_*}, \texttt{det\_fast*},
+\texttt{cad\_projn*}).
+\texttt{cad/top.pvs} lists and describes every theory of the library.
+\end{itemize}
+
+
+\end{document}

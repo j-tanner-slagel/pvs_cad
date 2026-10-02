@@ -1,0 +1,17 @@
+(|col_out|
+ (|cad_outc_TCC1| 0
+  (|cad_outc_TCC1-0| "" 3999860409 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL)
+   NIL SHOSTAK (|cad_outc| SUBTYPE "k" "nat" (23 25 23 26)))
+  (|cad_outc_TCC1-1| NIL 3999860332 ("" (SUBTYPE-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
+   NIL (|cad_outc| SUBTYPE "k" "nat" (23 25 23 26)))))
+

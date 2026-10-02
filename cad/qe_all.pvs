@@ -1,0 +1,35 @@
+qe_all: THEORY
+%----------------------------------------------------------------------------
+% Quantifier elimination is correct for every number m >= 1 of free variables
+% (GAP_PLAN.md Tier 2; m = 0 is the decision, and qelim_ok's qelim covers every
+% formula and every m).
+%
+% qe_correct: for a prenex formula Q1 x1 ... Qn xn: phi (n >= 1, phi a Boolean
+% combination of sign conditions on the polynomials F) over m >= 1 free
+% variables, qe(m, os, F, phi) returns a formula that holds at every point of
+% R^m exactly where the prenex formula does; qe_qf: when its qf flag is set
+% the formula is quantifier-free; qe_isqf: the flag is always set (for one
+% free variable by qe1_isqf, for more because qe falls back to qe2c when
+% qe2's answer is not quantifier-free, qe2c_isqf).  qe_complete: for every
+% m >= 1, qe computes a quantifier-free formula equivalent to the prenex
+% formula -- quantifier elimination for the reals, computed and proved.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING qe_all_def, qe1_full, qe2_ok, qe2c_full
+
+  m: VAR posnat
+  os: VAR list[bool]
+  F: VAR list[list[mpoly]]
+  phi: VAR BF
+  pt: VAR list[real]
+
+  qe_correct: THEOREM cons?(os) AND length(pt) = m IMPLIES
+    qe(m, os, F, phi)`ok AND (qfsem(qe(m, os, F, phi)`out)(pt) IFF fsem(os, F, phi, pt))
+  qe_qf: THEOREM qe(m, os, F, phi)`qf IMPLIES qf?(qe(m, os, F, phi)`out)
+  qe_qf1: THEOREM cons?(os) IMPLIES qe(1, os, F, phi)`qf
+
+  %% ---- always quantifier-free (2C) ------------------------------------------------------------
+  qe_isqf: THEOREM cons?(os) IMPLIES qe(m, os, F, phi)`qf
+  qe_complete: THEOREM cons?(os) AND length(pt) = m IMPLIES
+    qf?(qe(m, os, F, phi)`out) AND (qfsem(qe(m, os, F, phi)`out)(pt) IFF fsem(os, F, phi, pt))
+END qe_all

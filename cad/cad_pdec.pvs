@@ -33,7 +33,7 @@ cad_pdec: THEORY
 % (cad_meas: routes_agree, three_works, controls).
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING cad_proj
+  IMPORTING cad_proj, alg_rat
 
   F, P: VAR list[list[mpoly]]
   TW: VAR list[list[list[mpoly]]]
@@ -66,8 +66,13 @@ BEGIN
   MEASURE k
 
   %% the rational sample of a sector, when one is available exactly
+  %% (2026-10-01) alg_rat_def's ratx first: rroot finds a rational root only
+  %% when a bisection midpoint lands on it, and the sorted roots now come with
+  %% intervals already narrowed (cell1's sortu separates neighbours)
   rsamp(a: Alg): list[rat] =
-    IF lin?(a) THEN (: -cf(a, 0) / cf(a, 1) :) ELSE rroot(a, rfk) ENDIF
+    IF lin?(a) THEN (: -cf(a, 0) / cf(a, 1) :)
+    ELSE LET x = ratx(a) IN IF cons?(x`r) THEN x`r ELSE rroot(a, rfk) ENDIF
+    ENDIF
 
   ratsamp?(sc): bool = IF at?(sc) THEN cons?(rsamp(pt(sc))) ELSE TRUE ENDIF
   rsv(sc): rat =

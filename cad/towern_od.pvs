@@ -11,14 +11,16 @@ towern_od: THEORY
 %                                            the specialized member, signs by
 %                                            alg_sign2 (Phase 3, proved); the
 %                                            certificate is alg? (one root in
-%                                            the gap).  Over anything else the
+%                                            the gap).  A rational root makes
+%                                            it a rational point (2026-09-30,
+%                                            ratx).  Over anything else the
 %                                            tower query sg_sec of tower_def.
 % Chains: one table per level per sector, built along the leftmost cell path
 % (tables), used at every cell whose oracle agrees with the recorded signs of
 % the chain's reads (walk_od).
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING walk_od, towern_def, rd_norm, qsec_rd, ztrunc
+  IMPORTING walk_od, towern_def, rd_norm, qsec_rd, ztrunc, alg_rat_def
 
   od, od2: VAR OD
   tb2: VAR CT
@@ -54,11 +56,16 @@ BEGIN
     ENDIF
   MEASURE length(G)
 
+  %% a section over a rational point whose root is rational is a rational
+  %% point (alg_rat_def's ratx, QE_PLAN.md 12): its signs are evaluations
   osec(od, P, lo, hi): OD =
     CASES od OF
       pt(rys): LET l0 = secp_n(P, rys, P, lo, hi),
                    a = (# p := partial_eval(mpol(l0), rys), lb := lo, ub := hi #) IN
-               IF alg?(a) THEN mix(null[rat], a, rys) ELSE sec(od, P, lo, hi) ENDIF
+               IF alg?(a) THEN
+                 LET x = ratx(a) IN
+                 IF cons?(x`r) THEN pt(cons(car(x`r), rys)) ELSE mix(null[rat], x`b, rys) ENDIF
+               ELSE sec(od, P, lo, hi) ENDIF
       ELSE sec(od, P, lo, hi)
     ENDCASES
 
@@ -257,9 +264,14 @@ BEGIN
   MEASURE fuel
 
   %% ---- the outermost level ---------------------------------------------------------------------
-  %% an algebraic sample's isolating interval is refined 32 times first, so
-  %% that alg_isign's interval enclosure decides the signs there (PERF_PLAN P4)
-  odS(s): OD = IF at?(s) THEN mix(null[rat], refine_n(sect_inv.pt(s), 32), null[rat]) ELSE pt((: sval(s) :)) ENDIF
+  %% a root that is rational is a rational point (alg_rat_def's ratx,
+  %% QE_PLAN.md 12); otherwise the algebraic sample's isolating interval is
+  %% refined 32 times first, so that alg_isign's interval enclosure decides
+  %% the signs there (PERF_PLAN P4)
+  odS(s): OD =
+    IF at?(s) THEN LET x = ratx(sect_inv.pt(s)) IN
+                   IF cons?(x`r) THEN pt((: car(x`r) :)) ELSE mix(null[rat], x`b, null[rat]) ENDIF
+    ELSE pt((: sval(s) :)) ENDIF
   %% the closed tower of a sector, from the initial tower T0 = tw0(k, F),
   %% which the decision computes ONCE (PERF_PLAN P2: it was rebuilt for every
   %% sector, a projection each time)

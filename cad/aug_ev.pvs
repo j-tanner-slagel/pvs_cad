@@ -1,0 +1,70 @@
+aug_ev: THEORY
+%----------------------------------------------------------------------------
+% QE from a derivative-closed run always succeeds for large u
+% (QE_PLAN.md section 11, 2C completeness).
+%
+% From a fixed initial tower the certificate holds for every large u
+% (runokT_ev: decn_complete's decn_ev with the tower as an argument), and a
+% round of the augmentation is eventually constant (aug1_evc, from the
+% closures' eventual constancy in clos_ev), so is any fixed number of rounds
+% (augT_evc).  A round that adds nothing leaves every sector's closed free
+% families derivative-closed (fix_dclok: the closure only adds members,
+% tclos_sub, and taug added nothing, taug_same / augall_fix).  With aug_same
+% and aug_stop of aug_univ the run qe2c_T is, for large u, one fixed tower
+% whose round adds nothing, so qe2c_o succeeds for every large u (qe2c_ev).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING aug_univ, qe2c_ok, decn_complete, ev_nat[Tower], ev_nat[list[Sect]],
+            ev_nat[list[list[mpoly]]], map_member[Sect, Tower]
+
+  u, v, d, n, fuel, j: VAR nat
+  m: VAR posnat
+  qb: VAR list[bool]
+  F: VAR list[list[mpoly]]
+  Psi: VAR [SV -> bool]
+  T, TW, TR, T1, T2: VAR Tower
+  TWs: VAR list[Tower]
+  s: VAR Sect
+  ss: VAR list[Sect]
+  od: VAR OD
+  G, P, R: VAR list[list[mpoly]]
+
+  %% ---- lengths ------------------------------------------------------------------------------
+  taug_len: LEMMA FORALL d: FORALL T, TW: length(taug(T, TW, d)) = length(T)
+  augall_len: LEMMA FORALL TWs: FORALL T: length(augall(T, TWs, d)) = length(T)
+  aug1_len: LEMMA length(aug1(u, d, T)) = length(T)
+
+  %% ---- the certificate from a fixed tower -------------------------------------------------------
+  runokT_ev: LEMMA cons?(T) IMPLIES ev?(LAMBDA u: runokT(u, T))
+
+  %% ---- a round, and n rounds, settle ------------------------------------------------------------
+  ts: VAR [Sect -> Tower]
+  map_eqs: LEMMA FORALL ss: (FORALL s: member(s, ss) IMPLIES ts(s) = runtwT(u, T)(s))
+    IMPLIES map(ts)(ss) = map(LAMBDA s: runtwT(u, T)(s))(ss)
+  sectsT_evc: LEMMA cons?(T) IMPLIES evc?(LAMBDA u: runsectsT(u, T))
+  aug1_evc: LEMMA cons?(T) IMPLIES evc?(LAMBDA u: aug1(u, d, T))
+  augT_evc: LEMMA FORALL n: FORALL T: cons?(T) IMPLIES evc?(LAMBDA u: augT(u, d, n, T))
+
+  %% ---- a round that adds nothing -------------------------------------------------------------------
+  tsub_refl: LEMMA FORALL T: tsub?(T, T)
+  tsub_trans: LEMMA FORALL T1: FORALL T, T2: tsub?(T1, T) AND tsub?(T, T2) IMPLIES tsub?(T1, T2)
+  zipadd_sub: LEMMA FORALL TW: FORALL TR: tsub?(TW, zipadd(TW, TR))
+  tclos_sub: LEMMA FORALL fuel: FORALL TW: tsub?(TW, tclos_o(u, fuel, TW, od))
+  addnew_eq: LEMMA length(addnew(P, R)) = length(P) IMPLIES addnew(P, R) = P
+  taug_same: LEMMA FORALL d: FORALL T, TW: tsize(taug(T, TW, d)) = tsize(T) IMPLIES taug(T, TW, d) = T
+  augall_fix: LEMMA FORALL TWs: FORALL T: tsize(augall(T, TWs, d)) = tsize(T) IMPLIES
+    FORALL TW: member(TW, TWs) IMPLIES taug(T, TW, d) = T
+  pg: VAR [list[mpoly] -> bool]
+  L: VAR list[list[mpoly]]
+  every_intro_l: LEMMA FORALL L: (FORALL (g: list[mpoly]): member(g, L) IMPLIES pg(g)) IMPLIES every(pg)(L)
+  dvs_dcl: LEMMA sub?(dvs(G), G) IMPLIES dclx?(G)
+  taug_dcl: LEMMA FORALL d: FORALL T, TW: taug(T, TW, d) = T AND tsub?(T, TW) AND length(T) = length(TW)
+    IMPLIES every(dclx?)(ttake(TW, d))
+  ps: VAR [Sect -> bool]
+  every_intro_s: LEMMA FORALL ss: (FORALL s: member(s, ss) IMPLIES ps(s)) IMPLIES every(ps)(ss)
+  fix_dclok: LEMMA cons?(T) AND tsize(aug1(u, d, T)) = tsize(T) IMPLIES dclok(u, d, T)
+
+  %% ---- QE from the derivative-closed run succeeds ---------------------------------------------------
+  qe2c_ev: THEOREM m >= 2 AND cons?(qb) IMPLIES ev?(LAMBDA u: qe2c_o(u, m, qb, F, Psi)`ok)
+  qe2c_complete: THEOREM m >= 2 AND cons?(qb) IMPLIES EXISTS u: qe2c_o(u, m, qb, F, Psi)`ok
+END aug_ev
