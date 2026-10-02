@@ -4701,3 +4701,17 @@ tools/import_paths.py reports theories, edges and path counts per directory.
   has no formulas).  Whole library 3814/3814 (256 theories, 1184 s), including every (cad)
   proof under the changed strategies.  Overview figures: 256 theories, 3,814 formulas (2,609
   lemmas and theorems, 1,205 TCCs), 20,133 lines of PVS, 1,964 lines of strategies.
+
+## 2026-10-02 — License: CC0 1.0 instead of "All rights reserved"
+
+- README: the copyright statement ("Copyright (c) 2026 J. Tanner Slagel. All rights reserved") is
+  replaced by a CC0 1.0 waiver: to the extent possible under law, J. Tanner Slagel has waived all
+  copyright and related rights to this work.  The library was generated with Claude models
+  (README, "How it was made"), and the author does not claim copyright on it.
+- LICENSE: the CC0 1.0 Universal legal code, as published at
+  https://creativecommons.org/publicdomain/zero/1.0/legalcode.txt.
+- NOTICE.md: the waiver does not cover the third-party material (the Bath problems, CC BY-SA 4.0;
+  tools/pvs-circular-deps.lisp, BSD 3-Clause), which keeps its own license.
+- README, "How to cite": a request (not a condition) to cite pvs_cad, as PVS specifications and
+  proofs (BibTeX @misc).  No CITATION.cff: that format describes a repository only as software
+  or a dataset, and pvs_cad is neither.

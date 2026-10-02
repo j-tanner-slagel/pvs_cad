@@ -169,12 +169,33 @@ To replay the whole library: `proveit -a cad/top.pvs` (in a copy of `cad/`).
   procedure to a verified CAD, and what remains), `CADSTAR_PLAN.md`
   (`(cad *)`), `ENDGAME_PLAN.md` (proof reconstruction), and others.
 
-## Contact and copyright
+## Contact and license
 
 Questions and bug reports: open an issue on this repository.
 
-Copyright (c) 2026 J. Tanner Slagel. All rights reserved: no license is granted for the library as a
-whole. Third-party material and its licenses are listed in [`NOTICE.md`](NOTICE.md).
+To the extent possible under law, J. Tanner Slagel has waived all copyright and related rights to
+this work ([CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/); the full text is in
+[`LICENSE`](LICENSE)). The waiver does not cover the third-party material listed in
+[`NOTICE.md`](NOTICE.md), which keeps its own licenses.
+
+## How to cite
+
+If you use pvs_cad in your work, please cite it. This is a request, not a condition: under the CC0
+waiver anyone may use it without credit.
+
+J. Tanner Slagel. *pvs_cad: Verified Cylindrical Algebraic Decomposition and Quantifier Elimination
+in PVS.* PVS specifications and proofs, 2026. https://github.com/j-tanner-slagel/pvs_cad
+
+```bibtex
+@misc{slagel_pvs_cad_2026,
+  author       = {Slagel, J. Tanner},
+  title        = {{pvs\_cad}: Verified Cylindrical Algebraic Decomposition and
+                  Quantifier Elimination in {PVS}},
+  howpublished = {PVS specifications and proofs,
+                  \url{https://github.com/j-tanner-slagel/pvs_cad}},
+  year         = {2026}
+}
+```
 
 ## References
 

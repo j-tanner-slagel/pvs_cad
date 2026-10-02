@@ -1,5 +1,8 @@
 # Third-party material
 
+The CC0 1.0 waiver in [`LICENSE`](LICENSE) covers everything in this repository except the
+material listed below, which keeps its own license.
+
 pvs_cad requires PVS and NASALib, which are not included here.
 
 - **Bath CAD example bank.** `cad/bench_pdec.pvs`, `cad/bench_n.pvs` and `cad/cad_bath.pvs`
