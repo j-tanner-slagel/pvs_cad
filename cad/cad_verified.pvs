@@ -11,7 +11,9 @@ cad_verified: THEORY
 %     same;
 %   - every cell, at every level, is connected and definable by a
 %     first-order formula over the reals with rational polynomial sign atoms
-%     (semi-algebraic by Tarski-Seidenberg, which is not formalized here);
+%     (so also without quantifiers, by qelim_ok's fod_qfd, the
+%     Tarski-Seidenberg theorem; cad_sa's cad_cells_sa states it for these
+%     cells: semi-algebraic, indeed defined over Q);
 %   - over each sector the tower is a CAD (cad_over?): every level is
 %     delineable over every cell below it (delin_cl?: the roots of the
 %     members not identically zero on the fibre are a constant number of
@@ -26,6 +28,10 @@ cad_verified: THEORY
 %     -- so the nonempty cells are finitely many.
 % cad_verified: this holds whenever decn_o's certificate does.  cad_exists:
 % for every F and prefix of at least two quantifiers some u makes it hold.
+% Def. 5.1 asks for a partition at every level; cad_of? states cover and
+% disjointness for the cells of R^(k+1), and at the lower levels they
+% follow from the stack construction (cad_tower's tcell_cover, tcell_disj)
+% without being restated here.
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING rcf_cells, cad_sample

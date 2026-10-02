@@ -1,0 +1,24 @@
+cad_decide8_def: THEORY
+%----------------------------------------------------------------------------
+% The decision behind (cad) in a theory that imports cad_decide8: the
+% Collins run (COLLINS_PLAN.md M-I).  Executable.
+%
+% A sentence with two or more quantifiers goes to decc_u: decc_o, the walk
+% over the tower of Collins projections of the family (decc_def), from
+% u = 0, raising u until its certificate holds (decc_u_def); it always
+% answers (decc_ok's decc_complete).  With one quantifier or none it goes to
+% decq2, the sectors of the line, as in decide5 and decide7.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad_decide5_def, decc_u_def
+
+  qs: VAR list[bool]
+  F: VAR list[list[mpoly]]
+  Psi: VAR [SV -> bool]
+  phi: VAR BF
+
+  decq8(qs, F, Psi): [# ok: bool, val: bool #] =
+    IF length(qs) >= 2 THEN decc_u(reverse(qs), F, Psi, 0) ELSE decq2(qs, F, Psi) ENDIF
+
+  decide8(qs, F, phi): [# ok: bool, val: bool #] = decq8(qs, F, LAMBDA (v: SV): bfsv(phi, v))
+END cad_decide8_def

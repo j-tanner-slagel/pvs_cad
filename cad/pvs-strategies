@@ -10,6 +10,21 @@
 ;;;   4. poly_eq_by_norm closes the goal.
 ;;; The printer is not trusted: every equation it suggests is proved.
 
+;; is E an application of the connective or relation NAME ("AND", "OR",
+;; "IMPLIES", "IFF", "NOT", "=", "/=", "<", ...)?  The connectives and /= are
+;; recognized by the class PVS gives them, so every synonym counts: & and the
+;; wedge (AND), the vee (OR), => and the double arrow (IMPLIES; WHEN, with its
+;; arguments swapped by PVS), <=> (IFF), the negation sign (NOT), the
+;; not-equal sign (/=).
+(defun cad-is (e name)
+  (cond ((string= name "AND") (conjunction? e))
+        ((string= name "OR") (disjunction? e))
+        ((string= name "IMPLIES") (implication? e))
+        ((string= name "IFF") (iff? e))
+        ((string= name "NOT") (negation? e))
+        ((string= name "/=") (disequation? e))
+        (t (is-function-expr e name))))
+
 (defparameter *mpoly-atoms* nil)   ; atom strings, in order of first occurrence
 
 (defun mpoly-atom-index (expr)
@@ -526,7 +541,7 @@ The facts are labelled poly-nonzero and every one of them is proved."
 (defun psign-parts (fexpr)
   (when (and fexpr (exists-expr? fexpr))
     (let ((bs (bindings fexpr)) (body (expression fexpr)))
-      (when (and (= (length bs) 1) (is-function-expr body "AND"))
+      (when (and (= (length bs) 1) (cad-is body "AND"))
         (let ((eqn (args1 body)) (ineq (args2 body)))
           (when (and (is-function-expr eqn "=") (is-function-expr ineq ">"))
             (let ((z1 (extra-get-number-from-expr (args2 eqn) t))
@@ -715,7 +730,7 @@ The facts are labelled poly-nosign and every one of them is proved."
                   ((is-function-expr expr "<") "<")
                   ((is-function-expr expr ">=") ">=")
                   ((is-function-expr expr "<=") "<=")
-                  ((is-function-expr expr "/=") "/=")
+                  ((cad-is expr "/=") "/=")
                   (t nil))))
     (when op
       (let* ((lhs (args1 expr)) (rhs (args2 expr))
@@ -732,16 +747,16 @@ The facts are labelled poly-nosign and every one of them is proved."
 ;; list of literals; nil is FALSE and (nil) is TRUE
 (defun qe-dnf (expr neg)
   (cond
-   ((is-function-expr expr "AND")
+   ((cad-is expr "AND")
     (if neg (append (qe-dnf (args1 expr) t) (qe-dnf (args2 expr) t))
       (qe-cross (qe-dnf (args1 expr) nil) (qe-dnf (args2 expr) nil))))
-   ((is-function-expr expr "OR")
+   ((cad-is expr "OR")
     (if neg (qe-cross (qe-dnf (args1 expr) t) (qe-dnf (args2 expr) t))
       (append (qe-dnf (args1 expr) nil) (qe-dnf (args2 expr) nil))))
-   ((is-function-expr expr "IMPLIES")
+   ((cad-is expr "IMPLIES")
     (if neg (qe-cross (qe-dnf (args1 expr) nil) (qe-dnf (args2 expr) t))
       (append (qe-dnf (args1 expr) t) (qe-dnf (args2 expr) nil))))
-   ((and (unary-application? expr) (is-function-expr expr "NOT"))
+   ((and (unary-application? expr) (cad-is expr "NOT"))
     (qe-dnf (args1 expr) (not neg)))
    ((and (name-expr? expr) (string= (string (id expr)) "TRUE"))
     (if neg nil (list nil)))
@@ -950,13 +965,33 @@ computed here but is not trusted."
 ;;; instantiating the other with the same name.
 ;;; ---------------------------------------------------------------------------
 
+;; whether the current theory imports the theory NAME (directly or not)
+(defun cad-imports? (name)
+  (and *current-context*
+       (let ((found nil))
+         (map-lhash #'(lambda (th insts)
+                        (declare (ignore insts))
+                        (when (and (not found) (string-equal (string (id th)) name))
+                          (setq found t)))
+                    (current-using-hash))
+         found)))
+
+;; the decision (cad) uses: decide8, the Collins run (cad_decide8_def,
+;; COLLINS_PLAN.md M-I), in a theory that imports cad_decide8; otherwise
+;; decide5, the read-closure run (cad_decide5_def)
+(defun cad-dec () (if (cad-imports? "cad_decide8") "decide8" "decide5"))
+
+;; the elimination (cad-qe) uses: qe8, the Collins run (qe8_def), in a
+;; theory that imports qe8; otherwise qe (qe_all_def, the read-closure run)
+(defun cad-qe-fn () (if (cad-imports? "qe8") "qe8" "qe"))
+
 ;; the quantifier prefix of EXPR, outermost first, as (NAME . ISALL), and the
 ;; matrix; nil when a quantifier binds several variables
 (defun cad-prefix (expr)
   (let ((pre nil) (e expr) (bad nil))
     (loop while (and (not bad) (or (forall-expr? e) (exists-expr? e))) do
       (let ((bs (bindings e)))
-        (if (= (length bs) 1)
+        (if (and (= (length bs) 1) (tc-eq (type (car bs)) *real*))
             (progn (push (cons (string (id (car bs))) (and (forall-expr? e) t)) pre)
                    (setq e (expression e)))
           (setq bad t))))
@@ -974,19 +1009,19 @@ computed here but is not trusted."
 ;; the matrix as a BF term of bform; nil when some atom is not a sign condition
 (defun cad-bf (expr)
   (cond
-   ((is-function-expr expr "AND")
+   ((cad-is expr "AND")
     (let ((a (cad-bf (args1 expr))) (b (cad-bf (args2 expr))))
       (when (and a b) (format nil "band(~a, ~a)" a b))))
-   ((is-function-expr expr "OR")
+   ((cad-is expr "OR")
     (let ((a (cad-bf (args1 expr))) (b (cad-bf (args2 expr))))
       (when (and a b) (format nil "bor(~a, ~a)" a b))))
-   ((is-function-expr expr "IMPLIES")
+   ((cad-is expr "IMPLIES")
     (let ((a (cad-bf (args1 expr))) (b (cad-bf (args2 expr))))
       (when (and a b) (format nil "bor(bnot(~a), ~a)" a b))))
-   ((is-function-expr expr "IFF")
+   ((cad-is expr "IFF")
     (let ((a (cad-bf (args1 expr))) (b (cad-bf (args2 expr))))
       (when (and a b) (format nil "band(bor(bnot(~a), ~a), bor(bnot(~a), ~a))" a b b a))))
-   ((and (unary-application? expr) (is-function-expr expr "NOT"))
+   ((and (unary-application? expr) (cad-is expr "NOT"))
     (let ((a (cad-bf (args1 expr)))) (when a (format nil "bnot(~a)" a))))
    ((and (name-expr? expr) (string= (string (id expr)) "TRUE"))
     "bnot(band(batom(0, 0), bnot(batom(0, 0))))")
@@ -1007,10 +1042,10 @@ computed here but is not trusted."
 ;; the nesting depth of the matrix, for unfolding bfeval
 (defun cad-depth (expr)
   (cond
-   ((or (is-function-expr expr "AND") (is-function-expr expr "OR")
-        (is-function-expr expr "IMPLIES") (is-function-expr expr "IFF"))
+   ((or (cad-is expr "AND") (cad-is expr "OR")
+        (cad-is expr "IMPLIES") (cad-is expr "IFF"))
     (+ 2 (max (cad-depth (args1 expr)) (cad-depth (args2 expr)))))
-   ((and (unary-application? expr) (is-function-expr expr "NOT"))
+   ((and (unary-application? expr) (cad-is expr "NOT"))
     (1+ (cad-depth (args1 expr))))
    (t 3)))
 
@@ -1033,12 +1068,12 @@ computed here but is not trusted."
 ;; *cad-polys*; one pair per distinct atom.
 (defun cad-atom-eqs (expr canon)
   (cond
-   ((or (is-function-expr expr "AND") (is-function-expr expr "OR")
-        (is-function-expr expr "IMPLIES") (is-function-expr expr "IFF"))
+   ((or (cad-is expr "AND") (cad-is expr "OR")
+        (cad-is expr "IMPLIES") (cad-is expr "IFF"))
     (let ((a (cad-atom-eqs (args1 expr) canon)))
       (append a (remove-if #'(lambda (e) (member e a :test #'equal))
                            (cad-atom-eqs (args2 expr) canon)))))
-   ((and (unary-application? expr) (is-function-expr expr "NOT"))
+   ((and (unary-application? expr) (cad-is expr "NOT"))
     (cad-atom-eqs (args1 expr) canon))
    ((and (name-expr? expr) (member (string (id expr)) '("TRUE" "FALSE") :test #'string=))
     nil)
@@ -1192,8 +1227,11 @@ computed here but is not trusted."
           (printf "cad: the certificate of the decision did not pass (~a`ok is FALSE), so there is no proof; the formula is unchanged.  (cad :complete? t) falls back to the complete but exponential decision" dec)))))
   "[pvs_cad] Internal: finishes (cad) for the sentence labelled GL from the decision record labelled EV (of decide5, or of decide when DECIDE?)." "")
 
-(defstep cad-direct (&optional (fnum 1) complete? (dec "decide5"))
-  (let ((fexpr  (extra-get-formula fnum))
+(defstep cad-direct (&optional (fnum 1) complete? dec)
+  (let ((fnum   (cad-default-fnum fnum))
+        (dec    (or dec (cad-dec)))
+        (grouped (let ((f (extra-get-formula fnum))) (and f (cadg-grouped-prenex? f))))
+        (fexpr  (extra-get-formula fnum))
         (pp     (when fexpr (cad-prefix fexpr)))
         (pre    (when pp (first pp)))
         (body   (when pp (second pp)))
@@ -1212,29 +1250,63 @@ computed here but is not trusted."
         ;; the side of the sentence decides the shape of the proof; after this
         ;; every formula is named by a fresh label, never by its position
         (fn     (extra-get-fnum fnum))
-        (ante   (and (integerp fn) (< fn 0))))
-    (if (or (null pre) (null body))
-        (printf "cad: formula ~a is not a closed prenex formula" fnum)
-      (if bad
-          (printf "cad: the matrix is not a Boolean combination of polynomial sign conditions in the quantified variables")
+        (ante   (and (integerp fn) (< fn 0)))
+        ;; why the prenex route does not apply, said when the general route
+        ;; is not available (no gform_ok)
+        (gbad   (and fexpr (eq (ignore-errors (cadg-tree fexpr nil)) :bad)))
+        (why    (cond ((null fexpr) (format nil "cad: there is no formula ~a" fnum))
+                      ;; refused by the general route too: say what it takes
+                      ((and gbad (or (null pp) (null pre) (cadg-has-quant? body)))
+                       (format nil "cad: formula ~a is not a first-order formula over the reals whose atoms compare polynomials (binders over real, posreal, nnreal, negreal, npreal or nzreal; other real terms must not contain a bound variable)" fnum))
+                      ((null pp)
+                       (format nil "cad: formula ~a is not prenex with one real variable per quantifier (it binds a variable of another type, or several at once); formulas of any shape need IMPORTING pvs_cad (or gform_ok)" fnum))
+                      ((cadg-has-quant? body)
+                       (format nil "cad: formula ~a has quantifiers inside its connectives; formulas of any shape need IMPORTING pvs_cad (or gform_ok)" fnum))
+                      ((null pre)
+                       (format nil "cad: formula ~a has no quantifier; quantifier-free formulas need IMPORTING pvs_cad (or gform_ok)" fnum))
+                      ((or (null phistr) gbad)
+                       (format nil "cad: the matrix of formula ~a is not a Boolean combination of polynomial sign conditions in its quantified variables" fnum))
+                      ((not closed)
+                       (format nil "cad: formula ~a has real terms other than its quantified variables; they are generalized as unknowns only in a theory that imports pvs_cad (or gform_ok)" fnum))
+                      (t (format nil "cad: the polynomials of formula ~a could not be normalized" fnum)))))
+    (if grouped
+        ;; grouped binders in a prenex formula: through its nested form
+        (cad-nest__$ fnum "direct" 10 complete? nil dec)
+     (if (or (null pre) (null body) bad)
+        ;; not a closed prenex formula with one real per quantifier and a
+        ;; polynomial matrix: the general route (FORMS_PLAN.md), which needs
+        ;; gform_ok (IMPORTING pvs_cad)
+        (if (cad-imports? "gform_ok")
+            (cadg__$ fnum)
+          (printf "~a" why))
         (with-fresh-labels ((!cdg fnum) (!cde))
           (then (discriminate (eval-expr recstr) !cde)
                 (cad-finish__$ !cdg !cde ante complete? nil dec))))))
-  "[pvs_cad] Decides the closed prenex formula FNUM, Q1 x1: ... Qn xn: PHI
+  "[pvs_cad] Decides the formula FNUM without the witness search (by default
+1, or -1 when the sequent has no consequent).  A formula of any other shape
+(quantifiers inside NOT / AND / OR / IMPLIES / IFF, binders over posreal,
+nnreal, negreal, npreal or nzreal, no quantifier at all) and a formula with
+other real terms (unknowns, generalized) are taken as (cad) takes them, by
+decide_g, in a theory that imports pvs_cad (or gform_ok) (FORMS_PLAN.md);
+grouped binders FORALL (x, y: real) go through the nested form and need no
+more.  The prenex case is Q1 x1: ... Qn xn: PHI
 with each Qi FORALL or EXISTS over one real variable and PHI a Boolean
-combination of sign conditions on polynomials in the xi, by decide5 of
-cad_decide5_def (the n-level cylindrical decision decn_o for three or more
-quantifiers; decw, then decn_o, for two; decide2 for one).  A TRUE formula in the
+combination of sign conditions on polynomials in the xi, by decide8 of
+cad_decide8_def in a theory that imports cad_decide8 (the Collins run decc_u
+for two or more quantifiers: the walk over the tower of Collins projections;
+decide2 for one), otherwise by decide5 of cad_decide5_def (the n-level
+cylindrical decision decn_o for three or more quantifiers; decw, then decn_o,
+for two; decide2 for one); DEC names another.  A TRUE formula in the
 consequent is proved and a FALSE one in the antecedent refuted, which closes the
 goal; otherwise the formula is already the answer and stays, labelled cad, with a
 message saying whether it is TRUE or FALSE.  The proof instantiates
-decide5_correct, evaluates the completion flag and the decision on the ground,
+decide8_correct or decide5_correct, evaluates the completion flag and the decision on the ground,
 walks the quantifiers, and closes the matrix with the reflection of Phase 1.
 With COMPLETE? a certificate that does not pass is followed by the complete
 decision decide of cad_decide (decide_correct_os: no flag), which always
-answers but can take hours.  The theory must import cad_decide5 and
-mpoly_embed.  (cad) is this, after a witness search when one can settle the
-goal."
+answers but can take hours.  The theory must import cad_decide5 (or
+cad_decide8) and mpoly_embed.  (cad) is this, after a witness search when one
+can settle the goal."
   "Deciding ~a by cylindrical decision")
 
 ;;; ------------------------------------------------------------------
@@ -1290,16 +1362,16 @@ goal."
                    (and a b #'(lambda (v) (funcall f (funcall a v) (funcall b v))))))
          (rel (f) (let ((a (cadw-cnum (args1 e) names)) (b (cadw-cnum (args2 e) names)))
                     (and a b #'(lambda (v) (and (funcall f (funcall a v) (funcall b v)) t))))))
-    (cond ((is-function-expr e "AND") (b2 #'(lambda (a b) (and a b))))
-          ((is-function-expr e "OR") (b2 #'(lambda (a b) (or a b))))
-          ((is-function-expr e "IMPLIES") (b2 #'(lambda (a b) (or (not a) b))))
-          ((is-function-expr e "IFF") (b2 #'(lambda (a b) (eq (not a) (not b)))))
-          ((and (unary-application? e) (is-function-expr e "NOT"))
+    (cond ((cad-is e "AND") (b2 #'(lambda (a b) (and a b))))
+          ((cad-is e "OR") (b2 #'(lambda (a b) (or a b))))
+          ((cad-is e "IMPLIES") (b2 #'(lambda (a b) (or (not a) b))))
+          ((cad-is e "IFF") (b2 #'(lambda (a b) (eq (not a) (not b)))))
+          ((and (unary-application? e) (cad-is e "NOT"))
            (let ((a (cadw-cbool (args1 e) names))) (and a #'(lambda (v) (not (funcall a v))))))
           ((and (name-expr? e) (string= (string (id e)) "TRUE")) #'(lambda (v) (declare (ignore v)) t))
           ((and (name-expr? e) (string= (string (id e)) "FALSE")) #'(lambda (v) (declare (ignore v)) nil))
           ((is-function-expr e "=") (rel #'=))
-          ((is-function-expr e "/=") (rel #'/=))
+          ((cad-is e "/=") (rel #'/=))
           ((is-function-expr e "<") (rel #'<))
           ((is-function-expr e "<=") (rel #'<=))
           ((is-function-expr e ">") (rel #'>))
@@ -1340,7 +1412,7 @@ goal."
          (s (and v (expr2str v))))
     (and s (string= s (if want "TRUE" "FALSE")))))
 
-;; the decide5 record for a closed prenex formula EXPR, as a string, or nil
+;; the record of (cad)'s decision (cad-dec) for a closed prenex formula EXPR, as a string, or nil
 (defun cadw-recstr (expr)
   (let* ((pp (cad-prefix expr)) (pre (first pp)) (body (second pp)))
     (when (and pre body)
@@ -1352,7 +1424,7 @@ goal."
                                    (let ((v (evalexpr (format nil "as_list(pnorm(~a))" (car pr)) nil nil t)))
                                      (when v (expr2str v)))))))
         (when (and phistr closed (notany #'null lists))
-          (format nil "decide5(reverse(~a), ~a, ~a)"
+          (format nil "~a(reverse(~a), ~a, ~a)" (cad-dec)
                   (format nil "(: ~{~a~^, ~} :)" (loop for q in pre collect (if (cdr q) "TRUE" "FALSE")))
                   (qe-list-str lists "null[list[mpoly]]") phistr))))))
 
@@ -1377,11 +1449,11 @@ goal."
 
 ;; the atoms (relational subterms) of a matrix
 (defun cadw-atoms (e)
-  (cond ((or (is-function-expr e "AND") (is-function-expr e "OR")
-             (is-function-expr e "IMPLIES") (is-function-expr e "IFF"))
+  (cond ((or (cad-is e "AND") (cad-is e "OR")
+             (cad-is e "IMPLIES") (cad-is e "IFF"))
          (append (cadw-atoms (args1 e)) (cadw-atoms (args2 e))))
-        ((and (unary-application? e) (is-function-expr e "NOT")) (cadw-atoms (args1 e)))
-        ((some #'(lambda (op) (is-function-expr e op)) '("=" "/=" "<" "<=" ">" ">=")) (list e))
+        ((and (unary-application? e) (cad-is e "NOT")) (cadw-atoms (args1 e)))
+        ((some #'(lambda (op) (cad-is e op)) '("=" "/=" "<" "<=" ">" ">=")) (list e))
         (t nil)))
 
 ;; the prefix positions a term mentions, from its free variables (mapobject
@@ -1488,13 +1560,13 @@ goal."
         (t (cons (format nil "NOT ~a" (cadw-ftxt a)) (cdr a)))))
 (defun cadw-fold (e names i c)
   (flet ((f (x) (cadw-fold x names i c)))
-    (cond ((is-function-expr e "AND") (cadw-fand (f (args1 e)) (f (args2 e))))
-          ((is-function-expr e "OR") (cadw-for (f (args1 e)) (f (args2 e))))
-          ((is-function-expr e "IMPLIES") (cadw-for (cadw-fnot (f (args1 e))) (f (args2 e))))
-          ((is-function-expr e "IFF")
+    (cond ((cad-is e "AND") (cadw-fand (f (args1 e)) (f (args2 e))))
+          ((cad-is e "OR") (cadw-for (f (args1 e)) (f (args2 e))))
+          ((cad-is e "IMPLIES") (cadw-for (cadw-fnot (f (args1 e))) (f (args2 e))))
+          ((cad-is e "IFF")
            (let ((a (f (args1 e))) (b (f (args2 e))))
              (cadw-fand (cadw-for (cadw-fnot a) b) (cadw-for (cadw-fnot b) a))))
-          ((and (unary-application? e) (is-function-expr e "NOT")) (cadw-fnot (f (args1 e))))
+          ((and (unary-application? e) (cad-is e "NOT")) (cadw-fnot (f (args1 e))))
           ((and (name-expr? e) (string= (string (id e)) "TRUE")) :true)
           ((and (name-expr? e) (string= (string (id e)) "FALSE")) :false)
           (t (let* ((vs (cadw-vars e names))
@@ -1675,15 +1747,15 @@ goal."
   (flet ((bin (op) (let ((a (cadstar-bool (args1 e) bv)) (b (cadstar-bool (args2 e) bv)))
                      (when (and a b) (format nil "(~a ~a ~a)" a op b)))))
     (cond
-     ((is-function-expr e "AND") (bin "AND"))
-     ((is-function-expr e "OR") (bin "OR"))
-     ((is-function-expr e "IMPLIES") (bin "IMPLIES"))
-     ((is-function-expr e "IFF") (bin "IFF"))
-     ((and (unary-application? e) (is-function-expr e "NOT"))
+     ((cad-is e "AND") (bin "AND"))
+     ((cad-is e "OR") (bin "OR"))
+     ((cad-is e "IMPLIES") (bin "IMPLIES"))
+     ((cad-is e "IFF") (bin "IFF"))
+     ((and (unary-application? e) (cad-is e "NOT"))
       (let ((a (cadstar-bool (args1 e) bv))) (when a (format nil "(NOT ~a)" a))))
      ((and (name-expr? e) (member (string (id e)) '("TRUE" "FALSE") :test #'string=))
       (string (id e)))
-     (t (let ((op (find-if #'(lambda (o) (is-function-expr e o)) '("=" "/=" "<" "<=" ">" ">="))))
+     (t (let ((op (find-if #'(lambda (o) (cad-is e o)) '("=" "/=" "<" "<=" ">" ">="))))
           (when (and op (not (unary-application? e)))
             (let ((a (cadstar-term (args1 e) bv)) (b (cadstar-term (args2 e) bv)))
               (when (and a b) (format nil "(~a ~a ~a)" a op b)))))))))
@@ -1705,18 +1777,72 @@ goal."
       (let ((m (cadstar-bool e bv)))
         (when m (list (reverse nodes) m))))))
 
+;; the comparisons of the bound variable of the subtype predicate PRED with
+;; numbers, as a list of (OP . NUMBER): {x: T | x > 0}, {x: T | 1 <= x},
+;; {k: int | i <= k AND k <= j} (conjunctions split)
+(defun cad-pred-guards (pred)
+  (when (and (lambda-expr? pred) (= (length (bindings pred)) 1))
+    (let ((v (car (bindings pred))))
+      (labels ((var? (x) (and (name-expr? x) (eq (declaration x) v)))
+               (cmps (body)
+                 (if (and (not (unary-application? body)) (cad-is body "AND"))
+                     (append (cmps (args1 body)) (cmps (args2 body)))
+                   (let ((op (and (application? body) (not (unary-application? body))
+                                  (find-if #'(lambda (o) (cad-is body o)) '(">" ">=" "<" "<=" "/=")))))
+                     (when op
+                       (let ((l (args1 body)) (r (args2 body)))
+                         (cond ((and (var? l) (extra-get-number-from-expr r t))
+                                (list (cons op (extra-get-number-from-expr r t))))
+                               ((and (var? r) (extra-get-number-from-expr l t))
+                                (list (cons (cdr (assoc op '((">" . "<") (">=" . "<=") ("<" . ">")
+                                                             ("<=" . ">=") ("/=" . "/="))
+                                                        :test #'string=))
+                                            (extra-get-number-from-expr l t)))))))))))
+        (cmps (expression pred))))))
+
+;; the comparisons with numbers that the type TE of a real term gives it, as a
+;; list of (OP . TEXT): every comparison of its variable with a number in the
+;; predicates up TE's subtype chain (posreal: > 0, nnreal: >= 0, nzreal: /= 0,
+;; below(5): >= 0 and < 5, a user's {x: real | x < 1}: < 1), strict bounds
+;; made non-strict on an integer type (posnat: >= 1, negint: <= -1, below(5):
+;; <= 4), and of those the strongest lower and upper bound and the /= that
+;; they do not already give.  The types are read, not named, so a type
+;; declared again elsewhere (NASALib's own negint) counts too
+(defun cad-type-guards (te)
+  (let* ((raw (loop for ty = te then (supertype ty)
+                    while (subtype? ty)
+                    append (ignore-errors (cad-pred-guards (predicate ty)))))
+         (int? (ignore-errors (subtype-of? te (pc-typecheck (pc-parse "int" 'type-expr)))))
+         (gs (mapcar #'(lambda (g)
+                         (let ((op (car g)) (c (cdr g)))
+                           (cond ((and int? (integerp c) (string= op ">")) (cons ">=" (1+ c)))
+                                 ((and int? (integerp c) (string= op "<")) (cons "<=" (1- c)))
+                                 (t g))))
+                     raw))
+         (lo nil) (hi nil) (nes nil))
+    (dolist (g gs)
+      (let ((op (car g)) (c (cdr g)))
+        (cond ((member op '(">" ">=") :test #'string=)
+               (when (or (null lo) (> c (cdr lo)) (and (= c (cdr lo)) (string= op ">")))
+                 (setq lo g)))
+              ((member op '("<" "<=") :test #'string=)
+               (when (or (null hi) (< c (cdr hi)) (and (= c (cdr hi)) (string= op "<")))
+                 (setq hi g)))
+              (t (pushnew c nes)))))
+    (setq nes (remove-if #'(lambda (c) (or (and lo (or (> (cdr lo) c) (and (= (cdr lo) c) (string= (car lo) ">"))))
+                                           (and hi (or (< (cdr hi) c) (and (= (cdr hi) c) (string= (car hi) "<"))))))
+                         (reverse nes)))
+    (mapcar #'(lambda (g) (cons (car g) (format nil "~a" (cdr g))))
+            (append (when lo (list lo)) (when hi (list hi))
+                    (mapcar #'(lambda (c) (cons "/=" c)) nes)))))
+
 ;; the fact the type of the abstracted term E gives its variable NM, or nil
 (defun cadstar-typefact (e nm)
-  (let ((te (type e)))
-    (flet ((sub (s) (ignore-errors (subtype-of? te (pc-typecheck (pc-parse s 'type-expr))))))
-      (cond ((or (sub "posnat") (sub "posint")) (format nil "(~a >= 1)" nm))
-            ((sub "negint") (format nil "(~a <= -1)" nm))
-            ((sub "posreal") (format nil "(~a > 0)" nm))
-            ((sub "negreal") (format nil "(~a < 0)" nm))
-            ((sub "nonneg_real") (format nil "(~a >= 0)" nm))
-            ((sub "nonpos_real") (format nil "(~a <= 0)" nm))
-            ((sub "nzreal") (format nil "(~a /= 0)" nm))
-            (t nil)))))
+  (let ((gs (cad-type-guards (type e))))
+    (cond ((null gs) nil)
+          ((null (cdr gs)) (format nil "(~a ~a ~a)" nm (car (car gs)) (cdr (car gs))))
+          (t (format nil "(~{~a~^ AND ~})"
+                     (mapcar #'(lambda (g) (format nil "(~a ~a ~a)" nm (car g) (cdr g))) gs))))))
 
 ;; the usable formulas of FNUMS as (fnum nodes matrix), and the skipped fnums
 (defun cadstar-collect (fnums)
@@ -1773,6 +1899,10 @@ goal."
   (let ((cs      (cadstar-collect fnums))
         (used    (first cs))
         (skipped (second cs))
+        ;; a skipped formula the general route can read: every formula is
+        ;; kept whole instead (FORMS_PLAN.md F5)
+        (gen?    (and (cad-imports? "gform_ok")
+                      (some #'(lambda (fn) (cadg-usable? (extra-get-formula-from-fnum fn))) skipped)))
         (tfs     (loop for a in *cadstar-abs* for f = (cadstar-typefact (third a) (second a))
                        when f collect f))
         (gstr    (when used (cadstar-g used tfs)))
@@ -1781,29 +1911,49 @@ goal."
         (msg     (format nil "cad*: using ~a, skipping ~a~@[; unknown reals: ~{~a~^, ~}~]"
                          (or (mapcar #'first used) "nothing") (or skipped "nothing")
                          (loop for a in *cadstar-abs* collect (format nil "~a = ~a" (second a) (first a))))))
+    (if gen? (cadg-seq__$ fnums budget cad-only?)
     (if (null used)
         (printf "cad*: no formula of the sequent is a polynomial formula over the reals")
       (let ((step `(then ,@(loop for u in used for lab in labs collect `(label ,lab ,(first u)))
                          ,(cad-fact-case gstr gl (cadstar-use used labs gl) `(cad ,gl ,budget nil ,cad-only?)))))
         (then (printf "~a~%cad*: deciding ~a" msg gstr)
               (else (finalize__$ step)
-                    (printf "cad*: not proved; the sequent is unchanged"))))))
+                    (printf "cad*: not proved; the sequent is unchanged")))))))
   "[pvs_cad] Internal: (cad *) for the formulas FNUMS." "")
 
 (defstep cad (&optional (fnum 1) (budget 10) complete? cad-only?)
-  (let ((multi (cadstar-multi? fnum))
+  (let ((fnum  (cad-default-fnum fnum))
+        (multi (cadstar-multi? fnum))
         (fexpr (unless multi (extra-get-formula fnum)))
+        (grouped (and fexpr (cadg-grouped-prenex? fexpr)))
         (pp    (when fexpr (cad-prefix fexpr)))
         (pre   (when pp (first pp)))
         (body  (when pp (second pp)))
         (fn    (when fexpr (extra-get-fnum fnum)))
-        (plan  (when (and pre body (integerp fn) (not cad-only?))
-                 (cadw-plan fnum fexpr pre body budget (< fn 0)))))
+        (plan  (when (and pre body (integerp fn) (not cad-only?) (not (cadg-has-quant? body)))
+                 (cadw-plan fnum fexpr pre body budget (< fn 0))))
+        ;; the verified-CAD engine: the Collins run (decide8, col_verified) when
+        ;; the theory imports cad_decide8, else the read-closure run (decide7)
+        (odec  (if (cad-imports? "cad_decide8") "decide8" "decide7")))
     (if multi (cad-seq__$ fnum budget cad-only?)
-      (if cad-only? (cad-direct fnum complete? "decide7")
-        (if plan plan (cad-direct fnum complete?)))))
-  "[pvs_cad] Decides the closed prenex formula FNUM (a formula number or a
-label), Q1 x1: ... Qn xn: PHI, over the reals: in the consequent it is
+     (if grouped (cad-nest__$ fnum "cad" budget complete? cad-only?)
+      (if cad-only? (cad-direct fnum complete? odec)
+        (if plan plan (cad-direct fnum complete?))))))
+  "[pvs_cad] Decides the closed formula FNUM (a formula number or a label;
+by default 1, or -1 when the sequent has no consequent, as for a goal NOT A),
+a first-order formula over the reals with polynomial comparisons: in prenex
+form Q1 x1: ... Qn xn: PHI it is decided as below; with grouped binders
+FORALL (x, y: real) through its nested form; of any other shape --
+quantifiers inside NOT / AND / OR / IMPLIES / IFF, binders over posreal,
+nnreal, negreal, npreal or nzreal (no other binder types) -- by decide_g
+(gform_ok), in a theory that imports pvs_cad (FORMS_PLAN.md).  The
+connectives may be written with any of PVS's synonyms (&, =>, <=>, WHEN, the
+negation and not-equal signs, ...).  Other real terms that mention no bound
+variable (f(c), sqrt(c), length(l)) are unknowns, generalized (FORALL in a
+goal, EXISTS in a hypothesis), each with the comparisons with numbers its
+type gives up its subtype chain (c > 0 for a posreal c, sqrt(c) >= 0,
+n >= 1 for a posnat n, 0 <= i <= 4 for i of type below(5)); a term such as f(x) under a binder for
+x is refused.  In the consequent it is
 proved when it holds, in the antecedent it closes the goal when it fails;
 otherwise it stays, labelled cad, and a message says whether it is TRUE or
 FALSE.  Before the full
@@ -1816,18 +1966,27 @@ COMPLETE?, when the certificate does not pass, the complete (exponential)
 decision of cad_decide answers instead (COMPLETENESS_PLAN C1).  With
 CAD-ONLY? (cad :cad-only? t) the answer comes only from the verified CAD
 engine: no witness search and no two-variable fast path; the sentence is
-decided by decide7 (cad_decide7_def: decn_o, whose run is a proved CAD
-(cad_verified), for two or more quantifiers, the sectors of the line for
-one), and the theory must also import cad_decide7.  Formulas
+decided by decide8 (the Collins run, whose run is a proved CAD (col_verified))
+in a theory that imports cad_decide8, otherwise by decide7 (cad_decide7_def:
+decn_o, whose run is a proved CAD (cad_verified), for two or more
+quantifiers, the sectors of the line for one), and the theory must then also
+import cad_decide7.  Formulas
 are named by fresh labels throughout, never by position.  The theory must
-import cad_decide5 and mpoly_embed.
+import cad_decide5 and mpoly_embed; in a theory that also imports
+cad_decide8 the full decision is decide8, the Collins run (the walk over the
+tower of Collins projections, decc_ok), instead of decide5.
 
 (cad *) -- or (cad -), (cad +), (cad (-1 2 3)) -- uses the whole sequent
 (those formulas): every formula that is a real quantifier prefix over a
 Boolean combination of polynomial comparisons is collected, other real
-subterms (constants, sqrt(x), f(a), nat variables) become unknown reals,
-and the implication from the antecedents to the consequents is decided and,
-when TRUE, closes the goal; other formulas are ignored (CADSTAR_PLAN.md)."
+subterms free of bound variables (constants, sqrt(c), f(a), nat variables)
+become unknown reals, with the comparisons their types give, and the
+implication from the antecedents to the consequents is decided and, when
+TRUE, closes the goal (CADSTAR_PLAN.md).  In a theory that imports pvs_cad
+(gform_ok), a selected first-order formula over the reals of any other shape
+makes every selected formula be used whole, decided as one sentence by the
+general route (FORMS_PLAN.md F5); formulas that are not about the reals are
+ignored either way."
   "Deciding ~a by cylindrical decision, witness first")
 
 ;;; ------------------------------------------------------------------
@@ -1962,3 +2121,1251 @@ proof use (cad)."
       (printf "cad-mn: polys=~a  decn_o=~a  ~a s  (a measurement, NOT a proof)" npolys valout secs)))
   "[pvs_cad] Measures the n-quantifier decision decnm of towern_def on FNUM."
   "Measuring ~a by the n-quantifier decision")
+
+;;; cad-mx: MEASURE a decision function FN (decn_o, decc_o, ...) with fuel U
+;;; on a closed prenex formula: prints FN's record and the wall-clock time and
+;;; changes nothing (COLLINS_PLAN.md M-I/M-K measurements).
+(defstep cad-time (expr &optional (secs 300))
+  (let ((t0   (get-internal-real-time))
+        (v    (handler-case
+                  (sb-ext:with-timeout secs
+                    (let ((r (evalexpr expr nil nil nil))) (if r (expr2str r) "<none>")))
+                (sb-ext:timeout () (format nil "<timeout after ~a s>" secs))))
+        (tsec (/ (round (* 100 (- (get-internal-real-time) t0)) internal-time-units-per-second) 100.0))
+        (vs   (if (> (length v) 200) (concatenate 'string (subseq v 0 200) " ...") v)))
+    (printf "cad-time: ~a s  ~a" tsec vs))
+  "[pvs_cad] Evaluates the ground expression EXPR and prints the time and the value (a measurement; changes nothing)."
+  "Timing ~a")
+
+(defstep cad-qeshow (&optional (fnum 1))
+  (let ((fexpr (extra-get-formula fnum))
+        (pr    (when fexpr (cadqe-parse fexpr)))
+        (bad   (or (null pr) (getf pr :bad)))
+        (nf    (unless bad (length (getf pr :frees))))
+        (os    (unless bad (getf pr :osstr)))
+        (fs    (unless bad (getf pr :fstr)))
+        (ph    (unless bad (getf pr :phistr))))
+    (if bad
+        (printf "cad-qeshow: not a prenex formula with free variables over polynomial sign conditions")
+      (printf "cad-qeshow: m = ~a~%cad-qeshow: os = ~a~%cad-qeshow: F = ~a~%cad-qeshow: phi = ~a"
+              nf os fs ph)))
+  "[pvs_cad] Prints the number of free variables, the prefix, the family and the matrix of the
+formula FNUM as (cad-qe) encodes it; changes nothing."
+  "Showing the QE encoding of ~a")
+
+(defstep cad-showf (&optional (fnum 1))
+  (let ((fexpr  (extra-get-formula fnum))
+        (pp     (when fexpr (cad-prefix fexpr)))
+        (pre    (when pp (first pp)))
+        (body   (when pp (second pp)))
+        (dummy1 (setq *mpoly-atoms* (reverse (mapcar #'car pre))))
+        (dummy2 (setq *cad-polys* nil))
+        (phistr (when (and pre body) (cad-bf body)))
+        (lists  (when phistr (loop for pr in *cad-polys* collect
+                              (let ((v (evalexpr (format nil "as_list(pnorm(~a))" (car pr)) nil nil t)))
+                                (when v (expr2str v))))))
+        (fstr   (when (and lists (notany #'null lists)) (qe-list-str lists "null[list[mpoly]]"))))
+    (printf "cad-showf: F = ~a~%cad-showf: phi = ~a" fstr phistr))
+  "[pvs_cad] Prints the family F and the matrix phi (cad_decide's encoding) of the closed prenex formula FNUM; changes nothing."
+  "Showing the family of ~a")
+
+(defstep cad-mx (&optional (fnum 1) (fn "decc_o") (u 0) (secs 120))
+  (let ((fexpr  (extra-get-formula fnum))
+        (pp     (when fexpr (cad-prefix fexpr)))
+        (pre    (when pp (first pp)))
+        (body   (when pp (second pp)))
+        (dummy1 (setq *mpoly-atoms* (reverse (mapcar #'car pre))))
+        (dummy2 (setq *cad-polys* nil))
+        (phistr (when (and pre body) (cad-bf body)))
+        (lists  (when phistr (loop for pr in *cad-polys* collect
+                              (let ((v (evalexpr (format nil "as_list(pnorm(~a))" (car pr)) nil nil t)))
+                                (when v (expr2str v))))))
+        (bad    (or (null phistr) (< (length pre) 2) (some #'null lists)))
+        (fstr   (unless bad (qe-list-str lists "null[list[mpoly]]")))
+        (osstr  (format nil "(: ~{~a~^, ~} :)"
+                        (loop for q in pre collect (if (cdr q) "TRUE" "FALSE"))))
+        (t0     (get-internal-real-time))
+        (valv   (unless bad
+                  (handler-case
+                      (sb-ext:with-timeout secs
+                        (let ((v (evalexpr (format nil "~a(~a, ~a, ~a, LAMBDA (v: SV): bfsv(~a, v))"
+                                                   fn u osstr fstr phistr) nil nil nil)))
+                          (when v (expr2str v))))
+                    (sb-ext:timeout () (format nil "<timeout after ~a s>" secs))
+                    (error (c) (format nil "<error: ~a>" c)))))
+        (tsec   (/ (round (* 10 (- (get-internal-real-time) t0)) internal-time-units-per-second) 10.0))
+        (npolys (length lists))
+        (valout (or valv "<none>")))
+    (if bad
+        (printf "cad-mx: not a closed prenex formula (>= 2 quantifiers) over polynomial sign conditions")
+      (printf "cad-mx: ~a(u=~a) polys=~a  value=~a  ~a s  (a measurement, NOT a proof)" fn u npolys valout tsec)))
+  "[pvs_cad] Measures the decision function FN with fuel U on FNUM, giving up after SECS seconds."
+  "Measuring ~a with ~a")
+
+;;; ------------------------------------------------------------------
+;;; cad-qe: quantifier elimination (GAP_PLAN.md Tier 2; QE_PLAN.md).
+;;; (cad-qe FNUM) takes a prenex formula ORIG at FNUM, Q1 x1: ... Qn xn: PHI,
+;;; with PHI a Boolean combination of polynomial sign conditions in the xi
+;;; and m >= 1 further real terms y1, ..., ym (the free variables), and
+;;; replaces it by an equivalent quantifier-free formula TEXT in the yi.  The
+;;; answer is computed by qe8 of qe8_def (the Collins run) in a theory that
+;;; imports qe8, otherwise by qe of qe_all_def, and printed here; nothing
+;;; printed is trusted: the case ORIG IFF TEXT is proved from qe8_correct or
+;;; qe_correct (the answer's qfsem at the point (: y1, ..., ym :) IFF fsem of
+;;; the formula there), the ground evaluation of the record, and reflection.
+;;; The TEXT side unfolds qfsem and uses one proved equation per output
+;;; polynomial; the ORIG side is walked against fsem as (cad) does, in the
+;;; direction the case on fsem leaves; both close with bddsimp.  The answer
+;;; is always quantifier-free (qe8_isqf, qe_isqf).  Grouped binders go through
+;;; the nested form (cad-nest__); a formula of any other shape goes to qe_g
+;;; of gform_def (cadg-qe__, qe_g_ok) in a theory that imports gform_ok.  The
+;;; theory must import qe8 (or qe_all), mpoly_embed and cad_endgame; pvs_cad
+;;; imports qe8, mpoly_embed and cad_endgame.  (Names here start with cadqe-: the qe- names belong to
+;;; Phase 3's qe-exists.)
+;;; ------------------------------------------------------------------
+
+;; field FIELD of an evaluated record expression, as an expression
+(defun cadqe-rec-field (rec field)
+  (let ((asg (find-if #'(lambda (a) (string= (string (id (caar (arguments a)))) field))
+                      (assignments rec))))
+    (when asg (expression asg))))
+
+;; the evaluated Fm term FM as text over *mpoly-atoms* (the free variables,
+;; innermost first); collects (LIST . POLYTEXT) per output polynomial in
+;; *cadqe-polys* and (ATOM . LEAF) per atom in *cadqe-aeqs*
+(defvar *cadqe-polys* nil)
+(defvar *cadqe-aeqs* nil)
+
+(defun cadqe-num (e)
+  (or (extra-get-number-from-expr e t)
+      (let ((v (ignore-errors (read-from-string
+                                (remove-if #'(lambda (c) (member c '(#\Space #\( #\))))
+                                           (expr2str e))))))
+        (when (rationalp v) v))))
+
+;; mpoly-term->str with cadqe-num (the record read from the sequent carries
+;; rational literals that extra-get-number-from-expr does not read)
+(defun cadqe-term->str (term depth)
+  (cond ((is-function-expr term "mconst")
+         (mpoly-num-str (cadqe-num (args1 term))))
+        ((is-function-expr term "mpol")
+         (let* ((elems (mpoly-list-elems (args1 term)))
+                (var   (nth (1- depth) *mpoly-atoms*))
+                (terms nil))
+           (loop for c in elems for i from 0 do
+             (unless (and (is-function-expr c "mconst") (eql (cadqe-num (args1 c)) 0))
+               (push (mpoly-monomial-str (cadqe-term->str c (1+ depth)) (mpoly-const-term? c) var i)
+                     terms)))
+           (if (null terms) "0" (format nil "~{~a~^ + ~}" (reverse terms)))))
+        (t (format nil "~a" term))))
+
+(defun cadqe-fm-text (fm)
+  (cond
+   ((and (name-expr? fm) (string= (string (id fm)) "ftrue")) "TRUE")
+   ((is-function-expr fm "fsg")
+    (let* ((p    (args1 fm))
+           (s    (cadqe-num (args2 fm)))
+           (pstr (cadqe-term->str p 1))
+           (lstr (when (is-function-expr p "mpol") (expr2str (args1 p))))
+           (atom (cond ((eql s 1) (format nil "~a > 0" pstr))
+                       ((eql s -1) (format nil "~a < 0" pstr))
+                       (t (format nil "~a = 0" pstr))))
+           (leaf (format nil "sign3(~a) = ~a" pstr s)))
+      (when lstr
+        (pushnew (cons lstr pstr) *cadqe-polys* :test #'equal)
+        (pushnew (cons atom leaf) *cadqe-aeqs* :test #'equal))
+      (format nil "(~a)" atom)))
+   ((is-function-expr fm "fnot")
+    (let ((a (args1 fm)))
+      (cond ((and (name-expr? a) (string= (string (id a)) "ftrue")) "FALSE")
+            ((and (is-function-expr a "fand")
+                  (is-function-expr (args1 a) "fnot") (is-function-expr (args2 a) "fnot"))
+             (format nil "(~a OR ~a)" (cadqe-fm-text (args1 (args1 a))) (cadqe-fm-text (args1 (args2 a)))))
+            (t (format nil "(NOT ~a)" (cadqe-fm-text a))))))
+   ((is-function-expr fm "fand")
+    (format nil "(~a AND ~a)" (cadqe-fm-text (args1 fm)) (cadqe-fm-text (args2 fm))))
+   (t "(unprintable)")))
+
+(defun cadqe-fm-depth (fm)
+  (cond ((is-function-expr fm "fnot") (1+ (cadqe-fm-depth (args1 fm))))
+        ((is-function-expr fm "fand") (1+ (max (cadqe-fm-depth (args1 fm)) (cadqe-fm-depth (args2 fm)))))
+        (t 1)))
+
+;; the TEXT side: after the atom equations of AEQS replace each atom of TEXT
+;; in GOAL by its sign leaf, bddsimp closes GOAL
+(defun cadqe-text-endgame (goal aeqs)
+  (reduce #'(lambda (ae rest)
+              `(with-fresh-labels ((!cae))
+                 (branch (discriminate (case ,(format nil "(~a) = (~a)" (car ae) (cdr ae))) !cae)
+                   ((then (replace !cae ,goal) ,rest)
+                    (then (hide-all-but !cae)
+                          (rewrite "cadz_s3_pos" !cae) (rewrite "cadz_s3_zero" !cae)
+                          (rewrite "cadz_s3_neg" !cae) (iff !cae) (ground))))))
+          aeqs :from-end t
+          ;; leaves on constant polynomials (sign3(0) = 0, sign3(1) = 1) are
+          ;; atoms to bddsimp; what they leave is closed by evaluation
+          :initial-value `(then (bddsimp ,goal) (expand "sign3") (assert))))
+
+;; one reflection equation for an answer polynomial L (as its text PSTR, PolyExpr
+;; E): meval(mpol(L))(VSTR) = PSTR.  L need not be in normal form (a tower
+;; family's coefficients can be unnormalized zeros), so the check is on normal
+;; forms, mnorm(mpol(L)) = pnorm(E), and meval_mnorm carries it back.
+(defun cadqe-mev (l e pstr vstr rest)
+  (let ((mev (format nil "meval(mpol(~a))(~a) = ~a" l vstr pstr))
+        (nrm (format nil "mnorm(mpol(~a)) = pnorm(~a)" l e)))
+    `(with-fresh-labels ((!cmv))
+       (branch (discriminate (case ,mev) !cmv)
+         ((then (replace !cmv) ,rest)
+          (with-fresh-labels ((!cma) (!cmp))
+            (then (hide-all-but !cmv)
+                  (branch (discriminate (case ,nrm) !cma)
+                    ((then (rewrite "meval_mnorm" !cmv :dir rl) (replace !cma !cmv)
+                           (discriminate (lemma "peval_pnorm") !cmp) (inst !cmp ,e ,vstr)
+                           (replace !cmp) (mpoly-eq-side__))
+                     (then (hide-all-but !cma) (eval-formula !cma)))))))))))
+
+;; the ORIG side: fsem labelled !cfs against the sentence GOAL, as the core of
+;; cad-strategy without a completion flag.  TRUTH: GOAL (consequent) from
+;; !cfs (antecedent); nil: !cfs (consequent) from GOAL (antecedent).
+(defun cadqe-orig-core (goal truth pre depth m mevs aeqs)
+  (let* ((con (if truth goal '!cfs)) (ant (if truth '!cfs goal))
+         (asr '(assert !cfs))
+         (unfold-fsem (loop repeat (1+ (length pre)) append `((expand "fsem" !cfs) ,asr)))
+         (unfold-bf (append (loop repeat depth append '((expand "bfeval" !cfs)))
+                            (loop repeat (1+ m) append
+                              `((expand "nth" !cfs) (expand "length" !cfs) ,asr)))))
+    `(then ,asr ,@unfold-fsem
+           ,@(loop for q in pre append
+               (if (cdr q)
+                   `((skolem ,con (,(car q))) (inst ,ant ,(car q)))
+                 `((skolem ,ant (,(car q))) (inst ,con ,(car q)))))
+           ,@unfold-bf ,@mevs
+           (else (finalize__$ ,(cad-endgame-leaves goal aeqs))
+                 (then (printf "cad-qe: case-split endgame")
+                       (assert) (expand "sign3" !cfs) (repeat (lift-if !cfs)) (ground)
+                       (then (lift-if) (ground)) (then (lift-if) (ground)))))))
+
+(defun cadqe-strategy (gl ev fstr osstr phistr nfree fvstr pre depth m mevs aeqs
+                       text fact fsemstr origstr qfstr odepth omevs outstr recstr)
+  (let ((prove-fact
+         `(then
+           ;; the answer, as parsed from its printed form (so that every
+           ;; formula below is built from the same text): qe1(...)`out is the
+           ;; evaluated record's out (EV), and that equals the parsed text by
+           ;; a ground evaluation of constants only
+           (branch (discriminate (case ,(format nil "(~a)`out = ~a" recstr outstr)) !qr)
+             ((then (replace !qr !qb) (hide !qr))
+              (then (hide-all-but (!qr ,ev)) (replace ,ev !qr) (eval-formula !qr))))
+           (branch (discriminate (case ,(format nil "(~a) IFF ~a" text qfstr)) !qt)
+             ((branch (discriminate (case ,(format nil "id(~a)" fsemstr)) !cfs)
+                ((then (expand "id" !cfs :assert? none)
+                       (branch (discriminate (case ,(format nil "id(~a)" origstr)) !cgo)
+                         ((then (expand "id" !cgo :assert? none) (bddsimp (!qe !qb !qt !cfs !cgo)))
+                          (then (expand "id" !cgo :assert? none) (hide-all-but (!cgo !cfs))
+                                ,(cadqe-orig-core '!cgo t pre depth m mevs aeqs)))))
+                 (then (expand "id" !cfs :assert? none)
+                       (branch (discriminate (case ,(format nil "id(~a)" origstr)) !cgo)
+                         ((then (expand "id" !cgo :assert? none) (hide-all-but (!cgo !cfs))
+                                ,(cadqe-orig-core '!cgo nil pre depth m mevs aeqs))
+                          (then (expand "id" !cgo :assert? none) (bddsimp (!qe !qb !qt !cfs !cgo))))))))
+              (then (hide-all-but !qt) (expand "qfsem" !qt)
+                    ,@(loop repeat odepth collect '(expand "fsem" !qt))
+                    ,omevs))))))
+    `(with-fresh-labels ((!qe) (!qb) (!qc) (!qr) (!qt) (!cfs) (!cgo))
+       (branch (discriminate (case ,fact) !qe)
+         ((then (replace !qe ,gl) (delete !qe) (delete ,ev)
+                (printf "cad-qe: ~a" ,text))
+          (then (hide-all-but (!qe ,ev))
+                ;; qe_correct's conclusion, proved on its own: after the split
+                ;; of the instance the conclusion closes by itself, and the
+                ;; hypothesis cons?(os) AND length(pt) = m by evaluation
+                (branch (discriminate (case ,(format nil "(~a)`ok AND (qfsem((~a)`out)(~a) IFF ~a)"
+                                                     recstr recstr fvstr fsemstr)) !qb)
+                  ((then (flatten !qb) ,prove-fact)
+                   (then (hide-all-but !qb)
+                         (discriminate (lemma ,(format nil "~a_correct" (cad-qe-fn))) !qc)
+                         (inst !qc ,fstr ,(format nil "~a" nfree) ,osstr ,phistr ,fvstr)
+                         (split !qc)
+                         (then (split 1) (assert) (repeat (expand "length" 1)) (assert)))))))))))
+
+;; the formula FEXPR as cad-qe reads it: the prefix, the matrix as a BF, the
+;; free terms, the reflection lists and the name of the elimination record
+(defun cadqe-parse (fexpr)
+  (let* ((pp     (when fexpr (cad-prefix fexpr)))
+         (pre    (when pp (first pp)))
+         (body   (when pp (second pp)))
+         (dummy1 (setq *mpoly-atoms* (reverse (mapcar #'car pre))))
+         (dummy2 (setq *cad-polys* nil))
+         (phistr (when (and pre body) (cad-bf body)))
+         (frees  (nthcdr (length pre) *mpoly-atoms*))
+         (lists  (when phistr (loop for pr in *cad-polys* collect
+                               (let ((v (evalexpr (format nil "as_list(pnorm(~a))" (car pr)) nil nil t)))
+                                 (when v (expr2str v))))))
+         (bad    (or (null pre) (null body) (null phistr) (< (length frees) 1) (some #'null lists)))
+         (fstr   (unless bad (qe-list-str lists "null[list[mpoly]]")))
+         (osstr  (unless bad (format nil "(: ~{~a~^, ~} :)"
+                                     (loop for q in pre collect (if (cdr q) "TRUE" "FALSE"))))))
+    (declare (ignore dummy1 dummy2))
+    (list :pre pre :body body :phistr phistr :frees frees :lists lists :bad bad
+          :fstr fstr :osstr osstr
+          :recstr (unless bad (format nil "~a(~a, ~a, ~a, ~a)" (cad-qe-fn) (length frees) osstr fstr phistr)))))
+
+(defhelper cad-qe__ (gl ev)
+  (let ((fexpr   (extra-get-formula gl))
+        (pr      (cadqe-parse fexpr))
+        (pre     (getf pr :pre))
+        (body    (getf pr :body))
+        (frees   (getf pr :frees))
+        (lists   (getf pr :lists))
+        (fstr    (getf pr :fstr))
+        (osstr   (getf pr :osstr))
+        (phistr  (getf pr :phistr))
+        (recstr  (getf pr :recstr))
+        ;; the ORIG side: reflection equations over all atoms, bound first
+        (vstr    (mpoly-valuation))
+        (mevs    (unless (getf pr :bad)
+                   (list (reduce #'(lambda (rest p3) (cad-mev (first p3) (second p3) (third p3) vstr rest))
+                                 (reverse (loop for p2 in *cad-polys* for l in lists
+                                                collect (list l (car p2) (cdr p2))))
+                                 :initial-value '(skip)))))
+        (aeqs    (unless (getf pr :bad)
+                   (cad-atom-eqs body (loop for l in lists collect
+                                        (cdr (nth (position l lists :test #'equal) *cad-polys*))))))
+        (depth   (unless (getf pr :bad) (cad-depth body)))
+        ;; the answer, read off the evaluated record EV (qe1(...) = VALUE)
+        (evf     (extra-get-formula ev))
+        (rec     (when (and evf (is-function-expr evf "=")) (args2 evf)))
+        (recs    (when rec (expr2str rec)))
+        (okqf    (and recs (search "ok := TRUE" recs) (search "qf := TRUE" recs) t))
+        (outx    (when okqf (cadqe-rec-field rec "out")))
+        (dummy3  (setq *mpoly-atoms* frees))
+        (dummy4  (setq *cadqe-polys* nil *cadqe-aeqs* nil))
+        (text    (when outx (cadqe-fm-text outx)))
+        (fvstr   (mpoly-valuation))
+        (outstr  (when outx (expr2str outx)))
+        (odepth  (when outx (cadqe-fm-depth outx)))
+        ;; the TEXT side: one reflection equation per output polynomial
+        (omevs   (when outx
+                   (reduce #'(lambda (p2 rest)
+                               (let ((e (mpoly-expr-rec (extra-get-expr (cdr p2)))))
+                                 (cadqe-mev (car p2) e (cdr p2) fvstr rest)))
+                           (reverse *cadqe-polys*) :from-end t
+                           :initial-value (cadqe-text-endgame '!qt (reverse *cadqe-aeqs*)))))
+        (origstr (when fexpr (expr2str fexpr)))
+        (fsemstr (when outx (format nil "fsem(~a, ~a, ~a, ~a)" osstr fstr phistr fvstr)))
+        (qfstr   (when outx (format nil "qfsem(~a)(~a)" outstr fvstr)))
+        (fact    (when outx (format nil "(~a) IFF ~a" origstr text)))
+        (strat   (when outx (cadqe-strategy gl ev fstr osstr phistr (length frees) fvstr pre depth
+                                            (length lists) mevs aeqs text fact fsemstr origstr
+                                            qfstr odepth omevs outstr recstr)))
+        ;; qe and qe8 always answer, quantifier-free (qe_isqf, qe8_isqf), so
+        ;; a failure here is a failure to evaluate or to read the record
+        (failwhy (cond ((null recs) "the ground evaluation gave no value")
+                       ((not okqf) "its ok or qf flag is not TRUE")
+                       (t "its answer could not be printed"))))
+    (if strat
+        strat
+      (then (printf "cad-qe: the elimination record could not be read (~a); the formula is unchanged"
+                    failwhy)
+            (delete ev))))
+  "[pvs_cad] Internal: finishes (cad-qe) for the formula labelled GL from the elimination record labelled EV." "")
+
+(defstep cad-qe (&optional (fnum 1))
+  (let ((fexpr  (extra-get-formula fnum))
+        (grouped (and fexpr (cadg-grouped-prenex? fexpr)))
+        (pr     (unless grouped (cadqe-parse fexpr)))
+        (bad    (getf pr :bad))
+        (recstr (getf pr :recstr))
+        (gplan  (when (and bad fexpr) (cadg-qe-plan fexpr)))
+        (grec   (when gplan (format nil "qe_g(~a, ~a)" (third gplan) (length (second gplan)))))
+        (why    (cond ((null fexpr) (format nil "cad-qe: there is no formula ~a" fnum))
+                      ((cad-imports? "gform_ok")
+                       (format nil "cad-qe: formula ~a is not a first-order formula over the reals whose atoms compare polynomials with at least one free real term (binders over real, posreal, nnreal, negreal, npreal or nzreal; other real terms must not contain a bound variable)" fnum))
+                      ((eq (ignore-errors (cadg-tree fexpr nil)) :bad)
+                       (format nil "cad-qe: formula ~a is not a first-order formula over the reals whose atoms compare polynomials (binders over real, posreal, nnreal, negreal, npreal or nzreal; other real terms must not contain a bound variable)" fnum))
+                      (t (format nil "cad-qe: formula ~a is not a prenex formula over the reals whose atoms compare polynomials, with one real per quantifier and at least one free real term (formulas of any other shape need IMPORTING pvs_cad)" fnum)))))
+    (if grouped (cad-nest__$ fnum "qe")
+    (if (and bad gplan (cad-imports? "gform_ok"))
+        ;; all or nothing: when the proof of the answer does not close,
+        ;; cadg-qe__ fails and the sequent is restored
+        (else (with-fresh-labels ((!qg fnum) (!qv))
+                (then (discriminate (eval-expr grec) !qv)
+                      (cadg-qe__$ !qg !qv)))
+              (printf "cad-qe: the proof of the answer did not close; the formula is unchanged"))
+    (if bad
+        (printf "~a" why)
+      (with-fresh-labels ((!qg fnum) (!qv))
+        (then (discriminate (eval-expr recstr) !qv)
+              (cad-qe__$ !qg !qv)))))))
+  "[pvs_cad] Quantifier elimination.  FNUM is a formula over one or more real
+terms y1, ..., ym (the free variables): prenex, Q1 x1: ... Qn xn: PHI with PHI
+a Boolean combination of polynomial sign conditions, or, in a theory that
+imports pvs_cad, of any shape (quantifiers inside connectives, binders over
+posreal, nnreal, negreal, npreal or nzreal: qe_g of gform_ok, FORMS_PLAN.md);
+grouped binders FORALL (x, y: real) go through the nested form with either
+import.  It is replaced by an
+equivalent quantifier-free formula in the yi, computed by qe8 of qe8_def (the
+Collins run, COLLINS_PLAN.md) in a theory that imports qe8, otherwise by qe of
+qe_all_def (evaluated once), and proved equivalent from qe8_correct or
+qe_correct (qe_g_ok for other shapes), ground evaluation and reflection.
+The answer is always quantifier-free, for every m >= 1 free variables
+(qe8_complete, qe_complete; qe_g_qf).  The theory must import qe8 (or qe_all), mpoly_embed and
+cad_endgame."
+  "Eliminating the quantifiers of ~a")
+
+;;; ------------------------------------------------------------------
+;;; cring: a complex ring identity, by its real and imaginary parts
+;;; (COLLINS_PLAN.md M-B).  NASALib's complex numbers are records, so
+;;; assert does not normalize complex products; their components are
+;;; real polynomials, which it does.
+(defstep cring (&optional (fnum 1))
+  (with-fresh-labels ((!crg fnum))
+    (then (rewrite "complex_ext" !crg)
+          (auto-rewrite "Re_add1" "Re_sub1" "Re_mul1" "Re_neg1"
+                        "Im_add1" "Im_sub1" "Im_mul1" "Im_neg1")
+          (assert !crg)
+          (stop-rewrite "Re_add1" "Re_sub1" "Re_mul1" "Re_neg1"
+                        "Im_add1" "Im_sub1" "Im_mul1" "Im_neg1")))
+  "[pvs_cad] Proves the complex ring identity in FNUM (an equation of
+complex expressions built with +, -, *) by comparing real and imaginary
+parts."
+  "Proving a complex ring identity in ~a by components")
+
+;;; ------------------------------------------------------------------
+;;; Formulas as people write them (FORMS_PLAN.md).  A closed formula with
+;;; quantifiers anywhere -- grouped binders FORALL (x, y: real), NOT,
+;;; AND / OR / IMPLIES / IFF around quantified parts -- is encoded as a Gm
+;;; term of gform_def (each atom's two sides as polynomials over the
+;;; variables in scope, innermost first; other real terms become unknowns,
+;;; generalized outermost: FORALL for a goal, EXISTS for a hypothesis, each
+;;; with the comparisons with numbers its type gives, cad-type-guards),
+;;; decided by decide_g (gform_ok's decide_g_ok: qelim on the Collins run,
+;;; decide8 for sentences), and proved by a MIRROR WALK: gsem unfolded on
+;;; the code has the formula's own shape, and the two formulas are taken
+;;; apart together, connective by connective -- the strong side skolemized
+;;; and the weak side instantiated with the same constant, one side split
+;;; and the other flattened, the pieces named by fresh labels (relabel with
+;;; pairing).  At a quantifier-free leaf they differ only in their atoms,
+;;; meval(pnorm(E))(VS) against the polynomial itself; cadg-leaf__ proves
+;;; one equation per atom side there (peval_pnorm, mpoly-eq-side__) and the
+;;; leaf closes by propax.
+;;; ------------------------------------------------------------------
+(defparameter *cadg-count* 0)
+
+(defun cadg-name () (format nil "cadg_~a" (incf *cadg-count*)))
+(defun cadg-label () (intern (format nil "!CGL~a" (incf *cadg-count*))))
+
+;; the guard of a binding over a subtype of the reals: its comparison with 0.
+;; The types are the prelude's, named with their theories and compared as
+;; types (tc-eq), so nnreal, npreal and nzreal (abbreviations) count, and a
+;; user's type of the same name does not
+(defparameter *cadg-guards*
+  '(("real_types.posreal" . ">") ("real_types.nonneg_real" . ">=") ("real_types.negreal" . "<")
+    ("real_types.nonpos_real" . "<=") ("reals.nonzero_real" . "/=")))
+
+;; :real for a real binding, its guard's comparison for a binding over
+;; posreal, nnreal, negreal, npreal or nzreal, nil otherwise
+(defun cadg-guard-of (b)
+  (let ((te (type b)))
+    (if (tc-eq te *real*) :real
+      (loop for (name . op) in *cadg-guards*
+            for ty = (ignore-errors (pc-typecheck (pc-parse name 'type-expr)))
+            when (and ty (tc-eq te ty)) return op))))
+
+(defparameter *cadg-rels*
+  '(("=" . "geq") ("/=" . "gne") ("<" . "glt") ("<=" . "gle") (">" . "ggt") (">=" . "gge")))
+
+;; is E a polynomial in the bound variables DECLS and in real terms free of them?
+(defun cadg-poly-ok? (e decls)
+  (cond
+   ((and (name-expr? e) (member (declaration e) decls)) t)
+   ((extra-get-number-from-expr e t) (not (cadstar-mentions? e decls)))
+   ((and (unary-application? e) (is-function-expr e "-")) (cadg-poly-ok? (args1 e) decls))
+   ((and (not (unary-application? e))
+         (or (is-function-expr e "+") (is-function-expr e "-") (is-function-expr e "*")))
+    (and (cadg-poly-ok? (args1 e) decls) (cadg-poly-ok? (args2 e) decls)))
+   ((is-function-expr e "^")
+    (let ((n (extra-get-number-from-expr (args2 e) t)))
+      (if (and n (integerp n) (>= n 0)) (cadg-poly-ok? (args1 e) decls)
+        (and (cadstar-real-type? (type e)) (not (cadstar-mentions? e decls))))))
+   ((is-function-expr e "/")
+    (let ((d (extra-get-number-from-expr (args2 e) t)))
+      (if (and d (not (zerop d))) (cadg-poly-ok? (args1 e) decls)
+        (and (cadstar-real-type? (type e)) (not (cadstar-mentions? e decls))))))
+   ((is-function-expr e "sq") (cadg-poly-ok? (args1 e) decls))
+   (t (and (cadstar-real-type? (type e)) (not (cadstar-mentions? e decls))))))
+
+;; the unknowns of E (real leaves that are neither bound variables nor numbers),
+;; as expressions, appended to ACC in order of first occurrence
+(defun cadg-leaves (e decls acc)
+  (cond
+   ((and (name-expr? e) (member (declaration e) decls)) acc)
+   ((extra-get-number-from-expr e t) acc)
+   ((and (unary-application? e) (is-function-expr e "-")) (cadg-leaves (args1 e) decls acc))
+   ((and (not (unary-application? e))
+         (or (is-function-expr e "+") (is-function-expr e "-") (is-function-expr e "*")))
+    (cadg-leaves (args2 e) decls (cadg-leaves (args1 e) decls acc)))
+   ((and (is-function-expr e "^")
+         (let ((n (extra-get-number-from-expr (args2 e) t))) (and n (integerp n) (>= n 0))))
+    (cadg-leaves (args1 e) decls acc))
+   ((and (is-function-expr e "/")
+         (let ((d (extra-get-number-from-expr (args2 e) t))) (and d (not (zerop d)))))
+    (cadg-leaves (args1 e) decls acc))
+   ((is-function-expr e "sq") (cadg-leaves (args1 e) decls acc))
+   ((member (expr2str e) acc :key #'expr2str :test #'string=) acc)
+   (t (append acc (list e)))))
+
+;; :true or :false when E compares a term with itself (= <= >= or /= < >), else nil
+(defun cadg-refl (e)
+  (let ((op (and (application? e) (not (unary-application? e))
+                 (find-if #'(lambda (o) (cad-is e o)) '("=" "<=" ">=" "/=" "<" ">")))))
+    (when (and op (tc-eq (args1 e) (args2 e))
+               (let ((te (type (args1 e))))
+                 ;; a number: real, a subtype of it, or numfield, the type of
+                 ;; the prelude's arithmetic
+                 (or (cadstar-real-type? te) (tc-eq te *number_field*) (tc-eq te *number*))))
+      (if (member op '("=" "<=" ">=") :test #'string=) :true :false))))
+
+;; the formula E as a tree: (:atom OP LHS RHS), (:const BOOL), (:not K),
+;; (:and K1 K2) (:or ..) (:imp ..) (:iff ..), (:all BINDINGS NAMES K),
+;; (:ex BINDINGS NAMES K); NAMES are fresh skolem names; :bad when E is not a
+;; first-order formula over the reals with polynomial atoms
+(defun cadg-tree (e decls)
+  (flet ((bin (kind)
+           (let ((a (cadg-tree (args1 e) decls)) (b (cadg-tree (args2 e) decls)))
+             (if (or (eq a :bad) (eq b :bad)) :bad (list kind a b)))))
+    (cond
+     ((or (forall-expr? e) (exists-expr? e))
+      (let ((bs (bindings e)))
+        (if (every #'cadg-guard-of bs)
+            (let ((k (cadg-tree (expression e) (append bs decls))))
+              (cond ((eq k :bad) :bad)
+                    ;; a quantifier over a body that folds to TRUE or FALSE is
+                    ;; that constant (the types bound are all nonempty), as
+                    ;; PVS's expand and assert treat it
+                    ((eq (car (cadg-simp k)) :const) (cadg-simp k))
+                    (t (list (if (forall-expr? e) :all :ex) bs (loop for b in bs collect (cadg-name)) k
+                             (loop for b in bs collect (let ((g (cadg-guard-of b))) (unless (eq g :real) g)))))))
+          :bad)))
+     ((and (not (unary-application? e)) (cad-is e "AND")) (bin :and))
+     ((and (not (unary-application? e)) (cad-is e "OR")) (bin :or))
+     ((and (not (unary-application? e)) (cad-is e "IMPLIES")) (bin :imp))
+     ((and (not (unary-application? e)) (cad-is e "IFF")) (bin :iff))
+     ((and (unary-application? e) (cad-is e "NOT"))
+      (let ((k (cadg-tree (args1 e) decls))) (if (eq k :bad) :bad (list :not k))))
+     ((and (name-expr? e) (string= (string (id e)) "TRUE")) (list :const t))
+     ((and (name-expr? e) (string= (string (id e)) "FALSE")) (list :const nil))
+     ;; a comparison of a term with itself is a constant (an equation with
+     ;; the same two sides PVS's substitution itself makes TRUE)
+     ((cadg-refl e) (list :const (eq (cadg-refl e) :true)))
+     (t (let ((op (find-if #'(lambda (o) (cad-is e o)) '("=" "/=" "<" "<=" ">" ">="))))
+          (if (and op (not (unary-application? e))
+                   (cadg-poly-ok? (args1 e) decls) (cadg-poly-ok? (args2 e) decls))
+              (list :atom op (args1 e) (args2 e))
+            :bad))))))
+
+;; the unknowns of a tree, in order of first occurrence
+(defun cadg-unknowns (k decls acc)
+  (case (car k)
+    (:atom (cadg-leaves (fourth k) decls (cadg-leaves (third k) decls acc)))
+    (:const acc)
+    (:not (cadg-unknowns (second k) decls acc))
+    ((:and :or :imp :iff) (cadg-unknowns (third k) decls (cadg-unknowns (second k) decls acc)))
+    ((:all :ex) (cadg-unknowns (fourth k) (append (second k) decls) acc))))
+
+;; E as an mpoly term over SCOPE (names, innermost first) then the unknowns
+(defun cadg-poly (e scope unk)
+  (setq *mpoly-atoms* (append scope unk))
+  (let ((s (mpoly-expr-rec e)))
+    (when (= (length *mpoly-atoms*) (+ (length scope) (length unk)))
+      (format nil "pnorm(~a)" s))))
+
+;; the Gm term of a tree
+(defun cadg-enc (k scope unk)
+  (case (car k)
+    (:const (if (second k) "gtrue" "gfalse"))
+    (:atom (let ((p (cadg-poly (third k) scope unk)) (q (cadg-poly (fourth k) scope unk)))
+             (when (and p q)
+               (format nil "~a(~a, ~a)" (cdr (assoc (second k) *cadg-rels* :test #'string=)) p q))))
+    (:not (let ((a (cadg-enc (second k) scope unk))) (when a (format nil "gnot(~a)" a))))
+    ((:and :or :imp :iff)
+     (let ((a (cadg-enc (second k) scope unk)) (b (cadg-enc (third k) scope unk)))
+       (when (and a b)
+         (format nil "~a(~a, ~a)"
+                 (cdr (assoc (car k) '((:and . "gand") (:or . "gor") (:imp . "gimp") (:iff . "giff"))))
+                 a b))))
+    ((:all :ex)
+     (let* ((bs (second k))
+            (body (cadg-enc (fourth k) (append (reverse (mapcar #'(lambda (b) (string (id b))) bs)) scope) unk)))
+       (when body
+         (let ((r body))
+           (loop for b in (reverse bs) for g in (reverse (fifth k)) do
+             (let ((gd (when g (format nil "~a(pnorm(pe_var(1)), pnorm(pe_const(0)))"
+                                       (cdr (assoc g *cadg-rels* :test #'string=))))))
+               (setq r (cond ((null gd) r)
+                             ((eq (car k) :all) (format nil "gimp(~a, ~a)" gd r))
+                             (t (format nil "gand(~a, ~a)" gd r))))
+               (setq r (format nil "~a(~a)" (if (eq (car k) :all) "gall" "gex") r))))
+           r))))))
+
+;; the nesting depth of the Gm term of a tree (gsem unfoldings needed)
+(defun cadg-depth (k)
+  (case (car k)
+    ((:atom :const) 1)
+    (:not (1+ (cadg-depth (second k))))
+    ((:and :or :imp :iff) (1+ (max (cadg-depth (second k)) (cadg-depth (third k)))))
+    ((:all :ex) (+ (length (second k)) (count-if #'identity (fifth k)) (cadg-depth (fourth k))))))
+
+(defun cadg-qf? (k)
+  (case (car k)
+    ((:atom :const) t)
+    (:not (cadg-qf? (second k)))
+    ((:and :or :imp :iff) (and (cadg-qf? (second k)) (cadg-qf? (third k))))
+    (t nil)))
+
+;; the mirror walk for the tree K: LA labels the unfolded gsem (A), LB the
+;; formula (B); DIR :ab when A is a hypothesis and B a goal, :ba the other way
+(defun cadg-walk (k la lb dir)
+  (cond
+   ((eq (car k) :same) '(propax))
+   ((not (equal (cadg-simp k) k))
+    `(then (cadg-unconst__$ ,la) (cadg-unconst__$ ,lb) ,(cadg-walk (cadg-simp k) la lb dir)))
+   ;; a leaf: a piece still stored as NOT X (left by expand, rewrite or
+   ;; replace) is moved first, so that both pieces have the same shape
+   ((cadg-qf? k)
+      `(then (repeat (cadg-unnot__$ ,la)) (repeat (cadg-unnot__$ ,lb)) (cadg-leaf__$ ,la ,lb)))
+   (t
+    (let ((flip (if (eq dir :ab) :ba :ab)))
+      (case (car k)
+        ((:all :ex)
+         (let ((names (third k))
+               (strong-b (if (eq (car k) :all) (eq dir :ab) (eq dir :ba))))
+           (if strong-b
+               `(then (skolem ,lb ,names)
+                      ,(cadg-strong-layers k names (fifth k) la lb dir))
+             (cadg-weak-layers k names (fifth k) la lb dir))))
+        ;; NOT X: PVS has usually moved both pieces already (a goal NOT X is
+        ;; shown as the hypothesis X, and inst, skolem, split and flatten
+        ;; strip a NOT as they make a piece); only the piece on the
+        ;; hypothesis side can still read NOT X (after expand or rewrite), and
+        ;; cadg-unnot__ moves it.  Flattening a moved piece would take X
+        ;; itself apart one level too early.
+        (:not `(then (cadg-unnot__$ ,(if (eq dir :ab) la lb)) ,(cadg-walk (second k) la lb flip)))
+        ((:and :or)
+         ;; the side where the connective is weak is flattened into two named
+         ;; pieces, the other split
+         (let* ((p1 (cadg-label)) (p2 (cadg-label))
+                (flat-a (if (eq (car k) :and) (eq dir :ab) (eq dir :ba)))
+                (flat (if flat-a la lb)) (spl (if flat-a lb la)))
+           `(with-fresh-labels ((,p1) (,p2))
+              (then (flatten-disjunct ,flat 1) (relabel (,p1 ,p2) ,flat :pairing? t :push? nil)
+                    (spread (split ,spl 1)
+                      ((then (hide ,p2) ,(if flat-a (cadg-walk (second k) p1 lb dir) (cadg-walk (second k) la p1 dir)))
+                       (then (hide ,p1) ,(if flat-a (cadg-walk (third k) p2 lb dir) (cadg-walk (third k) la p2 dir)))))))))
+        (:imp
+         ;; the goal side is flattened (its premise becomes a hypothesis), the
+         ;; hypothesis side split: its conclusion as a hypothesis, its premise
+         ;; as a goal (roles swap there)
+         (let ((p1 (cadg-label)) (p2 (cadg-label)))
+           (if (eq dir :ab)
+               `(with-fresh-labels ((,p1) (,p2))
+                  (then (flatten-disjunct ,lb 1) (relabel (,p1 ,p2) ,lb :pairing? t :push? nil)
+                        (spread (split ,la 1)
+                          ((then (hide ,p1) ,(cadg-walk (third k) la p2 :ab))
+                           (then (hide ,p2) ,(cadg-walk (second k) la p1 :ba))))))
+             `(with-fresh-labels ((,p1) (,p2))
+                (then (flatten-disjunct ,la 1) (relabel (,p1 ,p2) ,la :pairing? t :push? nil)
+                      (spread (split ,lb 1)
+                        ((then (hide ,p1) ,(cadg-walk (third k) p2 lb :ba))
+                         (then (hide ,p2) ,(cadg-walk (second k) p1 lb :ab)))))))))
+        (:iff
+         ;; the hypothesis side is flattened into its two implications, the
+         ;; goal side split into them
+         (let ((p1 (cadg-label)) (p2 (cadg-label))
+               (fwd (list :imp (second k) (third k))) (bwd (list :imp (third k) (second k))))
+           (if (eq dir :ab)
+               `(with-fresh-labels ((,p1) (,p2))
+                  (then (flatten-disjunct ,la 1) (relabel (,p1 ,p2) ,la :pairing? t :push? nil)
+                        (spread (split ,lb 1)
+                          ((then (hide ,p2) ,(cadg-walk fwd p1 lb :ab))
+                           (then (hide ,p1) ,(cadg-walk bwd p2 lb :ab))))))
+             `(with-fresh-labels ((,p1) (,p2))
+                (then (flatten-disjunct ,lb 1) (relabel (,p1 ,p2) ,lb :pairing? t :push? nil)
+                      (spread (split ,la 1)
+                        ((then (hide ,p2) ,(cadg-walk fwd la p1 :ba))
+                         (then (hide ,p1) ,(cadg-walk bwd la p2 :ba))))))))))))))
+
+;; B's binder is skolemized (all its names at once, done by the caller); A's
+;; layers are instantiated one by one, outermost first.  A guarded layer of A
+;; reads G IMPLIES rest (FORALL, A a hypothesis) or G AND rest (EXISTS, A a
+;; goal): it is split, and G -- the binding's comparison with 0 over meval --
+;; is proved from the type of the skolem constant (cadg-guard__, typepred)
+(defun cadg-strong-layers (k names guards la lb dir)
+  (if (null names) (cadg-walk (fourth k) la lb dir)
+    (let ((n (car names)) (g (car guards))
+          (rest (cadg-strong-layers k (cdr names) (cdr guards) la lb dir)))
+      (cond
+       ((null g) `(then (inst ,la ,n) ,rest))
+       ((eq (car k) :all)
+        `(then (inst ,la ,n)
+               (spread (split ,la 1)
+                 (,rest
+                  (then (cadg-guard__$ ,la ,n) (typepred ,n) (assert))))))
+       (t
+        `(then (inst ,la ,n)
+               (spread (split ,la 1)
+                 ((then (cadg-guard__$ ,la ,n) (typepred ,n) (assert))
+                  ,rest))))))))
+
+;; A's layers are skolemized one by one, a guarded one flattened into its
+;; guard (made a comparison of the constant with 0) and the rest; then B's
+;; binder is instantiated with all the names at once, and the TCCs that its
+;; subtypes give (n > 0, ...) close by assert on the guards
+(defun cadg-weak-layers (k names guards la lb dir &optional done)
+  (if (null names)
+      `(branch (inst ,lb ,@(reverse done)) (,(cadg-walk (fourth k) la lb dir) (assert)))
+    (let ((n (car names)) (g (car guards)))
+      (if (null g)
+          `(then (skolem ,la (,n))
+                 ,(cadg-weak-layers k (cdr names) (cdr guards) la lb dir (cons n done)))
+        (let ((pg (cadg-label)) (pr (cadg-label)))
+          `(with-fresh-labels ((,pg) (,pr))
+             (then (skolem ,la (,n)) (flatten-disjunct ,la 1)
+                   (relabel (,pg ,pr) ,la :pairing? t :push? nil)
+                   (cadg-guard__$ ,pg ,n)
+                   ,(cadg-weak-layers k (cdr names) (cdr guards) pr lb dir (cons n done)))))))))
+
+;; the guard at LAB, meval(pnorm(pe_var(1)))(VS) OP meval(pnorm(pe_const(C)))(VS),
+;; rewritten to N OP C
+(defhelper cadg-guard__ (lab n &optional (c "0"))
+  (let ((fa (extra-get-formula lab))
+        (strat (when (and fa (application? fa) (not (unary-application? fa)))
+                 `(then ,(or (cadg-leaf-eq (cons (args1 fa) (format nil "~a" n)) lab) '(skip))
+                        ,(or (cadg-leaf-eq (cons (args2 fa) (format nil "~a" c)) lab) '(skip))))))
+    (if strat strat (skip)))
+  "[pvs_cad] Internal: a guard as a comparison of a constant or term with C." "")
+
+;; at a NOT node of the walk: the piece labelled LAB is flattened only when it
+;; is a hypothesis that still reads NOT X (it becomes the goal X)
+(defhelper cadg-unnot__ (lab)
+  (let ((fn (extra-get-fnum lab))
+        (f  (extra-get-formula lab))
+        (strat (if (and (integerp fn) (< fn 0) f (negation? f))
+                   `(flatten-disjunct ,lab 1)
+                 '(skip))))
+    strat)
+  "[pvs_cad] Internal: the NOT step of the mirror walk." "")
+
+;; the unknowns' layers of A (labelled LA), outermost first (UNK, GUARDS given
+;; outermost first): each instantiated with its term; a guarded layer is then
+;; split, and its guard -- the term's comparison with a constant, over meval --
+;; proved from the term's type (cadg-guard__, typepred); REST continues
+(defun cadg-unk-steps (unk guards la dir rest)
+  (if (null unk) rest
+    (let* ((u (expr2str (car unk)))
+           (more (cadg-unk-steps (cdr unk) (cdr guards) la dir rest)))
+      `(then (inst ,la ,u) ,(cadg-guard-steps u (car guards) la dir more)))))
+
+;; the guards GDS of the unknown U, outermost first: each split off and proved
+;; from U's type (cadg-guard__, typepred, assert); REST continues
+(defun cadg-guard-steps (u gds la dir rest)
+  (if (null gds) rest
+    (let ((more (cadg-guard-steps u (cdr gds) la dir rest))
+          (prove `(then (cadg-guard__$ ,la ,u ,(cdr (car gds))) (typepred ,u) (assert))))
+      (if (eq dir :ab)
+          `(spread (split ,la 1) (,more ,prove))
+        `(spread (split ,la 1) (,prove ,more))))))
+
+;; the pairs (A-term . B-term) of a quantifier-free leaf: A's atoms compare
+;; meval(pnorm(E))(VS) terms, B's the polynomials themselves
+(defun cadg-leaf-pairs (a b acc)
+  (cond
+   ((and (or (and (cad-is a "AND") (cad-is b "AND"))
+             (and (cad-is a "OR") (cad-is b "OR"))
+             (and (cad-is a "IMPLIES") (cad-is b "IMPLIES"))
+             (and (cad-is a "IFF") (cad-is b "IFF")))
+         (not (unary-application? a)) (not (unary-application? b)))
+    (cadg-leaf-pairs (args2 a) (args2 b) (cadg-leaf-pairs (args1 a) (args1 b) acc)))
+   ((and (unary-application? a) (cad-is a "NOT")
+         (unary-application? b) (cad-is b "NOT"))
+    (cadg-leaf-pairs (args1 a) (args1 b) acc))
+   ((and (application? a) (application? b) (not (unary-application? a)) (not (unary-application? b))
+         (find-if #'(lambda (o) (and (cad-is a o) (cad-is b o)))
+                  '("=" "/=" "<" "<=" ">" ">=")))
+    (let ((acc1 (cons (cons (args1 a) (args1 b)) acc)))
+      (cons (cons (args2 a) (args2 b)) acc1)))
+   (t acc)))
+
+;; one equation meval(pnorm(E))(VS) = B-term, replaced in LA
+(defun cadg-leaf-eq (pr la)
+  (let* ((at (car pr)) (bt (if (stringp (cdr pr)) (cdr pr) (expr2str (cdr pr))))
+         (pn (when (application? at) (operator at)))
+         (pe (when (and pn (application? pn)) (argument pn)))
+         (e  (when (and pe (application? pe)) (argument pe)))
+         (vs (when (application? at) (argument at))))
+    (when (and e vs)
+      (let* ((vss (let ((v (expr2str vs))) (if (string= v "null") "null[real]" v)))
+             (eq  (format nil "meval(pnorm(~a))(~a) = ~a" (expr2str e) vss bt)))
+        `(with-fresh-labels ((!cgq) (!cgp))
+           ,(cad-fact-case eq '!cgq
+              `(then (replace !cgq ,la) (hide !cgq))
+              `(then (hide-all-but !cgq)
+                     (discriminate (lemma "peval_pnorm" ("e" ,(expr2str e) "xs" ,vss)) !cgp)
+                     (replace !cgp !cgq) (hide !cgp)
+                     (mpoly-eq-side__))))))))
+
+(defhelper cadg-leaf__ (la lb)
+  (let ((fa (extra-get-formula la))
+        (fb (extra-get-formula lb))
+        (prs (when (and fa fb) (reverse (cadg-leaf-pairs fa fb nil))))
+        (seen nil)
+        (eqs (loop for pr in prs
+                   for key = (expr2str (car pr))
+                   unless (member key seen :test #'string=)
+                   do (push key seen)
+                   and collect (cadg-leaf-eq pr la)))
+        (strat `(then ,@(remove nil eqs)
+                      (try (propax) (skip)
+                           (then (bddsimp) (assert) (try (expand "sq") (assert) (skip)))))))
+    strat)
+  "[pvs_cad] Internal: closes a quantifier-free leaf of the mirror walk." "")
+
+;; ---- grouped binders in a prenex formula ----------------------------------
+;; FORALL (x, y: real): EXISTS (z: real): PHI is decided as its nested form
+;; FORALL (x: real): FORALL (y: real): EXISTS (z: real): PHI by the fast route
+;; (witness search, decide8); the two are proved equivalent by the mirror
+;; walk with the matrix shared (:same).
+
+;; a prenex formula over real binders, some binding several variables, whose
+;; matrix has no quantifier
+(defun cadg-grouped-prenex? (e)
+  (let ((grouped nil) (ok t))
+    (loop while (or (forall-expr? e) (exists-expr? e)) do
+      (unless (every #'(lambda (b) (tc-eq (type b) *real*)) (bindings e)) (setq ok nil))
+      (when (> (length (bindings e)) 1) (setq grouped t))
+      (setq e (expression e)))
+    (and ok grouped
+         (let ((quant nil))
+           (mapobject #'(lambda (o) (or quant (when (or (forall-expr? o) (exists-expr? o)) (setq quant t))))
+                      e)
+           (not quant)))))
+
+;; the nested form of E as text: one quantifier per variable
+(defun cadg-nest-str (e)
+  (let ((parts nil))
+    (loop while (or (forall-expr? e) (exists-expr? e)) do
+      (dolist (b (bindings e))
+        (push (format nil "~a (~a: real): " (if (forall-expr? e) "FORALL" "EXISTS") (id b)) parts))
+      (setq e (expression e)))
+    (format nil "~{~a~}(~a)" (reverse parts) (expr2str e))))
+
+;; the walk tree of E's prefix over a shared matrix
+(defun cadg-nest-tree (e)
+  (if (or (forall-expr? e) (exists-expr? e))
+      (list (if (forall-expr? e) :all :ex) (bindings e)
+            (loop for b in (bindings e) collect (cadg-name))
+            (cadg-nest-tree (expression e))
+            (loop for b in (bindings e) collect nil))
+    (list :same)))
+
+;; FNUM (a grouped prenex formula) through its nested form: proved from it
+;; as a goal, or used to prove it as a hypothesis; the nested form is decided
+;; by (cad) when KIND is "cad", replaced by its quantifier elimination when
+;; "qe", decided by (cad-direct) otherwise ("direct").  It is first checked that the
+;; nested form can be handled (polynomial atoms; other real terms only with
+;; gform_ok for (cad) and (cad-direct), at least one for (cad-qe)), else
+;; nothing changes.  For (cad) and (cad-direct), when the decision does not close the goal
+;; (a FALSE goal, a TRUE hypothesis), the sequent is restored and the
+;; formula itself is labelled cad.
+(defhelper cad-nest__ (fnum kind &optional (budget 10) complete? cad-only? dec)
+  (let ((fexpr (extra-get-formula fnum))
+        (fn    (when fexpr (extra-get-fnum fnum)))
+        (ante  (and (integerp fn) (< fn 0)))
+        (tree0 (when fexpr (ignore-errors (cadg-tree fexpr nil))))
+        (poly? (and tree0 (not (eq tree0 :bad))))
+        (unk   (when poly? (cadg-unknowns tree0 nil nil)))
+        (qe?   (equal kind "qe"))
+        (who   (if qe? "cad-qe" "cad"))
+        (why   (cond ((null fexpr) (format nil "~a: there is no formula ~a" who fnum))
+                     ((not poly?)
+                      (format nil "~a: formula ~a is not a first-order formula over the reals whose atoms compare polynomials" who fnum))
+                     ((and qe? (null unk))
+                      (format nil "cad-qe: formula ~a has no free real term to keep; (cad) decides it" fnum))
+                     ((and unk (not qe?) (not (cad-imports? "gform_ok")))
+                      (format nil "cad: formula ~a has real terms other than its quantified variables; they are generalized as unknowns only in a theory that imports pvs_cad (or gform_ok)" fnum))
+                     (t nil)))
+        (nstr  (unless why (cadg-nest-str fexpr)))
+        (tree  (unless why (cadg-nest-tree fexpr)))
+        (dcd   (cond ((equal kind "cad") `(cad !cnn ,budget ,complete? ,cad-only?))
+                     (qe? '(then (hide !cnb) (cad-qe !cnn)))
+                     (t `(cad-direct !cnn ,complete? ,dec))))
+        (strat (unless why
+                 `(with-fresh-labels ((!cnb ,fnum) (!cnn))
+                    ,(if ante
+                         (cad-fact-case nstr '!cnn dcd (cadg-walk tree '!cnn '!cnb :ba))
+                       (cad-fact-case nstr '!cnn (cadg-walk tree '!cnn '!cnb :ab)
+                                      `(then (hide !cnb) ,dcd)))))))
+    (if why (printf "~a" why)
+      (if qe? strat
+        (else (finalize__$ strat) (label "cad" fnum :push? t)))))
+  "[pvs_cad] Internal: a prenex formula with grouped binders, through its nested
+form (FORMS_PLAN.md)." "")
+
+;; ---- TRUE / FALSE beside a quantified part ----------------------------------
+;; PVS's flatten and split drop a TRUE hypothesis or FALSE goal and close a goal
+;; with a FALSE hypothesis or TRUE goal, and its substitution (skolem, inst,
+;; expand) simplifies TRUE / FALSE away beside AND, OR, IMPLIES and NOT and makes
+;; an equation with two equal sides TRUE, so the mirror walk could not pair the
+;; pieces.  The tree therefore counts a comparison of a term with itself, and a
+;; quantifier over a constant, as that constant (cadg-tree).  When the walk
+;; reaches a node with a constant, the node is at the top of both formulas (the
+;; binders above it are skolemized or instantiated by then -- PVS does not
+;; rewrite an instance holding a bound variable), and the constants are taken
+;; away there in both formulas and, by the same rules (cadg-simp), in the
+;; walk's tree: first by rewriting with gform_ok's gb_* lemmas ((TRUE AND b) =
+;; b, (b IMPLIES FALSE) = NOT b, ...) to a fixpoint, then, for what those
+;; cannot reach (a connective written with a synonym, a comparison of a term
+;; with itself), by replacing the formula with its simplified text
+;; (cadg-unconst2__), proved equal to it by propositional reasoning and assert.
+(defparameter *cadg-bool-lemmas*
+  '("gb_and_tl" "gb_and_tr" "gb_and_fl" "gb_and_fr" "gb_or_tl" "gb_or_tr" "gb_or_fl" "gb_or_fr"
+    "gb_imp_tl" "gb_imp_tr" "gb_imp_fl" "gb_imp_fr" "gb_iff_tl" "gb_iff_tr" "gb_iff_fl" "gb_iff_fr"
+    "gb_not_t" "gb_not_f"))
+
+;; the propositional layer of the tree K (down to its quantifiers) with the
+;; constants simplified away, as the gb_* lemmas do
+(defun cadg-simp (k)
+  (flet ((c? (x v) (and (eq (car x) :const) (eq (and (second x) t) v))))
+    (case (car k)
+      (:not (let ((a (cadg-simp (second k))))
+              (cond ((c? a t) (list :const nil)) ((c? a nil) (list :const t)) (t (list :not a)))))
+      ((:and :or :imp :iff)
+       (let ((a (cadg-simp (second k))) (b (cadg-simp (third k))))
+         (case (car k)
+           (:and (cond ((c? a t) b) ((c? b t) a) ((c? a nil) a) ((c? b nil) b) (t (list :and a b))))
+           (:or  (cond ((c? a t) a) ((c? b t) b) ((c? a nil) b) ((c? b nil) a) (t (list :or a b))))
+           (:imp (cond ((c? a t) b) ((c? b t) b) ((c? a nil) (list :const t)) ((c? b nil) (list :not a))
+                       (t (list :imp a b))))
+           (:iff (cond ((c? a t) b) ((c? b t) a) ((c? a nil) (list :not b)) ((c? b nil) (list :not a))
+                       (t (list :iff a b)))))))
+      (t k))))
+
+;; the propositional layer of the formula E (down to its quantifiers and
+;; atoms) with the constants simplified away by the rules of cadg-simp, a
+;; comparison of a term with itself and a quantifier over a constant counting
+;; as constants (cadg-refl, as in cadg-tree): (STRING . CHANGED?), STRING the
+;; text of the result with keyword connectives, CHANGED? whether anything was
+;; simplified
+(defun cadg-simp-expr (e)
+  (labels
+      ((const (x) (cond ((eq x :true) t) ((eq x :false) nil) (t :no)))
+       (txt (x) (cond ((eq x :true) "TRUE") ((eq x :false) "FALSE") (t x)))
+       (simp1 (e)
+         ;; :true, :false, or (TEXT . CHANGED?)
+         (cond
+          ((and (name-expr? e) (string= (string (id e)) "TRUE")) :true)
+          ((and (name-expr? e) (string= (string (id e)) "FALSE")) :false)
+          ((cadg-refl e) (cadg-refl e))
+          ;; a quantifier whose body simplifies to a constant is that constant
+          ((or (forall-expr? e) (exists-expr? e))
+           (let ((r (simp1 (expression e))))
+             (if (consp r) (cons (format nil "(~a)" (expr2str e)) nil) r)))
+          ((and (cad-is e "NOT") (not (or (forall-expr? e) (exists-expr? e))))
+           (let ((a (simp1 (args1 e))))
+             (case (const a)
+               ((t) :false) ((nil) :true)
+               (t (cons (format nil "(NOT ~a)" (car a)) (cdr a))))))
+          ((and (not (unary-application? e))
+                (some #'(lambda (o) (cad-is e o)) '("AND" "OR" "IMPLIES" "IFF")))
+           (let* ((op (find-if #'(lambda (o) (cad-is e o)) '("AND" "OR" "IMPLIES" "IFF")))
+                  (a (simp1 (args1 e))) (b (simp1 (args2 e)))
+                  (ca (const a)) (cb (const b))
+                  (bin (cons (format nil "(~a ~a ~a)" (txt (if (consp a) (car a) a)) op
+                                     (txt (if (consp b) (car b) b)))
+                             (or (and (consp a) (cdr a)) (and (consp b) (cdr b)))))
+                  (r (cond
+                      ((string= op "AND") (cond ((eq ca t) b) ((eq cb t) a) ((null ca) :false) ((null cb) :false) (t bin)))
+                      ((string= op "OR") (cond ((eq ca t) :true) ((eq cb t) :true) ((null ca) b) ((null cb) a) (t bin)))
+                      ((string= op "IMPLIES") (cond ((eq ca t) b) ((eq cb t) :true) ((null ca) :true)
+                                                    ((null cb) (cons (format nil "(NOT ~a)" (car a)) t)) (t bin)))
+                      (t (cond ((eq ca t) b) ((eq cb t) a)
+                               ((null ca) (if (consp b) (cons (format nil "(NOT ~a)" (car b)) t) (if (eq b :true) :false :true)))
+                               ((null cb) (if (consp a) (cons (format nil "(NOT ~a)" (car a)) t) (if (eq a :true) :false :true)))
+                               (t bin))))))
+             (if (eq r bin) r (if (consp r) (cons (car r) t) r))))
+          (t (cons (format nil "(~a)" (expr2str e)) nil)))))
+    (let ((r (simp1 e)))
+      (if (consp r) r (cons (txt r) t)))))
+
+(defhelper cadg-unconst__ (fnum)
+  (let ((strat `(then (repeat (then ,@(loop for l in *cadg-bool-lemmas* collect `(rewrite ,l ,fnum))))
+                      (cadg-unconst2__$ ,fnum))))
+    strat)
+  "[pvs_cad] Internal: rewrites TRUE and FALSE away beside quantified parts." "")
+
+;; what the gb_* lemmas cannot rewrite -- a constant beside a connective
+;; written with a synonym (<=>, &, ...), an equation with the same two sides --
+;; is removed by replacing the formula at FNUM with its simplified text
+;; (cadg-simp-expr), proved equal to it by propositional reasoning
+(defhelper cadg-unconst2__ (fnum)
+  (let ((f     (extra-get-formula fnum))
+        (sc    (when f (cadg-simp-expr f)))
+        (strat (if (or (null sc) (not (cdr sc))) '(skip)
+                 `(with-fresh-labels ((!cuq))
+                    (branch (discriminate (case ,(format nil "(~a) = (~a)" (expr2str f) (car sc))) !cuq)
+                      ((then (replace !cuq ,fnum) (hide !cuq))
+                       (then (hide-all-but !cuq) (iff !cuq) (bddsimp) (assert))))))))
+    strat)
+  "[pvs_cad] Internal: removes the constants rewriting cannot reach." "")
+
+;; does E contain a quantifier?
+(defun cadg-has-quant? (e)
+  (let ((q nil))
+    (mapobject #'(lambda (o) (or q (when (or (forall-expr? o) (exists-expr? o)) (setq q t)))) e)
+    q))
+
+;; the formula (cad) decides by default: 1, or -1 when the sequent has no
+;; consequent -- PVS keeps a goal NOT A as the hypothesis A
+(defun cad-default-fnum (fnum)
+  (if (and (eql fnum 1) (null (extra-get-formula 1)) (extra-get-formula -1)) -1 fnum))
+
+;; (TREE UNKNOWNS GSTR DEPTH GUARDS) for a formula FEXPR, or nil: the
+;; unknowns are generalized outermost, FORALL for a goal and EXISTS for a
+;; hypothesis (ANTE), each with the comparisons with numbers its type gives
+;; (cad-type-guards: c > 0 for a posreal constant c, sqrt(c) >= 0, i >= 0 and
+;; i <= 4 for a below(5) term i, ...) as premises (goal) or conjuncts
+;; (hypothesis), as (cad *) does; GUARDS lists them per unknown
+(defun cadg-plan (fexpr ante)
+  (let ((tree (cadg-tree fexpr nil)))
+    (unless (eq tree :bad)
+      (let* ((unk (cadg-unknowns tree nil nil))
+             (guards (mapcar #'(lambda (u) (cad-type-guards (type u))) unk))
+             (body (cadg-enc tree nil (mapcar #'expr2str unk))))
+        (when body
+          (let ((g body))
+            (loop for gds in guards do
+              (dolist (gd (reverse gds))
+                (setq g (format nil "~a(~a(pnorm(pe_var(1)), pnorm(pe_const(~a))), ~a)"
+                                (if ante "gand" "gimp")
+                                (cdr (assoc (car gd) *cadg-rels* :test #'string=)) (cdr gd) g)))
+              (setq g (format nil "~a(~a)" (if ante "gex" "gall") g)))
+            (list tree unk g (+ (cadg-depth tree) (length unk) (reduce #'+ (mapcar #'length guards)))
+                  guards)))))))
+
+(defhelper cadg-finish__ (gb ge ante)
+  (let ((fexpr  (extra-get-formula gb))
+        (plan   (when fexpr (cadg-plan fexpr ante)))
+        (tree   (first plan))
+        (unk    (second plan))
+        (gstr   (third plan))
+        (depth  (or (fourth plan) 0))
+        (guards (fifth plan))
+        ;; the record reads decide_g(G) = TRUE or = FALSE; anything else
+        ;; (nothing, when the ground evaluation failed) is not an answer
+        (evf    (extra-get-formula ge))
+        (val    (when (and evf (is-function-expr evf "=")) (expr2str (args2 evf))))
+        (truth  (equal val "TRUE"))
+        (dir    (if ante :ba :ab))
+        (unfold (loop repeat depth collect '(expand "gsem" !cga)))
+        (walk   (when plan (cadg-unk-steps (reverse unk) (reverse guards) '!cga dir
+                                           (cadg-walk tree '!cga gb dir))))
+        (strat
+         (cond
+          ((null plan) '(printf "cad: the formula changed"))
+          ((not (member val '("TRUE" "FALSE") :test #'equal))
+           `(then (printf "cad: the value of decide_g could not be read (the ground evaluation gave no answer); the formula is unchanged")
+                  ,@(when evf `((delete ,ge)))))
+          ;; the proof is all or nothing: when the walk does not close it, the
+          ;; sequent is restored (finalize) and the formula stays, labelled cad
+          ((and (not ante) truth)
+           `(else (finalize__$
+                   (with-fresh-labels ((!cga))
+                     (then (discriminate (lemma "decide_g_ok" ("g" ,gstr)) !cga)
+                           (replace ,ge !cga) (hide ,ge) (assert !cga)
+                           ,@unfold ,walk)))
+                  (then (printf "cad: decide_g says the formula is TRUE, but the proof did not close; it stays as it is, labelled cad")
+                        (delete ,ge) (label "cad" ,gb :push? t))))
+          ((and ante (not truth))
+           `(else (finalize__$
+                   (with-fresh-labels ((!cga))
+                     (then (discriminate (lemma "decide_g_ok" ("g" ,gstr)) !cga)
+                           (replace ,ge !cga) (hide ,ge) (assert !cga) (flatten !cga)
+                           ,@unfold ,walk)))
+                  (then (printf "cad: decide_g says the hypothesis is FALSE, but the proof did not close; it stays as it is, labelled cad")
+                        (delete ,ge) (label "cad" ,gb :push? t))))
+          (t `(then (printf "cad: the ~a is ~a~a; it stays as it is, labelled cad"
+                            ,(if ante "hypothesis" "formula")
+                            ,(if truth "TRUE" "FALSE")
+                            ,(if unk " for some values of its other real terms (unknowns, each with only the comparisons with numbers that its type gives, e.g. c > 0 for a posreal c)" ""))
+                    (delete ,ge) (label "cad" ,gb :push? t))))))
+    strat)
+  "[pvs_cad] Internal: finishes the general route of (cad) from the decision ~
+record GE of the formula GB." "")
+
+(defhelper cadg__ (fnum)
+  (let ((fexpr (extra-get-formula fnum))
+        (fn    (when fexpr (extra-get-fnum fnum)))
+        (ante  (and (integerp fn) (< fn 0)))
+        (plan  (when fexpr (cadg-plan fexpr ante)))
+        (rec   (when plan (format nil "decide_g(~a)" (third plan)))))
+    (if (null plan)
+        (printf "cad: formula ~a is not a first-order formula over the reals whose atoms compare polynomials (binders over real, posreal, nnreal, negreal, npreal or nzreal; other real terms must not contain a bound variable)" fnum)
+      (with-fresh-labels ((!cgb fnum) (!cge))
+        (then (discriminate (eval-expr rec) !cge)
+              (cadg-finish__$ !cgb !cge ante)))))
+  "[pvs_cad] Internal: the general route of (cad) -- a formula of any shape,
+decided by decide_g and proved by the mirror walk (FORMS_PLAN.md)." "")
+
+;; ---- (cad *) with formulas of any shape -----------------------------------------
+;; the text of the first-order formula E with its bound variables renamed
+;; (BV: bind-decl -> name, fresh cadb_N names) and its unknown real terms
+;; abstracted (cadstar-abstract); nil when E is not usable
+(defun cadg-text (e bv)
+  (flet ((bin (op) (let ((a (cadg-text (args1 e) bv)) (b (cadg-text (args2 e) bv)))
+                     (when (and a b) (format nil "(~a ~a ~a)" a op b)))))
+    (cond
+     ((or (forall-expr? e) (exists-expr? e))
+      (let ((names nil) (bad nil) (bv2 bv))
+        (dolist (b (bindings e))
+          (let ((g (cadg-guard-of b)))
+            (if (null g) (setq bad t)
+              (let ((nm (format nil "cadb_~a" (incf *cadstar-count*))))
+                (push (format nil "~a: ~a" nm (if (eq g :real) "real"
+                                                 (car (rassoc g *cadg-guards* :test #'string=))))
+                      names)
+                (push (cons b nm) bv2)))))
+        (unless bad
+          (let ((body (cadg-text (expression e) bv2)))
+            (when body
+              (format nil "(~a (~{~a~^, ~}): ~a)" (if (forall-expr? e) "FORALL" "EXISTS")
+                      (reverse names) body))))))
+     ((and (not (unary-application? e)) (cad-is e "AND")) (bin "AND"))
+     ((and (not (unary-application? e)) (cad-is e "OR")) (bin "OR"))
+     ((and (not (unary-application? e)) (cad-is e "IMPLIES")) (bin "IMPLIES"))
+     ((and (not (unary-application? e)) (cad-is e "IFF")) (bin "IFF"))
+     ((and (unary-application? e) (cad-is e "NOT"))
+      (let ((a (cadg-text (args1 e) bv))) (when a (format nil "(NOT ~a)" a))))
+     ((and (name-expr? e) (member (string (id e)) '("TRUE" "FALSE") :test #'string=))
+      (string (id e)))
+     (t (let ((op (find-if #'(lambda (o) (cad-is e o)) '("=" "/=" "<" "<=" ">" ">="))))
+          (when (and op (not (unary-application? e)))
+            (let ((a (cadstar-term (args1 e) bv)) (b (cadstar-term (args2 e) bv)))
+              (when (and a b) (format nil "(~a ~a ~a)" a op b)))))))))
+
+;; is the formula F usable by the general route (a first-order formula over the reals)?
+(defun cadg-usable? (f) (and f (not (eq (ignore-errors (cadg-tree f nil)) :bad))
+                             (ignore-errors (cadg-tree f nil))))
+
+;; (cad *) when a selected formula is not prenex (or binds a variable over
+;; posreal, nnreal, negreal, npreal or nzreal): the sentence FORALL (unknowns): (type facts AND antecedents) IMPLIES
+;; (consequents), every formula kept whole, decided by (cad) (the general
+;; route); the sequent follows from it by instantiation and propositional logic
+(defhelper cadg-seq__ (fnums budget &optional cad-only?)
+  (let ((dummy  (setq *cadstar-abs* nil *cadstar-count* 0))
+        ;; the unknowns a formula abstracted are dropped again when the
+        ;; formula is skipped, as cadstar-collect does
+        (items  (loop for fn in (extra-get-fnums fnums)
+                      for f = (extra-get-formula-from-fnum fn)
+                      collect (let* ((saved *cadstar-abs*)
+                                     (txt (when f (ignore-errors (cadg-text f nil)))))
+                                (unless txt (setq *cadstar-abs* saved))
+                                (list fn txt))))
+        (ants   (loop for it in items when (and (second it) (< (first it) 0)) collect (second it)))
+        (cnss   (loop for it in items when (and (second it) (> (first it) 0)) collect (second it)))
+        (skip   (loop for it in items unless (second it) collect (first it)))
+        (tfs    (loop for a in *cadstar-abs* for f = (cadstar-typefact (third a) (second a))
+                      when f collect f))
+        (unk    (mapcar #'second *cadstar-abs*))
+        (terms  (mapcar #'first *cadstar-abs*))
+        (hyp    (when (or tfs ants) (format nil "~{~a~^ AND ~}" (append tfs ants))))
+        (con    (when cnss (format nil "~{~a~^ OR ~}" cnss)))
+        (matrix (cond ((and hyp con) (format nil "(~a) IMPLIES (~a)" hyp con))
+                      (con (format nil "(~a)" con))
+                      (t (format nil "NOT (~a)" hyp))))
+        (sstr   (if unk (format nil "FORALL (~{~a~^, ~}: real): ~a" unk matrix) matrix))
+        (gl     (freshlabel "cadsg"))
+        (use    `(then ,@(when unk `((inst ,gl ,@terms)))
+                       ,@(loop for a in *cadstar-abs*
+                               when (cadstar-typefact (third a) (second a))
+                               collect `(typepred ,(first a)))
+                       (prop) (assert)))
+        (step   (cad-fact-case sstr gl use `(cad ,gl ,budget nil ,cad-only?)))
+        (skips  (if skip (format nil "~{~a~^, ~}" skip) "nothing")))
+    (if (null (or ants cnss))
+        (printf "cad*: no formula of the sequent is a first-order formula over the reals")
+      (then (printf "cad*: skipping ~a; deciding ~a" skips sstr)
+            (else (finalize__$ step)
+                  (printf "cad*: not proved; the sequent is unchanged")))))
+  "[pvs_cad] Internal: (cad *) with formulas of any shape (FORMS_PLAN.md)." "")
+
+;; ---- (cad-qe) on a formula of any shape --------------------------------------
+;; (TREE UNKNOWNS GSTR DEPTH): the free real terms are the point's coordinates
+(defun cadg-qe-plan (fexpr)
+  (let ((tree (cadg-tree fexpr nil)))
+    (unless (eq tree :bad)
+      (let* ((unk (cadg-unknowns tree nil nil))
+             (g (cadg-enc tree nil (mapcar #'expr2str unk))))
+        (when (and g unk) (list tree unk g (cadg-depth tree)))))))
+
+;; the formula GL is replaced by the quantifier-free answer qe_g(G, m) = OUT
+;; read off EV.  The fact (GL) IFF TEXT is proved from qe_g_ok (qfsem(OUT)(PT)
+;; IFF gsem(G)(PT)), the text side of (cad-qe) (TEXT IFF qfsem(OUT)(PT)) and
+;; gsem(G)(PT) IFF GL, by the mirror walk in each direction
+(defhelper cadg-qe__ (gl ev)
+  (let ((fexpr  (extra-get-formula gl))
+        (plan   (when fexpr (cadg-qe-plan fexpr)))
+        (tree   (first plan))
+        (unk    (second plan))
+        (gstr   (third plan))
+        (depth  (or (fourth plan) 0))
+        (evf    (extra-get-formula ev))
+        (outx   (when (and plan evf (is-function-expr evf "=")) (args2 evf)))
+        (dummy1 (setq *mpoly-atoms* (mapcar #'expr2str unk)))
+        (dummy2 (setq *cadqe-polys* nil *cadqe-aeqs* nil))
+        (text   (when outx (cadqe-fm-text outx)))
+        (pts    (mpoly-valuation))
+        (outstr (when outx (expr2str outx)))
+        (odepth (when outx (cadqe-fm-depth outx)))
+        (omevs  (when outx
+                  (reduce #'(lambda (p2 rest)
+                              (let ((e (mpoly-expr-rec (extra-get-expr (cdr p2)))))
+                                (cadqe-mev (car p2) e (cdr p2) pts rest)))
+                          (reverse *cadqe-polys*) :from-end t
+                          :initial-value (cadqe-text-endgame '!qt (reverse *cadqe-aeqs*)))))
+        (origstr (when fexpr (expr2str fexpr)))
+        (gsemstr (format nil "gsem(~a)(~a)" gstr pts))
+        (qestr   (format nil "qe_g(~a, ~a)" gstr (length unk)))
+        (strat
+         (when text
+           `(with-fresh-labels ((!qe) (!qb) (!qt) (!qg) (!qx) (!qy) (!qc))
+              (branch (discriminate (case ,(format nil "(~a) IFF ~a" origstr text)) !qe)
+                ((then (replace !qe ,gl) (delete !qe) (delete ,ev) (printf "cad-qe: ~a" ,text))
+                 (else
+                  (finalize__$
+                 (then
+                  (hide-all-but (!qe ,ev))
+                  (branch (discriminate (case ,(format nil "qfsem(~a)(~a) IFF ~a" qestr pts gsemstr)) !qb)
+                    ((then
+                      (replace ,ev !qb) (hide ,ev)
+                      (branch (discriminate (case ,(format nil "(~a) IFF qfsem(~a)(~a)" text outstr pts)) !qt)
+                        ((branch (discriminate (case ,(format nil "~a IFF (~a)" gsemstr origstr)) !qg)
+                           ((bddsimp (!qe !qb !qt !qg))
+                            (then (hide-all-but !qg)
+                                  (spread (split !qg 1)
+                                    ((then (flatten-disjunct !qg 1) (relabel (!qx !qy) !qg :pairing? t :push? nil)
+                                           ,@(loop repeat depth collect '(expand "gsem" !qx))
+                                           ,(cadg-walk tree '!qx '!qy :ab))
+                                     (then (flatten-disjunct !qg 1) (relabel (!qy !qx) !qg :pairing? t :push? nil)
+                                           ,@(loop repeat depth collect '(expand "gsem" !qx))
+                                           ,(cadg-walk tree '!qx '!qy :ba)))))))
+                         (then (hide-all-but !qt) (expand "qfsem" !qt)
+                               ,@(loop repeat odepth collect '(expand "fsem" !qt))
+                               ,omevs))))
+                     (then (hide-all-but !qb) (expand "qfsem" !qb)
+                           (discriminate (lemma "qe_g_ok" ("g" ,gstr "m" ,(format nil "~a" (length unk)) "pt" ,pts)) !qc)
+                           (split !qc)
+                           (then (split 1) (assert) (repeat (expand "length" 1)) (assert)))))))
+                  (fail))))))))
+    (if strat strat
+      (then (printf "cad-qe: the answer could not be read") (delete ev))))
+  "[pvs_cad] Internal: (cad-qe) on a formula of any shape (FORMS_PLAN.md)." "")

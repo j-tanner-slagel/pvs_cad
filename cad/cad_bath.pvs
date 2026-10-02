@@ -5,13 +5,21 @@ cad_bath: THEORY
 % examples", ACM Communications in Computer Algebra 46(3) 67-69; dataset
 % maintained by David Wilson, University of Bath Research Data Archive,
 % version 4 (2013), doi 10.15125/BATH-00069, CC-BY-SA 4.0 (bench_pdec has
-% all twelve closed problems as PVS formulas).
+% the ten usable closed problems as PVS formulas; bath_06 and bath_11 are
+% excluded for defects in the source).
 %
 % "Random B Grobner from Buchberger-Hong" (bath_08) is FALSE -- no z makes
-% y^2 equal a fixed value for EVERY y -- and (cad -1) refutes it through the
-% n-level decision decn_o (ok TRUE, 280 s for the decision alone).  The other
-% nine closed problems of the bank run past 300 s in decn_o (PROGRESS.md,
-% benchmark table).
+% y^2 equal a fixed value for EVERY y -- and (cad -1) refutes it: the whole
+% proof takes about 9.5 s, and about 10 s with cad_decide8 imported
+% (1 October 2026; it took 280 s for the decision alone when this theory was
+% made).  Of the other nine closed problems, (cad) settles Bath 01, 03 and 04
+% by a model search, and Bath 02 -- and 05 and 07, refuted as hypotheses --
+% by fixing one variable to a constant and deciding the smaller sentence, in
+% under 13 s each (PROGRESS.md, 27 September 2026; the same with IMPORTING
+% pvs_cad, 1 October 2026); the decision alone,
+% without the witness search, does not finish in 90 s on bath_02-05, 07, 09,
+% 10 and 12 with either engine (bath_01: 0.2 s with the Collins run;
+% docs/collins_cad.pdf).
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING cad_decide5, mpoly_embed

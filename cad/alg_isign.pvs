@@ -11,10 +11,11 @@ alg_isign: THEORY
 % which is in the interval (value_in).  Otherwise alg_sign2 answers as
 % before.  The enclosure is tight when the interval is narrow, so the n-level
 % decision refines a sample's interval once (refine_n, which keeps the
-% number).
+% number).  A second enclosure, of the query re-expanded around the middle of
+% the interval (pshift), comes before alg_sign2 (QE_PLAN.md 12).
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING alg_sign2, interval_arith@interval
+  IMPORTING alg_sign2, interval_arith@interval, pl_shift
 
   pl, ql: VAR Polylist
   c: VAR rat
@@ -34,10 +35,16 @@ BEGIN
   MEASURE length(pl)
   hornI_incl: LEMMA FORALL pl: x ## X IMPLIES polylist(pl)(x) ## hornI(pl, X)
 
-  %% the sign: the enclosure when it decides, alg_sign2 otherwise
+  %% the sign: the enclosure when it decides; then the enclosure of the query
+  %% shifted to the middle of the interval (pl_shift_def, 2026-10-01: it
+  %% overestimates by about half the width times |q'(mid)| and settles most of
+  %% the queries the first one leaves); alg_sign2 otherwise
   alg_isign(a, ql): Sign3 =
     LET E = hornI(ql, [|a`lb, a`ub|]) IN
-    IF lb(E) > 0 THEN 1 ELSIF ub(E) < 0 THEN -1 ELSE alg_sign2(a, ql) ENDIF
+    IF lb(E) > 0 THEN 1 ELSIF ub(E) < 0 THEN -1
+    ELSE LET m = mid(a), C = hornI(pshift(ql, m), [|a`lb - m, a`ub - m|]) IN
+      IF lb(C) > 0 THEN 1 ELSIF ub(C) < 0 THEN -1 ELSE alg_sign2(a, ql) ENDIF
+    ENDIF
 
   alg_isign_sign: THEOREM alg_isign(a, ql) = sign3(polylist(ql)(value(a)))
 END alg_isign

@@ -1,0 +1,74 @@
+det_fast_def: THEORY
+%----------------------------------------------------------------------------
+% The determinant with every minor computed once (COLLINS_PLAN.md M-J).
+% Executable.
+%
+% ring_det's det is the Laplace expansion along the first row, which
+% recomputes the minors: n! products, so a principal subresultant
+% coefficient of two degree-7 polynomials (a 13 x 13 determinant) is out of
+% reach.  detf computes the same polynomial from the bottom row up: for every
+% set S of m columns (an increasing list) the determinant of the submatrix of
+% the last m rows and the columns S is the expansion along that submatrix's
+% first row, whose minors are the entries for the sets one smaller (dtab) --
+% n 2^n products.  det_fast proves detf(n, M) = det(n, M).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING ring_det
+
+  n, m, r, b: VAR nat
+  M: VAR Mat
+  S: VAR list[nat]
+
+  lo: VAR nat
+
+  %% the increasing lists of m numbers from lo to n - 1
+  dsubs(lo, n, m): RECURSIVE list[list[nat]] =
+    IF m = 0 THEN (: null[nat] :)
+    ELSIF n <= lo THEN null[list[nat]]
+    ELSE append(map(LAMBDA (S: list[nat]): cons(lo, S))(dsubs(lo + 1, n, m - 1)), dsubs(lo + 1, n, m))
+    ENDIF
+  MEASURE IF lo <= n THEN n - lo ELSE 0 ENDIF
+
+  %% lo, lo + 1, ..., n - 1
+  dcols(lo, n): RECURSIVE list[nat] = IF n <= lo THEN null[nat] ELSE cons(lo, dcols(lo + 1, n)) ENDIF
+  MEASURE IF lo <= n THEN n - lo ELSE 0 ENDIF
+
+  %% S without its b-th member
+  drem(S, b): RECURSIVE list[nat] =
+    IF null?(S) THEN S ELSIF b = 0 THEN cdr(S) ELSE cons(car(S), drem(cdr(S), b - 1)) ENDIF
+  MEASURE length(S)
+
+  %% equality of column sets, executable (the ground evaluator's = on these
+  %% lists fails between lists of different lengths: "Equality unknown between
+  %% types NULL and CONS")
+  S1, S2: VAR list[nat]
+  dleq(S1, S2): RECURSIVE bool =
+    IF null?(S1) THEN null?(S2) ELSIF null?(S2) THEN FALSE
+    ELSE car(S1) = car(S2) AND dleq(cdr(S1), cdr(S2)) ENDIF
+  MEASURE length(S1)
+
+  %% a table of determinants by column set
+  DEnt: TYPE = [list[nat], mpoly]
+  T: VAR list[DEnt]
+  dlook(S, T): RECURSIVE mpoly =
+    IF null?(T) THEN mconst(0) ELSIF dleq(car(T)`1, S) THEN car(T)`2 ELSE dlook(S, cdr(T)) ENDIF
+  MEASURE length(T)
+
+  %% the first-row expansion of the submatrix of rows r, r + 1, ... and columns S, from
+  %% position b on, its minors read from the table T of row r + 1
+  dxrow(M, r, S, T, b): RECURSIVE mpoly =
+    IF b >= length(S) THEN mconst(0)
+    ELSE madd(mmul(mmul(msgn(b), M(r, nth(S, b))), dlook(drem(S, b), T)), dxrow(M, r, S, T, b + 1))
+    ENDIF
+  MEASURE IF b <= length(S) THEN length(S) - b ELSE 0 ENDIF
+
+  %% the determinants of the sets of m columns below n at row n - m
+  dtab(n, M, (m: upto(n))): RECURSIVE list[DEnt] =
+    IF m = 0 THEN (: (null[nat], mconst(1)) :)
+    ELSE LET T = dtab(n, M, m - 1) IN
+         map(LAMBDA (S: list[nat]): (S, dxrow(M, n - m, S, T, 0)))(dsubs(0, n, m))
+    ENDIF
+  MEASURE m
+
+  detf(n, M): mpoly = dlook(dcols(0, n), dtab(n, M, n))
+END det_fast_def

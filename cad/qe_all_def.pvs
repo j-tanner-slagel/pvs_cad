@@ -1,0 +1,22 @@
+qe_all_def: THEORY
+%----------------------------------------------------------------------------
+% Quantifier elimination for any number m >= 1 of free variables (GAP_PLAN.md
+% Tier 2).  Executable.  qe(m, os, F, phi) is qe1 (qe_def) for one free
+% variable; for two or more it is qe2 (qe2_def) when that answer is
+% quantifier-free, and otherwise qe2c (qe2c_u_def: the run with the free
+% families closed under the derivative, always quantifier-free); qe_all
+% proves it.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING qe2_def, qe2c_u_def
+
+  m: VAR posnat
+  os: VAR list[bool]
+  F: VAR list[list[mpoly]]
+  phi: VAR BF
+
+  qe(m, os, F, phi): QER =
+    IF m = 1 THEN qe1(os, F, phi)
+    ELSE LET r = qe2(m, os, F, phi) IN IF r`qf THEN r ELSE qe2c(m, os, F, phi) ENDIF
+    ENDIF
+END qe_all_def

@@ -1,0 +1,83 @@
+(|qelim_def|
+ (|atomsF_TCC1| 0
+  (|atomsF_TCC1-3| "" 3999873924
+   ("" (SKEEP*)
+    (("" (REPLACE -1) (("" (EXPAND "<<") (("" (PROPAX) NIL NIL)) NIL)) NIL))
+    NIL)
+   NIL SHOSTAK
+   (|atomsF| TERMINATION "atomsF(b)" #A((3) BASE-CHAR . "NIL") (29 15 29 24)))
+  (|atomsF_TCC1-2| "" 3999873912
+   ("" (SKEEP*) (("" (ASSERT) (("" (POSTPONE) NIL NIL)) NIL)) NIL) NIL SHOSTAK
+   (|atomsF| TERMINATION "atomsF(b)" #A((3) BASE-CHAR . "NIL") (29 15 29 24)))
+  (|atomsF_TCC1-1| NIL 3999873902 ("" (TERMINATION-TCC) NIL NIL)
+   ((<< ADT-DEF-DECL "(strict_well_founded?[Fm])" |rcf_fol| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (TRUE CONST-DECL "bool" |booleans| NIL))
+   NIL
+   (|atomsF| TERMINATION "atomsF(b)" #A((3) BASE-CHAR . "NIL") (29 15 29 24))))
+ (|atomsF_TCC2| 0
+  (|atomsF_TCC2-3| "" 3999873924
+   ("" (SKEEP*)
+    (("" (REPLACE -1) (("" (EXPAND "<<") (("" (PROPAX) NIL NIL)) NIL)) NIL))
+    NIL)
+   NIL SHOSTAK
+   (|atomsF| TERMINATION "atomsF(a)" #A((3) BASE-CHAR . "NIL") (30 25 30 34)))
+  (|atomsF_TCC2-2| "" 3999873913
+   ("" (SKEEP*) (("" (ASSERT) (("" (POSTPONE) NIL NIL)) NIL)) NIL) NIL SHOSTAK
+   (|atomsF| TERMINATION "atomsF(a)" #A((3) BASE-CHAR . "NIL") (30 25 30 34)))
+  (|atomsF_TCC2-1| NIL 3999873902 ("" (TERMINATION-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (<< ADT-DEF-DECL "(strict_well_founded?[Fm])" |rcf_fol| NIL))
+   NIL
+   (|atomsF| TERMINATION "atomsF(a)" #A((3) BASE-CHAR . "NIL") (30 25 30 34))))
+ (|atomsF_TCC3| 0
+  (|atomsF_TCC3-4| "" 3999873925
+   ("" (SKEEP*)
+    (("" (REPLACE -1) (("" (EXPAND "<<") (("" (PROPAX) NIL NIL)) NIL)) NIL))
+    NIL)
+   NIL SHOSTAK
+   (|atomsF| TERMINATION "atomsF(b)" #A((3) BASE-CHAR . "NIL") (30 36 30 45)))
+  (|atomsF_TCC3-3| "" 3999873913
+   ("" (SKEEP*) (("" (ASSERT) (("" (POSTPONE) NIL NIL)) NIL)) NIL) NIL SHOSTAK
+   (|atomsF| TERMINATION "atomsF(b)" #A((3) BASE-CHAR . "NIL") (30 36 30 45)))
+  (|atomsF_TCC3-1| NIL 3999873902 ("" (TERMINATION-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (<< ADT-DEF-DECL "(strict_well_founded?[Fm])" |rcf_fol| NIL))
+   NIL
+   (|atomsF| TERMINATION "atomsF(b)" #A((3) BASE-CHAR . "NIL") (30 36 30 45))))
+ (|atomsF_TCC4| 0
+  (|atomsF_TCC4-2| "" 3999873926
+   ("" (SKEEP*)
+    (("" (REPLACE -1) (("" (EXPAND "<<") (("" (PROPAX) NIL NIL)) NIL)) NIL))
+    NIL)
+   NIL SHOSTAK
+   (|atomsF| TERMINATION "atomsF(b)" #A((3) BASE-CHAR . "NIL") (31 14 31 23)))
+  (|atomsF_TCC4-0| "" 3999873914
+   ("" (SKEEP*) (("" (ASSERT) (("" (POSTPONE) NIL NIL)) NIL)) NIL) NIL SHOSTAK
+   (|atomsF| TERMINATION "atomsF(b)" #A((3) BASE-CHAR . "NIL") (31 14 31 23)))
+  (|atomsF_TCC4-1| NIL 3999873902 ("" (TERMINATION-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (<< ADT-DEF-DECL "(strict_well_founded?[Fm])" |rcf_fol| NIL))
+   NIL
+   (|atomsF| TERMINATION "atomsF(b)" #A((3) BASE-CHAR . "NIL") (31 14 31 23))))
+ (|qelim_TCC1| 0
+  (|qelim_TCC1-0| "" 3999873914 ("" (SKEEP*) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK (|qelim| SUBTYPE "m" "posnat" (55 23 55 24)))
+  (|qelim_TCC1-1| NIL 3999873902 ("" (SUBTYPE-TCC) NIL NIL)
+   ((TRUE CONST-DECL "bool" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL))
+   NIL (|qelim| SUBTYPE "m" "posnat" (55 23 55 24)))))
+

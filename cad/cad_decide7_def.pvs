@@ -1,14 +1,16 @@
 cad_decide7_def: THEORY
 %----------------------------------------------------------------------------
-% The decision behind (cad :cad-only? t): the verified CAD engine for two or
-% more quantifiers, the sectors of the line for fewer.  Executable.
+% The decision behind (cad :cad-only? t) in a theory that does not import
+% cad_decide8 (with it, decide8): the verified CAD engine for two or more
+% quantifiers, the sectors of the line for fewer.  Executable.
 %
 % A sentence with two or more quantifiers goes to decn_u: decn_o, the
 % n-level engine whose run is a proved cylindrical algebraic decomposition
 % (cad_verified), from u = 0, raising u until its certificate holds
 % (decide_u_def).  With one quantifier or none it goes to decq2, which
-% decides on the sectors of the line (their CAD properties are proved piece
-% by piece, not as one theorem).  Unlike decide5 (cad_decide5_def) there is
+% with one quantifier decides on the sectors of the real roots of F; that
+% these form a CAD of the line adapted to F is col_line's col_cad_line (the
+% case k = 0 of col_cells).  Unlike decide5 (cad_decide5_def) there is
 % no two-level fast path (decw), and the strategy (cad :cad-only? t) does no
 % witness search.
 %----------------------------------------------------------------------------

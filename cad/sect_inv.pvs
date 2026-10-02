@@ -62,13 +62,30 @@ BEGIN
     polylist(ql)(clr(fuel, a, ql, chain(ql))`a`ub) = 0
     IMPLIES clr(fuel, a, ql, chain(ql))`a`ub = value(a)
 
-  %% separating two roots: refine both until the intervals are disjoint
-  sepf(fuel, a, b): RECURSIVE [# ok: bool, a: Alg, b: Alg #] =
+  %% separating two roots: refine both until the intervals are disjoint.
+  %% sepf0 is the specification; sepf evaluates alg_sortc_def's sepcc, the
+  %% same bisection with each Sturm chain computed once (sepf_eq; QE_PLAN.md
+  %% 12, fix 3)
+  sepf0(fuel, a, b): RECURSIVE [# ok: bool, a: Alg, b: Alg #] =
     IF a`ub < b`lb THEN (# ok := TRUE, a := a, b := b #)
     ELSIF fuel = 0 THEN (# ok := FALSE, a := a, b := b #)
-    ELSE sepf(fuel - 1, refine(a), refine(b))
+    ELSE sepf0(fuel - 1, refine(a), refine(b))
     ENDIF
   MEASURE fuel
+  sepf(fuel, a, b): [# ok: bool, a: Alg, b: Alg #] =
+    IF a`ub < b`lb THEN (# ok := TRUE, a := a, b := b #)
+    ELSE LET s = sepcc(fuel, mkca(a), mkca(b)) IN (# ok := s`ok, a := s`sa`a, b := s`sb`a #)
+    ENDIF
+  c, d: VAR CA
+  sepcc_eq: LEMMA FORALL fuel: FORALL c, d:
+    sepcc(fuel, c, d)`ok = sepf0(fuel, c`a, d`a)`ok AND sepcc(fuel, c, d)`sa`a = sepf0(fuel, c`a, d`a)`a
+    AND sepcc(fuel, c, d)`sb`a = sepf0(fuel, c`a, d`a)`b
+  sepf_eq: LEMMA sepf(fuel, a, b) = sepf0(fuel, a, b)
+  sepf0_inv: LEMMA FORALL fuel: FORALL a, b:
+    value(sepf0(fuel, a, b)`a) = value(a) AND value(sepf0(fuel, a, b)`b) = value(b) AND
+    sepf0(fuel, a, b)`a`p = a`p AND sepf0(fuel, a, b)`b`p = b`p
+  sepf0_apart: LEMMA FORALL fuel: FORALL a, b: sepf0(fuel, a, b)`ok IMPLIES
+    sepf0(fuel, a, b)`a`ub < sepf0(fuel, a, b)`b`lb
   sepf_inv: LEMMA FORALL fuel: FORALL a, b:
     value(sepf(fuel, a, b)`a) = value(a) AND value(sepf(fuel, a, b)`b) = value(b) AND
     sepf(fuel, a, b)`a`p = a`p AND sepf(fuel, a, b)`b`p = b`p

@@ -5,10 +5,15 @@ development repository: the private `pvs_cad-dev`, branch `main`). Nothing in th
 `tools/env.sh`); always `git pull` first, because work moves between machines (an old copy
 on an external drive is stale). The goal and the phased plan are in
 `CAD_PLAN.md` and the endgame in `FINISH_PLAN.md`; read them first in every session.
-The CURRENT goal (set 2026-09-29) is `GAP_PLAN.md`: close the gap between decide5 and a
-verified CAD in the classical sense. Its status header records what is done (Tiers 0, 1A-1C and
-the cad_spec semi-algebraicity stage, 2026-09-30) -- read it before anything else. The previous
-goal, verified completeness of (cad) (`COMPLETENESS_PLAN.md`), was reached 2026-09-28. The reference paper is
+The goal set 2026-09-29 is `GAP_PLAN.md`: close the gap between decide5 and a verified CAD in
+the classical sense. Its status header records what is done: Tiers 0, 1A-1C and the cad_spec
+semi-algebraicity stage (2026-09-30); Tier 2, quantifier elimination (own plan and status:
+`QE_PLAN.md`; finished 2026-10-01 by qelim, with no prenex form); Tier 4, Collins's projection
+(`COLLINS_PLAN.md`, done 2026-10-01); and formulas as people write them (`FORMS_PLAN.md`, done
+2026-10-01). What is CURRENT is the "What remains" list under that header (next in line, per
+`COLLINS_PLAN.md`: the witness search on top of decide8, and a smaller projection, McCallum /
+Brown, for the Bath problems) -- read it before anything else. The previous goal, verified
+completeness of (cad) (`COMPLETENESS_PLAN.md`), was reached 2026-09-28. The reference paper is
 Narkawicz, Muñoz, Dutle, J. Automated Reasoning 54 (2015), doi 10.1007/s10817-015-9320-x
 (Sturm/Tarski decision procedures in PVS).
 The PVS library being built lives in `cad/` (one theory per concern, `top.pvs` with
@@ -26,8 +31,8 @@ Do not recreate it here.
 - On a new machine run `tools/setup.sh` once: it creates the repo's `.venv` (websockets for
   pvs-cli; not committed) and checks that PVS, proveit and the NASALib libraries are found.
 - Check `proveit --version` and `$NASALIB/nasalib-version` at the start of a phase.
-- Libraries this work builds on: `Sturm`, `Tarski`, `mult_poly`, `Bernstein`, `reals`,
-  `analysis`, `structures`, `complex`; strategy toolkit in `$PVS_DIR/src/Field/extrategies.lisp`.
+- Libraries this work builds on: `reals`, `Sturm`, `Tarski`, `structures`, `analysis`,
+  `complex`, `mult_poly`, `matrices`, `interval_arith` (the list `tools/setup.sh` checks); strategy toolkit in `$PVS_DIR/src/Field/extrategies.lisp`.
 - On a small-RAM machine watch `vm_stat | sed -n 2p`; below ~5000 free pages `proveit`
   hangs. Close other apps rather than fight it (the user has permitted this).
 

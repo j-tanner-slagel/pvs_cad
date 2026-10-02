@@ -1,0 +1,457 @@
+(|qe2_def|
+ (|qsn_TCC1| 0
+  (|qsn_TCC1-2| "" 3999781784 ("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK (|qsn| SUBTYPE "n - 1" "nat" (41 78 41 83)))
+  (|qsn_TCC1-1| NIL 3999781772 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
+   NIL (|qsn| SUBTYPE "n - 1" "nat" (41 78 41 83))))
+ (|qsn_TCC2| 0
+  (|qsn_TCC2-2| "" 3999781785 ("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK
+   (|qsn| TERMINATION "qsn(n - 1)" #A((3) BASE-CHAR . "NIL") (41 74 41 84)))
+  (|qsn_TCC2-1| NIL 3999781772 ("" (TERMINATION-TCC) NIL NIL)
+   ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
+   NIL
+   (|qsn| TERMINATION "qsn(n - 1)" #A((3) BASE-CHAR . "NIL") (41 74 41 84))))
+ (|qsn_len| 0
+  (|qsn_len-0| "" 3999781817
+   ("" (INDUCT "n")
+    (("1" (EXPAND "qsn") (("1" (EXPAND "length") (("1" (PROPAX) NIL NIL)) NIL))
+      NIL)
+     ("2" (EXPAND "qsn")
+      (("2" (EXPAND "length")
+        (("2" (SKEEP)
+          (("2" (EXPAND "qsn" 1)
+            (("2" (EXPAND "length" 1) (("2" (PROPAX) NIL NIL)) NIL)) NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)
+  (|qsn_len-1| NIL 3999781817 ("" (POSTPONE) NIL NIL)
+   ((|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|pred| TYPE-EQ-DECL NIL |defined_types| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|qsn| DEF-DECL "list[bool]" |qe2_def| NIL)
+    (|nat_induction| FORMULA-DECL NIL |naturalnumbers| NIL))
+   SHOSTAK))
+ (|ntake_TCC1| 0
+  (|ntake_TCC1-2| "" 3999781785 ("" (SUBTYPE-TCC) NIL NIL) NIL SHOSTAK
+   (|ntake| SUBTYPE "A" "(list_adt[real].cons?)" (49 54 49 55)))
+  (|ntake_TCC1-1| NIL 3999781772 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL))
+   NIL (|ntake| SUBTYPE "A" "(list_adt[real].cons?)" (49 54 49 55))))
+ (|ttake_TCC1| 0
+  (|ttake_TCC1-2| "" 3999781786 ("" (SUBTYPE-TCC) NIL NIL) NIL SHOSTAK
+   (|ttake| SUBTYPE "TW"
+    "(list_adt[list_adt[list_adt[mpoly_adt.mpoly].list].list].cons?)"
+    (52 69 52 71)))
+  (|ttake_TCC1-1| NIL 3999781772 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   NIL
+   (|ttake| SUBTYPE "TW"
+    "(list_adt[list_adt[list_adt[mpoly_adt.mpoly].list].list].cons?)"
+    (52 69 52 71))))
+ (|dnrs_TCC1| 0
+  (|dnrs_TCC1-2| "" 3999781786 ("" (SUBTYPE-TCC) NIL NIL) NIL SHOSTAK
+   (|dnrs| SUBTYPE "A" "(list_adt[nat].cons?)" (54 70 54 71)))
+  (|dnrs_TCC1-1| NIL 3999781772 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL))
+   NIL (|dnrs| SUBTYPE "A" "(list_adt[nat].cons?)" (54 70 54 71))))
+ (|dnrs_TCC2| 0
+  (|dnrs_TCC2-2| "" 3999781787
+   ("" (SKEEP) (("" (EXPAND "length" 2 2) (("" (ASSERT) NIL NIL)) NIL)) NIL)
+   NIL SHOSTAK
+   (|dnrs| TERMINATION "dnrs(cdr[nat](A), dnr(car[real](A), L))"
+    #A((3) BASE-CHAR . "NIL") (54 61 54 89)))
+  (|dnrs_TCC2-1| NIL 3999781772 ("" (TERMINATION-TCC) NIL NIL)
+   ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL))
+   NIL
+   (|dnrs| TERMINATION "dnrs(cdr[nat](A), dnr(car[real](A), L))"
+    #A((3) BASE-CHAR . "NIL") (54 61 54 89))))
+ (|fpl_TCC1| 0
+  (|fpl_TCC1-2| "" 3999781787 ("" (SUBTYPE-TCC) NIL NIL) NIL SHOSTAK
+   (|fpl| SUBTYPE "TW"
+    "(list_adt[list_adt[list_adt[mpoly_adt.mpoly].list].list].cons?)"
+    (61 76 61 78)))
+  (|fpl_TCC1-1| NIL 3999781772 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|posnat| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|nonneg_int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (> CONST-DECL "bool" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
+   NIL
+   (|fpl| SUBTYPE "TW"
+    "(list_adt[list_adt[list_adt[mpoly_adt.mpoly].list].list].cons?)"
+    (61 76 61 78))))
+ (|fpl_TCC2| 0
+  (|fpl_TCC2-2| "" 3999781788 ("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK (|fpl| SUBTYPE "m - j - 2" "nat" (61 60 61 69)))
+  (|fpl_TCC2-1| NIL 3999781772 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL))
+   NIL (|fpl| SUBTYPE "m - j - 2" "nat" (61 60 61 69))))
+ (|fpl_TCC3| 0
+  (|fpl_TCC3-2| "" 3999781788
+   ("" (SKEEP) (("" (EXPAND "length" 3 2) (("" (ASSERT) NIL NIL)) NIL)) NIL)
+   NIL SHOSTAK
+   (|fpl| TERMINATION "fpl(cdr[list[list[mpoly]]](TW), m, j + 1)"
+    #A((3) BASE-CHAR . "NIL") (61 82 61 104)))
+  (|fpl_TCC3-1| NIL 3999781772 ("" (TERMINATION-TCC) NIL NIL)
+   ((|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL))
+   NIL
+   (|fpl| TERMINATION "fpl(cdr[list[list[mpoly]]](TW), m, j + 1)"
+    #A((3) BASE-CHAR . "NIL") (61 82 61 104))))
+ (|recof_TCC1| 0
+  (|recof_TCC1-2| "" 3999781789 ("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK (|recof| SUBTYPE "m - 1" "nat" (72 51 72 56)))
+  (|recof_TCC1-1| NIL 3999781772 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
+   NIL (|recof| SUBTYPE "m - 1" "nat" (72 51 72 56))))
+ (|gatoms_TCC1| 0
+  (|gatoms_TCC1-2| "" 3999781789 ("" (SUBTYPE-TCC) NIL NIL) NIL SHOSTAK
+   (|gatoms| SUBTYPE "G" "(list_adt[mpoly_adt.mpoly].cons?)" (84 60 84 61)))
+  (|gatoms_TCC1-1| NIL 3999781772 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL))
+   NIL
+   (|gatoms| SUBTYPE "G" "(list_adt[mpoly_adt.mpoly].cons?)" (84 60 84 61))))
+ (|gatoms_TCC2| 0
+  (|gatoms_TCC2-2| "" 3999781790 ("" (SUBTYPE-TCC) NIL NIL) NIL SHOSTAK
+   (|gatoms| SUBTYPE "w" "(list_adt[real].cons?)" (84 68 84 69)))
+  (|gatoms_TCC2-1| NIL 3999781772 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL))
+   NIL (|gatoms| SUBTYPE "w" "(list_adt[real].cons?)" (84 68 84 69))))
+ (|gatoms_TCC3| 0
+  (|gatoms_TCC3-2| "" 3999781790
+   ("" (SKEEP) (("" (EXPAND "length" 3 2) (("" (ASSERT) NIL NIL)) NIL)) NIL)
+   NIL SHOSTAK
+   (|gatoms| TERMINATION "gatoms(cdr[mpoly](G), cdr[Sign3](w))"
+    #A((3) BASE-CHAR . "NIL") (84 73 84 95)))
+  (|gatoms_TCC3-1| NIL 3999781772 ("" (TERMINATION-TCC) NIL NIL)
+   ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL))
+   NIL
+   (|gatoms| TERMINATION "gatoms(cdr[mpoly](G), cdr[Sign3](w))"
+    #A((3) BASE-CHAR . "NIL") (84 73 84 95))))
+ (|jprune2_TCC1| 0
+  (|jprune2_TCC1-1| NIL 3999786015 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|jprune2| SUBTYPE "J" "(list_adt[nat].cons?)" (109 70 109 71))))
+ (|jprune2_TCC2| 0
+  (|jprune2_TCC2-1| NIL 3999786015 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+   (|jprune2| TERMINATION "jprune2(K, cdr[nat](J), es2)"
+    #A((3) BASE-CHAR . "NIL") (109 55 109 78))))
+ (|jprune2_TCC3| 0
+  (|jprune2_TCC3-1| NIL 3999786015 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|jprune2| SUBTYPE "J" "(list_adt[real].cons?)" (110 34 110 35))))
+ (|jprune2_TCC4| 0
+  (|jprune2_TCC4-0| "" 3999786499
+   ("" (SKEEP)
+    (("" (EXPAND "every") (("" (EXPAND "every") (("" (ASSERT) NIL NIL)) NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK
+   (|jprune2| SUBTYPE "(: car[real](J) :)" "list[nat]" (110 27 110 39)))
+  (|jprune2_TCC4-1| NIL 3999786015 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
+   NIL (|jprune2| SUBTYPE "(: car[real](J) :)" "list[nat]" (110 27 110 39))))
+ (|jprune2_TCC5| 0
+  (|jprune2_TCC5-1| NIL 3999786015 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+   (|jprune2| TERMINATION
+    "jprune2(append[nat](K, (: car[real](J) :)), cdr[nat](J), es2)"
+    #A((3) BASE-CHAR . "NIL") (110 9 110 54))))
+ (|maxsz_TCC1| 0
+  (|maxsz_TCC1-1| NIL 3999786015 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|maxsz| SUBTYPE "G" "(list_adt[mpoly_adt.mpoly].cons?)" (118 66 118 67))))
+ (|maxsz_TCC2| 0
+  (|maxsz_TCC2-1| NIL 3999786015 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+   (|maxsz| TERMINATION "maxsz(cdr[mpoly](G))" #A((3) BASE-CHAR . "NIL")
+    (118 71 118 84))))
+ (|qe2_c_TCC1| 0
+  (|qe2_c_TCC1-2| "" 3999781791 ("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK (|qe2_c| SUBTYPE "k" "nat" (142 32 142 33)))
+  (|qe2_c_TCC1-1| NIL 3999781772 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL))
+   NIL (|qe2_c| SUBTYPE "k" "nat" (142 32 142 33))))
+ (|qe2_o_TCC1| 0
+  (|qe2_o_TCC1-2| "" 3999781791 ("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL) NIL
+   SHOSTAK (|qe2_o| SUBTYPE "m - 1 + length[bool](qb)" "nat" (147 41 147 59)))
+  (|qe2_o_TCC1-1| NIL 3999781772 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
+   NIL (|qe2_o| SUBTYPE "m - 1 + length[bool](qb)" "nat" (147 41 147 59))))
+ (|qe2_u_TCC1| 0
+  (|qe2_u_TCC1-3| "" 3999781848
+   ("" (SKEEP)
+    ((""
+      (USE "decn_u_TCC2" :SUBST
+           ("qs" "qsn(m + length(qb))" "F" "F" "Psi" "Psi" "u" "u" "d"
+            "decn_o(u, qsn(m + length(qb)), F, Psi)"))
+      (("" (ASSERT)
+        (("" (SPLIT 1)
+          (("1" (REPLACE -2)
+            (("1" (HIDE -2)
+              (("1" (EXPAND "qe2_o")
+                (("1" (ASSERT)
+                  (("1" (EXPAND "runok")
+                    (("1" (EXPAND "decn_o")
+                      (("1" (EXPAND "runsects")
+                        (("1" (EXPAND "runq")
+                          (("1" (USE "qsn_len" :SUBST ("n" "length(qb) + m"))
+                            (("1" (EXPAND "qsn" -2)
+                              (("1" (ASSERT)
+                                (("1"
+                                  (USE "qsn_len" :SUBST
+                                       ("n" "length(qb) - 1 + m"))
+                                  (("1" (REPLACE -1)
+                                    (("1"
+                                      (CASE "null?(qsn(length(qb) - 1 + m))")
+                                      (("1" (ASSERT) NIL NIL)
+                                       ("2" (ASSERT)
+                                        (("2" (GROUND)
+                                          (("2" (EXPAND "qe2_c")
+                                            (("2" (PROPAX) NIL NIL)) NIL))
+                                          NIL))
+                                        NIL))
+                                      NIL))
+                                    NIL))
+                                  NIL))
+                                NIL))
+                              NIL))
+                            NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL)
+           ("2" (EXPAND "qsn") (("2" (PROPAX) NIL NIL)) NIL)
+           ("3" (EXPAND "qsn")
+            (("3" (EXPAND "qsn") (("3" (PROPAX) NIL NIL)) NIL)) NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK
+   (|qe2_u| TERMINATION "qe2_u(m, qb, F, Psi, u + 1)" #A((3) BASE-CHAR . "NIL")
+    (151 48 151 75)))
+  (|qe2_u_TCC1-1| NIL 3999781772 ("" (TERMINATION-TCC) NIL NIL)
+   ((|decn_o| CONST-DECL "[# ok: bool, val: bool #]" |towern_od| NIL)
+    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL) NIL
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|posnat| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (> CONST-DECL "bool" |reals| NIL)
+    (|nonneg_int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (+ CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
+    (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
+    (|qsn| DEF-DECL "list[bool]" |qe2_def| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|decn_u_TCC2| TERMINATION-TCC NIL |decide_u_def| NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|runq| CONST-DECL "list[list[mpoly]]" |cad_run| NIL)
+    (|qe2_c| CONST-DECL "QER" |qe2_def| NIL)
+    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (- CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
+    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|qsn_len| FORMULA-DECL NIL |qe2_def| NIL)
+    (|runsects| CONST-DECL "list[Sect]" |cad_run| NIL)
+    (|runok| CONST-DECL "bool" |qe2_def| NIL)
+    (|qe2_o| CONST-DECL "QER" |qe2_def| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
+   NIL
+   (|qe2_u| TERMINATION "qe2_u(m, qb, F, Psi, u + 1)" #A((3) BASE-CHAR . "NIL")
+    (151 48 151 75)))))
+

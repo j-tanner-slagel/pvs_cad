@@ -1,0 +1,42 @@
+(|alg_rat_def|
+ (|qroot_TCC1| 0
+  (|qroot_TCC1-1| NIL 3999810057 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|qroot| SUBTYPE "rs" "(list_adt[real].cons?)" (27 28 27 30))))
+ (|qroot_TCC2| 0
+  (|qroot_TCC2-0| "" 3999810064
+   ("" (SKEEP)
+    (("" (ASSERT) (("" (EXPAND "length" 3 2) (("" (ASSERT) NIL NIL)) NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK
+   (|qroot| TERMINATION "qroot(a, cdr[rat](rs))" #A((3) BASE-CHAR . "NIL")
+    (28 9 28 26)))
+  (|qroot_TCC2-1| NIL 3999810057 ("" (TERMINATION-TCC) NIL NIL)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
+   NIL
+   (|qroot| TERMINATION "qroot(a, cdr[rat](rs))" #A((3) BASE-CHAR . "NIL")
+    (28 9 28 26))))
+ (|lin1_TCC1| 0
+  (|lin1_TCC1-1| NIL 3999810057 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|lin1| SUBTYPE "1" "below[length[rat](q)]" (34 32 34 33))))
+ (|lin1_TCC2| 0
+  (|lin1_TCC2-1| NIL 3999810057 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|lin1| SUBTYPE "0" "below[length[rat](q)]" (34 56 34 57))))
+ (|qmids_TCC1| 0
+  (|qmids_TCC1-1| NIL 3999810057 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|qmids| SUBTYPE "n" "posnat" (37 79 37 80))))
+ (|qmids_TCC2| 0
+  (|qmids_TCC2-1| NIL 3999810057 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
+   (|qmids| SUBTYPE "n - 1" "nat" (37 92 37 97))))
+ (|qmids_TCC3| 0
+  (|qmids_TCC3-1| NIL 3999810057 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+   (|qmids| TERMINATION "qmids(a, n - 1)" #A((3) BASE-CHAR . "NIL")
+    (37 83 37 98)))))
+

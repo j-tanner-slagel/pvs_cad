@@ -4702,6 +4702,701 @@ tools/import_paths.py reports theories, edges and path counts per directory.
   proof under the changed strategies.  Overview figures: 256 theories, 3,814 formulas (2,609
   lemmas and theorems, 1,205 TCCs), 20,133 lines of PVS, 1,964 lines of strategies.
 
+## 2026-09-30 — cad_found: the CAD with the search for u built in
+
+- cad_found_def (executable, 2 TCCs): cad_outu(qs, F, u) raises u from its argument until
+  decn_o's certificate holds (for the trivial Boolean combination psi_any; the certificate
+  does not depend on the sentence) and returns fu with frecs = cad_out(fu, qs, F);
+  cad_found(qs, F) starts at u = 0.  Termination on decn_u's measure umeas (TCC2 from
+  decn_u_TCC2).
+- cad_found_ok (4 formulas): cadu_ok (measure induction, as decn_u_complete), cadu_recs,
+  cad_found_cad (for two or more variables the result is a CAD adapted to F, cad_of?, and
+  its records are cad_out at fu), cad_found_decides (those records decide every sentence
+  over F in the same variables and order).  So the algorithm needs no u from the user:
+  cad_found is the complete CAD function.
+- cad_out_ex: circ_found, cad_found on the circle returns fu = 0 and the 15 records of
+  cad_out(0, qs2, circF) (eval-formula, 4 s).
+- Verified: gate passed for cad_found_def, cad_found_ok, cad_out_ex (three fresh runs +
+  traces, 0 warnings); top.pvs typechecks with both theories imported.  Library 258
+  theories, 3,821 formulas (3,814 replayed earlier today + 7 new, gated).
+- Next: GAP_PLAN Tier 2 (general quantifier elimination), stage G0 under way: the windowed
+  question's run is certified at u = 0 (13 sectors).
+
+## 2026-09-30 — GAP_PLAN Tier 2, stage 1: quantifier elimination for one free variable
+
+- Plan saved as QE_PLAN.md (design merged from two drafts and a review; user: do all of it --
+  stage 1, stage 2, epc_ok, 2C).  Gate G0 (windowed question, t bound, D free): decn_o's certificate
+  at u = 0, 13 sectors, the per-sector values TRUE exactly where D^2 > 5, and one member of the
+  projection set (125/4 - 25/4 D^2) negative exactly on the TRUE sectors; all under 1 s.
+- Executable: qe_ldd[T] (duplicate removal), qe_fm_def (qf?, f_orl, f_andl, qfsem), qe_def:
+  qe1_o(u, qb, F, Psi) = qe1_c at Q = runq (the run's first-level projection set); per sector of
+  the line an entry (sector, scval at the sample, osv_of Q's signs); qe1_s builds the output from Q
+  and the entries alone: minJ (greedy, untrusted) picks indices J, sep1? checks that equal signs on
+  J mean equal values, and then out = OR over the TRUE sign vectors of the AND of their sign
+  conditions (qf), else OR of the TRUE sectors' sectF (correct, not quantifier-free).  qe1_u raises
+  u on decn_u's measure (TCC from decn_u_TCC2 via the ok of qe1_o = decn_o's ok).
+- Proofs (qe_ldd_ok 1, qe_fm 4, qe1_ok 22; exec TCCs 19): qe1_s_sem, the abstract core (if every
+  entry whose sector holds x carries the truth value and Q's signs at x, and some sector holds x,
+  then out holds at x iff the truth value); sig1_inv (osv_ok, odS_den, sect_svec); qe1_ent/qe1_cov
+  (memn_ok, sectn_sem, tw0_shape, sects_cover); qe1_correct: qe1_o(u, qb, F, Psi)`ok IMPLIES
+  (qfsem(out)((: x :)) IFF sem(qb, F, Psi, (: x :))); qe1_qf; qe1_u_ok (always ok), qe1_u_eq;
+  qe1_bf (for (cad-qe)).  All gated (three fresh runs + traces).
+- (cad-qe FNUM) in pvs-strategies: parses the prenex formula like (cad-direct), requires exactly
+  one free real term, evaluates qe1, prints the answer over the free variable, and replaces FNUM by
+  it after proving ORIG IFF TEXT: TEXT side by unfolding qfsem, one reflection equation per output
+  polynomial, atom equations and bddsimp; ORIG side by a case on fsem and (cad)'s quantifier walk in
+  the direction the case leaves.  The answer is rewritten from its printed form (eval-formula on
+  qe1(...)`out = OUT) so that every formula comes from the same text (the evaluator's rational
+  literals print as 125/4 but parse back as 125 / 4).  qe_cad_ex (gated): qe_win (the window, 2-3 s
+  per direction, answer 125/4 + (-25/4)*D^2 < 0), qe_sqrt ((-4)*D = 0 OR (-4)*D < 0), qe_disc
+  (4 + (-1)*b^2 > 0).
+- Measured, not kept: a x^2 + x + 1 = 0 gives a correct four-disjunct answer (not minimal);
+  two bound variables (x^2 + y^2 < r, with or without x + y > 1) did not finish in 600 s -- the
+  three-level engine cost (Bath three-quantifier problems also took 280 s or more).
+- Lesson: a Python edit of pvs-strategies matched an older (defun qe-strategy (Phase 3) and deleted
+  1,100 lines; the running server kept the old definitions in memory, so interactive tests passed
+  while proveit failed (cad_endgame_ex 2/20).  Restored from HEAD; the new code uses cadqe- names;
+  proveit on cad_endgame_ex (20/20), qe_examples (21/21) and qe_cad_ex (7/7) after the fix.  Check
+  batch proveit on a strategy demo after every strategy edit.
+- Next: output polish (normalized polynomials, simpler disjunctions), stage 2 (m >= 2), epc_ok, 2C.
+
+## 2026-09-30 — QE for one free variable is complete: EP and epc_ok
+
+- minJ drops the longest projection-set members first (lenord), so the kept sign conditions have
+  low degree: on the disc-and-half-plane question (EXISTS x, y: x^2 + y^2 < r AND x + y > 1) the
+  answer is now (-1/2) + r > 0 instead of a degree-6 disjunction.  minJ is untrusted, and the
+  output builder is now qe1_sJ(Q, es, J) for ANY index set J (qe1_s = qe1_sJ at minJ), proved once
+  (qe1_sJ_sem), so tuning minJ touches no proof.
+- (cad-qe) evaluates qe1 once, inside the proof (eval-expr, as cad-direct does), and checks the
+  printed answer against the evaluated record by a ground evaluation of constants only; the
+  record's rational literals are read by cadqe-num.  Disc-and-half-plane: 569 -> 277 s per
+  direction (the three-level run itself; not in the gated demos).  qe_disc2 (x^2 + y^2 < r iff
+  r > 0, two bound variables) added to qe_cad_ex: 4 s.
+- qe_ep_def / qe_ep (EP, 7 + 16 formulas): x <, =, > value(b) quantifier-free in x for a real
+  algebraic b, from a record checked at run time (a rational value, or a polynomial q with value(b)
+  its one root on [elb, eub] and a sign change there; ep_side: x < value(b) iff q(x) has q(elb)'s
+  sign, on the interval); cmpX falls back to cmpF, sectX(s) is in?(s, x) (sectX_ok).  qe1's
+  fallback (signs do not separate) is now the disjunction of the TRUE sectors' sectX, and
+  qf := qf?(out).
+- qe_ep_ok (18 formulas): epc_ok -- the check always passes.  deriv_bridge (the Polylist
+  derivative pderiv evaluates as crit_pos's derivative of the polynomial function), simple_change
+  (a simple root with no other root in [a, c] is a sign change: otherwise an interior extremum,
+  NASALib deriv_minimum / deriv_maximum), nderiv_top, deg0_dz, mltd_inv (the multiplicity search
+  stops at a simple root of p^(k)), ratroot_spec; clrx's lemmas give the interval.
+- qe1_full (5): qe1_isqf and qe1_complete -- for every prenex formula in one free variable x,
+  qe1 computes a quantifier-free formula in x that holds exactly where the formula does.
+
+## 2026-09-30 — GAP_PLAN Tier 2, stage 2: quantifier elimination for any number of free variables
+
+- qe2_def (24 formulas, executable): QE for m >= 2 free variables.  One decn_o run on the free and
+  bound variables together (cad_out's records); over each sector s of the outermost free variable
+  the free cells are the records' first m - 1 stack indices (fkeys), a free cell's value is the fold
+  of the bound quantifiers over its records (afold), and its signature is the signs of the free
+  levels' polynomials of s's tower (fpolys) at one of its records' samples (sigat).  secout(s):
+  FALSE / TRUE when all free cells agree, else the disjunction of the TRUE signatures' sign
+  conditions when equal signatures mean equal values (sep2?), else of the TRUE cells' formulas
+  (cellF: correct but not quantifier-free).  The answer is the disjunction over the sectors of
+  sectX(s) (lifted past the inner free variables) and secout(s).  Untrusted output shaping, proved
+  once for any choice: min2J cuts the signatures down to the members that still separate (largest
+  polynomials first, as minJ does for one free variable); an all-TRUE sector contributes sectX(s)
+  alone; ratc also tries the root of a linear multiplicity derivative and 0, so a rational end
+  point prints as b < 0 instead of an isolating interval.
+- qe2_ok (66): qe2_correct -- under the run's certificate the output holds at (y1, ..., ym) iff
+  the bound quantifiers do.  secoutE_sem is abstract (no engine); over one sector the record facts
+  (sector_recs) are pushed down m - 1 levels (desc_all), a free cell's fold is its meaning
+  (afold_sem), every free cell holding a point is a key (key_cover), a key's record lies over its
+  cell (rec_over), and the free levels' polynomials keep their signs on a free cell (fp_inv), so the
+  signature at the record is the signature at the point (sig_at_rec); secout_sem, sect_sem,
+  qe2_c_sem.  qe2_u_ok (the escalation reaches the certificate), qe2_bf (the form (cad-qe) uses).
+  secsig_sem (the old secoutE_sem) and the new secoutE_sem / qe2_c_sem were replayed through the
+  prover with (rerun SCRIPT) from PVS's own editable-justification export, one name or lambda
+  changed -- PVS rewrote the .prf.
+- qe_all_def / qe_all (3): qe(m, os, F, phi) = qe1 for m = 1, qe2 otherwise; qe_correct for every
+  m >= 1: qe's output holds at a point of length m iff the prenex formula does; qe_qf (qf means
+  quantifier-free); qe_qf1 (always quantifier-free for m = 1).
+- (cad-qe) takes any number of free variables: the reflection uses qe_correct, and answer
+  polynomials are checked on normal forms (cadqe-mev: mnorm(mpol(L)) = pnorm(E) by evaluation,
+  carried back by meval_mnorm), since a tower family's coefficients can be unnormalized zeros.
+  qe_cad_ex: qe_eq2 ((EXISTS t: t = a AND t = b) IFF a = b, 7 s) and qe_quad ((EXISTS t: t^2 + a t +
+  b = 0) IFF a^2 >= 4 b, 5 s; answer b < 0 OR b = 0 OR (b /= 0 AND NOT b < 0 AND (a^2 - 4b = 0 OR
+  a^2 - 4b > 0))).  Before the output shaping the qe_quad answer carried constant atoms (1 > 0,
+  0 = 0), four copies of the discriminant condition and an isolating interval for b < 0, and the
+  IFF form of qe_eq2 left 92 subgoals.
+- Gates: qe2_def, qe2_ok, qe_ep_def, qe_all, qe_cad_ex (qe_all_def has no formulas: typechecks
+  clean); strategy regressions cad_endgame_ex 20/20, qe_examples 21/21.
+- What stage 2 does not give: for m >= 2 the answer is quantifier-free only when sep2? holds in
+  every sector (qf flag); otherwise it is the proved-correct cellF form.  2C (derivative closure of
+  the free levels) makes it unconditional -- next.
+
+## 2026-09-30 — 2C, first half: derivative-closed free families separate the free cells
+
+- qe_thom (15 formulas): on one fiber.  dcl?(G) (lderiv of every member is a member) gives every
+  lder(g, j) (lder_mem); the fiber polynomial of g at its actual degree n (fiber_deg, from NASALib's
+  polynomial_degree_existence) has the fiber polynomials of lder(g, j) as derivatives (earr_lder,
+  from earr_deriv) and truncating at n - j changes nothing (eval_deg: dk_above + extend_polynomial).
+  fiber_const: if y1 <= y2 have the same sign vector on G, each member not identically zero on the
+  fiber keeps its sign on [y1, y2] -- thom_lemma's sat_convex (real coefficients).  fiber_noroot: so
+  no root of G lies in [y1, y2] (otherwise g vanishes on an interval: poly_not_zero_interval), and
+  fiber_sidx: the stack index is the same.
+- qe_tsep (3): stk_sep -- over a base cell where G is delineable, two points of stacks a and b
+  with the same sign vector have a = b (the second point is moved to the first one's fiber with
+  sec_in and delin_cl?'s sign invariance); tcell_sep -- by induction over the tower, two cells whose
+  points agree on every family (tsame?) are the same cell.
+- qe2_sep (15): fpl_same / fp_tsame (equal signatures on fpolys mean equal sign vectors on every
+  free family at its own level), over_ttake, nth_ttake, key_pt (a key's record gives a point of its
+  free cell carrying the entry's signature: recof_ok, rec_over, sig_at_rec), and ents_sep: if the
+  free part ttake(TW, m - 1) of a sector's tower has derivative-closed families, sep2? holds on the
+  sector's entries -- the answer over that sector is quantifier-free.
+- Remaining for 2C (QE_PLAN.md section 11): the run from an initial tower whose free families are
+  closed under lderiv (executable, with the run-time check), soundness of that run for any certified
+  initial tower, completeness of the derivative closure, and qe_complete.
+
+## 2026-09-30 — 2C complete: QE always returns a quantifier-free formula (qe_complete)
+
+- runT_def / runT_ok (16): decn_o's run with the initial tower as an argument (runqT, runsectsT,
+  runtwT, runokT, cad_outT) and the facts cad_run / cad_out_ok / cad_fold_ok prove for it, for any
+  initial tower: each sector's closed tower is a CAD (sectorT_cad), the records lie in their cells
+  (cad_outT_in) and name every nonempty cell (cad_outT_cov), F is sign-invariant (sectorT_fsinv),
+  bundled as sectorT_recs.  The originals used the initial tower only through its length and last
+  family; sectorT_inv / sectorT_cad / cad_outT_mem were replayed from their scripts.
+- qe2_def: secoutE uses the pruned signatures (min2J) only when they still separate (secoutJ_sem,
+  secoutE_sem re-proved); qe2_sep adds qf_secoutE -- separating entries give a quantifier-free
+  answer.
+- qe2c_def / qe2c_ok (12 + 18): the run from tw0(k, F) with the free families grown by formal
+  derivatives (taug) of every sector's closed free families, repeated until a round adds nothing
+  (augT); dclok checks that every sector's closed free families are derivative-closed.
+  qe2c_correct: when qe2c_o succeeds, its answer is quantifier-free (qe2c_c_qf, from ents_sep and
+  qf_secoutE) and correct (qe2c_c_sem, qe2_c_sem's proof over runT_ok).  On the quadratic
+  (EXISTS t: t^2 + a t + b = 0) the augmented tower (5 -> 9 polynomials) passes the certificate
+  and the check at u = 0 in 2 s.
+- aug_univ (39): the whole augmentation stays in one finite universe fixed by the initial tower:
+  tu1 builds each level's universe from the top down as tul does (the level's family, the reads
+  RW of every list over the level above's universe with at most as many members as a family there
+  can have -- rwalld -- and, at the free levels, all formal derivatives: dcls/alld).  tinvd?: every
+  tower of the process is its initial tower plus distinct new members of the universe.  The
+  engine's closure keeps it (treads_subd, zipadd_invd, tclos_invd -- tower_univ's treads_sub /
+  zipadd_inv replayed with the new universe), so does taug (taug_invd: the free universes are
+  closed under lderiv, dcls_closed), so tsize stays below tbndd; hence augT reaches a round that
+  adds nothing (aug_stop) and more fuel changes nothing (aug_same).
+- aug_ev (22): runokT_ev (decn_complete's decn_ev with the tower as an argument); a round and any
+  fixed number of rounds are eventually constant in u (aug1_evc, augT_evc: nclos_evc_fuel,
+  lvln_evc); a round that adds nothing leaves every sector's free families derivative-closed
+  (fix_dclok: the closure only adds members, tclos_sub; a step that does not grow adds nothing,
+  taug_same / augall_fix; dvs_dcl); qe2c_ev / qe2c_complete: for every m >= 2 and prenex formula,
+  qe2c_o succeeds for every large u.
+- qe2c_u_def / qe2c_full (2 + 6): qe2c raises u until qe2c_o succeeds (measure from qe2c_ev's
+  bound, as decide_u_def); qe2c_bf: always ok, quantifier-free and correct.
+- qe_all_def / qe_all: qe = qe1 for one free variable; for more, qe2 when its answer is
+  quantifier-free, otherwise qe2c.  qe_correct (same statement), qe_isqf (the flag is always
+  set) and qe_complete: for every m >= 1, cons?(os) and every point of R^m, qe(m, os, F, phi) is
+  quantifier-free and holds there exactly when the prenex formula does -- quantifier elimination
+  for the reals (Tarski-Seidenberg), computed and proved.
+- Output polish (same day): ratc also tries the simplest rationals near the middle of a root's isolating
+  interval (untrusted; epc_ok unchanged), and gtQ of a rational record is the single atom x - r > 0
+  (gtQ_ok, qf_gtQ re-proved), so answers read "c + 1 = 0", "b > 0" instead of isolating intervals and
+  NOT-NOT pairs.  docs/qe_capabilities.pdf (4 pages): qe_complete, fourteen examples with the answers as
+  printed (one free variable 2-6 s, two 3-5 s, the general quadratic with three free variables 12 s),
+  two transcripts, how it works, limits.
+
+## 2026-10-01 — QE speed and output: rational samples, merged answers, Sturm chains computed once
+
+Prompted by the limits experiment (every ∀/∃ prefix for n = 1, 2, 3, ...): n = 3 took about 4 min
+(linear bounds) and did not finish in 2 h (quadratic bounds).  The question was whether that is
+normal.  It was partly not: profiles (tools/prof, sb-sprof and sb-profile) found defects, fixed
+here with proofs; QE_PLAN.md section 12 has the account.
+- Fix 1, rational samples.  alg_rat_def / alg_rat (ratx: a checked rational value of an
+  algebraic number, ratx_r / ratx_b); towern_od's odS and osec make a rational root a rational
+  point (oddef's osec_val / osec_den, decn_ok's odS_wf / odS_den / odS_exact re-proved).  Linear
+  n = 3, whole (cad-qe) step: ∃∃∃ 252.7 → 29.4 s, ∀∀∀ 229.2 → 17.3 s, ∃∀∃ 227.5 → 17.4 s.
+- Fix 2, merged answers for one free variable.  qe_mrg_def / qe_mrg (mrgX: runs of TRUE sectors
+  as intervals; mrgX_sem, qf_mrgX); qe_def's qe1_sm takes it when smaller (qe1_ok: anyT_es,
+  sox_sem, mo_sem, qe1_sm_sem, qe1_sm_qf, qe1_sm_ok; qe1_c_sem / qe1_c_qf / qe_ok_eq1 re-proved;
+  qe1_full: qe1_sm_isqf, qe1_isqf re-proved; qe_def's qe1_u_TCC1 re-proved).  ∃∃∃ prints
+  "((-3) + c < 0) OR ((-3) + c = 0)" instead of 30 cell conditions.
+- Fix 3, Sturm chains computed once.  alg_def's refine tries a zero or sign change at lb and mid
+  first (lhalf?, half_one, lhalf_def; refine_contains re-proved).  alg_sortc_def / alg_sortc: an
+  algebraic number with its chain (CA, refc), comparison with gcd equality (cmpc_def, eqg_def,
+  gcd_eq, com_root), the insertion sort with one comparison per step (sortf) and neighbours
+  separated once (sepall, sepall_vals); cell1's sortu evaluates sortsep (sortu0 the old sort;
+  sortf_eq, sortu_vl, incr_v, vals_v; sortu_incr / sortu_vals re-proved, same statements);
+  sect_inv's sepf evaluates sepcc only when the intervals overlap (sepf0 the old one; sepcc_eq,
+  sepf_eq; sepf_inv / sepf_apart re-proved).  Quadratic ∃∃∃, outer closure alone: more than
+  30 min before (96% in one sortu call), 948 s after.
+- cad_pdec's rsamp (pdecide's rational samples) tries ratx first: its rroot found a rational root
+  only when a bisection midpoint landed on it, and the separated intervals of the new sortu made
+  pdec_examples' circle and disc fail their ok flag (rsamp_value and allrat_TCC2 re-proved).
+- alg_isign: a second enclosure of the query shifted to the middle of the interval (pl_shift_def /
+  pl_shift: pshift, pshift_sem; alg_isign_sign re-proved).  It settles only 13% of the fallbacks
+  on the quadratic example, whose fallbacks are mostly exact zeros.
+- What is left, measured: the walk's Sturm sign-variation counts, separator searches and
+  coincidence tests (about half, the algorithm's normal work per cell), chain tables (about a
+  sixth), and the number of cells: the read closure cuts the line at 179 points for the quadratic
+  example where 4 suffice -- a projection with a delineability proof (GAP_PLAN Tier 4).
+- Gates passed (three fresh runs plus traces) for every new or changed theory: alg_rat_def,
+  alg_rat, towern_od, oddef, decn_ok, qe_mrg_def, qe_mrg, qe_def, qe1_ok, qe1_full, alg_def,
+  alg_sortc_def, alg_sortc, cell1, sect_inv, pl_shift_def, pl_shift, alg_isign, cad_pdec,
+  cad_pdec_ex.
+
+## 2026-10-01 — Tier 4 (Collins' projection) adopted; M-A: determinants, kernels, columns
+
+The measurement gate of GAP_PLAN Tier 4 (projection tower sizes before any proof) was run with
+two scratch prototypes (proj_meas.pvs on the library's own psc, and a sympy script): on the
+quadratic three-variable benchmark Collins' operator with necessary reducta cuts the c-axis at 11
+points where the read closure cuts it at 179; linear n = 4 needs 9 (the read closure did not
+finish in an hour); Collins with every reductum is no better than the closure (181).  On the Bath
+problems it is small for bath_01, 02, 05, 08 (5–23 bottom cuts) and explodes on bath_04 (the dense
+quartic: 1452 bottom cuts even after factoring).  Plan, measurements and proof architecture:
+COLLINS_PLAN.md.  The proof avoids multiplicities except for counting distinct roots, and gets
+common roots from the subresultant S_κ = u·f + v·g.
+
+M-A (linear algebra), two theories, 35 formulas, gated:
+- rdet_nl: ring_det's rdet is NASALib's matrices@matrix_props det for n ≥ 1 (rdet_nl, by
+  induction through the first-row expansion: rdetl_sigma, nlm_remove, rsgn_expt); so the
+  transpose has the same determinant (rdet_tr, det_transpose), two equal rows or columns give 0
+  (rdet_rows_eq, rdet_cols_eq), rdet ≠ 0 kills every left-kernel vector (rdet_lker: matrix_inv's
+  invertible_det gives an inverse; row vectors as 1 × n matrices, rowv), and rdet = 0 gives a
+  nonzero left-kernel vector (rdet_zero_lker: matrix_diag's Gaussian elimination has a zero row
+  i; c is row i of the elimination matrix, nonzero because that matrix is invertible).
+- rdet_lin: linearity in a column (rdet_col_lin, by induction through the expansion: the column's
+  own term and the minors that keep it, setcol / vsh / cj), a zero column (rdet_col_zero), and
+  the expansion of a column in unit columns (rdet_col_sum).
+
+## 2026-10-01 — Tier 4, M-B and the rows of M-C: complex polynomial algebra, subresultant rows
+
+Three theories, 84 formulas, gated; a strategy:
+- pvs-strategies: cring proves a complex ring identity by its real and imaginary parts (NASALib's
+  complex numbers are records, so assert does not normalize complex products).
+- cpoly_alg (33): complex polynomials as functions with coefficient witnesses (cpol?: degree at most
+  n; clead?: exactly n with leading coefficient c).  Products are handled through croots' cfact:
+  degree-n with leading coefficient c is c times n linear factors (clead_cprod), such a product is
+  monic (cprod_lead), so products add degrees and multiply leading coefficients (clead_mul) with
+  no convolution formula.  Also cpol_cases, clead_low / clead_deg, cmul_zero, clow_zero, cfactor,
+  ccancel (linear factors cancel, by roots_bound at n + 1 points).
+- cpoly_div (12): cdvd?, ccd? (a common divisor of degree k written as k linear factors: the gcd
+  degree without a gcd), ccd_down / ccd_le, cdvd_cof (exact cofactor degree), ccd_up (a common
+  root of the cofactors gives degree k + 1), ccoprime (G | U F with no common root of G and F gives
+  G | U, by induction on deg G).
+- sres_rows (39): sylj, the subresultant matrix of real coefficient arrays (subres' sresm at a
+  point); comb_poly: a complex row combination c is the coefficient list of u*A + v*B (by
+  induction on the rows: ecf_step, row_poly via rp_shift, ucf_step / vcf_step); comb_low and
+  comb_zero (left kernel of the square part iff u*A + v*B has degree below j); complex left
+  kernels through real and imaginary parts (ckernel_parts, ckernel_real, rdet_ckernel,
+  rdet_zero_ckernel).
+
+## 2026-10-01 — Tier 4, M-C: the subresultant theorem, proved
+
+Three theories, 48 formulas, gated (cpoly_div gains ccd_le_deg2):
+- sres_thm (33): sres_ccd — for real coefficient arrays A, B of exact degrees p, q and
+  k <= min(p, q), the complex polynomials F, G have a common divisor of degree k (ccd?) iff the
+  principal subresultant coefficients psc_0 .. psc_(k-1) all vanish.  sres_zero: a common divisor
+  h of degree k > j gives the kernel vector (G/h, -F/h) of the j-th matrix (kvec, kvec_up,
+  kvec_vp, kvec_lead), so psc_j = 0.  sres_nz: if the common divisors have degree exactly k, a
+  kernel vector of the k-th matrix makes u F + v G of degree below k, hence (nz_fact, nz_S0)
+  u F/h + v G/h = 0 with coprime cofactors, so G/h | u (ccoprime) and u = v = 0 (nz_uv, up_zero,
+  vp_zero): psc_k /= 0.  sres_ccd by induction on k.
+- sres_gcd (8): the k-th subresultant polynomial Sk is u F + v G for the cofactor vector of the
+  last column (sres_comb, through rdet_lin's unit-column expansion and rdet_cols_eq for the
+  columns of degree above k); common roots are roots of Sk (sres_common), and at the exact gcd
+  degree every root of Sk is a common root (sres_roots: Sk is the common divisor times the
+  nonzero constant psc_k).
+- sres_eval (7): subres' psc and subres2's sresc at a point are these determinants (psc_ev,
+  sresc_ev), so the projection's psc signs at a point decide the common divisors of the fibre
+  polynomials and their common roots are the roots of a polynomial with coefficients sresc.
+
+## 2026-10-01 — Tier 4, M-B2: multiplicities and the number of distinct roots
+
+Three theories, 47 formulas, gated:
+- cpoly_der (10): the formal derivative of a complex polynomial function (cder?, unique once the
+  coefficient witness is padded: cder_unique); the product rule only for a linear factor
+  (cder_lin) and for a power of one (cder_pow: ((z - y)^(m+1) Q)' = (z - y)^m ((m+1) Q + (z - y) Q')).
+- cpoly_ord (17): the order of a root, ordp?(P, y, m): P = (z - y)^m Q with Q(y) /= 0.  Existence
+  for exact degree (ord_ex), uniqueness (ord_unique via pw_cancel), orders add (ord_mul), a divisor
+  has smaller order (ord_dvd), the derivative drops the order by one at a root (ord_der); ord(P, y)
+  as a function (ord_def, ord_eq).
+- cpoly_dist (20): for F of degree e >= 1 whose distinct roots are listed by L, F and F' have a
+  common divisor of degree e - length(L) (dist_lo: the product of (z - a)^(ord - 1)) and none of
+  degree e - length(L) + 1 (dist_hi: a common divisor has order at most ord(F, a) - 1 at each root,
+  and the orders over L add up to e, ord_sum).  With sres_thm: the psc of (f, f') count the
+  distinct complex roots of f.
+
+## 2026-10-01 — Tier 4, M-D: the analysis (roots move continuously, one root per disc)
+
+Three theories, 39 formulas, gated:
+- croot_lsc (21): for a real coefficient array A of exact degree n, rp_near (every root of a
+  nearby polynomial of the same degree is near a root of rp(A, n); from croot_near's root_near)
+  and rp_lsc (every root w of rp(A, n) has a root of every nearby polynomial within eps; lsc_core
+  with delta = min(|A(n)|/2, (|A(n)|/2 eps^n) / (2 (n+1) (|w|+2)^n)): if every root s_i of
+  B(n) cprod(s, n) were eps away, |rp(B, n)(w)| >= |A(n)|/2 eps^n by cprod_far, against
+  cpoly_diff_bound).  rp_list (the distinct roots form a list, dist_seq over cfact's roots),
+  rp_conj, rp_real, rp_cder (rp(poly_deriv(A), n - 1) is the derivative), ccd_same / dist_same
+  (equal psc patterns of (A, A') and (B, B') give equal common-divisor degrees with the
+  derivative, hence equally many distinct roots, by sres_ccd and dist_lo / dist_hi).
+- croot_disc (9): the pigeonhole -- cover_len (a cover of an eps-separated distinct list is at
+  least as long), disc_one (a cover no longer than the list puts one point in each disc).
+- ev_near (9): ev? (eventually near p1 in C) and sm? (for every small eps), closed under AND and
+  bounded quantification over positions (ev_all, sm_all); ev_cont from mpar's mev_mcont.
+Gate note: a gate run while the pvs-cli server typechecks can fail reading NASALib's
+.pvscontext ("end of file"); rerun with the server idle.
+
+## 2026-10-01 — Tier 4, M-E and M-F: the local Collins lemma and delineability (collins_stack)
+
+Six theories, 126 formulas, gated.  THE THEOREM: col_stack's collins_stack — if C is connected
+(cad_conn's conn?) and the N-reducta Collins projection of G is sign-invariant on C (col_def's
+colh?), then G is classically delineable over C (cad_stack's delin_cl?).
+- col_def (11): rdc (reductum), kept? (the N-reducta rule: a reductum is kept unless a coefficient
+  above it is nonzero everywhere), cinv? (one sign on C), colh?(G, C).
+- col_eff (36): the effective degree edeg over a point (ed_props, edeg_pos/neg/eq); col_edeg (one
+  effective degree on C: the coefficients above it vanish at one point, so none is nonzero
+  everywhere, so those reducta are kept and their leading coefficients have one sign); mev_rdc /
+  mev_rp (a member over p is the real polynomial of its reductum), mev_zero, mev_nz, rootat_ed;
+  psc1_ev / psc2_ev / sresc_ev2 and the zero patterns on C (col_psc1, col_psc2).
+- col_real (15): the abstract real picture.  From up? / lo? (roots move continuously), one? (one
+  root per disc), sh? (common roots stay common), sp? (2 eps separation) and conjugate-closed root
+  sets: a real root a over p1 has exactly one real root bt(a) of the family over p within eps
+  (real_near, bt_unique: its conjugate is in the same disc), bt is onto (bt_onto), increasing
+  (bt_mono), and a member vanishes at bt(a) iff at a (bt_van); bt_list for the sorted lists.
+- col_pair (38): those hypotheses near p1 in C (ff_hyp).  ff_up / ff_lo (croot_lsc on the
+  coefficients, eventually close by mev_mcont), ff_one (dist_same from col_psc1 + disc_one), ff_sh
+  (common roots persist): kappa = the exact common-divisor degree (ccd_max), the same over p by
+  ff_pat; kappa = 0: no common roots (ccd_one); kappa a full degree: the smaller member divides
+  the other (ccd_full); otherwise S_kappa (sres_gcd) has nonzero leading coefficient psc_kappa,
+  its roots are the common roots over p1 and over p (sres_common, sres_roots), and rp_lsc on its
+  coefficients (subres2's sresc, sv_close) finds one near each common root (sh_mid1).  ff_sp: for
+  every small eps all distinct roots over p1 are 2 eps apart (AR collects them, sm_pairs).
+- col_loc (23): THE LOCAL COLLINS LEMMA collins_loc — for every eta there is d such that over
+  every p in C within d of p1: rsvl and bsvl are those over p1, the same root count, every root
+  within eta.  eps_ex chooses eps (separation, eps <= eta, sign persistence at the roots and band
+  points over p1: pers_sm from mev_mcont); near_rtl (rtl(G, p) = bt mapped over rtl(G, p1));
+  near_sv_root / near_sv_band (bpts_near: band points move by less than eps).
+- col_stack (3): col_same (constant stack on the connected C), col_cont (continuous roots),
+  collins_stack (as cad_stack's stack_const, certz_all for the certificate everywhere).
+Proof notes: a lemma used before its declaration silently fails to resolve -- order matters; the
+identifier e is taken (use ee); after a lemma whose conclusion lands in the consequent, the goal
+moves -- label the goal before instantiating.
+
+## 2026-10-01 — Tier 4, M-G: the executable N-reducta projection (projn_ok)
+
+Two theories, 45 formulas, gated; col_def's colh? refined (psc conditions only for reducta whose
+leading coefficient is not identically zero, zall?) and col_def / col_eff / col_pair / col_loc /
+col_stack regated.
+- cad_projn_def (16, executable): nzc? / zcst? (normalizes, mnorm, to a nonzero constant / to 0),
+  kd (the kept degrees from the top, stopping after a nonzero constant coefficient), pscg (psc
+  with its degree condition as a guard), pj1 (coefficients), pj2 (psc_j(f, f'), j <= k - 2), pj3
+  (psc_j of kept reducta of two members), pjall over members and pairs i1 < i2, clean (normalize,
+  drop constants and repetitions), projn.
+- cad_projn (29): projn_ok -- every member of projn(G) sign-invariant on C gives colh?(G, C):
+  kept_kd (via nzc_nz), pj1/pj2/pj3_mem (via zc_z, pscs_mem, pscg_eq), pjr_mem, pjall_own,
+  pjall_pair, clean_cinv (normalization keeps the values, meval_mnorm; constants have one sign).
+Checked by evaluation: projn of x^2 + y^2 - 1 is 4y^2 - 4; with x - y added, also 2y^2 - 1.
+
+## 2026-10-01 — Tier 4, M-H core and M-I decision: the Collins tower is a CAD; the Collins decision is correct and complete
+
+Eight theories, gated.  THE THEOREMS: col_tower's ctw_cad -- over a connected C on which the k-th
+Collins projection pbot(F, k) is sign-invariant, the tower ctw(F, k) of F and its projections is a
+CAD (cad_over?); decc_ok's decc_correct / decc_complete -- the decision decc_o over that tower
+(the read-closure walk with no closure) is right whenever its certificate holds, and the
+certificate holds for every large u.
+- col_tower_def (2 TCCs, executable): fam, pdown (projn as a family), ctw(F, k) (F's k - 1
+  projections and F, lowest first), pbot(F, k).
+- col_tower (15): chain?, sinv?; ptower_cad (a chained tower over a connected C where the
+  projection of its lowest family is sign-invariant is a CAD: projn_ok + collins_stack at each
+  level, conn_stk / stk_sinv up the stack cells); ctw_cad.
+- decc_def (4 TCCs, executable): okw_o (okn_o without the closure condition cellok_o), cscof /
+  okc? (a sector with the fixed tower and its tables), cbot, decc_o.
+- col_sem (8): sem_cad (the truth of the inner quantifiers is the same at all points of a cell
+  over which the tower is a CAD: the stack indices taken are the same at every point, sidx_onto,
+  and each index's cell is a CAD base for the rest); rf_sidx / rfc_cad / sem_cvlc (a root-free
+  interval stays in one stack cell, so the fold of the walk's cell values is the quantifier);
+  sinv_sect (the outer family is sign-invariant on each of its sectors).
+- decc_walk (8): innern_cad (over a base cell where the tower is a CAD the walk reads the truth,
+  by innern_sem's induction with the CAD in place of the closure: okw_one, ic_sep, ic_sec,
+  ic_step); lvall_okw / okw_ev (the certificate is tower_ev's walk half, so it holds eventually).
+- decc_ok (7): cbot_ctw, colmem_ok, colsect_sem, colfold_sem, decc_correct, decc_ev,
+  decc_complete.
+Measured (bench_c, not in top.pvs; (cad-mx 1 "decc_o" 0) vs "decn_o"): t_circle 0.1 / 0.0 s,
+t_sphere 0.1 / 0.1, k2_lin 0.1 / 0.2, l2_quad 0.1 / 0.8, k3_lin 0.5 / 11.5, l3_quad 0.7 / > 600 s
+(all decc_o answers ok and TRUE).
+
+## 2026-10-01 — Tier 4, M-H rest, M-J, decide8: the Collins projections form a CAD; fast psc; (cad) through Collins
+
+THE THEOREMS: col_run's col_cad_run -- for every family F in k + 1 variables (k >= 1) the cells of
+the Collins run (the tower ctw(F, k) over the sectors of the roots of pbot(F, k)) cover R^(k+1), are
+disjoint, connected and first-order definable at every level, the tower is a CAD over each
+sector, the root graphs are definable and F has one sign vector on every cell -- with NO
+certificate; col_verified's col_verified / col_exists -- with decc_o's certificate the run also
+returns a record (sample in the cell, F's sign vector there) for every nonempty cell (ccad_of?,
+cad_of? for the Collins run), and some u certifies; det_fast's detf_det -- the determinant with every
+minor computed once is ring_det's det; cad_decide8's decide8_correct / decide8_decides.
+- col_run (7), col_out (1 TCC, executable cad_outc), col_out_ok (6: ctree_inw, ctree_coverw --
+  cad_out_ok's ctree_in / ctree_cover replayed with okw_o for okn_o --, cad_outc_mem, csector_okt,
+  cad_outc_ok), col_verified (4).
+- det_fast_def (20 TCCs, executable: dsubs, dcols, drem, dleq, dlook, dxrow, dtab, detf) and
+  det_fast (33): detl_cong / det_cong (det depends only on the entries below the size),
+  dsubs_mem (dsubs(0, n, m) = the increasing m-lists below n), drem / dcols lemmas, minor_smat,
+  dxrow_detl (the table-driven expansion is detl), dlook_map, dtab_ok, detf_det.
+- cad_projn_def: pscg computes psc by detf (pscg_eq re-proved by detf_det); clean de-duplicates
+  with pmem (mpoly_eqd's meq) instead of the prelude's member, which the ground evaluator cannot
+  run on mpolys ("Equality unknown between types NULL and CONS": decc_o returned no value on
+  e4_above, e4_between, bath_02); clean_cinv re-proved (pmem_member).
+- decc_u_def / decc_u (decc_o from u = 0 until it certifies; correct, complete), cad_decide8_def /
+  cad_decide8 (decide8 = decc_u for >= 2 quantifiers, decq2 for one), cad_decide8_ex ((cad-direct)
+  proves c8_circle, c8_k3_lin, c8_l3_quad in 5-7 s each through decide8_correct).
+- pvs-strategies: (cad) / (cad-direct) / the witness search use decide8 in a theory that imports
+  cad_decide8 (cad-imports?, cad-dec), decide5 otherwise; cad-mx has a time limit and reports
+  evaluation errors; cad-showf prints a formula's family.
+Measured (u = 0, 90 s limit, decc_o vs decn_o): bath_01 0.2 s vs timeout; e4_above 2.1 / 0.9 s;
+e4_between 0.2 / 0.4; e4_sum, e4_square, t_sphere, t_cone 0.1 both; bath_02-05, 07, 09, 10, 12 time
+out with both.  Profile of bath_04: the first projection has 11 members, the second 569 (all
+pairwise psc of reducta), and isolating their roots is the cost -- the remedy is a smaller
+projection (McCallum / Brown), equational constraints or square-free factors, not the
+determinant.
+
+## 2026-10-01 — Tier 4, M-I QE: quantifier elimination over the Collins run (qe8)
+
+THE THEOREM: qe8's qe8_complete -- for every prenex formula with m >= 1 free variables [corrected
+2026-10-01: and at least one quantifier, cons?(os)], qe8 returns a
+quantifier-free formula equivalent to it, computed by the Collins run alone; (cad-qe) uses qe8
+(instantiating qe8_correct) in a theory that imports qe8.
+- qe1c_def / qe1c_ok: one free variable -- qe1cc is qe_def's qe1_sm on the Collins sectors (entry
+  values by decc_ok's colsect_sem, signs by qe1_ok's sig1_inv); qe1cc_correct, qe1cc_bf (always
+  answers, quantifier-free).
+- qe2cc_def / qe2cc_ok: m >= 2 -- qe2cc is qe2_def's secout on the Collins run's records; every
+  sector satisfies secout_sem's hypotheses (csector_recs: CAD over the sector, records in and
+  covering the cells, F sign-invariant -- from col_cad_run and cad_outc_ok); qe2cc_correct,
+  qe2cc_bf (quantifier-free when its flag says so).
+- ctwd_def / ctwd: ctwd(F, k, d), the Collins tower whose lowest d families are closed under
+  the derivative (dch, dclf); pstower_cad -- col_tower's ptower_cad for a chain in which each
+  family CONTAINS the projection of the next (sinv_sub: sign-invariance passes to a subfamily);
+  ctwd_cad; ctwd_dcl (the free levels pass qe2c_def's dclx?).
+- twrun_def / twrun_ok: the certificate (twok) and records (cad_outw) of the run over any tower;
+  twok_ev, cad_outw_mem, wsector_okt, wrec_wf, wsector_recs (secout_sem's hypotheses on every
+  sector of a tower that is a CAD over its sectors).
+- qe2cd_def / qe2cd_ok: m >= 2 over ctwd(F, k, m - 1); dsect_sem (correct on each sector), dsect_qf
+  (quantifier-free on each sector: qe2_sep's ents_sep with the derivative-closed free levels),
+  qe2cd_bf (always answers, quantifier-free, equivalent).
+- qe8_def / qe8: qe8 = qe1cc for m = 1; for m >= 2 qe2cc when quantifier-free, else qe2cd -- every
+  branch is the Collins run (an intermediate version fell back to the read-closure qe2c);
+  qe8_correct, qe8_isqf, qe8_complete.
+- qe8_ex: the qe_cad_ex equivalences through (cad-qe) and qe8 (q8_quad needs a^2 >= 0 after the
+  elimination, as qe_quad).
+- pvs-strategies: cad-qe-fn ((cad-qe) uses qe8 / qe8_correct when the theory imports qe8).
+
+## 2026-10-01 — Tier 4, M-K: measurements, the default import, documents
+
+- Measured (/tmp/cad_scratch/k_time.sh, one scratch copy and server per variant): all 68 (cad) /
+  (cad-direct) / (cad-qe) proofs of cad_examples1-4 [corrected 2026-10-01: cad_examples,
+  cad_examples2-4], cad_endgame_ex, cad_star_ex, cad_bath and
+  qe_cad_ex pass as they are (read closure, 191.5 s) and with cad_decide8 / qe8 imported (Collins,
+  244.0 s): about 0.8 s more per proof on these small examples, roughly constant [corrected
+  2026-10-01: 0.77 s on average, 0.1-2.5 s per proof; part of it is the larger imported context --
+  the one-quantifier proofs run the same decq2 either way and are 0.64 s slower on average].  The decision
+  alone (u = 0, 90 s limit, bench_c): Collins far faster with several quantifiers (k3_lin 0.5 /
+  11.5 s, l3_quad 0.7 / > 600 s, bath_01 0.2 / > 90 s), slower on e4_above (2.1 / 0.9 s);
+  bath_02-12 time out with both [corrected 2026-10-01: bath_02-05, 07, 09, 10, 12, as in the
+  entry above; bath_08 gave no result in that run; measured again on 2026-10-01 with decc_def
+  imported (the repository's bench_n does not import it, so (cad-mx ... "decc_o") cannot resolve
+  decc_o there): decc_o 0.8 s, decn_o 1.1 s, both FALSE] (projection size: bath_04's second projection
+  has 569 members).
+- (cad :cad-only? t) decides by decide8 in a theory that imports cad_decide8, decide7 otherwise.
+- The default: README now recommends IMPORTING cad_decide8, mpoly_embed (and qe8 for (cad-qe));
+  checked on a fresh theory with only those imports: (cad), (cad-direct) and (cad-qe) + (cad *)
+  prove their goals.  The example theories keep their imports (read closure).
+- README: the Collins CAD (col_cad_run, col_verified, col_exists), decide8, quantifier elimination
+  (qe_complete, qe8_complete); the stale sentences "general QE is the next stage" and "delineability
+  is not proved for a named projection operator" replaced.
+- docs/collins_cad.tex / .pdf (4 pages): what is proved, using it, what it costs, how it works,
+  limits.
+- Gates passed (three fresh proveit runs + traces each): col_run 7, col_out 1, col_out_ok 6,
+  col_verified 4, det_fast_def 20, det_fast 33, cad_projn_def 18, cad_projn 30, decc_u_def 3,
+  decc_u 2, cad_decide8 4, cad_decide8_ex 6, qe1c_def 1, qe1c_ok 7, qe2cc_def 4, qe2cc_ok 14,
+  ctwd_def 5, ctwd 26, twrun_ok 5, qe2cd_def 4, qe2cd_ok 15, qe8 6, qe8_ex 6 (cad_decide8_def,
+  twrun_def, qe8_def have no formulas: typecheck only).  Whole library 4952/4952 (344 theories,
+  1790 s).
+
+## 2026-10-01 — The Collins CAD in every dimension, found; the cells are semi-algebraic
+
+User: "So can we say we have formally verified CAD?" -- three gaps named (one variable not one
+theorem; semi-algebraic only as first-order definable; no Collins search built in); "do 1 and 3",
+then "let's do 2 as well".
+THE THEOREMS:
+- col_line's col_cells: ccells?(k, F) for EVERY k -- col_cad_run's conditions (cover, disjoint,
+  connected and first-order definable at every level, a CAD over each sector, root graphs
+  definable, F sign-invariant) in every number of variables; col_cad_line is k = 0 (the sectors of
+  the roots of F: csects_0, ccell_0, scell_fod; sinv_sect, sects_cover, sects_disj).
+- col_found_ok's col_found_cad: col_found(qs, F) (col_found_def: cad_outcu raises u until decc_o's
+  certificate holds, as decc_u; one variable: lrecs, a record per sector with its sample odS) always
+  returns the CAD as data (cfound?: ccells? + records in their cells with F's signs + a record for
+  every nonempty cell), for every nonempty prefix, with no effort hypothesis; col_found_ccad
+  (ccad_of? at the u found); cfound_decides / col_found_decides (the records decide every sentence
+  over F: afold_sem on every sector, cf_sector_recs / _has / _fold).
+- qelim_ok's fod_qfd: fod?(n)(S) IFF qfd?(n)(S) -- Tarski-Seidenberg for EVERY first-order formula
+  (quantifiers anywhere): qelim_def's qelim(phi, m) eliminates from the inside out, each fex by
+  qe8 on the encoded quantifier-free body (encF: the atoms as coefficient lists; encB: a BF over
+  their indices, ftrue as bnot(batom(0, 2)); enc_ok), a sentence (m = 0) by decide8; qelim_qf,
+  qelim_ok.  No prenex normal form needed.
+- cad_sa's col_cells_sa / cad_cells_sa: every cell of both CADs at every level (and the Collins root
+  graphs) is semi-algebraic in the quantifier-free sense of Basu-Pollack-Roy [corrected 2026-10-01:
+  each is defined without quantifiers by a Boolean combination of sign conditions on polynomials with
+  RATIONAL coefficients -- a semi-algebraic set defined over Q, hence semi-algebraic in BPR's sense, whose
+  definition allows real coefficients (a larger class)].
+- col_tower already had ctw_len; a duplicate in col_line was removed (two resolutions broke a
+  (lemma "ctw_len") in col_found_ok).
+- Gates passed: col_line 7, col_found_def 2, col_found_ok 17, qelim_def 5, qelim_ok 9, cad_sa 5.
+  Whole library 4997/4997 (350 theories, 1807 s); the Collins work is 58 theories, 698 formulas,
+  3,352 lines.
+- README, docs/collins_cad: one variable included, col_found, semi-algebraic in both senses.
+
+## 2026-10-01 — Formulas as people write them; the showcase (FORMS_PLAN.md)
+
+User: "we gotta fix that for real. Make a plan to fix all of this and do it" -- (cad) refused
+FORALL (x, y: real), a goal NOT A, and quantifiers inside connectives; then "a very nice example
+file showing everything ... (cad) and (cad-qe) ... (cad 1) (cad -1) (cad (1 2)) (cad (-1 3))".
+- gform_def / gform_ok: Gm (TRUE, FALSE, the six comparisons of two polynomials, NOT, AND, OR,
+  IMPLIES, IFF, FORALL, EXISTS), gsem written with PVS's own connectives, g2f into rcf_fol, qfval,
+  decide_g = qfval(qelim(g2f(g), 0))(null), qe_g; g2f_ok, qfval_ok, decide_g_ok (decide_g(g) IFF
+  gsem(g)(null)), qe_g_qf, qe_g_ok.
+- pvs-strategies, three routes for (cad) / (cad-direct) / (cad :cad-only? t):
+  1. a goal NOT A is stored by PVS as the hypothesis A: (cad) with no consequent takes -1
+     (cad-default-fnum);
+  2. grouped binders in a prenex formula: cad-nest__ proves the formula from (or to) its nested
+     form by the mirror walk with a shared matrix, then the fast route (witness search, decide8)
+     decides the nested form (the 4-variable box: minutes through qelim, 5-8 s this way);
+  3. any other closed formula: cadg-tree / cadg-enc encode it as a Gm term (atom sides as
+     pnorm(PolyExpr) over the variables in scope, innermost first; other real terms generalized,
+     FORALL for a goal, EXISTS for a hypothesis), (eval-expr "decide_g(G)"), decide_g_ok, gsem
+     unfolded (it has the formula's shape), and the MIRROR WALK (cadg-walk): connective by
+     connective, the strong side skolemized and the weak side instantiated with the same fresh
+     constant, one side split and the other flattened -- one level at a time (split .. 1,
+     flatten-disjunct .. 1: plain flatten / split go several levels and broke the pairing) -- and
+     the pieces named by relabel :pairing? t; quantifier-free leaves closed by cadg-leaf__ at run
+     time (one equation meval(pnorm(E))(VS) = side per atom side, peval_pnorm + mpoly-eq-side__,
+     then propax).  Binders over posreal / nnreal / negreal / npreal / nzreal carry their guard
+     (x > 0, ...), discharged by typepred or, for an instantiated binder, by the TCC closing on the
+     guard (cadg-strong-layers / cadg-weak-layers).
+  The old prenex path now takes plain real binders only (it read FORALL (x: posreal) as over all
+  reals and called a true sentence FALSE; the kernel never accepted a wrong proof).  The witness
+  search runs only on quantifier-free matrices.  The general route needs gform_ok (IMPORTING
+  pvs_cad); without it the old messages stay.  [Corrected 2026-10-01: they did not -- without
+  gform_ok, cad-direct then told every formula the prenex route could not take, a closed prenex
+  formula with a non-polynomial matrix included, that it was not a closed prenex formula and
+  needed IMPORTING pvs_cad, and the old matrix message could no longer be reached.  The review
+  fixes of 2026-10-01 give each case its own message.]
+- TRUE / FALSE beside a quantified part (user: "is that a bug of PVS?" -- no: flatten and split
+  drop a TRUE hypothesis or FALSE goal and close trivial goals by design): gform_ok's 18 gb_*
+  lemmas ((TRUE AND b) = b, (b IMPLIES FALSE) = NOT b, ...); when the walk reaches such a node it
+  is at the top of both formulas (PVS's rewrite does not rewrite under a binder: the instance
+  would hold a bound variable), so cadg-unconst__ rewrites the constants away there, and cadg-simp
+  does the same to the walk's tree.  cad_forms_ex: 35 regression lemmas (every connective on both
+  sides, subtypes in every position [corrected 2026-10-01: the binders tested were posreal, nnreal
+  and negreal], unknowns, constants, (cad *) and (cad-qe) on such formulas).
+- cad_star_ex replayed alone with the final strategies: 16/16 (s_skip had failed once: (cad *)
+  took the general route in a theory without gform_ok; the route now needs gform_ok imported).
+  [Recorded 2026-10-01: whole library 5142/5142 (355 theories, 2086 s) on this entry's state,
+  after the constants fix.]
+- (cad-qe): grouped binders through the nested form; any other shape through qe_g (cadg-qe__: the
+  fact ORIG IFF TEXT from qe_g_ok, the text side of cad-qe, and the mirror walk both ways).
+- (cad *): a selected formula that is not prenex (or binds a subtype) makes cadg-seq__ build the
+  sentence FORALL (unknowns): (type facts AND hypotheses) IMPLIES (goals) with every formula kept
+  whole (cadg-text), decided by (cad), the sequent closed by instantiation and prop.
+- pvs_cad.pvs: the library in one import [corrected 2026-10-01: everything (cad) and (cad-qe)
+  need in one import ((alg-roots) needs alg_strategy, (poly-sign) / (poly-nosign) sgn_prune); col_line, col_found_ok, cad_verified, cad_found_ok, cad_sa, qe_all and
+  complete_all are outside its import closure].  cad_showcase.pvs: 38 lemmas, 1-32 s each -- the
+  quadratic formula, a quintic root, epsilon-delta continuity with posreal binders, Motzkin,
+  root_iff_disc, the 4-variable box; (cad 2), (cad -1), (cad -2), (cad (-1 3)), (cad (1 2)),
+  (cad +), (cad -), (cad *) with unknown f(x), sqrt(x), length(l) and with quantified and non-prenex
+  hypotheses; (cad :cad-only? t), (cad-direct); (cad-qe 1) / (cad-qe -1) on 12 eliminations, the
+  printed answers quoted.
+- Tests (scratch theories, deleted): every connective on both sides, refuted hypotheses, nested
+  NOT, three-level nesting, unknowns in goals and hypotheses, subtype binders in every position,
+  false formulas left unproved with a message.
+
+## 2026-10-01 — Review: everything the repository says, checked against the code; fixes
+
+A multi-agent review of the dev repository (8 reviewers by dimension, each finding checked by a
+verifier) raised 121 findings: 115 confirmed (1 critical, 25 major, 60 minor, 29 nit), 6 rejected.
+None was an unsound proof.  The user asked for all of them to be fixed ("It's important that the
+documents are correct"); helpers rewrote the README, plans, theory comments and the three
+documents, and the strategy fixes, tests, measurements and proofs were done in the main session.
+
+- The critical one: qelim_ok's header equated the quantifier-free definable sets (rational
+  coefficients, no parameters) with the semi-algebraic sets of Basu-Pollack-Roy and
+  Bochnak-Coste-Roy.  They are the semi-algebraic sets DEFINED OVER Q, a smaller class ({pi} is
+  semi-algebraic but not definable over Q); every such set is semi-algebraic in their sense.  Same
+  wording fixed in cad_sa, collins_cad.tex and README.  CAD works with rational coefficients, as
+  Tarski's and Collins' settings do; real parameters are free variables, and the QE theorems hold
+  at every real point.
+- Stale statements fixed: "Tarski-Seidenberg is not formalized" (cad_verified, cad_run, rcf_cells,
+  top.pvs, cad_decide7_def); b6_heart is FALSE (at (9/10, 11/10)); cad_proj is not "for
+  measurement only" -- decide5's read closures start from its proj (towern_def's tw0, walk_rd,
+  cad_fast_def), under the run-time certificate; qe_all's "any number of free variables" (m >= 1);
+  GAP_PLAN's status and a "What remains" list; QE_PLAN, COLLINS_PLAN, CLAUDE.md, FORMS_PLAN.
+- Strategies (every bug reproduced first in scratch theories, then fixed and retested):
+  - the mirror walk's NOT step flattened pieces PVS had already moved (a goal NOT X is shown as the
+    hypothesis X; inst, skolem, split and flatten strip a NOT), so NOT over a 3-part AND or a /=,
+    and hypotheses-only (cad -) on the general route, failed: cadg-unnot__ now flattens only a
+    hypothesis that still reads NOT X;
+  - cadg-finish__ read a missing decide_g record as FALSE: now "could not be read", unchanged;
+  - grouped binders: cad-nest__ checks first that the nested form can be decided (polynomial
+    atoms; unknowns only with gform_ok; a free term for (cad-qe)); a FALSE goal or TRUE hypothesis
+    restores the sequent (finalize) and labels the user's own formula cad; kinds are strings (a
+    keyword argument made PVS warn on every call);
+  - unknowns get the bounds their types give in (cad) as in (cad *): cad-type-guards reads every
+    comparison with a number in the predicates up the subtype chain (posreal > 0, nnreal >= 0,
+    nzreal /= 0, below(5) >= 0 and < 5, a user's {x: real | x > 1} > 1), conjunctions split, strict
+    bounds made non-strict on integer types (posnat >= 1, negint <= -1, below(5) <= 4), and keeps the
+    strongest lower and upper bound and the /= they do not give; NASALib's own negint (ints@div, a
+    separate declaration) counts too.  (A first version kept only the first comparison; the final
+    review found that this lost below(5)'s >= 0, which HEAD's (cad *) had used -- a regression, fixed
+    before the commit: fx_below_star, fx_below);
+  - connectives by PVS class (cad-is: conjunction?, disjunction?, implication?, iff?, negation?,
+    disequation?), so &, the wedge, =>, <=>, WHEN, the negation and not-equal signs are accepted
+    in all 70 places that tested connective names;
+  - found while testing: PVS's substitution makes x = x TRUE and simplifies TRUE / FALSE beside
+    AND, OR, IMPLIES and NOT but not beside IFF, so a comparison of a term with itself (cadg-refl)
+    and a quantifier over a constant are constants in the tree, and what the gb_* lemmas cannot
+    rewrite (synonyms, such comparisons) is removed by cadg-unconst2__ (case on "F = F'", replace,
+    proved by iff, bddsimp, assert); the (cad *) skipped list printed as an unevaluated Lisp form;
+    binder guards are compared as types (tc-eq with real_types.posreal, ...), so a user's type
+    named posreal is refused instead of getting the prelude's guard;
+  - messages: cad-direct says why each formula is refused (the matrix message was dead code);
+    (cad-qe)'s failure names the real cause (qe and qe8 always answer, quantifier-free); docstrings.
+- Final review (six verifiers on the 115 findings, two fresh reviewers): 96 resolved at once, the
+  rest finished (counts, wording, the "everything the strategies need" claim, which (alg-roots),
+  (poly-sign) and (poly-nosign) contradict).  The fresh strategy reviewer found, besides the
+  below(5) regression above: a quantifier whose body folds through NOT/AND/... to a constant
+  (cadg-tree now folds with cadg-simp); constants and comparisons of a term with itself inside a
+  quantifier-free leaf (cadg-walk now removes constants at every node); a hypothesis still reading
+  NOT X at a leaf (both pieces moved first, cadg-unnot__ repeated); sq(c) against c * c (the leaf
+  expands sq as a last step); no restore when the general route's proof does not close (cadg-finish__
+  and the general (cad-qe) are now all or nothing: finalize, and a fail that reaches cad-qe's else);
+  self-comparisons of non-numbers taken as constants (cadg-refl now checks real / numfield);
+  unknowns from a skipped formula kept in (cad *)'s sentence (cadg-seq__ restores *cadstar-abs*).
+  Regression lemmas fx_below_star, fx_below, fx_qf_imp_false, fx_leaf_refl, fx_fold_q, fx_sq.
+- Tests: cad_forms_ex 35 -> 64 lemmas (NOT over compound formulas, hypotheses-only (cad -),
+  synonyms, npreal / nzreal binders, comparisons of a term with itself, typed unknowns, (cad-qe)
+  with nzreal and synonyms); cad_showcase 38 -> 43 (a quantifier inside OR; nnreal, negreal,
+  npreal, nzreal binders); comments fixed (cubic, monic quadratic, zero_no_inverse, hyps_only,
+  two_circles, the saved proofs).  Gates: cad_forms_ex 77/77, cad_showcase 63/63 (3 runs +
+  traces, 0 fewer-subproofs warnings).
+- Tools: tools/pvs-cli.py (a copy of NASALib's pvs-cli) removed; tools/pvscli_wrap.py runs
+  NASALib's own copy with the state file per port and no websocket keepalive or size limit.
+- Measurements (1 October 2026, IMPORTING pvs_cad, wall clock of the proof command through
+  pvs-cli): h_wilk20 3.2 s, h_cheb10 2.7 s, h_cheb30 8.3 s, t_forall_exists_forall 8.3 s,
+  b_motzkin 1.7 s, c_cubic_root 1.5 s, d_quad_suf 3.2 s, s_disc 2.0 s; problems decide5 did not
+  finish in 90-120 s: c_amgm3 3.4 s, c_schur 4.0 s, d_two_squares 8.6 s, d_cs2 2.2 s, g_amgm8
+  26.0 s, g_root7 2.7 s, g_meet8 25.9 s; still not in 120 s: d_amgm4, g_root9, and g_amgm10 (not run with decide5; its twin
+  b10_amgm did not finish); cad_limits2's two-variable problems (2 October): b7_root 2.9 s, b8_meet
+  30.1 s, b10_amgm and h_mignotte not in 120 s.  The 68-proof re-run: 166.7 s as they are, 206.9 s
+  with cad_decide8 / qe8 (0.59 s more per proof on average; the first run, 0.77 s).  Bath 01,
+  03, 04 0.5-0.6 s, Bath 02, 05, 07 about 12 s (witness search, as with decide5).  bath_08 decision
+  alone (u = 0): decc_o 0.8 s, decn_o 1.1 s (zz_bench8: bench_n does not import decc_def).  The
+  68-proof comparison re-run after the strategy fixes (the 22:27 file): 68/68 with each import.  QE table of
+  qe_capabilities re-captured under IMPORTING pvs_cad (qe8): 2-8 s per row; the general quadratic,
+  19 cases, polynomial 4ca^2 - ab^2 = -a(b^2 - 4ac).
+- Whole library: 5183/5183 (355 theories, 1,630 TCCs, 3,553 lemmas and theorems; 2209 s;
+  proveit -i -f top.pvs on a clean copy of the final files, 2026-10-02; an earlier replay of this
+  round, before the second review's fixes, gave 5177/5177 in 2012 s).
+
 ## 2026-10-02 — License: CC0 1.0 instead of "All rights reserved"
 
 - README: the copyright statement ("Copyright (c) 2026 J. Tanner Slagel. All rights reserved") is

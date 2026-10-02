@@ -1,6 +1,8 @@
 cad_meas: THEORY
 %----------------------------------------------------------------------------
-% SCRATCH, not part of the library and not wired into top.  Measures the
+% A measurement theory: top does not import it directly, but alg_dec_ex and
+% cad_pdec_ex do (alg_dec_ex uses its sgn), so it is in top's import closure
+% and its lemmas are replayed with the library.  Measures the
 % projection against the read closure on the worked examples.  Family members
 % are polynomials in the INNERMOST quantified variable (the head of the point
 % list), with coefficients in the remaining variables.

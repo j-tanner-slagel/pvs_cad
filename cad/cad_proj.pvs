@@ -23,9 +23,12 @@ cad_proj: THEORY
 % what the lifting argument needs.  Lifting is then svs_pt: specialize at the
 % sample point and isolate roots, in time polynomial in the family.
 %
-% This theory is the OPERATOR ONLY, for measurement: the delineability
-% argument that makes projection+lifting a correct CAD is Phase 6's remaining
-% mathematics and is not claimed here.
+% This theory is the OPERATOR ONLY: the delineability argument that makes
+% projection+lifting a correct CAD is not claimed here.  [2026-10-01: the
+% n-level engine's read closures start from proj (towern_def's tw0, walk_rd,
+% cad_fast_def); their answers rest on the run-time certificate (decide5's ok
+% flag), not on delineability.  Collins' own projection, proved delineating,
+% is cad_projn (col_stack's collins_stack).]
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING sylvester, cad_lift

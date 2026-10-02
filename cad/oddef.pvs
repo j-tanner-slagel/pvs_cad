@@ -16,15 +16,16 @@ oddef: THEORY
 %   opt_den / osec_den   the cells' descriptors denote the cell points: a
 %               separator trivially; a section over a rational point becomes a
 %               mix whose algebraic number is the root of a member (or of the
-%               product) in [lo, hi], hence THE root of the gap; any other
-%               section is a sec, whose den is secbeta by definition
+%               product) in [lo, hi], hence THE root of the gap (osec_val), or
+%               a rational point when that root is rational (alg_rat's ratx_r);
+%               any other section is a sec, whose den is secbeta by definition
 %   feff_zf     the executable's effective family and zero insertion are zf and
 %               insz at the point, once the oracle is right on the member
 %               coefficients (the filter and the truncations are decided by
 %               their signs)
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING odreads, qsec_lift, cvl, zfam, map_member[mpoly, mpoly]
+  IMPORTING odreads, qsec_lift, cvl, zfam, map_member[mpoly, mpoly], alg_rat
 
   od, od1: VAR OD
   P, F, G: VAR list[list[mpoly]]
@@ -73,6 +74,11 @@ BEGIN
     EXISTS g: member(g, G) AND length(strip(g)) >= 2 AND secp_n(P, rys, G, lo, hi) = strip(g)
   %% a root of the query polynomial of osec is a root of the level's product
   secp_n_root: LEMMA meval(mpol(secp_n(P, rys, P, lo, hi)))(cons(z, rys)) = 0 IMPLIES P(P, rys)(z) = 0
+
+  %% the coordinate of a section over a rational point is the gap's root
+  osec_val: LEMMA lvl?(P, rys, lo, hi, beta) AND
+    alg?((# p := partial_eval(mpol(secp_n(P, rys, P, lo, hi)), rys), lb := lo, ub := hi #)) IMPLIES
+    value((# p := partial_eval(mpol(secp_n(P, rys, P, lo, hi)), rys), lb := lo, ub := hi #)) = beta
 
   osec_den: LEMMA wf?(od) AND lvl?(P, den(od), lo, hi, beta) IMPLIES
     den(osec(od, P, lo, hi)) = cons(beta, den(od)) AND wf?(osec(od, P, lo, hi))

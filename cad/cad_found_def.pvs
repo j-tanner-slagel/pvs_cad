@@ -1,0 +1,33 @@
+cad_found_def: THEORY
+%----------------------------------------------------------------------------
+% The CAD with the search for u built in.  Executable.
+%
+% cad_outu(qs, F, u) raises the search-effort parameter from u until the
+% run's certificate holds, as decn_u (decide_u_def) does for the decision,
+% and returns that value (fu) with the CAD's records at it (frecs =
+% cad_out(fu, qs, F)); cad_found starts at u = 0.  The certificate does not
+% depend on the sentence, so the search uses the trivial Boolean combination
+% psi_any.  It terminates on decn_u's measure umeas.  cad_found_ok proves
+% that for two or more variables the result is always a CAD adapted to F
+% (cad_of?) and that its records decide every sentence over F.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad_out, decide_u_def
+
+  u: VAR nat
+  qs: VAR list[bool]
+  F: VAR list[list[mpoly]]
+
+  psi_any: [SV -> bool] = LAMBDA (v: SV): TRUE
+
+  CF: TYPE = [# fu: nat, frecs: list[ORec] #]
+
+  cad_outu(qs, F, u): RECURSIVE CF =
+    IF decn_o(u, qs, F, psi_any)`ok OR null?(qs) OR null?(cdr(qs))
+      THEN (# fu := u, frecs := cad_out(u, qs, F) #)
+    ELSE cad_outu(qs, F, u + 1)
+    ENDIF
+  MEASURE umeas(qs, F, psi_any, u)
+
+  cad_found(qs, F): CF = cad_outu(qs, F, 0)
+END cad_found_def

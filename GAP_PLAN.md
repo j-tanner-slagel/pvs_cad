@@ -29,11 +29,95 @@
 >   sign-invariant -- returned as data (cad_out); cad_exists: some u always gives one.  "Definable" is first-order
 >   definability; semi-algebraic (quantifier-free) follows by Tarski-Seidenberg, which
 >   is not formalized here -- quantifier-free cell descriptions are Tier 2B/2C.
+>   [Superseded 2026-10-01: Tarski-Seidenberg is formalized (qelim_ok's fod_qfd), and cad_sa's
+>   cad_cells_sa gives these cells' quantifier-free definitions -- through qelim, not Tier 2B/2C.]
 > - **`(cad :cad-only? t)` and public wording: done 2026-09-30.** cad_decide7_def /
 >   cad_decide7 (5 formulas): decide7 = decn_u for two or more quantifiers, decq2 for
 >   fewer; decide7_correct, decide7_decides; `(cad :cad-only? t)` uses it.  README and
 >   docs/cad_overview say "verified CAD algorithm", scoped to decn_o in two or more
->   variables, with the limits stated.  Open: the one-variable case as one theorem.
+>   variables, with the limits stated.  Open: the one-variable case as one theorem.  [Closed
+>   2026-10-01: col_line's col_cad_line (the sectors of the real roots of F form a CAD of the
+>   line adapted to F; decq2 decides on them) and col_cells (every number of variables).]
+> - **cad_found (the complete CAD function): done 2026-09-30.** cad_found_def /
+>   cad_found_ok (6 formulas): cad_found(qs, F) raises u from 0 until the certificate holds
+>   and returns the CAD's records; cad_found_cad: for two or more variables it always
+>   returns a CAD adapted to F (cad_of?); cad_found_decides: its records decide every
+>   sentence over F.  No hypothesis on u remains.
+> - **Tier 2 stage 1 (QE, one free variable): done 2026-09-30.** qe_def / qe1_ok (46 formulas with
+>   helpers): qe1_correct -- under the run's certificate the output holds at x iff the bound
+>   quantifiers do; qe1_u_ok -- raising u always reaches the certificate; the output is
+>   quantifier-free whenever the sign-separation check passes (qe1_qf).  (cad-qe) replaces a prenex
+>   formula in one free variable by its proved quantifier-free equivalent.  Plan and status:
+>   QE_PLAN.md.  EP/epc_ok done the same day: qe1_complete -- every prenex formula in one free
+>   variable has a computed, proved-equivalent quantifier-free form.
+> - **Tier 2 stage 2 (QE, any number of free variables): done 2026-09-30.** qe2_def / qe2_ok /
+>   qe_all (93 formulas): qe_correct -- for every m >= 1 the computed formula holds at a point of
+>   R^m iff the prenex formula does; quantifier-free for m = 1 always, for m >= 2 whenever the free
+>   cells' signatures separate (reported).  (cad-qe) takes any number of free variables.
+> - **Tier 2C (always quantifier-free): done 2026-09-30.** qe_thom ... qe2c_full (8 theories,
+>   about 150 formulas): the run with the free families closed under the formal derivative
+>   separates every sector's free cells (Thom's lemma), the augmentation stops inside a finite
+>   universe, and qe_all's qe_complete: for every m >= 1 and prenex formula over sign conditions,
+>   qe computes an equivalent quantifier-free formula -- quantifier elimination for the reals
+>   (Tarski-Seidenberg), computed and proved.  Applying it to the cell definitions (rcf_cells'
+>   first-order formulas) needs a prenex normal form for rcf_fol, not done; until then the cells
+>   are semi-algebraic in the sense of first-order definable.  [Superseded 2026-10-01: no prenex
+>   normal form was needed -- qelim eliminates from the inside out (qelim_ok), and cad_sa gives
+>   the cells' quantifier-free definitions; see below.]
+> - **Tier 4 (Collins' projection): adopted 2026-10-01.** The measurement gate passed on the
+>   benchmark families (quadratic n = 3: 11 cuts against the read closure's 179; n = 4 reachable)
+>   and was mixed on Bath (small for bath_01/02/05/08, explodes on the dense quartic bath_04).
+>   Plan, measurements and proof architecture: COLLINS_PLAN.md.  M-A (determinants: kernels in
+>   both directions via NASALib, column linearity) done the same day.  [Tier 4 was completed the
+>   same day too: next line.]
+> - **2026-10-01: Tier 4 done (COLLINS_PLAN.md).** col_stack's collins_stack: Collins's
+>   N-reducta projection is delineating, in the sign-invariant sense delin_cl? (root
+>   multiplicities are not tracked), for every input; cad_projn's projn_ok ties it to the
+>   executable operator projn.  col_line's col_cells: the Collins cells form a CAD adapted to F in
+>   every number of variables, one included (col_cad_line), with no certificate.  col_found_ok's
+>   col_found_cad: col_found returns that CAD as data, with the search for u built in;
+>   col_found_decides: its records decide every sentence over F in the same variables, in the
+>   same order.  decide8 (for two or more quantifiers) and qe8 run on the Collins tower
+>   (cad_decide8, qe8).
+> - **2026-10-01: Tier 2 finished, with no prenex normal form.** qelim (qelim_def, proved in
+>   qelim_ok: qelim_qf, qelim_ok) eliminates the quantifiers of every rcf_fol formula from the
+>   inside out; fod_qfd: fod?(n)(S) IFF qfd?(n)(S) -- first-order definable = quantifier-free
+>   definable, Tarski-Seidenberg for formulas over Q (rational coefficients, no real parameters).
+> - **2026-10-01: the cells are quantifier-free definable (cad_sa).** col_cells_sa (every cell of
+>   the Collins CAD at every level, and its root graphs) and cad_cells_sa (every cell, at every
+>   level, of the n-level engine's CAD): Boolean combinations of sign conditions on polynomials
+>   with rational coefficients -- semi-algebraic sets defined over Q, so semi-algebraic in the
+>   sense of Basu-Pollack-Roy (whose definition allows real coefficients, a larger class).
+> - **2026-10-01: formulas of any shape: FORMS_PLAN.md** (gform_ok's decide_g_ok and qe_g_ok;
+>   IMPORTING pvs_cad).  Whole library 5142/5142 (355 theories, 2086 s), 2026-10-01; after the review fixes,
+>   5183/5183 (355 theories, 2209 s, 2026-10-02).
+
+## What remains (2026-10-01)
+
+Only items the plans list; the roadmap below is the plan as of 2026-09-29.
+- **A smaller projection with a delineability proof**: McCallum's or Brown-McCallum's, at first
+  Tier 3's Brown reduced McCallum projection on full-dimensional cells with its G/F decision
+  (3A, 3B); COLLINS_PLAN.md names a smaller projection (McCallum / Brown) for the Bath problems
+  as next.  cad_proj defines a McCallum-shaped operator (the n-level engine starts its read closures
+  from it, under its run-time certificate); nothing about its delineability is proved.  General McCallum and Brown-McCallum on all cells, and Lazard, are
+  under "Not planned" in section 4 (analytic delineability; Puiseux with parameters).
+- **The witness search on top of decide8** (COLLINS_PLAN.md, "Next": keep it, improve it -- CAD
+  sample points, partial CAD, numeric search).
+- **The Bath problems that time out with both engines** (bath_02-05, 07, 09, 10, 12: no answer
+  within 90 s from decc_o or decn_o at u = 0, cad/PROGRESS.md 2026-10-01; there the profile of
+  bath_04 puts the cost in the size of the projection, and the remedies named are a smaller
+  projection, equational constraints and square-free factors; section 4, "Not planned", lists the
+  published routes).
+- **Tier 1D** (optional): a static projection operator read off the walk; not done.
+- **Optional geometry** (Tier 1B, section 7 item 8): cells homeomorphic to open cubes, or
+  path-connected; not proved.
+- **QE output and speed items left in QE_PLAN.md section 12**: answers for two or more free
+  variables are not merged into intervals as for one; the exact-zero test by the remainder modulo
+  the sample's polynomial is not done.
+- **A NASALib proof-chain check** of the theories the library imports (sections 2.11 and 6.1):
+  not recorded as done.
+
+*[2026-10-01: the roadmap is kept as written. The status header above records what was done since, and dated notes mark the main statements below that it overtook. Under `IMPORTING pvs_cad`, `(cad)` now decides through `decide8` (the Collins run for two or more variables), not decide5.]*
 
 *Final roadmap, 2026-09-29. It combines five research reports, four plans, three reviews, twelve claim verifications and one critique. Nothing was edited and no prover was run. Labels used below:*
 - *PROVED: the theory is in `cad/top.pvs`'s import closure with saved proofs. The whole library replayed 3502/3502 as of 2026-09-29 (cad/PROGRESS.md:4516; for the current count see the status header). This is relative to NASALib's saved proofs, which were not replayed here (§2.11).*
@@ -134,10 +218,10 @@ Specialists also expect **quantifier elimination** with free variables as output
 1. **The proofs never reach whole cells of dimension 2 or more.** Root continuity and local sign-invariance are proved (§1.1). What is missing:
    - (i) a notion of a connected cell in Rⁿ for n ≥ 2. Connectedness exists only for real intervals (`loc_const`), and the run's cells are descriptors that denote points (`den`, oddef.pvs:42-49);
    - (ii) a global theorem that F is sign-invariant on a whole section or band cell;
-   - (iii) any theorem that sign-invariance of a projection gives delineability.
+   - (iii) any theorem that sign-invariance of a projection gives delineability. [2026-10-01: (i) and (ii) were supplied by Tier 1 (cad_conn, cad_stack, cad_run, cad_verified); (iii) by Tier 4 for Collins's projection (col_stack's collins_stack, cad_projn's projn_ok).]
 
    The proofs avoid (i) and (ii) on purpose: FINISH_PLAN.md:155-156 says "Only the OUTERMOST variable needs connectedness".
-2. **There is no projection theorem.** Each level's family is computed on demand and certified at run time. Correctness does not depend on the seed (`proj`, which is McCallum-shaped), so nothing about McCallum or Brown–McCallum follows from decide5.
+2. **There is no projection theorem.** Each level's family is computed on demand and certified at run time. Correctness does not depend on the seed (`proj`, which is McCallum-shaped), so nothing about McCallum or Brown–McCallum follows from decide5. [2026-10-01: there is one now for Collins's projection (collins_stack); still none for McCallum or Brown–McCallum.]
 3. **The library's "delineability" is weaker than the classical notion.**
    - `delin?` (cad/cad_delin.pvs:39-41) says only that the *set* of sign vectors realized on the fibre is constant along a one-dimensional sector.
    - Example: F = {(y²−x)(y−5)} realizes {−,0,+} on every fibre, so `delin?` holds on all of R. Yet its number of distinct roots is 1, 2, 3, 2, 3 on x < 0, x = 0, 0 < x < 25, x = 25, x > 25.
@@ -151,7 +235,7 @@ Specialists also expect **quantifier elimination** with free variables as output
    - `qtree_sound` (cad/qe_tree.pvs:48-50) does verified QE for one ∃ with any number of free parameters. It decided the unwindowed DAIDALUS question in 8 s, but no variant of the windowed one finished in 25–47 minutes (PROGRESS.md:794-801).
    - `sem_peel` (cad/cad_decide.pvs:79) is stated for all ys, but it is exponential (3^|F|).
 
-   Neither handles a general prefix at useful sizes.
+   Neither handles a general prefix at useful sizes. [Superseded 2026-09-30 / 10-01: quantifier elimination with free variables is proved for every prenex formula with at least one quantifier and m >= 1 free variables (qe_all's qe_complete, qe8's qe8_complete) and for every first-order formula (qelim_ok's qelim_ok); QE_PLAN.md.]
 
 ### 1.4 Public text that currently overstates (checked by reading)
 
@@ -364,7 +448,7 @@ cad_total: COROLLARY n >= 2 IMPLIES EXISTS u: cad?(n, F, run_cells(u, n, F))   %
 ```
 - **Mathematics.**
   - The CAD definition follows BPR ch. 5.
-  - Semi-algebraicity is included as first-order definability, which is cheap: root-index conditions are formulas that `sem` interprets. Quantifier-free cell descriptions need 2B/2C.
+  - Semi-algebraicity is included as first-order definability, which is cheap: root-index conditions are formulas that `sem` interprets. Quantifier-free cell descriptions need 2B/2C. [2026-10-01: obtained instead through qelim and fod_qfd (cad_sa's cad_cells_sa, col_cells_sa).]
   - Cells homeomorphic to open cubes follow from the graph/band recursion but are not proved here (optional).
   - Connectedness is the "locally constant ⇒ constant" form. For subsets of Rᵏ this is exactly topological connectedness. The optional bridge to nasalib/topology/connected_def.pvs costs about ½ day.
   - The band proof: Φ on a vertical interval equals Φ at a continuous midpoint section, by `loc_const`. On that section's graph Φ is locally constant, hence constant.
@@ -593,6 +677,8 @@ Some steps are class B, some class C.
 
 ### Tier 4: Collins projection (only on a concrete trigger)
 
+*[Done 2026-10-01, by a different milestone plan: COLLINS_PLAN.md (collins_stack, projn_ok, col_cells, col_found_cad, decide8, qe8). The estimate below is the 2026-09-29 one.]*
+
 | Milestone | What | Days |
 |---|---|---|
 | M1 | Two-level `delin_projc` (sector-local), assuming normalized members | 10–20 |
@@ -668,6 +754,8 @@ There are two routes:
 | T3B BM inside `(cad)` | T3A | 2–4.5 (+Lisp) | 40–85 | multivariate gcd; gate: `bm_ok?` ≥ 80% | Verified route for ∃-strict and ∀-non-strict goals (speed unmeasured) |
 | T4 Collins M1–M3 | T1, T3A kernel | 16–32 | 600–1500 | gcd-degree theorem, clustered roots, reducta | Collins' theorem in PVS (second overall); decide_collins possibly faster |
 
+*[Status 2026-10-01: done -- T0, T1A–T1C, T2A, T2B and T2C (QE_PLAN.md stages 1 and 2, 2C), T4 (COLLINS_PLAN.md). Not done -- T1D, T3A, T3B (see "What remains" at the top).]*
+
 ---
 
 ## 6. Recommended path
@@ -734,6 +822,8 @@ How the disagreements were settled:
 - "verified Collins/McCallum/Brown projection";
 - "no lifting over irrational points";
 - "first verified CAD" (the Rocq development exists).
+
+*[2026-10-01: Collins's projection is now proved delineating (collins_stack), and the Collins CAD is proved in every number of variables with no certificate (col_cells); McCallum's and Brown's projections are still not proved, and the other three items stand.]*
 
 ### 6.3 What to do first
 
