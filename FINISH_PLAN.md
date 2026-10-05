@@ -1,5 +1,8 @@
 # Completion plan — a (cad) that is proved, general, and fast
 
+> **Finished 2026-09-27** (section 3i). Superseded by COMPLETENESS_PLAN.md, GAP_PLAN.md and now
+> NEXT_PLAN.md.
+
 Written 2026-09-21 after a full review of CAD_PLAN.md, PHASE6_PLAN.md,
 ITEM1_PLAN.md, ITEMA_PLAN.md and PROGRESS.md. It supersedes their "what
 next" sections; their history stands.

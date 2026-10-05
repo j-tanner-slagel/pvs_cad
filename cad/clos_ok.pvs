@@ -45,8 +45,8 @@ BEGIN
     null?(T1) OR null?(T2) OR (sub?(car(T1), car(T2)) AND zsub?(cdr(T1), cdr(T2)))
   MEASURE length(T1)
   tsub_zsub: LEMMA FORALL T1: FORALL T2, T3: tsub?(T1, T2) AND zsub?(T2, T3) IMPLIES zsub?(T1, T3)
-  tsub_refl: LEMMA FORALL T1: tsub?(T1, T1)
-  tsub_trans: LEMMA FORALL T1: FORALL T2, T3: tsub?(T1, T2) AND tsub?(T2, T3) IMPLIES tsub?(T1, T3)
+  tsub_refl_clos_ok: LEMMA FORALL T1: tsub?(T1, T1)
+  tsub_trans_clos_ok: LEMMA FORALL T1: FORALL T2, T3: tsub?(T1, T2) AND tsub?(T2, T3) IMPLIES tsub?(T1, T3)
   zipapp_l: LEMMA FORALL T1: FORALL T2: tsub?(T1, zipapp(T1, T2))
   zipapp_r: LEMMA FORALL T1: FORALL T2: tsub?(T2, zipapp(T1, T2))
   cellsr_has: LEMMA FORALL Y: member(od2, cells_o(P, od, tb, Y)) IMPLIES

@@ -19,7 +19,7 @@ cad_projn_def: THEORY
 % colh?, hence (col_stack) delineability of G over a connected set.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING col_def, mpoly_norm, mpoly_eqd, det_fast_def
+  IMPORTING col_def, mpoly_norm, mpoly_eqd, det_fast_def, bareiss_def
 
   g, h: VAR list[mpoly]
   G: VAR list[list[mpoly]]
@@ -43,10 +43,11 @@ BEGIN
   MEASURE n
 
   %% psc with its degree condition as a guard
-  %% psc(g, h, j) through det_fast_def's detf (each minor once; det_fast's
-  %% detf_det: the same polynomial as subres' Laplace-expansion psc)
+  %% psc(g, h, j) through bareiss_def's bdet (fraction-free elimination,
+  %% O(n^3); bareiss' bdet_det: the normal form of subres' Laplace-expansion
+  %% psc), in normal form
   pscg(g, h, j): mpoly =
-    IF 2 * j <= dg(g) + dg(h) THEN detf(dg(g) + dg(h) - 2 * j, sresm(g, h, j)) ELSE mconst(0) ENDIF
+    IF 2 * j <= dg(g) + dg(h) THEN mnorm(bdet(dg(g) + dg(h) - 2 * j, sresm(g, h, j))) ELSE mconst(0) ENDIF
 
   %% psc_j for j < n
   pscs(g, h, n): RECURSIVE list[mpoly] =

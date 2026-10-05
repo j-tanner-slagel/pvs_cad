@@ -28,12 +28,14 @@
 ;;; interactive typecheck (pvs.lisp, typecheck-theories), follows every
 ;;; import path without remembering what it has explored, so its cost is
 ;;; the number of PATHS through the import graph.  In a large layered
-;;; library (this repository's cad/: about 95 million paths from a file importing the
-;;; decision) it does not finish, and Emacs waits on it forever.
+;;; library (this repository's cad/: about 30 billion paths from top.pvs,
+;;; tools/import_paths.py, 4 October 2026) it does not finish, and Emacs
+;;; waits on it forever.
 ;;; This is the same function with a visited set, so each theory is
 ;;; explored once per check.  It reports the same circularities: the
 ;;; circularity test still runs before the visited test, on every path.
-;;; Delete this file to go back to PVS's own version.
+;;; Remove the line that loads this file from ~/.pvs.lisp to go back to
+;;; PVS's own version.
 
 (in-package :pvs)
 

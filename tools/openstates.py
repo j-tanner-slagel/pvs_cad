@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import re,sys
 path,f=sys.argv[1],sys.argv[2]; N=int(sys.argv[3]) if len(sys.argv)>3 else 20
 parts=re.split(r'Rule\?\s*',open(path).read())

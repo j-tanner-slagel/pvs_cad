@@ -68,7 +68,7 @@
 \begin{document}
 \thispagestyle{empty}
 \begin{flushleft}
-{\sffamily\small\bfseries\color{moss}\MakeUppercase{pvs\_cad \quad·\quad PVS 8.1 \quad·\quad 2 October 2026}}\par\vspace{8pt}
+{\sffamily\small\bfseries\color{moss}\MakeUppercase{pvs\_cad \quad·\quad PVS 8.1 \quad·\quad 3 October 2026}}\par\vspace{8pt}
 {\fontsize{27}{33}\selectfont\bfseries Collins' projection, verified}\par\vspace{10pt}
 {\large\color{muted} The cylindrical algebraic decomposition of pvs\_cad, built from Collins' projection: the
 theorem that the projections form a CAD, the decision procedure and the quantifier elimination that read truth
@@ -80,7 +80,7 @@ values off it, what they cost on the benchmarks, and where the limits are.}
 \textbf{In one line.} For every family of polynomials in any number $n$ of variables, the cells built from Collins'
 projection are \textbf{proved} to form a cylindrical algebraic decomposition adapted to the family --- with no
 certificate checked at run time --- and every cell is defined without quantifiers by sign conditions on polynomials
-with rational coefficients, so it is semi-algebraic in the sense of Basu--Pollack--Roy. An executable function
+with rational coefficients, so it is semi-algebraic in the sense of Basu--Pollack--Roy~\cite{bpr}. An executable function
 returns that CAD as data: at least one record, each with an exact sample point, for every nonempty cell of
 $\mathbb{R}^n$, and none for any other. The decision
 procedure built on it (\texttt{decide8}) is \textbf{proved} sound and complete, and its quantifier elimination
@@ -102,8 +102,8 @@ $\mathrm{psc}_j(f, f')$, and $\mathrm{psc}_j(f, g)$ for pairs each have one sign
 \emph{delineable} over $C$ in the sign-invariant sense (\code{delin\_cl?}; root multiplicities are not tracked):
 over each point of $C$, the real roots of the members not identically zero on its fibre are the values of a
 constant number of continuous, strictly ordered functions on $C$, and every member has one sign on each section and band
-between them. This is Collins' delineability theorem, the basis of Collins' original algorithm (the smaller
-projections of McCallum, Brown and Lazard rest on different theorems); here it is proved from the definitions
+between them. This is Collins' delineability theorem, the basis of Collins' original algorithm~\cite{collins} (the smaller
+projections of McCallum~\cite{mccallum}, Brown~\cite{brown} and Lazard~\cite{lazard,mpp} rest on different theorems); here it is proved from the definitions
 (subresultant theorem, continuity of the roots of a polynomial in its coefficients, connectedness).
 
 \begin{thmbox}{col\_run.col\_cad\_run \quad (the projections form a CAD)}
@@ -122,8 +122,9 @@ col_cad_run: THEOREM k >= 1 IMPLIES
          IMPLIES svec(F, p1) = svec(F, p2))                         % F sign-invariant
 \end{Verbatim}
 \end{thmbox}
-For every family $F$ in $k+1$ variables: project $k$ times, $P_k = F$ and $P_{j-1} = \mathrm{proj}(P_j)$
-(\code{ctw(F, k)} is the tower $P_1, \dots, P_k$), cut the line of the outermost variable at the real roots of the
+For every family $F$ in $k+1$ variables: project $k$ times, $P_k = F$ and $P_{j-1}$ a basis of
+$\mathrm{proj}(P_j)$, meant to be squarefree, that a run-time product check confirms factors every member
+($\mathrm{proj}(P_j)$ itself when the check fails; \code{fsplit}) (\code{ctw(F, k)} is the tower $P_1, \dots, P_k$), cut the line of the outermost variable at the real roots of the
 $k$-th projection $P_0$ (\code{pbot}, \code{csects}), and build the stacks. The cells of $\mathbb{R}^{k+1}$ cover it
 and are disjoint; the cells of every level are connected and first-order definable; every level is delineable over
 every cell below it, and the graphs of its root functions are definable; and every polynomial of $F$ has one sign
@@ -133,13 +134,18 @@ $k \ge 1$, and \code{col\_cells} adds $k = 0$, one variable, where the cells are
 least one record for every nonempty cell of $\mathbb{R}^{k+1}$ and none for any other, each with a sample point in
 its cell and $F$'s signs there; \code{col\_found} raises the run's effort until the certificate holds, and
 \code{col\_found\_cad} says it always returns the CAD as data, in every number of variables, one included. These
-are the conditions of Basu--Pollack--Roy's Def.~5.1 for a CAD adapted to $F$, with the partition stated for
+are the conditions of Basu--Pollack--Roy's Defs.~5.1 and~5.5 for a CAD adapted to $F$, with the partition stated for
 $\mathbb{R}^{k+1}$ (at lower levels it follows from the stack construction, \code{tcell\_cover} and
 \code{tcell\_disj}, and is not restated) and its finiteness given by the records. First-order definable sets
 (formulas with rational coefficients, no parameters) are exactly the quantifier-free definable ones
 (\code{fod\_qfd}, Tarski--Seidenberg, proved for every first-order formula), so every cell is semi-algebraic in
 the sense of Basu--Pollack--Roy; indeed it is defined by a Boolean combination of sign conditions on polynomials
 with rational coefficients (\code{col\_cells\_sa}), where their definition allows real coefficients.
+\code{decb\_run.decb\_cad\_run} states the same for the cells of \texttt{decide8}'s run, which cuts the line of
+the outermost variable at the roots of a smaller bottom-step projection of $P_1$ (\code{projb}) when every member
+is nonzero at the rational sample of every sector that is not a root (\code{nzb?}), and at the roots of $P_0$
+otherwise; \code{decb\_cad\_input} gives the input family one sign vector on every cell when \texttt{decide8} runs
+over its checked basis.
 
 {\small
 \begin{longtable}{@{}>{\ttfamily}p{0.22\textwidth} p{0.72\textwidth}@{}}
@@ -156,26 +162,31 @@ fod\_qfd & a set is first-order definable exactly when it is quantifier-free def
 col\_cells\_sa & every cell at every level, and every root graph, is quantifier-free definable over $\mathbb{Q}$, hence semi-algebraic\\
 decc\_correct & the decision over the Collins tower, when certified, is the truth of the sentence\\
 decc\_complete & for at least two quantifiers some run is certified\\
+projb\_delin & over a connected set where the members of the smaller bottom-step projection are nonzero, the lowest family is delineable\\
+decb\_cad\_run & the cells of \texttt{decide8}'s run, with the smaller bottom step, form a CAD adapted to its family, for every $F$ and $k\ge1$\\
+decb\_correct & \texttt{decide8}'s run, when certified, is the truth of the sentence; \code{decb\_complete}: some run is certified\\
 decide8\_decides & \texttt{decide8} decides every closed prenex formula: its value is the truth (sound and complete)\\
 qe8\_complete & quantifier elimination by the Collins run: a quantifier-free equivalent of every prenex formula with at least one quantifier and $m \ge 1$ free variables\\
 qelim\_ok & \texttt{qelim} (with \texttt{qelim\_qf}): a quantifier-free equivalent of every first-order formula, quantifiers anywhere, any $m \ge 0$\\
 pstower\_cad & over any connected set on which the projection of its lowest family is sign-invariant, a tower whose families \emph{contain} the projections of the next is a CAD (used for derivative-closed free levels)\\
 detf\_det & the determinant computed with each minor once ($n\,2^n$ products) is the Laplace determinant ($n!$)\\
+bdet\_det & the determinant by fraction-free elimination (Bareiss, $O(n^3)$), with each exact division checked, is the Laplace determinant (in normal form)\\
 \bottomrule
 \end{longtable}}
 
 \textbf{What you trust.} The PVS kernel; its ground evaluator, which runs the procedures on the concrete input
-inside the proof (proof by reflection); NASALib's saved proofs of the theorems the library imports (from
+inside the proof (proof by reflection), and the other evaluations the strategies use (normal forms, witness points,
+NASALib's interval enclosures); NASALib's saved proofs of the theorems the library imports (from
 \texttt{reals}, \texttt{Sturm}, \texttt{Tarski}, \texttt{structures}, \texttt{analysis}, \texttt{complex},
-\texttt{matrices}, \texttt{mult\_poly} and \texttt{interval\_arith}, and through them from other NASALib libraries
-such as \texttt{ints}, \texttt{power} and \texttt{trig}), which were not replayed here; and the reading
+\texttt{matrices}, \texttt{mult\_poly}, \texttt{interval\_arith}, \texttt{trig} and \texttt{lnexp}, and through them
+from other NASALib libraries such as \texttt{ints} and \texttt{power}), which were not replayed here; and the reading
 of the statements (\code{fsem}, \code{gsem}, \code{svec}, \code{delin\_cl?}, \code{cad\_over?} say what is
 intended). The procedures and the strategy code are not trusted; the procedures' correctness is the theorems.
 
-\textbf{Size.} The Collins work is 58 theories with 698 proved formulas (theorems, lemmas and type-correctness
-conditions) in 3,362 lines of PVS. The whole library has 355 theories and
-5,183 proved formulas, all replayed by \texttt{proveit} from a clean copy
-(2 October 2026, 37 minutes).
+\textbf{Size.} The Collins work (the theories listed under ``Where it is'', with two example theories) is 76
+theories with 1,014 proved formulas (theorems, lemmas and type-correctness conditions) in 4,799 lines of PVS. The
+whole library has 375 theories and 5,628 proved formulas, all replayed by \texttt{proveit} from a clean copy
+(5 October 2026, 58 minutes).
 
 \section{Using it}
 
@@ -220,14 +231,14 @@ stopped at that time):
 \textsf{\small\bfseries Formula} & \textsf{\small\bfseries quantifiers} & \textsf{\small\bfseries shape} & \textsf{\small\bfseries Collins} & \textsf{\small\bfseries read closure}\\
 \midrule
 t\_circle & 2 & $\forall x\,\exists y.\; x^2+y^2=1 \lor x^2>1$ & 0.1 s & 0.0 s\\
-t\_sphere & 3 & the same in three variables & 0.1 s & 0.2 s\\
+t\_sphere & 3 & the same in three variables & 0.1 s & 0.1 s\\
 e4\_above & 4 & $\forall x\,y\,z\;\exists w.\; w>x \land w>y \land w>z$ & 2.1 s & 0.9 s\\
 e4\_between & 4 & the same with $w<z$ (false) & 0.2 s & 0.4 s\\
 k2\_lin & 3 & box $[-1,1]^2$ against $x_1+x_2 \ge c$, $c$ universal & 0.1 s & 0.2 s\\
 l2\_quad & 3 & the same with $x_i^2 \le 1$ & 0.1 s & 0.8 s\\
 k3\_lin & 4 & box $[-1,1]^3$ against $x_1+x_2+x_3 \ge c$ & 0.5 s & 11.5 s\\
 l3\_quad & 4 & the same with $x_i^2 \le 1$ & 0.7 s & $>$600 s\\
-bath\_01 & 3 & ball and cylinder (Bath CAD bank) & 0.2 s & $>$90 s\\
+bath\_01 & 3 & ball and cylinder (Bath CAD bank~\cite{bath}) & 0.2 s & $>$90 s\\
 bath\_08 & 3 & Random B, Gr\"obner form (false) & 0.8 s & 1.1 s\\
 bath\_02\textrm{--}05, 07, 09, 10, 12 & 3--4 & the other Bath problems & $>$90 s & $>$90 s\\
 \bottomrule
@@ -274,7 +285,9 @@ read-closure decision alone); on others it is slower (\texttt{e4\_above}: 2.1 s 
 kept reducta (its coefficients from the top down to the first that is a nonzero constant) and the principal
 subresultant coefficients $\mathrm{psc}_j(f, f')$ of each kept reductum $f$; for every pair of polynomials,
 $\mathrm{psc}_j(f, g)$ for their kept reducta $f$ and $g$; normalized, without constants and repetitions. The
-psc are determinants of Sylvester-type matrices, computed with every minor once (\code{detf}).
+psc are determinants of Sylvester-type matrices, computed by fraction-free elimination (\code{bdet}). Each
+projection is then replaced by a basis of it, meant to be squarefree (\code{fsplit}), when a product check confirms
+that the basis factors every member; the basis has the same roots, so the CAD is the same (\code{fsplit\_cinv}).
 \item \textbf{Delineability} (\code{collins\_stack}): over a connected set where the projection is sign-invariant,
 the number of distinct roots is constant (equal psc patterns of $(f, f')$ give equal numbers of distinct roots),
 the roots move continuously (lower semicontinuity of the roots in the coefficients), one root stays in each small
@@ -282,7 +295,10 @@ disc, and common roots of two members stay common (the subresultant $S_\kappa$);
 continuous and never cross.
 \item \textbf{The tower}: projecting $k$ times gives $P_{k-1}, \dots, P_0$ below $P_k = F$; over each sector of
 the roots of $P_0$ the stacks of $P_1, \dots, P_k$ form the CAD (\code{ctw\_cad}), because each level's
-projection is sign-invariant on the cells of the level below.
+projection is sign-invariant on the cells of the level below. \texttt{decide8} cuts the line at the roots of a
+smaller bottom step instead (\code{projb}: each member's leading coefficient and, for each member with its derivative and each pair of
+members, only the first psc that is not identically zero), which is
+enough where its members are nonzero (\code{projb\_delin}, \code{decb\_cad\_run}).
 \item \textbf{Truth values} come from the verified walk of the read-closure engine, over exact algebraic sample
 points: it passes the sections and bands of each level and folds the quantifiers. Its certificate only checks the answers of
 the sign oracle at the samples; delineability no longer depends on it.
@@ -292,10 +308,13 @@ the sign oracle at the samples; delineability no longer depends on it.
 \begin{itemize}[leftmargin=1.3em, itemsep=3pt]
 \item \textbf{The size of Collins' projection.} It contains psc of every pair of polynomials and of every kept
 reductum. On \texttt{bath\_04} (one polynomial in three variables, of degree 4 in its main variable) the first
-projection has 11 polynomials and the second 569; isolating their real roots is where the time goes, and most
-problems of the Bath bank do not finish in 90 s with either engine. The remedies are known and are not done here:
-a smaller projection (McCallum's or Brown's; \texttt{cad\_proj} defines a McCallum-shaped operator, not proved delineating; the read-closure engine
-starts from it, under its run-time certificate), equational constraints, square-free factors. Measured with
+projection has 11 polynomials and the second 569. Two remedies are in place: every family is replaced by a checked
+basis (square-free factors), and \texttt{decide8} cuts the line at the roots of the smaller bottom step; in a
+prototype count \texttt{bath\_04}'s bottom family drops from 569 polynomials to 35. The time then goes to the lifting,
+and \texttt{bath\_04}, \texttt{05} and \texttt{07} are still not decided in 300 s (3 October 2026). Not done: a
+smaller projection at every level (McCallum's~\cite{mccallum} or Brown's~\cite{brown}; \texttt{cad\_proj} defines a
+McCallum-shaped operator, not proved delineating; the read-closure engine starts from it, under its run-time
+certificate), Lazard's~\cite{lazard,mpp}, and equational constraints. Measured with
 \texttt{decide5} (\texttt{cad\_decide5}), September 2026: \texttt{(cad)} settles Bath 01, 03 and 04 by a model
 search, and Bath 02 --- and 05 and 07, refuted as hypotheses --- by fixing one variable to a constant and deciding
 the smaller sentence, after the full decision does not answer within its 10 s budget. With \texttt{cad\_decide8}
@@ -310,15 +329,38 @@ projection polynomials of the plain tower; when they do not tell the true cells 
 with the same signs and different truth values), \texttt{qe8} runs the Collins tower whose free families are
 closed under the derivative (\texttt{ctwd}), where by Thom's lemma they always do. The answer is always
 quantifier-free; the derivative-closed tower is larger, so such problems cost more.
-\item \textbf{Determinants} are computed with every minor once: $n\,2^n$ products instead of $n!$; a
-fraction-free elimination would be cubic.
+\item \textbf{Determinants} are computed by fraction-free elimination (Bareiss): $O(n^3)$ polynomial operations
+instead of $n\,2^n$. Each exact division is done by unproved code and kept only when the quotient times the
+divisor has the normal form of the dividend; when a check fails, the determinant is computed with every minor
+once ($n\,2^n$ products), so the result is always the determinant. The proof (\code{bdet\_det}) runs through
+Chi\`o's identity, from column operations, and the absence of zero divisors among polynomials
+(\code{mpoly\_dom}).
 \item \textbf{Where it is.} The theories are in \texttt{cad/}: the \texttt{col\_*}, \texttt{decc\_*},
 \texttt{cad\_decide8*}, \texttt{qe1c\_*}, \texttt{qe2cc\_*}, \texttt{qe2cd\_*}, \texttt{ctwd*}, \texttt{twrun\_*},
 \texttt{qe8*} and \texttt{qelim\_*} files and \texttt{cad\_sa}, with the algebra they rest on (\texttt{sres\_*},
-\texttt{cpoly\_*}, \texttt{croot\_*}, \texttt{ev\_near}, \texttt{rdet\_*}, \texttt{det\_fast*},
-\texttt{cad\_projn*}).
+\texttt{cpoly\_*}, \texttt{croot\_*}, \texttt{ev\_near}, \texttt{rdet\_*}, \texttt{det\_fast*}, \texttt{bareiss*}, \texttt{mpoly\_dom},
+\texttt{cad\_projn*}), and the smaller bottom step and the checked basis (\texttt{cad\_projb*}, \texttt{col\_towerb},
+\texttt{decb\_*}, \texttt{mpoly\_gcd\_def}, \texttt{mpoly\_cert*}, \texttt{fsplit\_top*}).
 \texttt{cad/top.pvs} lists and describes every theory of the library.
 \end{itemize}
+
+\begin{thebibliography}{9}\footnotesize
+\setlength\itemsep{1pt}
+\bibitem{collins} G.~E. Collins. Quantifier elimination for real closed fields by cylindrical algebraic
+  decomposition. In \emph{Automata Theory and Formal Languages}, LNCS 33, pages 134--183. Springer, 1975.
+\bibitem{bpr} S.~Basu, R.~Pollack, M.-F.~Roy. \emph{Algorithms in Real Algebraic Geometry}, 2nd ed. Springer, 2006.
+\bibitem{mccallum} S.~McCallum. An improved projection operation for cylindrical algebraic decomposition. In
+  B.~F. Caviness, J.~R. Johnson (eds.), \emph{Quantifier Elimination and Cylindrical Algebraic Decomposition}, pages
+  242--268. Springer, 1998.
+\bibitem{brown} C.~W. Brown. Improved projection for cylindrical algebraic decomposition. \emph{Journal of Symbolic
+  Computation} 32(5):447--465, 2001.
+\bibitem{lazard} D.~Lazard. An improved projection for cylindrical algebraic decomposition. In C.~L. Bajaj (ed.),
+  \emph{Algebraic Geometry and its Applications}, pages 467--476. Springer, 1994.
+\bibitem{mpp} S.~McCallum, A.~Parusi\'nski, L.~Paunescu. Validity proof of Lazard's method for CAD construction.
+  \emph{Journal of Symbolic Computation} 92:52--69, 2019.
+\bibitem{bath} D.~J. Wilson, R.~J. Bradford, J.~H. Davenport. A repository for CAD examples. \emph{ACM Communications
+  in Computer Algebra} 46(3/4):67--69, 2012.
+\end{thebibliography}
 
 
 \end{document}

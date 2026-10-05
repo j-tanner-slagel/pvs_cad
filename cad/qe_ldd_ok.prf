@@ -29,8 +29,6 @@
         NIL))
       NIL))
     NIL)
-   NIL SHOSTAK)
-  (|ldd_mem-1| NIL 3999766335 ("" (POSTPONE) NIL NIL)
    ((|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (T FORMAL-TYPE-DECL NIL |qe_ldd_ok| NIL)
     (|ldd| DEF-DECL "list[T]" |qe_ldd| NIL)

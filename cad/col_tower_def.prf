@@ -1,32 +1,34 @@
 (|col_tower_def|
  (|ctw_TCC1| 0
-  (|ctw_TCC1-0| "" 3999854512 ("" (SUBTYPE-TCC) NIL NIL) NIL SHOSTAK
-   (|ctw| SUBTYPE "k - 1" "nat" (23 95 23 100)))
-  (|ctw_TCC1-1| NIL 3999854511 ("" (SUBTYPE-TCC) NIL NIL)
+  (|ctw_TCC1-2| "" 3999949893 ("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL)
    ((|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
     (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
-    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
-    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
-    (>= CONST-DECL "bool" |reals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|ctw| SUBTYPE "k - 1" "nat" (23 95 23 100))))
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
+   SHOSTAK (|ctw| SUBTYPE "k - 1" "nat" (30 30 30 35))))
  (|ctw_TCC2| 0
-  (|ctw_TCC2-0| "" 3999854513 ("" (TERMINATION-TCC) NIL NIL) NIL SHOSTAK
+  (|ctw_TCC2-2| "" 3999949894 ("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL)
+   ((|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
+   SHOSTAK
    (|ctw| TERMINATION "ctw(pdown(F), k - 1)" #A((3) BASE-CHAR . "NIL")
-    (23 81 23 101)))
-  (|ctw_TCC2-1| NIL 3999854511 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
-   (|ctw| TERMINATION "ctw(pdown(F), k - 1)" #A((3) BASE-CHAR . "NIL")
-    (23 81 23 101)))))
+    (30 16 30 36))))
+ (|pbot_TCC1| 0
+  (|pbot_TCC1-0| "" 3999949895 ("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL)
+   ((|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
+   SHOSTAK (|pbot| SUBTYPE "k - 1" "nat" (32 80 32 85))))
+ (|pbot_TCC2| 0
+  (|pbot_TCC2-0| "" 3999949895 ("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL)
+   ((|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
+   SHOSTAK
+   (|pbot| TERMINATION "pbot(pdown(F), k - 1)" #A((3) BASE-CHAR . "NIL")
+    (32 65 32 86)))))
 

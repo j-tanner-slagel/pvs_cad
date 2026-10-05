@@ -1,5 +1,8 @@
 # Completeness plan — a (cad) that always answers
 
+> **Finished 2026-09-28** (section "Done -- THE GOAL IS REACHED"): decide5 is proved sound and
+> complete (`complete_all`). Later goals: GAP_PLAN.md, then NEXT_PLAN.md.
+
 Written 2026-09-27, after the user set the goal: make (cad) verified
 COMPLETE, not only sound.  It rests on a review of the executable decision
 (decide5 and everything it calls) and of the proved library; the review's
@@ -160,7 +163,7 @@ cell1's `gapw` and sect_inv's `sepw`, `clr1`/`clrw` (well-founded on
 run first, so the fast path is unchanged; `gaps_ok_incr`; the four free
 tests are sound and now also complete (`between_free_complete`, ...,
 `inv_chk_complete`: a polynomial without roots inside a sector passes);
-`nroots_two` (exactly two roots are counted twice).  complete1:
+`nroots_two_sect_inv` (exactly two roots are counted twice; named `nroots_two` until 2026-10-05).  complete1:
 `decide5_complete1`, the fast decision answers every closed formula with at
 most one quantifier.  Canary k1 proves on the fast path.
 

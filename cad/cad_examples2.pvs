@@ -3,7 +3,7 @@ cad_examples2: THEORY
 % Larger two-variable problems through (cad) (FINISH_PLAN S4).
 %
 % None of these was within reach of decide2's read closure in reasonable
-% time; all go through the fast decision decw inside decide5 (via decide4).  Times are wall
+% time; all go through the fast decision decw inside decide5.  Times are wall
 % clock for the whole proof through the pvs-cli server, session start
 % included, on the 8 GB machine.
 %

@@ -12,9 +12,10 @@ sgn_dec: THEORY
 % sign_tree's score answers.
 %
 % So gdec_sound holds under a bound on the fuel alone, length(p) + 3 length(q)
-% terms, which is syntactic.  sign_branch and nosign_branch are the two forms
-% a strategy uses: a branch of the tree whose conditions hold at the
-% parameters carries the answer there.
+% terms, which is syntactic.  sign_branch and nosign_branch: a branch of the
+% tree whose conditions hold at the parameters carries the answer there (the
+% strategies poly-sign and poly-nosign use the pruned forms, sgn_prune's
+% sdecide with psign_branch and pnosign_branch).
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING exists_dec

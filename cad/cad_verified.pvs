@@ -1,7 +1,7 @@
 cad_verified: THEORY
 %----------------------------------------------------------------------------
 % THE RUN COMPUTES A CYLINDRICAL ALGEBRAIC DECOMPOSITION ADAPTED TO F
-% (GAP_PLAN.md Tier 1; Basu-Pollack-Roy, Def. 5.1), returned as data.
+% (GAP_PLAN.md Tier 1; Basu-Pollack-Roy, Defs. 5.1 and 5.5), returned as data.
 %
 % cad_of?(u, qs, F) collects what decn_o's run at u provides for the family
 % F in k + 1 = length(qs) variables.  Its cells of R^(j+1), j <= k, are

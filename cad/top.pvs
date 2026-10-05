@@ -5,7 +5,10 @@ top: THEORY
 %
 % Phase 0 (baseline and harness)
 %   eval_probe   throwaway experiment: recursive multivariate polynomial
-%                datatype under the ground evaluator (design decision D1)
+%                datatype under the ground evaluator (design decision D1).
+%                Not imported here: it defines meval, as_list, deg and the
+%                arithmetic again over the same datatype, which would make
+%                those names ambiguous in a theory that imports top
 %
 % Phase 1 (multivariate polynomial kernel)
 %   mpoly        DATATYPE: mconst(rat) | mpol(list[mpoly]) (imported through
@@ -21,8 +24,9 @@ top: THEORY
 %                through mpoly_embed, not directly)
 %   mpoly_embed  peval, its rewrite lemmas, pto/pnorm, the reflection theorem
 %                poly_eq_by_norm used by the mpoly-eq strategy
-%   mpoly_examples  ten identities closed by (mpoly-eq), incl. a function
-%                atom f(x), sq, and division by a constant
+%   mpoly_examples  thirteen identities closed by (mpoly-eq), incl. a function
+%                atom f(x), sq, division by a constant, and three through
+%                unfolded user definitions
 %   pvs-strategies  mpoly-eq (Lisp printer expression -> PolyExpr, reflection)
 %                and mpoly-simp (normal form printed back and replaced in place)
 %   mpoly_showcase  what the strategies can do: classical identities up to
@@ -45,7 +49,8 @@ top: THEORY
 %                (b^pk * f = quo * g + rem) and pquo_rem_rem_length
 %   mpoly_mono   conversion tm to NASALib mult_poly's monomial lists (shift0,
 %                shift_up, bump on exponent vectors) with tm_eval:
-%                full_eval(tm(p))(xs) = meval(p)(xs); evaluation lemmas for
+%                full_eval(tm(p))(xs) = meval(p)(xs) when length(xs) >=
+%                max_length(tm(p)); evaluation lemmas for
 %                mult_poly's full_eval (nil, cons, append, scale, shifts)
 %   mpoly_mono_examples  the bridge tm_peval (any PolyExpr reaches mult_poly
 %                with its value preserved) and ground conversions checked by
@@ -189,7 +194,8 @@ top: THEORY
 %                pnosign_branch are what the strategies use
 %   sgn_examples the poly-sign and poly-nosign strategies: a root of x^2 - 1
 %                where x is positive, none of x^2 + 1, and the parametric
-%                statements about x - a and x^2 - a
+%                statements about x - a and x^2 - a; g6 needs poly-nosign's
+%                branch facts (no positive root of x^2 + a for a > 0)
 %   tarski_pair  two sign conditions at the roots of one polynomial: the four
 %                queries of the pairs q1^a q2^b with a, b in {1, 2} count the
 %                roots where both are positive four times over (pair_count),
@@ -262,8 +268,9 @@ top: THEORY
 %                ctree_sound needs length(sqsum(E)) + 2 mlen(Q) + 1 <= k
 %   qe_tree      qtree decides EXISTS x: feval(F, ys, x) for a formula of
 %                qe_formula as a tree of sign conditions on the parameters
-%                (qtree_sound, fuel tfuel(F)); qdecide is the pruned tree and
-%                qe_branch is what the parametric qe-exists strategy uses
+%                (qtree_sound, fuel tfuel(F)); qdecide is the pruned tree
+%                (the parametric qe-exists strategy uses qe_ctx's qdecidec and
+%                qe_branchc)
 %   sign_oracle  deciding the sign of a coefficient under the conditions on
 %                its path: with one parameter the question is one-variable QE
 %                on the parameter (qe_exists of qe_formula with no parameters
@@ -294,8 +301,9 @@ top: THEORY
 %   sgn_dec      gdec and gdec_sound: the sign condition on a tree with no
 %                hypothesis on the valuation, the cases tok2 rules out
 %                answered by exists_dec or by hand, so the fuel bound is the
-%                only condition; sign_branch and nosign_branch are the forms
-%                the strategy uses
+%                only condition; sign_branch and nosign_branch (poly-sign and
+%                poly-nosign use sgn_prune's sdecide with psign_branch and
+%                pnosign_branch)
 %   exists_dec   edec and edec_sound: the tree for EXISTS x: q(x, ys) > 0, a
 %                case analysis on the normalized query whose last case is
 %                crit_pos's and is answered by sdec for the derivative
@@ -337,7 +345,7 @@ top: THEORY
 %                every root of a proper polynomial lies in |z| <= 1 + n M/|a_n|
 %                (root_bound), and for every eps there is a delta such that a
 %                root of any polynomial whose coefficients are within delta of
-%                p's is within eps of some root of p (root_near) -- the
+%                p's is within eps of some root of p (croot_root_near) -- the
 %                analytic input to delineability
 %   sign_vec     sign vectors of a family (svec) and positions in a list
 %   tree_sel     selecting a branch tree by a sign vector instead of a
@@ -360,8 +368,10 @@ top: THEORY
 %   cad_decide   the cylindrical decision procedure decq/decide for a closed
 %                prenex formula with any quantifier prefix, and its
 %                correctness decq_correct/decide_correct
-%   cad_examples the cad strategy on two-variable alternations with linear
-%                atoms; the heavier examples are the Phase 6 target
+%   cad_examples eleven sentences in two and three variables (lines, the circle
+%                and the disc, a sum of squares, grouped binders, a constant
+%                that settles the matrix for the witness search) decided by
+%                (cad) through decide5
 %   chain_sturm  the chain of branch_prs, read as the triple Sturm@sturm
 %                expects, satisfies constructed_sturm_sequence?: the six
 %                conditions, assembled from the structure of the chain and
@@ -792,13 +802,16 @@ top: THEORY
 %                cert_w, CL? from cl_cells); fold3_sem is foldw_sem's fold
 %   cad_decide4_def, cad_decide4  the decision (cad) ran until N10: decw
 %                for two quantifiers, decw3 for three, decide2 as the fallback
-%                and for every other prefix; decide4_correct (decide5's
-%                fallback now)
-%   cad_examples3  three quantifiers through (cad), seconds each: five TRUE
+%                and for every other prefix; decide4_correct (decide5 has no
+%                fallback: decn_u for three or more quantifiers, decw then
+%                decn_u for two, decq2 for one)
+%   cad_examples3  three quantifiers through (cad), seconds each: six TRUE
 %                sentences (sphere over the disc, the cone, a sum of
-%                squares) and two FALSE ones refuted by (cad -1)
-%   walk_od     the walk through an ORACLE DESCRIPTOR (a rational point, an
-%                algebraic sample, or a section over a descriptor) and a
+%                squares, grouped binders) and two FALSE ones refuted by
+%                (cad -1)
+%   walk_od     the walk through an ORACLE DESCRIPTOR (a rational point, a
+%                point with algebraic coordinates, a section over a descriptor,
+%                or a separator over a tower point) and a
 %                CHAIN TABLE: chains built once per level and reused at any
 %                cell whose oracle agrees with the recorded signs of their
 %                reads (i_det), entry signs at a rational point by meval
@@ -999,7 +1012,7 @@ top: THEORY
 %   decide_u_def, decide_u  decn_u: decn_o from a given u, raising u until
 %                the certificate holds; terminates by decn_ev (the bound is
 %                only in the measure); decn_u_correct, decn_u_complete
-%   complete_all  (cad)'s decision is complete: decq5_complete,
+%   complete_all  decide5 (what (cad) runs without cad_decide8) is complete: decq5_complete,
 %                decide5_complete, and decide5_decides -- decide5 answers
 %                every closed formula with its truth, no hypothesis
 %   cad_examples4  FOUR quantifiers through (cad), seconds each: three TRUE
@@ -1044,10 +1057,16 @@ top: THEORY
 %   cad_endgame_ex  tests of that endgame: every comparison and connective,
 %                TRUE and FALSE, a repeated atom, division by a numeral,
 %                alternation, an irrational witness, a refuted hypothesis
-%   cad_bath    a problem of the Bath CAD example bank (Random B Grobner from
-%                Buchberger-Hong, three quantifiers, a degree-7 member)
-%                refuted by (cad -1) through decn_o in under five minutes; the
-%                other nine closed Bath problems run past 300 s
+%   cad_bath    problems of the Bath CAD example bank: bath_08 (Random B
+%                Grobner from Buchberger-Hong, three quantifiers, a degree-7
+%                member) refuted by (cad -1), about 10 s for the whole proof;
+%                bath_02 proved and bath_05 refuted by fixing one variable
+%                (the witness search's reduction).  Of the other closed
+%                problems (measurements, not lemmas), (cad) settles 01, 03 and
+%                04 by a model search and 07 by fixing one variable, in under
+%                13 s each; 09, 10 and 12 are not
+%                settled, and the decision alone does not finish in 90 s on
+%                02-05, 07, 09, 10 and 12
 %   cad_examples2  larger two-variable problems through (cad), seconds each:
 %                a cubic, AM-GM, the circle meeting a parabola, a quartic, and
 %                a FALSE sentence refuted in the antecedent by (cad -1)
@@ -1062,7 +1081,9 @@ top: THEORY
 %                no member changes sign there and aok? correctly refuses --
 %                the three open sectors pass, the two sections do not.  That
 %                residual case needs the sign of a polynomial at a point with
-%                two algebraic coordinates, which is what sh_count supplies
+%                two algebraic coordinates; alg_lift2, alg_bis and the n-level
+%                walk decide it (sh_count, sketched for it in sturm_habicht,
+%                was left with the psc route)
 %   cad_decn    dec at ANY number of levels computes the semantics
 %                (decn_sem), and pdecide's val field with it (pdecide_sem).
 %                dec2_sem settled two quantifiers; this is the general form,
@@ -1084,7 +1105,8 @@ top: THEORY
 %                which sect_svec already makes constant along a sector, so
 %                nothing extra is computed. sh_count, the correspondence
 %                between NASALib's integer pseudo-remainder sequence and the
-%                psc, is STATED AND NOT PROVED: it is what remains of Stage C
+%                psc, was only sketched (in sturm_habicht's comments) and left
+%                with the psc route (psc_det_ce)
 %   cad_projc    Collins' projection: coefficients, plus the psc chain of each
 %                member against its derivative and of each pair. [Note
 %                2026-10-01, after cad_projc's own 2026-09-29 note: without
@@ -1094,7 +1116,8 @@ top: THEORY
 %                cad_projn's projn_ok.] Measured
 %                barely larger than McCallum's and, decisively, adding NO
 %                roots below (cad_meas3: collins_cost), so the sector count
-%                and the whole speed advantage survive the correct operator
+%                and the whole speed advantage survive a Collins-like
+%                operator (projc); the operator proved delineating is projn
 %   cad_pdec     the projection decision at any number of levels: tower(m,F)
 %                is (: proj^m(F), ..., F :), and dec folds the outermost
 %                quantifier over the sectors of the outermost family
@@ -1143,7 +1166,7 @@ top: THEORY
 %   spec_deg     Stage B of item 1: degree is determined by sign data alone.
 %                deg(pl) is the largest index carrying a nonzero entry, so it
 %                depends only on WHICH coefficients vanish, and sign3 decides
-%                exactly that (sign3_zero). Proved as one inequality plus
+%                exactly that (sign3_zero_spec_deg). Proved as one inequality plus
 %                antisymmetry (deg_le, deg_signs): the hypothesis is symmetric
 %                in p and q, and proving the equality head-on splits into a
 %                dozen sign branches while each half of the inequality is a
@@ -1158,7 +1181,7 @@ top: THEORY
 %                to compute the fibre set exactly (svs_pt_fib), so one
 %                quantifier's semantics sees only that set (qfold_fib,
 %                sem1_fib, via fib_swap) and delineability moves it from the
-%                sample to the whole sector (sect_sem).
+%                sample to the whole sector (sect_sem_delin).
 %                cad_pdec also carries pdecq, the HYBRID: decq2 with proj in
 %                place of clos1 and svsec's dispatch at level 2, so algebraic
 %                coordinates go through the proved svs_sg/alg_sign2 route and
@@ -1350,7 +1373,8 @@ top: THEORY
 %   qe1_ok       qe1 is correct: qe1_correct (under the run's certificate the
 %                output holds at x iff the bound quantifiers do), qe1_qf (qf
 %                means quantifier-free), qe1_u_ok (the escalation always
-%                reaches the certificate), qe1_bf (the form (cad-qe) uses)
+%                reaches the certificate), qe1_bf ((cad-qe) proves from
+%                qe8_correct or qe_correct)
 %   qe1_full     QE FOR ONE FREE VARIABLE IS COMPLETE: qe1 always returns a
 %                quantifier-free formula equivalent to the input (qe1_complete)
 %   qe2_def      QE FOR SEVERAL FREE VARIABLES (executable): qe2_c runs
@@ -1365,7 +1389,7 @@ top: THEORY
 %                the disjunction of sectX(s) AND secout(s); qe2_u raises u
 %   qe2_ok       qe2 is correct: qe2_correct (under the run's certificate the
 %                output holds at (y1, ..., ym) iff the bound quantifiers do),
-%                qe2_qf, qe2_u_ok, qe2_bf (the form (cad-qe) uses)
+%                qe2_qf, qe2_u_ok, qe2_bf
 %   qe_thom      2C, ONE FIBER: a derivative-closed family (dcl?: lderiv of
 %                every member is a member) keeps each member's sign between
 %                two points with the same sign vector (fiber_const, Thom's
@@ -1414,7 +1438,8 @@ top: THEORY
 %   qe_cad_ex    (cad-qe) examples: a window of times, square roots, a
 %                discriminant, two bound variables (x^2 + y^2 < r iff r > 0),
 %                two free variables (t = a AND t = b; the quadratic's
-%                discriminant a^2 >= 4 b)
+%                discriminant a^2 >= 4 b), an alternating prefix, grouped
+%                binders
 %   ---- Collins' projection (COLLINS_PLAN.md) ------------------------------
 %   rdet_nl      ring_det's rdet is NASALib's det (rdet_nl), so NASALib's
 %                matrix theory applies: the transpose (rdet_tr), two equal
@@ -1506,20 +1531,48 @@ top: THEORY
 %                stack keeps its sign vectors (rsvl, bsvl) and root count, and
 %                the roots move by less than any eta
 %   col_stack    DELINEABILITY FROM COLLINS' PROJECTION collins_stack: C
-%                connected and colh?(G, C) imply delin_cl?(G, C)
+%                connected and colh?(G, C) imply delin_cl?(G, C); kcol_stack:
+%                the same from col_pair's kconst? (constant effective degrees
+%                and common-divisor degrees, what the proof uses; colh? gives
+%                it, colh_kconst)
 %   cad_projn_def  Collins' N-reducta projection, executable: kd (kept
 %                degrees, stopping after a coefficient that normalizes to a
 %                nonzero constant), pj1/pj2/pj3 (coefficients, psc with the
 %                derivative, psc of pairs), projn (normalized, no constants,
 %                no repetitions)
 %   cad_projn    projn_ok: sign-invariance of projn(G) on C gives colh?(G, C)
+%   cad_projb_def  a smaller projection for the bottom step (PROJ_PLAN.md
+%                P2), executable: per member its top coefficient that does
+%                not normalize to 0 and the first psc with its derivative
+%                that does not, per pair the first psc that does not (projb;
+%                pdownb is its checked basis as a family, fsplit)
+%   cad_projb    kconst_nz / projb_kconst: where every member of projb(G) is
+%                nonzero, kconst?(G, C) holds (the first psc that is nonzero
+%                fixes the common-divisor degree, ccd1_iff / ccd2_iff);
+%                kconst_one on a point; projb_delin: delineability
+%   mpoly_gcd_def  gcd (subresultant remainder sequences, NEXT_PLAN.md P5;
+%                primitive ones in P3), contents, Yun's squarefree
+%                decomposition and a pairwise coprime basis of multivariate
+%                polynomials (basis, exps), executable and untrusted: only
+%                results that pass mpoly_cert_def's check are used
+%                (PROJ_PLAN.md P3)
+%   mpoly_cert_def  fsplit(U): the proposed basis of U when every member is
+%                c * product of b^e over it by normal forms (ucheck?), else
+%                U; executable
+%   mpoly_cert   fsplit_cinv / fsplit_nz: one sign on C (nonzero on C) for
+%                every member of fsplit(U) gives the same for every member of
+%                U (ucert_eval, pprod_cinv, pprod_nz)
 %   col_tower_def  the Collins tower, executable: ctw(F, k) is F's k - 1
-%                projections and F, lowest first (pdown = projn as a
-%                family); pbot(F, k) is the k-th projection
+%                projections and F, lowest first (pdown = the checked basis of
+%                projn as a family, fsplit); pbot(F, k) is the k-th
+%                projection
 %   col_tower    ctw_cad: on a connected C where pbot(F, k) is sign-invariant
 %                the Collins tower is a CAD (cad_over?): every level is
 %                delineable over every stack cell, by collins_stack and
-%                projn_ok (ptower_cad)
+%                projn_ok (ptower_cad; fam_cinv through fsplit_cinv)
+%   col_towerb   ptower_cad2 / ctw_cad2: the tower is a CAD over a connected
+%                C where its lowest family is delineable; bot_cad (projb of
+%                the lowest family nonzero on C), bot_cad1 (C one point)
 %   decc_def     the decision over the Collins tower, executable: decc_o is
 %                decn_o's walk without the read closures, cut at the roots of
 %                pbot(F, k); its certificate okw_o is okn_o without the
@@ -1550,16 +1603,57 @@ top: THEORY
 %                run; col_verified (holds when decc_o certifies) and
 %                col_exists (for some u)
 %   det_fast_def the determinant with every minor computed once (detf, n 2^n
-%                products instead of n!), executable
-%   det_fast     detf_det: detf(n, M) = det(n, M); the projection's psc now
-%                uses detf (cad_projn_def's pscg, cad_projn's pscg_eq)
+%                products instead of n!), the minors looked up in a trie of
+%                their column sets (DTrie, dbits, tbuild; PROJ_PLAN.md P1),
+%                executable; detf0 is the former table-scan version
+%   det_fast     detf_det: detf(n, M) = det(n, M); the trie answers what the
+%                table did (tlook_tins, dbits_inj, tlook_tbuild, dtabt_dtab,
+%                detf_eq); bareiss_def's bdet falls back to detf
+%   mpoly_dom    no zero divisors: when p is not the zero function and p * q
+%                is, q is (cancel, cancel_pow), by induction on the sizes,
+%                through NASALib's univariate polynomials (poly_nodiv)
+%   bareiss_def  the determinant by fraction-free elimination (Bareiss, O(n^3)
+%                instead of n 2^n): bdet, with each exact division by mex
+%                checked by normal forms, a zero pivot replaced by adding the
+%                first row whose entry is not zero, detf when a check fails;
+%                executable (NEXT_PLAN.md P5)
+%   bareiss      bdet_det: mnorm(bdet(n, M)) = mnorm(det(n, M)); the block
+%                invariant bar_inv (value * p^(m-1) = det) by Chio's identity
+%                from column operations (chio_id), the checked divisions
+%                (elim_val) and mpoly_dom's cancellation; the projection's
+%                psc uses bdet (cad_projn_def's pscg, cad_projn's pscg_eq)
 %   decc_u_def   decc_u: decc_o from u = 0 until its certificate holds
 %   decc_u       decc_u_correct, decc_u_complete
-%   cad_decide8_def  decide8: decc_u for two or more quantifiers, decq2 for
-%                one -- what (cad) uses in a theory importing cad_decide8
+%   decb_def     decb_o: decc_o with the line cut at the roots of the smaller
+%                bottom-step projection (cbotb) when every member is nonzero
+%                at every non-root sector's rational sample (nzb?), else
+%                decc_o; executable
+%   decb_ok      decb_correct, decb_complete: on each base cell the tower is
+%                a CAD (sect_nz, fsplit_nz, sect_cadb), then decc_ok's
+%                argument
+%   decb_u_def   decb_u: decb_o from u = 0 until its certificate holds
+%   decb_u       decb_u_correct, decb_u_complete
+%   decb_run     DECIDE8'S RUN IS A CAD (decb_cad_run), with no certificate:
+%                col_run's conditions for the sectors decb_o cuts the line
+%                into (bsects: those of the smaller bottom step when nzb?
+%                holds, else those of pbot(F, k)); decb_cad_input: the input
+%                family has one sign vector on every cell of the run over its
+%                checked basis (svec_smap)
+%   fsplit_top_def  the input family over its checked basis, executable:
+%                ubs (the members as polynomials), sce (a member's cofactor
+%                sign and exponents), smap (the members' sign vector from the
+%                basis'), spsi (the matrix read through smap)
+%   fsplit_top   sem_split: when every member passes the check, the sentence
+%                over fam(B) and spsi means what it means over F and Psi
+%                (svec_smap, sce_sign, sprd_sign, spw_sign)
+%   cad_decide8_def  decide8: decb_u for two or more quantifiers, over the
+%                checked basis of the input family when every member passes
+%                (fsplit_top_def), decq2 for one -- what (cad) uses in a
+%                theory importing cad_decide8
 %   cad_decide8  decide8_correct, decide8_decides (sound and complete)
-%   cad_decide8_ex  (cad) through decide8: circle, k3_lin, l3_quad (the last
-%                > 600 s with the read-closure decision)
+%   cad_decide8_ex  (cad) and (cad-direct) through decide8: circle, k3_lin,
+%                l3_quad (the last > 600 s with the read-closure decision);
+%                (cad :cad-only? t) with one quantifier and on a hypothesis
 %   qe1c_def     quantifier elimination for one free variable over the
 %                Collins run (qe1cc: qe1_sm on the Collins sectors), executable
 %   qe1c_ok      qe1cc_correct, qe1cc_bf: always answers, quantifier-free,
@@ -1583,7 +1677,8 @@ top: THEORY
 %                answer is quantifier-free, else qe2cd -- every branch the
 %                Collins run; what (cad-qe) uses in a theory that imports qe8
 %   qe8          qe8_correct, qe8_complete: always a quantifier-free equivalent
-%   qe8_ex       (cad-qe) through qe8: the qe_cad_ex equivalences
+%   qe8_ex       (cad-qe) through qe8: qe_cad_ex's six equivalences and an
+%                alternating prefix
 %
 % The Collins CAD in every dimension, found, and semi-algebraic (after M-K):
 %   col_line     ccells?(k, F): col_cad_run's conditions; col_cad_line (one
@@ -1617,6 +1712,17 @@ top: THEORY
 %                of col_line, col_found_ok, cad_verified, cad_found_ok,
 %                cad_sa, qe_all and complete_all are outside its import
 %                closure (all are imported here)
+%   trans_bounds polynomial bounds of sin, cos, exp, ln and atan in the form
+%                (cad) reads, from NASALib's trig and lnexp lemmas: the
+%                ranges, bounds of degree 3 (t - t^3/6 <= sin(t) <= t for
+%                t >= 0, 1 + t <= exp(t), ln(t) <= t - 1 for t > 0, ...)
+%                and of higher degree (sin to 7, cos to 6, from NASALib's
+%                sin_bounds and cos_bounds) (NEXT_PLAN.md T5)
+%   pvs_cad_num  pvs_cad with NASALib's interval_arith@strategies and
+%                trans_bounds: (cad) also encloses constants such as pi, e,
+%                sin(1) between rationals (TERMS_PLAN.md T2), and bounds and
+%                encloses sin, cos, exp, ln and atan of terms with constants
+%                of the sequent (NEXT_PLAN.md T5)
 %   cad_showcase (cad) and (cad-qe) on 43 examples: sentences, (cad) on
 %                chosen formulas of a sequent ((cad n), (cad (m n)), (cad +),
 %                (cad -), (cad *)), the CAD engine alone, elimination
@@ -1625,11 +1731,28 @@ top: THEORY
 %                binders over the five subtypes, unknowns with the bounds
 %                their types give, TRUE / FALSE and comparisons of a term with
 %                itself beside quantified parts, (cad *) and (cad-qe) on such
-%                formulas (64 lemmas)
+%                formulas, (cad-direct) on a general formula, (cad-qe) on an
+%                alternating prefix (79 lemmas)
+%   cad_terms_ex regression for (cad) on real terms beyond polynomials
+%                (TERMS_PLAN.md T2-T4): constants that interval arithmetic
+%                evaluates (pi, e, sin(1), ln(2), atan(1), two at once, one
+%                in a hypothesis) by enclosures, sqrt, abs, max, min and
+%                quotients by their exact facts, also in formulas that are
+%                not prenex, and sqrt, abs, max, min and quotients under
+%                binders, in any order and nesting, read into formulas
+%                without them; sin, cos, exp, ln and atan of terms with
+%                constants (NEXT_PLAN.md T5: bounds, enclosures over pieces);
+%                (cad-num) and (cad-facts) called directly, with options; a
+%                failing (cad) that leaves the sequent as it was (96 lemmas);
+%                imports pvs_cad_num
+%   cad_decide7_ex  (cad :cad-only? t) through decide7 in a theory that
+%                imports neither cad_decide8 nor gform_ok
+%   cad_diag_ex  the measuring and inspection commands (cad-showf, cad-bench,
+%                cad-mn, cad-mx, cad-time, cad-m3, cad-qeshow), each run once
+%                before (cad) or (cad-qe) closes the goal
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING eval_probe,
-            mpoly_def,
+  IMPORTING mpoly_def,
             mpoly_arith,
             mpoly_norm,
             mpoly_embed,
@@ -1935,8 +2058,14 @@ BEGIN
             col_stack,
             cad_projn_def,
             cad_projn,
+            mpoly_gcd_def,
+            mpoly_cert_def,
+            mpoly_cert,
             col_tower_def,
             col_tower,
+            cad_projb_def,
+            cad_projb,
+            col_towerb,
             decc_def,
             col_sem,
             decc_walk,
@@ -1947,8 +2076,18 @@ BEGIN
             col_verified,
             det_fast_def,
             det_fast,
+            mpoly_dom,
+            bareiss_def,
+            bareiss,
             decc_u_def,
             decc_u,
+            decb_def,
+            decb_ok,
+            decb_u_def,
+            decb_u,
+            decb_run,
+            fsplit_top_def,
+            fsplit_top,
             cad_decide8_def,
             cad_decide8,
             cad_decide8_ex,
@@ -1974,6 +2113,11 @@ BEGIN
             gform_def,
             gform_ok,
             pvs_cad,
+            trans_bounds,
+            pvs_cad_num,
             cad_showcase,
-            cad_forms_ex
+            cad_forms_ex,
+            cad_terms_ex,
+            cad_decide7_ex,
+            cad_diag_ex
 END top

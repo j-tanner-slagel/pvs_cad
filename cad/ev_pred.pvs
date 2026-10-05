@@ -9,6 +9,6 @@ BEGIN
   p, q: VAR pred[nat]
 
   ev?(p): bool = EXISTS N: FORALL u: u >= N IMPLIES p(u)
-  ev_and: LEMMA ev?(p) AND ev?(q) IMPLIES ev?(LAMBDA u: p(u) AND q(u))
-  ev_mono: LEMMA ev?(p) AND (FORALL u: p(u) IMPLIES q(u)) IMPLIES ev?(q)
+  ev_and_ev_pred: LEMMA ev?(p) AND ev?(q) IMPLIES ev?(LAMBDA u: p(u) AND q(u))
+  ev_mono_ev_pred: LEMMA ev?(p) AND (FORALL u: p(u) IMPLIES q(u)) IMPLIES ev?(q)
 END ev_pred

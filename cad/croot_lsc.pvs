@@ -84,4 +84,22 @@ BEGIN
     AND dist?(LA) AND (FORALL z: rp(A, n)(z) = real_(0) IFF member(z, LA))
     AND dist?(LB) AND (FORALL z: rp(B, n)(z) = real_(0) IFF member(z, LB))
     IMPLIES length(LA) = length(LB)
+  %% ---- the same common-divisor degrees (2026-10-02, PROJ_PLAN.md P2) -------------------
+  %% what dist_le uses of psc_same?: the common divisors of A and A' have the same
+  %% degrees as those of B and B'.  psc_same? gives it (psc_kdist); so does a single
+  %% nonzero psc above identically zero ones (cad_projb), where psc_same? may fail
+  kdist?(A, B, n): bool = FORALL k: k <= n - 1 IMPLIES
+    (ccd?(rp(A, n), rp(poly_deriv(A), n - 1), k) IFF ccd?(rp(B, n), rp(poly_deriv(B), n - 1), k))
+  kdist_ccd: LEMMA A(n) /= 0 AND B(n) /= 0 AND n >= 1 AND kdist?(A, B, n) AND k <= n - 1 IMPLIES
+    (ccd?(rp(A, n), rp(poly_deriv(A), n - 1), k) IFF ccd?(rp(B, n), rp(poly_deriv(B), n - 1), k))
+  psc_kdist: LEMMA A(n) /= 0 AND B(n) /= 0 AND n >= 1 AND psc_same?(A, B, n) IMPLIES kdist?(A, B, n)
+  kdist_sym: LEMMA kdist?(A, B, n) IMPLIES kdist?(B, A, n)
+  kdist_le: LEMMA A(n) /= 0 AND B(n) /= 0 AND n >= 1 AND kdist?(A, B, n)
+    AND dist?(LA) AND (FORALL z: rp(A, n)(z) = real_(0) IFF member(z, LA))
+    AND dist?(LB) AND (FORALL z: rp(B, n)(z) = real_(0) IFF member(z, LB))
+    IMPLIES length(LB) <= length(LA)
+  kdist_same: LEMMA A(n) /= 0 AND B(n) /= 0 AND n >= 1 AND kdist?(A, B, n)
+    AND dist?(LA) AND (FORALL z: rp(A, n)(z) = real_(0) IFF member(z, LA))
+    AND dist?(LB) AND (FORALL z: rp(B, n)(z) = real_(0) IFF member(z, LB))
+    IMPLIES length(LA) = length(LB)
 END croot_lsc

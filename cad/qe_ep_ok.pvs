@@ -35,7 +35,7 @@ BEGIN
   len_pmc: LEMMA length(pmc(ql)) = length(ql)
   len_ld: LEMMA length(lderiv(pmc(ql))) = length(ql) - 1
   L: VAR list[mpoly]
-  len_cons: LEMMA length(L) >= 1 IMPLIES cons?(L)
+  len_cons_qe_ep_ok: LEMMA length(L) >= 1 IMPLIES cons?(L)
   len0_null: LEMMA length(L) = 0 IMPLIES L = null
   earr_pmc: LEMMA earr(pmc(ql), ys) = arr(ql)
   deriv_bridge: LEMMA meval(mpol(lderiv(pmc(ql))))(cons(x, ys)) = polylist(pderiv(ql))(x)

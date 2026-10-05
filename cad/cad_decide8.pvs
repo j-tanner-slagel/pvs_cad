@@ -1,12 +1,13 @@
 cad_decide8: THEORY
 %----------------------------------------------------------------------------
 % decide8 is correct and always answers (COLLINS_PLAN.md M-I): the Collins
-% run by decc_u_correct / decc_u_complete, fewer quantifiers by decq2 (as
-% cad_decide7).  decide8_correct is the lemma (cad) instantiates when the
-% theory imports cad_decide8.
+% run by decb_u_correct / decb_u_complete, over the checked basis of the
+% input family by fsplit_top's sem_split (PROJ_PLAN.md P3), fewer quantifiers
+% by decq2 (as cad_decide7).  decide8_correct is the lemma (cad)
+% instantiates when the theory imports cad_decide8.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING cad_decide8_def, cad_decide7, decc_u
+  IMPORTING cad_decide8_def, cad_decide7, decb_u, fsplit_top
 
   qs, os: VAR list[bool]
   F: VAR list[list[mpoly]]

@@ -1,6 +1,6 @@
 cad_proj: THEORY
 %----------------------------------------------------------------------------
-% The Collins projection operator (Phase 6, the standard route).
+% A McCallum-shaped projection operator (Phase 6, the standard route).
 % [Corrected 2026-09-29: proj below is McCALLUM-shaped (coefficients,
 % discriminants, pairwise resultants), not Collins'; the Collins-style
 % operator, psc chains without reducta, is cad_projc.]
@@ -14,7 +14,7 @@ cad_proj: THEORY
 %
 % Collins computes the projection once instead:
 %
-%   proj(A) = { lc(f), disc(f) : f in A, deg f > 0 }
+%   proj(A) = { the coefficients of f, disc(f) : f in A, deg f > 0 }
 %             U { res(f, g)    : f, g in A distinct, both of degree > 0 }
 %
 % res and disc are sylvester's - ground-evaluable determinants carrying the

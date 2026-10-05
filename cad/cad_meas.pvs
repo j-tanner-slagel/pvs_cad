@@ -101,7 +101,7 @@ BEGIN
   %%
   %% A section coordinate is an ALGEBRAIC number in general, and svs_pt needs
   %% a computable real.  But root isolation collapses the interval to a point
-  %% when the root is rational, so rsv0 is exact exactly when ratsamp? holds,
+  %% when the root is rational, so rsv0 is exact exactly when ratsampm? holds,
   %% and ok3 checks that over every sector actually used.  ok3 = TRUE means
   %% the answer below used no approximation anywhere.
   %%-------------------------------------------------------------------------
@@ -115,13 +115,13 @@ BEGIN
   cf(a: alg, (i: nat)): rat = IF i < length(a`p) THEN nth(a`p, i) ELSE 0 ENDIF
   lin?(a: alg): bool = length(a`p) = 2 AND cf(a, 1) /= 0
 
-  ratsamp?(sc): bool = IF at?(sc) THEN lin?(pt(sc)) ELSE TRUE ENDIF
+  ratsampm?(sc): bool = IF at?(sc) THEN lin?(pt(sc)) ELSE TRUE ENDIF
   rsv0(sc): rat =
     IF at?(sc) THEN (IF lin?(pt(sc)) THEN -cf(pt(sc), 0) / cf(pt(sc), 1) ELSE 0 ENDIF)
     ELSE sval(sc) ENDIF
 
-  allrat(ss): RECURSIVE bool =
-    IF null?(ss) THEN TRUE ELSE ratsamp?(car(ss)) AND allrat(cdr(ss)) ENDIF
+  allratm(ss): RECURSIVE bool =
+    IF null?(ss) THEN TRUE ELSE ratsampm?(car(ss)) AND allratm(cdr(ss)) ENDIF
   MEASURE length(ss)
 
   %% the y-sectors over a rational x
@@ -129,13 +129,13 @@ BEGIN
 
   okY(P, ss): RECURSIVE bool =
     IF null?(ss) THEN TRUE
-    ELSE allrat(ysects(P, rsv0(car(ss)))) AND okY(P, cdr(ss))
+    ELSE allratm(ysects(P, rsv0(car(ss)))) AND okY(P, cdr(ss))
     ENDIF
   MEASURE length(ss)
 
   %% every sample point the route uses is exactly a rational
   ok3(P, (R: list[list[mpoly]])): bool =
-    allrat(sects(rts(R))) AND okY(P, sects(rts(R)))
+    allratm(sects(rts(R))) AND okY(P, sects(rts(R)))
 
   route3(F, (P: list[list[mpoly]]), (R: list[list[mpoly]]),
          (qx: bool), (qy: bool), (qz: bool), (Psi: [SV -> bool])): bool =

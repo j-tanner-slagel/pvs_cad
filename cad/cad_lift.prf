@@ -21,7 +21,8 @@
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|as_list| CONST-DECL "list[mpoly]" |mpoly_def| NIL)
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|sgn_of| CONST-DECL "Sign3" |tree_sel| NIL))
+    (|sgn_of| CONST-DECL "Sign3" |tree_sel| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|sgv_at| 0
   (|sgv_at-2| "" 3998495234
@@ -59,8 +60,11 @@
     (|sgn_of_at| FORMULA-DECL NIL |tree_sel| NIL)
     (|svec| CONST-DECL "list[Sign3]" |sign_vec| NIL)
     (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
-    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL) (|list| TYPE-DECL NIL |list_adt| NIL)
-    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL))
+    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|memb_TCC1| 0
   (|memb_TCC1-1| NIL 3998427276 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
@@ -69,8 +73,7 @@
  (|memb_TCC2| 0
   (|memb_TCC2-1| NIL 3998427276 ("" (TERMINATION-TCC) NIL NIL)
    ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)) NIL
-   (|memb| TERMINATION "memb(l, cdr[list[mpoly]](P))" #A((3) BASE-CHAR . "NIL")
-    (53 63 53 78))))
+   (|memb| TERMINATION "memb(l, cdr[list[mpoly]](P))" "NIL" (53 63 53 78))))
  (|memb_member| 0
   (|memb_member-2| "" 3998495248
    ("" (INDUCT "P")
@@ -105,8 +108,7 @@
  (|memb1_TCC2| 0
   (|memb1_TCC2-0| "" 3998517515 ("" (SKEEP) (("" (GRIND) NIL NIL)) NIL)
    ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)) SHOSTAK
-   (|memb1| TERMINATION "memb1(pz, cdr[mpoly](Rz))" #A((3) BASE-CHAR . "NIL")
-    (67 66 67 84))))
+   (|memb1| TERMINATION "memb1(pz, cdr[mpoly](Rz))" "NIL" (67 66 67 84))))
  (|memb1_member| 0
   (|memb1_member-2| "" 3998523306
    ("" (INDUCT "Rz")
@@ -135,13 +137,11 @@
  (|dedup1_TCC1| 0
   (|dedup1_TCC1-0| "" 3998517516 ("" (SKEEP) (("" (GRIND) NIL NIL)) NIL)
    ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)) SHOSTAK
-   (|dedup1| TERMINATION "dedup1(cdr[mpoly](Rz))" #A((3) BASE-CHAR . "NIL")
-    (72 39 72 54))))
+   (|dedup1| TERMINATION "dedup1(cdr[mpoly](Rz))" "NIL" (72 39 72 54))))
  (|dedup1_TCC2| 0
   (|dedup1_TCC2-0| "" 3998517517 ("" (SKEEP) (("" (GRIND) NIL NIL)) NIL)
    ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)) SHOSTAK
-   (|dedup1| TERMINATION "dedup1(cdr[mpoly](Rz))" #A((3) BASE-CHAR . "NIL")
-    (73 23 73 38))))
+   (|dedup1| TERMINATION "dedup1(cdr[mpoly](Rz))" "NIL" (73 23 73 38))))
  (|dedup1_member| 0
   (|dedup1_member-3| "" 3998523371
    ("" (INDUCT "Rz")
@@ -167,8 +167,8 @@
     (|list| TYPE-DECL NIL |list_adt| NIL))
    SHOSTAK))
  (|every_cons_m| 0
-  (|every_cons_m-2| "" 3998523707 ("" (SKEEP) (("" (GRIND) NIL NIL)) NIL) NIL
-   SHOSTAK))
+  (|every_cons_m-2| "" 3998523707 ("" (SKEEP) (("" (GRIND) NIL NIL)) NIL)
+   ((|every| ADT-DEF-DECL "boolean" |list_adt| NIL)) SHOSTAK))
  (|every_mem_m| 0
   (|every_mem_m-0| "" 3998525191
    ("" (INDUCT "Rz")
@@ -196,6 +196,7 @@
     NIL)
    ((|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL))
    SHOSTAK))
  (|dedup1_every| 0
@@ -235,6 +236,7 @@
     NIL)
    ((|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL))
    SHOSTAK))
  (|addnew_TCC1| 0
@@ -244,8 +246,8 @@
  (|addnew_TCC2| 0
   (|addnew_TCC2-1| NIL 3998425821 ("" (TERMINATION-TCC) NIL NIL)
    ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)) NIL
-   (|addnew| TERMINATION "addnew(P, cdr[list[mpoly]](Rs))"
-    #A((3) BASE-CHAR . "NIL") (84 32 84 50))))
+   (|addnew| TERMINATION "addnew(P, cdr[list[mpoly]](Rs))" "NIL"
+    (84 32 84 50))))
  (|addnew_TCC3| 0
   (|addnew_TCC3-1| NIL 3998427276 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
    (|addnew| SUBTYPE "Rs" "(list_adt[list_adt[mpoly_adt.mpoly].list].cons?)"
@@ -255,7 +257,7 @@
    ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)) NIL
    (|addnew| TERMINATION
     "addnew(append[list[mpoly]](P, (: car[list[mpoly]](Rs) :)), cdr[list[mpoly]](Rs))"
-    #A((3) BASE-CHAR . "NIL") (85 9 85 50))))
+    "NIL" (85 9 85 50))))
  (|addnew_member| 0
   (|addnew_member-9| "" 3998525780
    ("" (INDUCT "Rs")
@@ -313,16 +315,18 @@
  (|new_reads_TCC1| 0
   (|new_reads_TCC1-1| NIL 3998425821 ("" (SUBTYPE-TCC) NIL NIL)
    ((SVL TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL))
    NIL (|new_reads| SUBTYPE "cs" "(list_adt[SV].cons?)" (96 35 96 37))))
  (|new_reads_TCC2| 0
   (|new_reads_TCC2-1| NIL 3998425821 ("" (TERMINATION-TCC) NIL NIL)
    ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL))
    NIL
-   (|new_reads| TERMINATION "new_reads(F, P, cdr[SV](cs))"
-    #A((3) BASE-CHAR . "NIL") (96 41 96 65))))
+   (|new_reads| TERMINATION "new_reads(F, P, cdr[SV](cs))" "NIL"
+    (96 41 96 65))))
  (|ratpt?_TCC1| 0
   (|ratpt?_TCC1-1| NIL 3998492182 ("" (SUBTYPE-TCC) NIL NIL)
    ((|rat_poly_to_int| CONST-DECL "{ai: [nat -> int] |
@@ -333,15 +337,18 @@
    length(crem) > 1 AND length(nth(crem, 0)) = 0}"
      |remainder_sequence| |Sturm|)
     (|chain_a| CONST-DECL "(Eq_computed_remainder?(A, n))" |alg_count| NIL)
-    (|polynomial| CONST-DECL "[real -> real]" |polynomials| |reals|)
     (C CONST-DECL "posnat" |binomial| |reals|)
     (|poly_n_deriv| CONST-DECL "real" |polynomials| |reals|)
+    (|polynomial| CONST-DECL "[real -> real]" |polynomials| |reals|)
     (|poly_rootless_width| CONST-DECL "posreal" |more_polynomial_props|
      |reals|)
-    (|roots_closed_int| CONST-DECL "int" |compute_sturm| |Sturm|)
+    (|chvals| CONST-DECL "[nat -> real]" |sturm_fast| NIL)
+    (|rcf| CONST-DECL "int" |sturm_fast| NIL)
     (|nroots_a| CONST-DECL "nat" |alg_count| NIL)
     (|nroots| CONST-DECL "nat" |alg_count| NIL)
+    (|sigma_rat| APPLICATION-JUDGEMENT "rational" |sigma_nat| |reals|)
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
     (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
     (|alg?| CONST-DECL "bool" |alg_def| NIL)
@@ -358,15 +365,18 @@
    length(crem) > 1 AND length(nth(crem, 0)) = 0}"
      |remainder_sequence| |Sturm|)
     (|chain_a| CONST-DECL "(Eq_computed_remainder?(A, n))" |alg_count| NIL)
-    (|polynomial| CONST-DECL "[real -> real]" |polynomials| |reals|)
     (C CONST-DECL "posnat" |binomial| |reals|)
     (|poly_n_deriv| CONST-DECL "real" |polynomials| |reals|)
+    (|polynomial| CONST-DECL "[real -> real]" |polynomials| |reals|)
     (|poly_rootless_width| CONST-DECL "posreal" |more_polynomial_props|
      |reals|)
-    (|roots_closed_int| CONST-DECL "int" |compute_sturm| |Sturm|)
+    (|chvals| CONST-DECL "[nat -> real]" |sturm_fast| NIL)
+    (|rcf| CONST-DECL "int" |sturm_fast| NIL)
     (|nroots_a| CONST-DECL "nat" |alg_count| NIL)
     (|nroots| CONST-DECL "nat" |alg_count| NIL)
+    (|sigma_rat| APPLICATION-JUDGEMENT "rational" |sigma_nat| |reals|)
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
     (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
     (|alg?| CONST-DECL "bool" |alg_def| NIL)
@@ -377,6 +387,7 @@
   (|new_reads1_TCC1-1| NIL 3998492182 ("" (SUBTYPE-TCC) NIL NIL)
    ((|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
     (|alg?| CONST-DECL "bool" |alg_def| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
     (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|))
@@ -386,29 +397,24 @@
    ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
     (|alg?| CONST-DECL "bool" |alg_def| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
     (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|))
    NIL
-   (|new_reads1| TERMINATION "new_reads1(F, cdr[Alg](smp))"
-    #A((3) BASE-CHAR . "NIL") (115 67 115 90))))
+   (|new_reads1| TERMINATION "new_reads1(F, cdr[Alg](smp))" "NIL"
+    (115 67 115 90))))
  (|clos_TCC1| 0
   (|clos_TCC1-1| NIL 3998425821 ("" (SUBTYPE-TCC) NIL NIL)
-   ((|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)) NIL
-   (|clos| SUBTYPE "fuel - 1" "nat" (128 52 128 60))))
+   ((|sortu| CONST-DECL "list[Alg]" |cell1| NIL)
+    (|sortsep| CONST-DECL "list[Alg]" |alg_sortc_def| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
+   NIL (|clos| SUBTYPE "fuel - 1" "nat" (128 52 128 60))))
  (|clos_TCC2| 0
   (|clos_TCC2-0| "" 3999560686
-   ("" (SKEEP) (("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL)) NIL) NIL SHOSTAK
-   (|clos| TERMINATION "clos(fuel - 1, m, av, F, P2)" #A((3) BASE-CHAR . "NIL")
-    (128 47 128 75)))
-  (|clos_TCC2-1| NIL 3998425821 ("" (TERMINATION-TCC) NIL NIL)
-   ((|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
-    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
-     "(strict_total_order?[real])" |real_props| NIL)
-    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
-   NIL
-   (|clos| TERMINATION "clos(fuel - 1, m, av, F, P2)" #A((3) BASE-CHAR . "NIL")
-    (128 47 128 75))))
+   ("" (SKEEP) (("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL)) NIL)
+   ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)) SHOSTAK
+   (|clos| TERMINATION "clos(fuel - 1, m, av, F, P2)" "NIL" (128 47 128 75))))
  (|cpl_eval| 0
   (|cpl_eval-0| "" 3998494685
    ("" (SKEEP)
@@ -420,8 +426,10 @@
       NIL))
     NIL)
    ((|meval_as_list| FORMULA-DECL NIL |mpoly_def| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
     (|as_list| CONST-DECL "list[mpoly]" |mpoly_def| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
@@ -522,6 +530,7 @@
     (|mid| ADT-CONSTRUCTOR-DECL "[[Alg, Alg] -> (mid?)]" |sect_inv| NIL)
     (|alg_sign2| CONST-DECL "Sign3" |alg_sign2| NIL)
     (|alg_sign2_sign| FORMULA-DECL NIL |alg_sign2| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
     (|below?| ADT-RECOGNIZER-DECL "[Sect -> boolean]" |sect_inv| NIL)
     (|below| ADT-CONSTRUCTOR-DECL "[Alg -> (below?)]" |sect_inv| NIL)
     (|Sect_induction| FORMULA-DECL NIL |sect_inv| NIL)
@@ -533,8 +542,9 @@
     (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
     (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|msg| CONST-DECL "SG" |sg_norm| NIL) (|list| TYPE-DECL NIL |list_adt| NIL)
-    (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
+    (|msg| CONST-DECL "SG" |sg_norm| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL) (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
     (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|Sect| TYPE-DECL NIL |sect_inv| NIL))
@@ -561,8 +571,8 @@
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|list_cons_eta| FORMULA-DECL NIL |list_adt| NIL))
    SHOSTAK
-   (|all_inv?| TERMINATION "all_inv?(F, cdr[Sect](ss))"
-    #A((3) BASE-CHAR . "NIL") (149 58 149 78))))
+   (|all_inv?| TERMINATION "all_inv?(F, cdr[Sect](ss))" "NIL"
+    (149 58 149 78))))
  (|all_inv_mem| 0
   (|all_inv_mem-0| "" 3998494737
    ("" (INDUCT "ss")
@@ -588,7 +598,8 @@
    SHOSTAK))
  (|badl_TCC1| 0
   (|badl_TCC1-0| "" 3998524927 ("" (SKEEP) (("" (GRIND) NIL NIL)) NIL)
-   ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|inv_chk| CONST-DECL "bool" |sect_inv| NIL)
     (|chain| CONST-DECL "(Eq_computed_remainder?(ipoly(pl), deg(pl)))"
      |alg_count| NIL)
@@ -636,8 +647,7 @@
     (|pl| CONST-DECL "Polylist" |cell1| NIL)
     (|as_list| CONST-DECL "list[mpoly]" |mpoly_def| NIL))
    SHOSTAK
-   (|badl| TERMINATION "badl(s, cdr[mpoly](R))" #A((3) BASE-CHAR . "NIL")
-    (156 39 156 54))))
+   (|badl| TERMINATION "badl(s, cdr[mpoly](R))" "NIL" (156 39 156 54))))
  (|badl_TCC2| 0
   (|badl_TCC2-1| NIL 3998494684 ("" (TERMINATION-TCC) NIL NIL)
    ((|inv_chk| CONST-DECL "bool" |sect_inv| NIL)
@@ -687,19 +697,15 @@
     (|pl| CONST-DECL "Polylist" |cell1| NIL)
     (|as_list| CONST-DECL "list[mpoly]" |mpoly_def| NIL)
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
-   NIL
-   (|badl| TERMINATION "badl(s, cdr[mpoly](R))" #A((3) BASE-CHAR . "NIL")
-    (157 31 157 46))))
+   NIL (|badl| TERMINATION "badl(s, cdr[mpoly](R))" "NIL" (157 31 157 46))))
  (|bads_TCC1| 0
   (|bads_TCC1-1| NIL 3998494684 ("" (TERMINATION-TCC) NIL NIL)
    ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)) NIL
-   (|bads| TERMINATION "bads(F, cdr[Sect](ss))" #A((3) BASE-CHAR . "NIL")
-    (162 28 162 44))))
+   (|bads| TERMINATION "bads(F, cdr[Sect](ss))" "NIL" (162 28 162 44))))
  (|bads_TCC2| 0
   (|bads_TCC2-1| NIL 3998554223 ("" (TERMINATION-TCC) NIL NIL)
    ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)) NIL
-   (|bads| TERMINATION "bads(F, cdr[Sect](ss))" #A((3) BASE-CHAR . "NIL")
-    (163 51 163 67))))
+   (|bads| TERMINATION "bads(F, cdr[Sect](ss))" "NIL" (163 51 163 67))))
  (|inv_chk_at| 0
   (|inv_chk_at-0| "" 3998554556
    ("" (INDUCT "s")
@@ -712,6 +718,7 @@
     (|inv_chk| CONST-DECL "bool" |sect_inv| NIL)
     (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|at?| ADT-RECOGNIZER-DECL "[Sect -> boolean]" |sect_inv| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
@@ -736,7 +743,8 @@
     (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
-    (|list_induction| FORMULA-DECL NIL |list_adt| NIL))
+    (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|sect_inv_at| 0
   (|sect_inv_at-0| "" 3998554558
@@ -744,15 +752,17 @@
    SHOSTAK))
  (|clos1_TCC1| 0
   (|clos1_TCC1-1| NIL 3998494684 ("" (SUBTYPE-TCC) NIL NIL)
-   ((|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)) NIL
-   (|clos1| SUBTYPE "fuel - 1" "nat" (186 58 186 66))))
+   ((|sortu| CONST-DECL "list[Alg]" |cell1| NIL)
+    (|sortsep| CONST-DECL "list[Alg]" |alg_sortc_def| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
+   NIL (|clos1| SUBTYPE "fuel - 1" "nat" (186 58 186 66))))
  (|clos1_TCC2| 0
   (|clos1_TCC2-1| NIL 3998494684 ("" (TERMINATION-TCC) NIL NIL)
    ((|sects| CONST-DECL "list[Sect]" |sect_inv| NIL)
-    (|gsects| DEF-DECL "list[Sect]" |sect_inv| NIL))
-   NIL
-   (|clos1| TERMINATION "clos1(fuel - 1, F, P2)" #A((3) BASE-CHAR . "NIL")
-    (186 52 186 74))))
+    (|gsects| DEF-DECL "list[Sect]" |sect_inv| NIL)
+    (|sortu| CONST-DECL "list[Alg]" |cell1| NIL)
+    (|sortsep| CONST-DECL "list[Alg]" |alg_sortc_def| NIL))
+   NIL (|clos1| TERMINATION "clos1(fuel - 1, F, P2)" "NIL" (186 52 186 74))))
  (|pts_ok_mem| 0
   (|pts_ok_mem-5| "" 3998594062
    ("" (INDUCT "ss")
@@ -765,11 +775,13 @@
         NIL))
       NIL))
     NIL)
-   ((|list_induction| FORMULA-DECL NIL |list_adt| NIL)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|Sect| TYPE-DECL NIL |sect_inv| NIL)
     (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|svs_ptok| CONST-DECL "bool" |svs_pt| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|at?| ADT-RECOGNIZER-DECL "[Sect -> boolean]" |sect_inv| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL))
@@ -818,7 +830,10 @@
     NIL)
    ((|qfold| CONST-DECL "bool" |cad_decide| NIL)
     (|every_mem| FORMULA-DECL NIL |cad_decide| NIL)
-    (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL) (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
     (|every_all| FORMULA-DECL NIL |cad_decide| NIL)
     (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
     (|some_intro| FORMULA-DECL NIL |cad_decide| NIL)
@@ -827,23 +842,21 @@
  (|over1_TCC1| 0
   (|over1_TCC1-1| NIL 3998554223 ("" (TERMINATION-TCC) NIL NIL)
    ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)) NIL
-   (|over1| TERMINATION "over1(F, cdr[Sect](ss))" #A((3) BASE-CHAR . "NIL")
-    (223 52 223 69))))
+   (|over1| TERMINATION "over1(F, cdr[Sect](ss))" "NIL" (223 52 223 69))))
  (|lv_TCC1| 0
   (|lv_TCC1-1| NIL 3998425821 ("" (SUBTYPE-TCC) NIL NIL)
    ((|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)) NIL
    (|lv| SUBTYPE "m - 1" "nat" (244 33 244 38))))
  (|lv_TCC2| 0
   (|lv_TCC2-0| "" 3998524929 ("" (SKEEP) (("" (GRIND) NIL NIL)) NIL) NIL
-   SHOSTAK
-   (|lv| TERMINATION "lv(m - 1)" #A((3) BASE-CHAR . "NIL") (244 30 244 39))))
+   SHOSTAK (|lv| TERMINATION "lv(m - 1)" "NIL" (244 30 244 39))))
  (|lv_TCC3| 0
   (|lv_TCC3-1| NIL 3998425821 ("" (SUBTYPE-TCC) NIL NIL)
    ((|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)) NIL
    (|lv| SUBTYPE "m - 1" "nat" (243 39 243 44))))
  (|lv_TCC4| 0
   (|lv_TCC4-1| NIL 3998425821 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
-   (|lv| TERMINATION "lv(m - 1)" #A((3) BASE-CHAR . "NIL") (243 46 243 55))))
+   (|lv| TERMINATION "lv(m - 1)" "NIL" (243 46 243 55))))
  (|over_mem| 0
   (|over_mem-0| "" 3998426044
    ("" (INDUCT "cs")
@@ -878,6 +891,7 @@
     NIL)
    ((|member_append_l| FORMULA-DECL NIL |more_list_props| |structures|)
     (|member_append_r| FORMULA-DECL NIL |more_list_props| |structures|)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
     (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
@@ -885,7 +899,9 @@
     (|svs_sg| CONST-DECL "SVL" |sg_svs| NIL)
     (|sfuel| CONST-DECL "nat" |svs_tree| NIL)
     (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL) (SV TYPE-EQ-DECL NIL |rsc_tree| NIL))
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL))
    SHOSTAK))
  (|over_mem_inv| 0
   (|over_mem_inv-0| "" 3998426057
@@ -918,6 +934,7 @@
       NIL))
     NIL)
    ((|member_append_fi| FORMULA-DECL NIL |more_list_props| |structures|)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
     (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
@@ -925,7 +942,9 @@
     (|svs_sg| CONST-DECL "SVL" |sg_svs| NIL)
     (|sfuel| CONST-DECL "nat" |svs_tree| NIL)
     (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL) (SV TYPE-EQ-DECL NIL |rsc_tree| NIL))
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL))
    SHOSTAK))
  (|new_reads_mem| 0
   (|new_reads_mem-0| "" 3998426084
@@ -959,10 +978,13 @@
     NIL)
    ((|member_append_r| FORMULA-DECL NIL |more_list_props| |structures|)
     (|member_append_l| FORMULA-DECL NIL |more_list_props| |structures|)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
     (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL) (SV TYPE-EQ-DECL NIL |rsc_tree| NIL))
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL))
    SHOSTAK))
  (|closed_sub| 0
   (|closed_sub-5| "" 3998525446
@@ -1004,18 +1026,20 @@
       NIL))
     NIL)
    ((SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
-    (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
     (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|map_mem| FORMULA-DECL NIL |map_member| NIL)
-    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
-    (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
-    (|svs_srd| CONST-DECL "list[mpoly]" |sg_svs| NIL)
+    (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
     (|sfuel| CONST-DECL "nat" |svs_tree| NIL)
+    (|svs_srd| CONST-DECL "list[mpoly]" |sg_svs| NIL)
+    (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
+    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (|map_mem| FORMULA-DECL NIL |map_member| NIL)
     (|as_list| CONST-DECL "list[mpoly]" |mpoly_def| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL)
-    (|every_as_member| FORMULA-DECL NIL |more_list_props| |structures|))
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|every_as_member| FORMULA-DECL NIL |more_list_props| |structures|)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|cell_eq| 0
   (|cell_eq-0| "" 3998426112
@@ -1036,10 +1060,12 @@
     (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
     (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
     (|svs_srd| CONST-DECL "list[mpoly]" |sg_svs| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
     (|svec| CONST-DECL "list[Sign3]" |sign_vec| NIL)
     (|msg| CONST-DECL "SG" |sg_norm| NIL)
-    (|svs_det| FORMULA-DECL NIL |sg_svs| NIL))
+    (|svs_det| FORMULA-DECL NIL |sg_svs| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|cell_sound| 0
   (|cell_sound-0| "" 3998426122
@@ -1074,7 +1100,9 @@
     (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
     (SV TYPE-EQ-DECL NIL |rsc_tree| NIL) (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL))
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|cell_complete| 0
   (|cell_complete-0| "" 3998426129
@@ -1109,20 +1137,24 @@
     (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
     (SV TYPE-EQ-DECL NIL |rsc_tree| NIL) (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL))
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|len0| 0
   (|len0-2| "" 3998426236
    ("" (INDUCT "ys")
     (("" (SKEEP) (("" (EXPAND "length" -2) (("" (ASSERT) NIL NIL)) NIL)) NIL))
     NIL)
-   ((|list_induction| FORMULA-DECL NIL |list_adt| NIL)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
     (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL))
    SHOSTAK))
- (|len_cons| 0
-  (|len_cons-2| "" 3998426237
+ (|len_cons_lift| 0
+  (|len_cons_lift-0| "" 4000196614
    ("" (INDUCT "ys")
     (("1" (SKEEP) (("1" (EXPAND "length" -1) (("1" (ASSERT) NIL NIL)) NIL))
       NIL)
@@ -1131,17 +1163,22 @@
         NIL))
       NIL))
     NIL)
-   ((|list_induction| FORMULA-DECL NIL |list_adt| NIL)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|cdr| ADT-ACCESSOR-DECL "[(cons?) -> list]" |list_adt| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL))
    SHOSTAK))
- (|len1_TCC1| 0
-  (|len1_TCC1-1| NIL 3998426207 ("" (SUBTYPE-TCC) NIL NIL)
-   ((|list| TYPE-DECL NIL |list_adt| NIL)) NIL
-   (|len1| SUBTYPE "ys" "(list_adt[real].cons?)" (287 60 287 62))))
- (|len1| 0
-  (|len1-0| "" 3998426219
+ (|len1_lift_TCC1| 0
+  (|len1_lift_TCC1-0| "" 4000196614 ("" (SUBTYPE-TCC) NIL NIL)
+   ((|list| TYPE-DECL NIL |list_adt| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
+   SHOSTAK
+   (|len1_lift| SUBTYPE "ys" "(list_adt[real].cons?)" (287 65 287 67))))
+ (|len1_lift| 0
+  (|len1_lift-0| "" 4000196613
    ("" (INDUCT "ys")
     (("1" (ASSERT) NIL NIL)
      ("2" (SKEEP)
@@ -1157,8 +1194,10 @@
      ("3" (SKEEP) (("3" (EXPAND "length" -1) (("3" (ASSERT) NIL NIL)) NIL))
       NIL))
     NIL)
-   ((|list_induction| FORMULA-DECL NIL |list_adt| NIL)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|car| ADT-ACCESSOR-DECL "[(cons?) -> T]" |list_adt| NIL)
     (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL))
@@ -1176,9 +1215,11 @@
         NIL))
       NIL))
     NIL)
-   ((|list_induction| FORMULA-DECL NIL |list_adt| NIL)
+   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL))
    SHOSTAK))
  (|reads_agree| 0
@@ -1290,6 +1331,7 @@
     NIL)
    ((|at?| ADT-RECOGNIZER-DECL "[Sect -> boolean]" |sect_inv| NIL)
     (|Sect| TYPE-DECL NIL |sect_inv| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
     (|agree| CONST-DECL "bool" |sg_norm| NIL)
     (|in?| CONST-DECL "bool" |sect_inv| NIL)
     (|every_as_member| FORMULA-DECL NIL |more_list_props| |structures|)
@@ -1307,6 +1349,7 @@
     (|sects| CONST-DECL "list[Sect]" |sect_inv| NIL)
     (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
     (|alg?| CONST-DECL "bool" |alg_def| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
     (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
     (|list| TYPE-DECL NIL |list_adt| NIL)
@@ -1339,10 +1382,12 @@
     (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|msg| CONST-DECL "SG" |sg_norm| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|sfuel| CONST-DECL "nat" |svs_tree| NIL)
     (|svs_srd| CONST-DECL "list[mpoly]" |sg_svs| NIL)
     (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
-    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|))
+    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|over1_mem| 0
   (|over1_mem-0| "" 3998494748
@@ -1382,6 +1427,7 @@
     NIL)
    ((|member_append_r| FORMULA-DECL NIL |more_list_props| |structures|)
     (|member_append_l| FORMULA-DECL NIL |more_list_props| |structures|)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
     (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|Sect| TYPE-DECL NIL |sect_inv| NIL)
     (|sfuel| CONST-DECL "nat" |svs_tree| NIL)
@@ -1389,6 +1435,7 @@
     (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL) (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
     (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
     (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL))
    SHOSTAK))
@@ -1423,6 +1470,7 @@
       NIL))
     NIL)
    ((|member_append_fi| FORMULA-DECL NIL |more_list_props| |structures|)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
     (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|Sect| TYPE-DECL NIL |sect_inv| NIL)
     (|sfuel| CONST-DECL "nat" |svs_tree| NIL)
@@ -1430,6 +1478,7 @@
     (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
     (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
     (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL) (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL))
    SHOSTAK))
@@ -1537,15 +1586,16 @@
     NIL)
    ((|qfold| CONST-DECL "bool" |cad_decide| NIL)
     (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|every_mem| FORMULA-DECL NIL |cad_decide| NIL)
-    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
-    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
-    (|svec| CONST-DECL "list[Sign3]" |sign_vec| NIL)
-    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
-    (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL) (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
-    (|svs_sg| CONST-DECL "SVL" |sg_svs| NIL)
     (|msg| CONST-DECL "SG" |sg_norm| NIL)
+    (|svs_sg| CONST-DECL "SVL" |sg_svs| NIL)
+    (SG TYPE-EQ-DECL NIL |sg_norm| NIL) (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|svec| CONST-DECL "list[Sign3]" |sign_vec| NIL)
+    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (|every_mem| FORMULA-DECL NIL |cad_decide| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|sfuel| CONST-DECL "nat" |svs_tree| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
@@ -1554,7 +1604,8 @@
     (|svs_sg_complete| FORMULA-DECL NIL |sg_svs| NIL)
     (|some_mem| FORMULA-DECL NIL |cad_decide| NIL)
     (|some_intro| FORMULA-DECL NIL |cad_decide| NIL)
-    (|sem| DEF-DECL "bool" |cad_decide| NIL))
+    (|sem| DEF-DECL "bool" |cad_decide| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|everyS_mem| 0
   (|everyS_mem-0| "" 3998494898
@@ -1580,6 +1631,7 @@
     NIL)
    ((|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|Sect| TYPE-DECL NIL |sect_inv| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL))
    SHOSTAK))
  (|everyS_all| 0
@@ -1605,6 +1657,7 @@
     NIL)
    ((|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|Sect| TYPE-DECL NIL |sect_inv| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL))
    SHOSTAK))
  (|someS_mem| 0
@@ -1629,6 +1682,7 @@
     NIL)
    ((|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|Sect| TYPE-DECL NIL |sect_inv| NIL)
+    (|some| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL))
    SHOSTAK))
  (|someS_intro| 0
@@ -1653,6 +1707,7 @@
     NIL)
    ((|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|Sect| TYPE-DECL NIL |sect_inv| NIL)
+    (|some| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL))
    SHOSTAK))
  (|qfoldS_sem| 0
@@ -1807,24 +1862,26 @@
         NIL))
       NIL))
     NIL)
-   ((|sortu| DEF-DECL "list[Alg]" |cell1| NIL)
+   ((|sortu| CONST-DECL "list[Alg]" |cell1| NIL)
     (|value| CONST-DECL "real" |alg_def| NIL)
     (|sample| CONST-DECL "Alg" |sect_inv| NIL)
     (|sects_cover| FORMULA-DECL NIL |sect_inv| NIL)
-    (|sects| CONST-DECL "list[Sect]" |sect_inv| NIL)
-    (|sfuel| CONST-DECL "nat" |svs_tree| NIL)
-    (|svs_sg| CONST-DECL "SVL" |sg_svs| NIL)
-    (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
-    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|Sect| TYPE-DECL NIL |sect_inv| NIL) (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
     (|qfold| CONST-DECL "bool" |cad_decide| NIL)
-    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL) (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL)
-    (|Sect| TYPE-DECL NIL |sect_inv| NIL)
+    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
+    (|svs_sg| CONST-DECL "SVL" |sg_svs| NIL)
+    (|sfuel| CONST-DECL "nat" |svs_tree| NIL)
+    (|sects| CONST-DECL "list[Sect]" |sect_inv| NIL)
     (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|allroots| DEF-DECL "list[Alg]" |cell1| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
     (|alg?| CONST-DECL "bool" |alg_def| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
     (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
@@ -1832,7 +1889,7 @@
     (|sem| DEF-DECL "bool" |cad_decide| NIL))
    SHOSTAK))
  (|lv_sound| 0
-  (|lv_sound-2| "" 3998495101
+  (|lv_sound-0| "" 4000203044
    ("" (INDUCT "m")
     (("1" (SKEEP)
       (("1" (EXPAND "lsound?" 1)
@@ -1856,7 +1913,7 @@
                   (("1" (ASSERT)
                     (("1" (EXPAND "good?" -3)
                       (("1" (ASSERT)
-                        (("1" (LEMMA "len1" ("ys" "ys"))
+                        (("1" (LEMMA "len1_lift" ("ys" "ys"))
                           (("1" (ASSERT)
                             (("1" (REPLACE -1)
                               (("1"
@@ -1885,7 +1942,8 @@
                                     (("1" (ASSERT)
                                       (("1" (SKEEP -1)
                                         (("1" (REPLACE -1)
-                                          (("1" (LEMMA "len1" ("ys" "ys1"))
+                                          (("1"
+                                            (LEMMA "len1_lift" ("ys" "ys1"))
                                             (("1" (ASSERT)
                                               (("1" (REPLACE -1)
                                                 (("1"
@@ -2021,33 +2079,7 @@
         NIL))
       NIL))
     NIL)
-   ((|length_singleton| FORMULA-DECL NIL |more_list_props| |structures|)
-    (|svs1_sound| FORMULA-DECL NIL |cell1| NIL)
-    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|car| ADT-ACCESSOR-DECL "[(cons?) -> T]" |list_adt| NIL)
-    (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL)
-    (|allroots| DEF-DECL "list[Alg]" |cell1| NIL)
-    (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
-    (|alg?| CONST-DECL "bool" |alg_def| NIL)
-    (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
-    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
-    (|sortu_incr| FORMULA-DECL NIL |cell1| NIL)
-    (|Sect| TYPE-DECL NIL |sect_inv| NIL)
-    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|sortu| DEF-DECL "list[Alg]" |cell1| NIL)
-    (|sects| CONST-DECL "list[Sect]" |sect_inv| NIL)
-    (|svec| CONST-DECL "list[Sign3]" |sign_vec| NIL)
-    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
-    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
-    (|svs_sg_sound| FORMULA-DECL NIL |sg_svs| NIL)
-    (|sfuel| CONST-DECL "nat" |svs_tree| NIL)
-    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
-    (|sects_cover| FORMULA-DECL NIL |sect_inv| NIL)
-    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL)
-    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL))
-   SHOSTAK))
+   NIL SHOSTAK))
  (|lv_complete| 0
   (|lv_complete-2| "" 3998495144
    ("" (INDUCT "m")
@@ -2211,8 +2243,8 @@
     (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
     (|svs1_complete| FORMULA-DECL NIL |cell1| NIL)
     (|length_singleton| FORMULA-DECL NIL |more_list_props| |structures|)
-    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
     (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL)
     (|sample| CONST-DECL "Alg" |sect_inv| NIL)
     (|value| CONST-DECL "real" |alg_def| NIL)
@@ -2225,8 +2257,10 @@
     (|alg?| CONST-DECL "bool" |alg_def| NIL)
     (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
     (|sects| CONST-DECL "list[Sect]" |sect_inv| NIL)
-    (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL))
    SHOSTAK))
@@ -2343,18 +2377,20 @@
     (|every_all| FORMULA-DECL NIL |cad_decide| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
-    (|sfuel| CONST-DECL "nat" |svs_tree| NIL)
-    (|svs_sg| CONST-DECL "SVL" |sg_svs| NIL)
-    (SG TYPE-EQ-DECL NIL |sg_norm| NIL) (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL)
-    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
-    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|svec| CONST-DECL "list[Sign3]" |sign_vec| NIL)
-    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
-    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|every_mem| FORMULA-DECL NIL |cad_decide| NIL)
+    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (|svec| CONST-DECL "list[Sign3]" |sign_vec| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
+    (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL) (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
+    (|svs_sg| CONST-DECL "SVL" |sg_svs| NIL)
+    (|sfuel| CONST-DECL "nat" |svs_tree| NIL)
     (|some_intro| FORMULA-DECL NIL |cad_decide| NIL)
     (|some_mem| FORMULA-DECL NIL |cad_decide| NIL)
-    (|sem| DEF-DECL "bool" |cad_decide| NIL))
+    (|sem| DEF-DECL "bool" |cad_decide| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|qfold_svs1| 0
   (|qfold_svs1-3| "" 3998525201
@@ -2447,6 +2483,7 @@
       NIL))
     NIL)
    ((|qfold| CONST-DECL "bool" |cad_decide| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
     (|svs1| CONST-DECL "list[list[Sign3]]" |cell1| NIL)
     (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL)
     (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
@@ -2454,6 +2491,7 @@
     (|svec| CONST-DECL "list[Sign3]" |sign_vec| NIL)
     (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
     (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|every_mem| FORMULA-DECL NIL |cad_decide| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
@@ -2744,6 +2782,7 @@
    ((|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
     (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|sem_null| FORMULA-DECL NIL |cad_decide| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
     (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
@@ -2754,6 +2793,7 @@
     (|qfold| CONST-DECL "bool" |cad_decide| NIL)
     (|sem| DEF-DECL "bool" |cad_decide| NIL)
     (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL) (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL))
    SHOSTAK))
@@ -2769,7 +2809,7 @@
    ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)) SHOSTAK
    (|decq2| TERMINATION
     "decq2(r, Q, LAMBDA tau: qfold(q, svs_sg(sfuel(F), F, sgv(Q, tau)), Psi))"
-    #A((3) BASE-CHAR . "NIL") (333 21 333 93))))
+    "NIL" (333 21 333 93))))
  (|decq2_correct| 0
   (|decq2_correct-2| "" 3998495212
    ("" (INDUCT "qs")
@@ -2881,17 +2921,19 @@
     (|list_cons_extensionality| FORMULA-DECL NIL |list_adt| NIL)
     (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
     (|car| ADT-ACCESSOR-DECL "[(cons?) -> T]" |list_adt| NIL)
-    (|sfuel| CONST-DECL "nat" |svs_tree| NIL)
-    (|svs_sg| CONST-DECL "SVL" |sg_svs| NIL)
-    (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
-    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
     (|qfold| CONST-DECL "bool" |cad_decide| NIL)
+    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
+    (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
+    (|svs_sg| CONST-DECL "SVL" |sg_svs| NIL)
+    (|sfuel| CONST-DECL "nat" |svs_tree| NIL)
     (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
     (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
     (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|sem| DEF-DECL "bool" |cad_decide| NIL)
     (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL))
    SHOSTAK))
@@ -2914,9 +2956,11 @@
    ((|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
     (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|fsem_sem| FORMULA-DECL NIL |cad_decide| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
     (|bfsv| DEF-DECL "bool" |bform| NIL)
     (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|) (BF TYPE-DECL NIL |bform| NIL)
     (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL))
    SHOSTAK)))

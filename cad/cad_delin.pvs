@@ -20,7 +20,7 @@ cad_delin: THEORY
 %
 % [Corrected 2026-09-29, GAP_PLAN.md.] Two statements above are wrong.
 % (1) delin? is FIBRE-SET invariance: the SET of realizable sign vectors is
-% constant along the sector.  Classical delineability (a constant number of
+% constant along the sector.  Delineability (delin_cl?: a constant number of
 % continuous, non-crossing root functions, each piece sign-invariant) implies
 % it but not conversely: (y^2-x)(y-5) realizes {-,0,+} on every fibre while
 % its root count is 1,2,3,2,3 across x = 0 and x = 25.  (2) The "univariate,
@@ -73,7 +73,7 @@ BEGIN
     (qfold(q, svs_pt(F, (: rsv(s) :)), Psi) IFF sem((: q :), F, Psi, (: rsv(s) :)))
 
   %% and delineability moves that from the sample to any point of the sector
-  sect_sem: LEMMA delin?(F, s) AND in?(s, rsv(s)) AND in?(s, x) IMPLIES
+  sect_sem_delin: LEMMA delin?(F, s) AND in?(s, rsv(s)) AND in?(s, x) IMPLIES
     (sem((: q :), F, Psi, (: rsv(s) :)) IFF sem((: q :), F, Psi, (: x :)))
 
   %% ---- the decision at two quantifiers, correct GIVEN delineability ----

@@ -1,9 +1,9 @@
 cad_stack: THEORY
 %----------------------------------------------------------------------------
-% CLASSICAL DELINEABILITY from sign-invariant reads (GAP_PLAN.md Tier 1).
+% DELINEABILITY (in the sign-invariant sense) from sign-invariant reads (GAP_PLAN.md Tier 1).
 %
-% delin_cl?(G, C) is delineability in the classical sense, with the stack's
-% cells sign-invariant:
+% delin_cl?(G, C) is delineability in the sign-invariant sense (root
+% multiplicities are not tracked), with the stack's cells sign-invariant:
 %   - over every point p of C the roots of G (rootat?: zeros of the members
 %     not identically zero on the fibre) are finitely many, listed
 %     increasing by rtl(G, p);
@@ -19,7 +19,7 @@ cad_stack: THEORY
 %
 % stack_const: if C is connected and the reads of the walk for G keep their
 % signs throughout C (agree with those at one point p0 where the walk's
-% certificate holds), then G is classically delineable over C.  The walk,
+% certificate holds), then G is delineable over C (delin_cl?).  The walk,
 % its certificate and its reads are what decide5 runs and checks; the
 % theorem turns that run-time check into delineability.  Proof: the stack is
 % locally constant and the roots continuous (cad_local); a locally constant

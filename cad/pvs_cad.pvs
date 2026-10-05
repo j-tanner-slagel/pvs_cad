@@ -1,7 +1,10 @@
 pvs_cad: THEORY
 %----------------------------------------------------------------------------
 % Everything (cad), (cad *), (cad-direct), (cad :cad-only? t) and (cad-qe)
-% need in one import: IMPORTING pvs_cad makes them available,
+% need in one import, except what pins down constants and functions of
+% constants (pi, sin(x) after skeep: IMPORTING pvs_cad_num instead, which
+% adds trans_bounds and NASALib's interval_arith@strategies): IMPORTING
+% pvs_cad makes them available,
 % deciding through the Collins run (cad_decide8, qe8) and taking formulas of
 % any shape (grouped binders and a goal NOT A need nothing more; quantifiers
 % inside connectives, binders over posreal / nnreal / negreal / npreal /
@@ -10,7 +13,7 @@ pvs_cad: THEORY
 % It does not import every theorem of the library: col_line (col_cells),
 % col_found_ok (col_found_cad), cad_verified, cad_found_ok, cad_sa (the
 % cells quantifier-free definable), qe_all and complete_all are outside its
-% import closure -- import those, or top.  The library's other strategies
+% import closure -- import those.  The library's other strategies
 % need their own theories: (alg-roots) alg_strategy, (poly-sign) and
 % (poly-nosign) sgn_prune.
 %----------------------------------------------------------------------------

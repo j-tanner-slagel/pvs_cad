@@ -6,8 +6,10 @@ walk_od: THEORY
 % for any table that is VALID (built from real chains at some oracle).
 %
 %   OD   pt(ys)              the rational point ys: signs by evaluation
-%        alg(a)              the algebraic outer sample
+%        mix(...)            a point with algebraic coordinates
 %        sec(od, P, lo, hi)  the section of P in (lo, hi] over od
+%        sp(od, y0)          a separator over a tower point
+%                            (the datatype's own comment below has the fields)
 %   osg(od): SG              what the descriptor means
 %
 % Why.  The walk builds Sturm chains SYMBOLICALLY (coefficients in every

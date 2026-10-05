@@ -32,7 +32,7 @@ BEGIN
     ENDIF
   MEASURE length(L)
 
-  mem_cons: LEMMA member(z, cons(a, L)) IFF z = a OR member(z, L)
+  mem_cons_croot_disc: LEMMA member(z, cons(a, L)) IFF z = a OR member(z, L)
   rm1_len: LEMMA FORALL L: member(x, L) IMPLIES length(rm1(x, L)) + 1 = length(L)
   rm1_mem: LEMMA FORALL L: member(z, L) AND z /= x IMPLIES member(z, rm1(x, L))
 

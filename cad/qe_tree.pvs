@@ -7,9 +7,9 @@ qe_tree: THEORY
 % the tree of the first conjunct, with every TRUE leaf kept and every FALSE
 % leaf replaced by the tree of the rest.  qtree_sound needs the syntactic
 % fuel bound tfuel(F) <= k alone.  qdecide is the same tree pruned
-% (btree_prune), and qe_branch is the form the strategy uses: a branch of the
-% pruned tree whose conditions hold at the parameters carries the answer
-% there, in both directions.
+% (btree_prune), and qe_branch: a branch of the pruned tree whose conditions
+% hold at the parameters carries the answer there, in both directions (the
+% qe-exists strategy uses qe_ctx's qdecidec and qe_branchc).
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING conj_tree, qe_formula, btree_prune[bool], branch_map[bool, bool]

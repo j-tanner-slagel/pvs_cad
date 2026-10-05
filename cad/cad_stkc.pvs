@@ -5,7 +5,7 @@ cad_stkc: THEORY
 % stk(G, C, a) is the cell of stack index a over C: the points cons(y, q)
 % with q in C and sidx(G, q, y) = a.  Index 2i+1 is the graph of the i-th
 % root, index 2i the band below it (above the (i-1)-th root).  When G is
-% classically delineable over a connected C (delin_cl?), each cell is a slab
+% delineable over a connected C (delin_cl?), each cell is a slab
 % (cad_slab): its slice over q is an interval (sidx_conv), and a continuous
 % section runs through the slices (sec: the i-th root, or the band's fixed
 % point from bpts, which is continuous because it is built from the roots,

@@ -1,5 +1,8 @@
 # Item A — sample points that are algebraic, without Q(alpha)
 
+> **Superseded** by FINISH_PLAN.md (2026-09-21), whose "what next" replaced this item's; the
+> algebraic samples were built later (alg_* theories, cad/PROGRESS.md). Kept for the record.
+
 ## The gap, stated exactly
 
 `svs_pt` is the polynomial-time lifting. It is TYPED on `list[rat]`, so it

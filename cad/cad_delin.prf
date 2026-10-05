@@ -69,8 +69,8 @@
     (|some_intro| FORMULA-DECL NIL |cad_decide| NIL)
     (|some_mem| FORMULA-DECL NIL |cad_decide| NIL)
     (|every_all| FORMULA-DECL NIL |cad_decide| NIL)
-    (|every_mem| FORMULA-DECL NIL |cad_decide| NIL)
     (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (|every_mem| FORMULA-DECL NIL |cad_decide| NIL)
     (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|svec| CONST-DECL "list[Sign3]" |sign_vec| NIL)
@@ -321,8 +321,8 @@
     (|qfold_fib| FORMULA-DECL NIL |cad_delin| NIL)
     (SV TYPE-EQ-DECL NIL |rsc_tree| NIL))
    SHOSTAK))
- (|sect_sem| 0
-  (|sect_sem-0| "" 3998652840
+ (|sect_sem_delin| 0
+  (|sect_sem_delin-0| "" 4000196603
    ("" (SKEEP)
     (("" (EXPAND "delin?")
       (("" (INST -1 "rsv(s)" "x")
@@ -356,7 +356,7 @@
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL))
    SHOSTAK))
  (|dec2_sem| 0
-  (|dec2_sem-2| "" 3998653155
+  (|dec2_sem-0| "" 4000196604
    ("" (SKEEP)
     (("" (EXPAND "qfoldS")
       (("" (USE "sem_cons" ("q" "q1" "r" "(: q2 :)" "ys" "null[real]"))
@@ -376,10 +376,10 @@
                                     "LAMBDA (s: Sect): qfold(q2, svs_pt(F, (: rsv(s) :)), Psi)"
                                     "s" "s" "ss" "sects(rts(P))"))
                               (("1" (USE "inner_sem" ("q" "q2"))
-                                (("1" (USE "sect_sem" ("q" "q2"))
+                                (("1" (USE "sect_sem_delin" ("q" "q2"))
                                   (("1" (GROUND)
                                     (("1"
-                                      (USE "sect_sem"
+                                      (USE "sect_sem_delin"
                                            ("q" "q2" "s" "s" "x" "x"))
                                       (("1" (GROUND) NIL NIL)) NIL))
                                     NIL))
@@ -429,7 +429,7 @@
                 (("4" (USE "sects_cover" ("rs" "rts(P)"))
                   (("4" (GROUND)
                     (("4" (SKEEP -1)
-                      (("4" (USE "sect_sem" ("q" "q2" "s" "s" "x" "x"))
+                      (("4" (USE "sect_sem_delin" ("q" "q2" "s" "s" "x" "x"))
                         (("4" (USE "inner_sem" ("q" "q2" "s" "s"))
                           (("4"
                             (USE "someS_intro"
@@ -446,7 +446,8 @@
                                ("4" (INST -6 "s")
                                 (("4" (USE "inner_sem" ("q" "q2" "s" "s"))
                                   (("4"
-                                    (USE "sect_sem" ("q" "q2" "s" "s" "x" "x"))
+                                    (USE "sect_sem_delin"
+                                         ("q" "q2" "s" "s" "x" "x"))
                                     (("4" (GROUND) NIL NIL)) NIL))
                                   NIL))
                                 NIL)
@@ -468,13 +469,13 @@
     NIL)
    ((|qfoldS| CONST-DECL "bool" |cad_lift| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
-    (|sects_cover| FORMULA-DECL NIL |sect_inv| NIL)
-    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
-    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
-    (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
-    (|alg?| CONST-DECL "bool" |alg_def| NIL)
-    (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
     (|rts| CONST-DECL "list[Alg]" |cad_lift| NIL)
+    (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|alg?| CONST-DECL "bool" |alg_def| NIL)
+    (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|sects_cover| FORMULA-DECL NIL |sect_inv| NIL)
     (|everyS_mem| FORMULA-DECL NIL |cad_lift| NIL)
     (SVL TYPE-EQ-DECL NIL |rsc_tree| NIL)
     (|qfold| CONST-DECL "bool" |cad_decide| NIL)
@@ -483,7 +484,7 @@
     (|svs_pt| CONST-DECL "list[list[Sign3]]" |svs_pt| NIL)
     (|rsv| CONST-DECL "rat" |cad_pdec| NIL)
     (|sects| CONST-DECL "list[Sect]" |sect_inv| NIL)
-    (|sect_sem| FORMULA-DECL NIL |cad_delin| NIL)
+    (|sect_sem_delin| FORMULA-DECL NIL |cad_delin| NIL)
     (|inner_sem| FORMULA-DECL NIL |cad_delin| NIL)
     (|Sect| TYPE-DECL NIL |sect_inv| NIL)
     (|everyS_all| FORMULA-DECL NIL |cad_lift| NIL)

@@ -61,7 +61,7 @@ BEGIN
   %% Between two reals there is a third: the quantifier sits inside an
   %% implication.
   %%   proof: (cad)  [1 s]
-  density: LEMMA FORALL (x, y: real): x < y IMPLIES EXISTS (z: real): x < z AND z < y
+  density_showcase: LEMMA FORALL (x, y: real): x < y IMPLIES EXISTS (z: real): x < z AND z < y
 
   %% The line y = 2x - 1 touches the parabola y = x^2 at exactly one point.
   %%   proof: (cad)  [2 s]
@@ -194,7 +194,8 @@ BEGIN
   %% =========================================================================================
 
   %% The answers are quoted compactly: (cad-qe) prints 4*c + (-1)*b^2 = 0 OR
-  %% 4*c + (-1)*b^2 < 0 where the comment says 4c - b^2 <= 0.
+  %% 4*c + (-1)*b^2 < 0 where the comment says 4c - b^2 <= 0 (captured on
+  %% 4 October 2026).
 
   a, b, c, d, m, x: VAR real
 
@@ -215,7 +216,7 @@ BEGIN
 
   %% For which slopes m does the line y = m t + 2 meet the unit circle?
   %%   proof: (skeep), (split); on each side (flatten), (cad-qe -1) or (cad-qe 1), (cad *)  [9 s]
-  %%   (cad-qe) answers: 12 + 8m^2 - 4m^4 <= 0
+  %%   (cad-qe) answers: 12 - 4m^2 <= 0
   qe_line_circle: LEMMA (EXISTS (t: real): t^2 + (m*t + 2)^2 = 1) IFF m^2 >= 3
 
   %% A linear equation a t = b, two free variables.
@@ -225,12 +226,12 @@ BEGIN
 
   %% Two unit circles, centres d apart, meet exactly when |d| <= 2.
   %%   proof: (skeep), (split); on each side (flatten), (cad-qe -1) or (cad-qe 1), (cad *)  [10 s]
-  %%   (cad-qe) answers: 256d^4 - 1024d^2 <= 0
+  %%   (cad-qe) answers: d^2/4 - 1 <= 0
   qe_kissing: LEMMA (EXISTS (s, t: real): s^2 + t^2 = 1 AND (s - d)^2 + t^2 = 1) IFF d^2 <= 4
 
   %% t^3 + a t is increasing exactly when a >= 0.
   %%   proof: (skeep), (split); on each side (flatten), (cad-qe -1) or (cad-qe 1), (cad *)  [11 s]
-  %%   (cad-qe) answers: -472392a <= 0
+  %%   (cad-qe) answers: a = 0 OR a > 0
   qe_monotone: LEMMA (FORALL (s, t: real): s < t IMPLIES s^3 + a*s < t^3 + a*t) IFF a >= 0
 
   %% Two distinct real roots exactly when the discriminant is positive.
@@ -241,12 +242,12 @@ BEGIN
 
   %% A posreal binder: a has a positive square root exactly when a > 0.
   %%   proof: (skeep), (split); on each side (flatten), (cad-qe -1) or (cad-qe 1), (cad *)  [7 s]
-  %%   (cad-qe) answers: -a < 0
+  %%   (cad-qe) answers: a > 0
   qe_pos_root: LEMMA (EXISTS (t: posreal): t^2 = a) IFF a > 0
 
   %% Quantifiers inside AND: a has a square root and a cube root.
   %%   proof: (skeep), (split); on each side (flatten), (cad-qe -1) or (cad-qe 1), (cad *)  [9 s]
-  %%   (cad-qe) answers: (-4a <= 0) AND TRUE  (as a goal: every real has a cube root)
+  %%   (cad-qe) answers: a = 0 OR a > 0
   qe_both_roots: LEMMA ((EXISTS (t: real): t^2 = a) AND (EXISTS (s: real): s^3 = a)) IFF a >= 0
 
   %% (cad-qe -1) inside a proof: the hypothesis loses its quantifier, then
@@ -257,8 +258,8 @@ BEGIN
     IMPLIES a^2 >= 4*b
 
   %% Three free variables: the general quadratic.
-  %%   proof: (skeep), (split); on each side (flatten), (cad-qe -1) or (cad-qe 1), (cad *)  [32 s]
-  %%   (cad-qe) answers: a case split on the signs of c, b, a and 4ca^2 - b^2a, 19 cases
+  %%   proof: (skeep), (split); on each side (flatten), (cad-qe -1) or (cad-qe 1), (cad *)  [23 s]
+  %%   (cad-qe) answers: a case split on the signs of c, a and 4ac - b^2, 9 cases
   qe_general_quadratic: LEMMA (EXISTS (t: real): a*t^2 + b*t + c = 0) IFF
     ((a /= 0 AND b^2 >= 4*a*c) OR (a = 0 AND (b /= 0 OR c = 0)))
 END cad_showcase

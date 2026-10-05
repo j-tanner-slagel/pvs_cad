@@ -1,14 +1,16 @@
 # Progress notes — pvs_cad
 
-Newest first. One entry per working session or verified item. Every entry records what
-was proved or built, what was verified and how, what was learned, and what is next.
-The LLM usage table is regenerated with `tools/llm_usage.py` (writes `paper/llm_usage.*`).
+One entry per working session or verified item. Every entry records what was proved or
+built, what was verified and how, what was learned, and what is next. The first block
+(2026-09-09 to 2026-09-16) is newest first; from "2026-09-16 — cad_proj" on, entries are
+appended oldest first, so the newest is at the end. Corrections found later are noted in
+brackets, dated, in the entry they correct.
 
 ## 2026-09-16 (end) - the real benchmark set, fetched and parsed
 
-- THE standard CAD benchmark is the Bath CAD example bank: Bradford, Davenport
-  and Wilson, "A repository for CAD examples", ACM Communications in Computer
-  Algebra 46(3) 67-69, doi 10.1145/2429135.2429137; dataset maintained by
+- THE standard CAD benchmark is the Bath CAD example bank: Wilson, Bradford
+  and Davenport, "A repository for CAD examples", ACM Communications in Computer
+  Algebra 46(3/4) 67-69, doi 10.1145/2429135.2429137; dataset maintained by
   David Wilson, University of Bath Research Data Archive v4 (2013),
   doi 10.15125/BATH-00069, CC-BY-SA 4.0. Three files: examplebank_v4.pdf
   (properties and sources), examplebank_v4.txt (Maple), and
@@ -22,7 +24,8 @@ The LLM usage table is regenerated with `tools/llm_usage.py` (writes `paper/llm_
   full CAD with reproduction details - a hardware- and
   implementation-independent measure, which is the right yardstick for a
   verified implementation that will never match a C library on wall-clock.
-- PARSED (parser + bath_bank_parsed.json in /tmp/cad_scratch): 78 entries, 30
+- PARSED (parser + bath_bank_parsed.json in /tmp/cad_scratch [scratch files, not kept; the
+  translated problems are in bench_pdec.pvs]): 78 entries, 30
   with zero free variables, of which 12 are genuinely CLOSED PRENEX, i.e. the
   shape (cad) decides:
       3 quantifiers: Ball and Circular Cylinder, Collision of Circle and
@@ -934,10 +937,9 @@ The LLM usage table is regenerated with `tools/llm_usage.py` (writes `paper/llm_
 - Evaluation section updated: 1242/1242 in 64 theories, 636 s; the only AXIOMs
   are the generated datatype ones (`mpoly`, `btree`, `PolyExpr`); the only
   trusted oracle PVS reports is METIT, which nothing here calls.
-- Memory updated: `project_cad_phase3_qe.md` rewritten for the finished phase,
-  `reference_pvs_proof_tactics_phase3.md` extended with the tactics from the
-  QE layer (replace-don't-add, `hide-all-but` vs `NOT` formulas, label the
-  lemma instance, print empty lists with their actual).
+- Tactics learned in the QE layer, recorded for later phases: replace-don't-add,
+  `hide-all-but` vs `NOT` formulas, label the lemma instance, print empty lists with
+  their actual.
 - Next: Phase 4 (subresultants), and the parametric QE — the whole QE layer
   lifted to branch trees, as `gdec` lifts one sign condition, which is what
   `qe-exists` needs for symbolic coefficients.
@@ -1553,7 +1555,7 @@ The LLM usage table is regenerated with `tools/llm_usage.py` (writes `paper/llm_
 - Phases 0, 1 and 2 were done by Claude Fable 5.1. From Phase 3 on the work is
   done by Claude Opus 5 (the change took effect mid-session, after the Phase 2
   close-out; Fable's last turn was 2026-09-11T18:53Z).
-- `tools/llm_usage.py` now records the model that produced each phase's turns,
+- `tools/llm_usage.py` [moved to `paper/` on 2026-10-04, with the paper draft] now records the model that produced each phase's turns,
   so the per-phase table in the paper shows it; the methods section warns that
   counts are comparable only within a model and that proof style will differ.
 - What does not change: the verification gate. Three fresh `proveit -f` runs
@@ -1864,8 +1866,8 @@ The LLM usage table is regenerated with `tools/llm_usage.py` (writes `paper/llm_
   Decisions: both decision and QE output; recursive representation (D1); Thom encodings;
   complex route for root continuity; benchmarks = executable exact bands, symbolic bands,
   WCV_inclusion theorems, ACCoRD lemmas, literature CAD problems.
-- Repository: this directory became `j-tanner-slagel/pvs_cad` (fresh history); the
-  matrix library was pushed to `matrix_suite` and removed here.
+- Repository: this directory became `j-tanner-slagel/pvs_cad` (fresh history); a matrix
+  library that used to live here moved to a separate repository.
 - Toolchain: PVS rebuilt at 8.1 (SRI master 2026-08-06), NASALib 8.1 (2026-07-23),
   all pvsbin caches cleared. Replays: Sturm examples 81/81, Tarski 39/39, hutch 35/35;
   mult_poly typechecks and its CAD-relevant theories replay (run killed inside a
@@ -3799,7 +3801,7 @@ the existence of separators that pass the NEW `wok?`:
   reads' nonvanishing `pe_nz` / `pairse_nz` / `wnz_nz`; determinacy
   `pi_det` / `pairs_det` / `wi_det` / `nzm_det` / `cert_det`; membership
   `mch_mem` / `pch_mem` / `pchs_mem` / `bprod_allch`.
-- Tooling: `/tmp/cad_scratch/prf2strat.py` turns a saved .prf script into one
+- Tooling: a scratch script (prf2strat.py, not kept) turns a saved .prf script into one
   `then`/`spread` strategy; mirror proofs (`rightok_all` from `leftok_all`,
   `sok_right` from `sok_left`) were replayed with textual substitutions.
   Lesson relearned: `lemma` of a declaration LATER in the theory is a silent
@@ -3845,7 +3847,7 @@ the same sign (walk_od's `wok_t`), so nothing measured changes.
 
 ## 2026-09-27 — new machine; the n-level certificate fixed; N1-N5 of the finish (FINISH_PLAN 3i)
 
-The repository moved to a new machine (`~/src/CAD`, PVS 8.1 built from
+The repository moved to a new machine (PVS 8.1 built from
 source with SBCL 2.6.8, NASALib 8.1).  Tools made portable (`tools/env.sh`,
 `tools/setup.sh`: the repo's `.venv` for pvs-cli; no machine paths), proofs
 through pvs-cli, `.prf` files written only by PVS.  Whole-library replay on
@@ -4458,7 +4460,7 @@ an IMPORTING takes effect where it is written, so an early import that a
 later one repeats stays (a first attempt that ignored this broke
 alg_examples).  top.pvs, the index, is unchanged.  Import paths through the
 library (what PVS 8.1's post-typecheck circularity check walks, see
-~/ITP_notes/pvs-circular-deps.md) drop from 910 million to 91 million from
+tools/README-pvs-circular-deps.md) drop from 910 million to 91 million from
 top.  Whole library 3479/3479; demos and cad_star_ex pass.
 tools/import_paths.py reports theories, edges and path counts per directory.
 
@@ -4480,7 +4482,7 @@ tools/import_paths.py reports theories, edges and path counts per directory.
   variables, degree and Boolean structure; each lemma annotated with its
   measured time or "not done in N s").
 - Emacs checked end to end with ~/.pvs.lisp (the circular-deps fix, see
-  ~/ITP_notes/pvs-circular-deps.md): M-x typecheck of cad_demo returns to
+  tools/README-pvs-circular-deps.md): M-x typecheck of cad_demo returns to
   (PVS :ready) after 70 s; M-x prove and (cad) give Q.E.D.
 - Found by an overnight run: m_cover20 (one variable, 42 atoms) answers in
   0.8 s but exhausts the 6 GB SBCL heap while the proof is BUILT.  The cause
@@ -4549,6 +4551,9 @@ tools/import_paths.py reports theories, edges and path counts per directory.
   the second public pvs_cad snapshot.
 
 ## 2026-09-29 — GAP_PLAN Tier 1A/1B: the n-level run computes a CAD
+
+[Corrected 2026-09-30: the cells' first-order definability (semi-algebraic in the sense of
+first-order definable) was still missing here; the next entries add it.]
 
 - Ten new theories, all gated; no existing proof changed.
   - cad_roots / cad_fibre: the roots over a point as a sorted list (rtl; rootat? = zeros of
@@ -4656,11 +4661,13 @@ tools/import_paths.py reports theories, edges and path counts per directory.
     on each, and cad_out lists exactly the nonempty cells with a sample and F's sign vector.
 - "Definable" is first-order definability with rational polynomial sign atoms.  Semi-algebraic
   in the quantifier-free sense follows by Tarski-Seidenberg, which is not formalized here;
-  quantifier-free cell descriptions are GAP_PLAN Tier 2B/2C.  Scope as before: decn_o.
+  quantifier-free cell descriptions are GAP_PLAN Tier 2B/2C.  [Superseded 2026-10-01:
+  Tarski-Seidenberg is formalized (qelim_ok's fod_qfd), and cad_sa gives quantifier-free cell
+  definitions.]  Scope as before: decn_o.
 - Design: mapped and adversarially reviewed by a 4-agent workflow before proving (it caught
   the closed interval of Alg values and cut the plan from an 80-100 lemma estimate to ~20).
 - PVS 8.1 bug: a datatype field of NASALib type Sign3 crashes the positivity check
-  (OCCURS-POSITIVELY?*); the atom's sign is an int instead (~/ITP_notes).
+  (OCCURS-POSITIVELY?*); the atom's sign is an int instead.
 - Lesson again: new definitions generate TCCs (mins_TCC3; cad_of? took cdr of a possibly empty
   list and had to be guarded) -- the quick proveit pass before gating caught both.
 
@@ -4673,7 +4680,7 @@ tools/import_paths.py reports theories, edges and path counts per directory.
   (default decide5, so (cad) is unchanged); (cad) and (cad *) take :cad-only?, which skips
   the witness search and the two-level fast path and runs cad-direct with decide7.
 - Timing, (cad) against (cad :cad-only? t), whole proofs, one at a time on a separate
-  server (scratch/time_cadonly.sh; 300 s cap):
+  server (a scratch script, not kept; 300 s cap):
   - the 54 library examples (cad_examples 1-4, cad_endgame_ex, cad_demo, cad_bath): all
     proved both ways, 0.3-5.9 s each with (cad) (95.5 s in all), 0.8-4.5 s with :cad-only?
     (88.7 s in all) -- the shortcuts buy nothing there;
@@ -5183,7 +5190,7 @@ quantifier-free formula equivalent to it, computed by the Collins run alone; (ca
 
 ## 2026-10-01 — Tier 4, M-K: measurements, the default import, documents
 
-- Measured (/tmp/cad_scratch/k_time.sh, one scratch copy and server per variant): all 68 (cad) /
+- Measured (a scratch script, not kept; one scratch copy and server per variant): all 68 (cad) /
   (cad-direct) / (cad-qe) proofs of cad_examples1-4 [corrected 2026-10-01: cad_examples,
   cad_examples2-4], cad_endgame_ex, cad_star_ex, cad_bath and
   qe_cad_ex pass as they are (read closure, 191.5 s) and with cad_decide8 / qe8 imported (Collins,
@@ -5377,7 +5384,10 @@ documents, and the strategy fixes, tests, measurements and proofs were done in t
   with nzreal and synonyms); cad_showcase 38 -> 43 (a quantifier inside OR; nnreal, negreal,
   npreal, nzreal binders); comments fixed (cubic, monic quadratic, zero_no_inverse, hyps_only,
   two_circles, the saved proofs).  Gates: cad_forms_ex 77/77, cad_showcase 63/63 (3 runs +
-  traces, 0 fewer-subproofs warnings).
+  traces, 0 fewer-subproofs warnings).  [Noted 2026-10-03: 77/77 is cad_forms_ex before the six
+  fx_* lemmas of this entry; later gates give 83/83.  The traces count read proveit's stdout,
+  where these warnings never appear (tools/gate.sh, fixed 2026-10-03), so "0 warnings" here and
+  in other gate lines before 2026-10-03 was not checked.]
 - Tools: tools/pvs-cli.py (a copy of NASALib's pvs-cli) removed; tools/pvscli_wrap.py runs
   NASALib's own copy with the state file per port and no websocket keepalive or size limit.
 - Measurements (1 October 2026, IMPORTING pvs_cad, wall clock of the proof command through
@@ -5392,7 +5402,8 @@ documents, and the strategy fixes, tests, measurements and proofs were done in t
   alone (u = 0): decc_o 0.8 s, decn_o 1.1 s (zz_bench8: bench_n does not import decc_def).  The
   68-proof comparison re-run after the strategy fixes (the 22:27 file): 68/68 with each import.  QE table of
   qe_capabilities re-captured under IMPORTING pvs_cad (qe8): 2-8 s per row; the general quadratic,
-  19 cases, polynomial 4ca^2 - ab^2 = -a(b^2 - 4ac).
+  19 cases, polynomial 4ca^2 - ab^2 = -a(b^2 - 4ac). [Since P3's checked bases (2026-10-02)
+  the answer has 9 cases and 387 characters, with 4ac - b^2; re-captured 2026-10-04.]
 - Whole library: 5183/5183 (355 theories, 1,630 TCCs, 3,553 lemmas and theorems; 2209 s;
   proveit -i -f top.pvs on a clean copy of the final files, 2026-10-02; an earlier replay of this
   round, before the second review's fixes, gave 5177/5177 in 2012 s).
@@ -5410,3 +5421,607 @@ documents, and the strategy fixes, tests, measurements and proofs were done in t
 - README, "How to cite": a request (not a condition) to cite pvs_cad, as PVS specifications and
   proofs (BibTeX @misc).  No CITATION.cff: that format describes a repository only as software
   or a dataset, and pvs_cad is neither.
+
+## 2026-10-02 — Deep dive: a smaller projection (PROJ_PLAN.md)
+
+- Profiles (scratch server, IMPORTING pvs_cad, decc_o at u = 0): g_root7 3.4 s, g_amgm8 25.0 s
+  (det_fast_def's dlook + dleq 87% of the time, arithmetic about 6%), g_root9 and b10_amgm more
+  than 400 s; bath_04 more than 150 s (big-integer gcd 81%, inside NASALib's root isolation of the
+  569-member bottom family).  A Lisp-level hashed dlook, loaded into the scratch server only as a
+  measurement: g_root7 0.2 s, g_amgm8 1.2 s, g_root9 2.0 s; b10_amgm still did not finish (side-19
+  determinants that vanish: its input is (x^5 - y^5)^2).
+- Projection sizes (a Python mirror of projn, 30 problems, 9 operators): the minimal bottom step
+  takes bath_04 from 569 polynomials / 2,490 bottom roots to 47 / 61 and bath_07 from 120 to 42
+  roots; a squarefree basis takes the largest determinant of b10_amgm from side 19 to 9 and of
+  d_amgm4 from 199 to 23; bath_09 / bath_12 finish only under McCallum or Brown (side-40
+  resultants).  COLLINS_PLAN.md sections 1 / 1a: dated note, those columns came from the
+  prototype and overstate projn.
+- Literature: no prover has a proof of Hong, McCallum, Brown or Lazard; McCallum, Brown, Lazard
+  and equational constraints need several-variable analytic geometry from three variables on.
+  Provable with the existing Collins proof: the minimal bottom step, Hong, open cells, local
+  projection.  Plan and estimates: PROJ_PLAN.md (P1 indexed determinant table, P2 minimal bottom
+  step, P3 squarefree basis by product certificate, then P4-P7).
+- Constants (scratch theory, not in the library): (cad *) with NASALib's proved bounds on pi
+  (trig@atan_approx pi_bounds, n = 0) as a hypothesis proves FORALL x: x^2 - pi*x + 3 > 0 and
+  EXISTS x: x^2 = pi; pi^2 < 10 and pi^2 < 9.87 are FALSE for some value in that interval
+  ((cad) says so and changes nothing) and are proved with the n = 2 bounds 3.1415926 < pi <
+  3.1415927.
+
+## 2026-10-02 — P1: the determinant's minors looked up in a trie (PROJ_PLAN.md)
+
+- det_fast_def: `DTrie` (a binary trie), `dbits` (the membership bits of an increasing column set
+  below n), `tlook`, `tins`, `tbuild` (the trie of a table; an earlier entry wins, as in dlook),
+  `dxrowt` / `dtabt` (dxrow / dtab with the minors read from the trie of the table below), and
+  `detf` now uses `dtabt`; the former detf is `detf0`.  31 TCCs, all by the default strategies.
+- det_fast: `detf0_det` (the former detf_det's proof), `tlook_null`, `tlook_cons`, `tlook_tins`
+  (insert then look up = an association list), `inr_empty`, `inr_skip`, `inr_take`, `dbits_inj`
+  (the bits are injective on increasing column sets in range), `tlook_tbuild` (the trie of a
+  table answers what dlook answers), `dxrowt_dxrow`, `map_ext`, `every_mapk`, `every_dtab`,
+  `dtabt_dtab` (dtabt = dtab), `detf_eq` (detf = detf0), and `detf_det` with its statement
+  unchanged.  25 new formulas; det_fast 48/48.  [Noted 2026-10-03: det_fast went from 33 to
+  48 formulas (15 new lemmas), det_fast_def's TCCs from 20 to 31: 26 new formulas.]
+- Gates: det_fast_def 31/31, det_fast 48/48 (3 runs + traces, 0 warnings); cad_projn 30/30
+  replayed (pscg_eq uses detf_det).
+- Measured (scratch server, IMPORTING pvs_cad, decc_o at u = 0): g_amgm8 25.0 s -> 1.2 s,
+  g_root9 more than 400 s -> 2.4 s, g_root7 3.4 s -> 2.0 s (the first call includes the
+  evaluator's compilation); b10_amgm still more than 300 s (its input is (x^5 - y^5)^2: P3).
+
+## 2026-10-02 — P2: the minimal bottom step (PROJ_PLAN.md)
+
+- croot_lsc: `kdist?(A, B, n)` (the degree of the common divisor of the polynomial and its
+  derivative is the same for A and B, every k <= n - 1) with kdist_ccd, psc_kdist, kdist_sym,
+  kdist_le, kdist_same.
+- col_pair, col_loc, col_stack: Collins' delineability argument now runs from col_pair's
+  `kconst?(G, C)` (constant effective degrees, constant common-divisor degree of each member with
+  its derivative and of each pair) -- what the proof actually uses; colh? gives it (colh_kconst,
+  with colh_lv, colh_lead, kc_edeg, kc_kdist), and col_stack's `kcol_stack` gives delineability
+  from it.  collins_stack keeps its statement.
+- cad_projb_def: `projb(G)`, per member its top coefficient that does not normalize to 0 and the
+  first psc_j(f, f') that does not, per pair the first psc_j(f, h) that does not; `pdownb`.
+  11 TCCs.
+- cad_projb (30): `kconst_nz` / `projb_kconst` -- where every member of projb(G) is nonzero on C,
+  kconst?(G, C) holds (the first nonzero psc fixes the common-divisor degree: ccd1_iff,
+  ccd2_iff); `kconst_one` on a set with one point; `projb_delin`.
+- col_towerb (5): `ptower_cad2` / `ctw_cad2` (a CAD over a connected C where the lowest family is
+  delineable), `bot_cad` (projb of the lowest family nonzero on C), `bot_cad1` (C one point).
+- decb_def / decb_ok (12): `decb_o` cuts the line at the roots of `cbotb(TW)` = pdownb of the
+  lowest family when `nzb?` holds (every member nonzero at the rational sample of every sector
+  that is not a root; then sect_nz makes it nonzero on the whole sector), else it is decc_o;
+  decb_correct, decb_ev, decb_complete.  decb_u_def / decb_u: the fuel loop (decc_u's).
+- cad_decide8_def: decq8 calls decb_u; cad_decide8's four theorems re-proved.
+- Gates: croot_lsc 27/27, col_pair 43/43, col_loc 23/23, col_stack 4/4, cad_projb_def 11/11,
+  cad_projb 30/30, col_towerb 5/5, decb_def 1/1, decb_ok 12/12, decb_u_def 3/3, decb_u 2/2,
+  cad_decide8 4/4 (3 runs + traces each, 0 warnings).  Replayed: col_tower 15/15,
+  cad_decide8_ex 6/6, cad_showcase 63/63, cad_forms_ex 83/83.
+- Measured (decb_o at u = 0, scratch server, 300 s limit): c_amgm3 0.2 s and c_schur 0.4 s
+  (cad_limits records both as not done in 120 s by decide5), g_amgm8 1.3 s, g_root9 5.8 s (the
+  first call, which includes the evaluator's compilation).  Not done in 300 s: g_amgm10
+  (= b10_amgm), bath_04, bath_05, bath_07.  So the plan's gate for P2 (the three Bath problems
+  within 120 s) is NOT met.  Profiled: the time is in the lifting, alg_isign's interval Horner
+  (Mult) at the algebraic section points over the lowest cells, with big-integer gcds; P3's
+  smaller degrees are aimed at that.
+
+## 2026-10-02 — P3: a checked squarefree basis of every family (PROJ_PLAN.md)
+
+- mpoly_gcd_def (executable, untrusted, 145 lines): multivariate gcd by primitive remainder
+  sequences (`gx`: gcd, content of a coefficient list and the primitive sequence in one function
+  with fuel, since PVS has no mutual recursion), exact division `mexf` (mpoly_div's mdiv reads a
+  divisor that is constant in the main variable in the wrong variable frame), Yun's squarefree
+  decomposition `sqf`, squarefree parts in every variable `parts`, gcd splitting into a pairwise
+  coprime list `ins` / `insl`, the proposed basis `basis(U)` and the exponents `exps(u, B)`.
+  None of it is proved; 41 TCCs (termination and subtypes) are.
+- mpoly_cert_def / mpoly_cert: `fsplit(U)` is basis(U) when every u in U is c * product of b^e
+  over it by normal forms (`ucheck?`: mnorm and meq, complete by mpoly_unique), else U.
+  `fsplit_cinv` and `fsplit_nz`: one sign on C (nonzero on C) for every member of fsplit(U)
+  gives the same for every member of U (ucert_eval, pprod_cinv, pprod_nz).
+- col_tower_def: `pdown(G) = fam(fsplit(projn(G)))`; col_tower's `fam_cinv` (same statement)
+  through the new `famu_cinv` and fsplit_cinv.  `ctw(F, 1) = (: F :)` is now its own case: the
+  evaluator computed the projection below the lowest family and dropped it (1.3 s of g_root9's
+  time; for three variables the full projection of the two-variable family).  ctw_len,
+  ctw_tlast, ctw_chain, ctw_car re-proved.  ctwd (the QE tower) had the same waste: same change,
+  ctwd_len, ctwd_tlast, ctwd_schain, ctwd_dclall, ctwd_dcl re-proved.
+- cad_projb_def: `pdownb(G) = fam(fsplit(projb(G)))`; `fpsc` computed its first nonzero psc
+  twice (once to test it): now once.  decb_ok's `sect_cadb` re-proved through fsplit_nz.
+- fsplit_top_def / fsplit_top: the input family.  When every member of F passes the check over
+  B = basis(ubs(F)), `sem_split`: the sentence over fam(B) with the matrix read through `smap`
+  (each member's sign = sign(c) * product of the signs of the b^e: sce_sign, sprd_sign,
+  spw_sign, svec_smap) means what it means over F.  cad_decide8_def's `decq8` decides over the
+  basis when the check passes; decq8_correct, decq8_complete, decide8_correct, decide8_decides
+  re-proved.
+- Gates (3 runs + traces each, 0 warnings): mpoly_gcd_def 41/41, mpoly_cert_def 3/3,
+  mpoly_cert 10/10, col_tower_def 4/4, col_tower 16/16, fsplit_top_def 5/5, fsplit_top 6/6,
+  cad_projb_def 11/11, cad_projb 30/30, decb_ok 12/12, cad_decide8 4/4, ctwd_def 5/5, ctwd 26/26.
+  Whole library (proveit -a top.pvs in a fresh copy): 5353/5353.
+- Measured (decide8's decq8 at u = 0, scratch server, before the two pieces of wasted work above
+  were removed): g_amgm10 (= b10_amgm) 0.3 s, where P2 did not finish in 300 s; g_amgm8 0.2 s
+  (P2: 1.3 s); c_amgm3 0.4 s, c_schur 0.5 s (P2: 0.2 s, 0.4 s, the basis costs a little there);
+  g_root9 5.4 s (the first call, with the evaluator's compilation).  Still more than 300 s:
+  bath_04, bath_05, bath_07; d_amgm4 exhausts the 6 GB heap (P5's polynomial-time psc).
+
+## 2026-10-02 — T2, T3: constants by interval arithmetic, algebraic operators as exact facts (TERMS_PLAN.md)
+
+- `(cad)` and `(cad *)` now try harder when the decision with the real terms as unknowns does not
+  prove the goal (cad-num).  A sequent with no such terms runs exactly as before.
+  - **T3, exact facts** (cad-facts): for sqrt(t), its type, which gives sqrt(t) >= 0 and
+    sqrt(t) * sqrt(t) = t (typepred); for abs(t), max(a, b) and min(a, b), their definitions as
+    two cases; for t / u with u not a number, (t / u) * u = t.  They are added as proved
+    hypotheses, round after round, because a fact can bring a new term (sqrt(1 + sqrt(2))
+    gives sqrt(2)).
+  - **T2, enclosures**, in a theory that imports `pvs_cad_num` (new: pvs_cad and NASALib's
+    interval_arith@strategies).
+    - Every remaining constant term that interval arithmetic evaluates (pi, e, sin(1), ln(2),
+      atan(1), ...) is enclosed between two rationals by `(numerical)`, as a proved hypothesis.
+      The `##` it gives is rewritten as two comparisons.
+    - The sequent G, with the enclosures, is decided by evaluation.  TRUE (or no answer): (cad)
+      proves it.  FALSE: the sequent with its goals moved among the hypotheses (H) is
+      decided.  When H holds, the goal is FALSE at the constants wherever the hypotheses
+      hold; the strategy says so and changes nothing.  Otherwise the precision rises (3, 6,
+      10, 16, 24 decimals).
+  - **Without pvs_cad_num**, `(cad)` says which constants it could have enclosed.  pvs_cad
+    leaves interval arithmetic out so that its names (Interval, ##, lb, ub, ...) are not added
+    to every theory that imports pvs_cad.
+  - **Nothing new is trusted:** the facts and enclosures are proved formulas about the terms,
+    and (cad) proves the rest.  cad-num is one finalize: it proves the goal or changes
+    nothing.
+- **Fixes in (cad *)'s unknowns (cadstar):**
+  - The same term in every formula gets the same unknown by tc-eq (e and lnexp@ln_exp.e).
+  - The text the proof steps use resolves on its own (cadstar-key-text, with
+    with-no-type-errors).  e alone is ambiguous where matrices' vector e is visible, so
+    `(cad *)` could not instantiate it before.  In batch proveit the old check's type error
+    escaped ignore-errors and aborted the step.
+  - A quotient by a non-number and a power with another exponent are unknowns when free of
+    the bound variables; before, the formula was refused.
+  - The type facts' typepred now has its TCCs decided by (cad) (cadstar-typepred__,
+    cadstar-tcc__).  sqrt(x^2 + 1) for a skolem x re-typechecks to the TCC x^2 + 1 >= 0, which
+    used to stay open, so `(cad *)` failed on such a sequent.
+- **cad_terms_ex** (new): 24 lemmas + 4 TCCs.
+  - Constants: pi, e, sin(1), ln(2), atan(1), two constants at once, a constant in a
+    hypothesis, and the 6-decimal case pi^2 < 9.87.
+  - Exact facts: sqrt (products, nested, of a constant, monotone), abs (the triangle
+    inequality takes about 100 s: five variables), max, min, quotients, and sqrt(2) + pi.
+  - Terms of skolem constants after (skeep): sqrt(x^2 + 1) > x, sqrt(x) <= (x + 1)/2,
+    |xy| = |x||y|, max.
+  - Checked by hand: pi^2 > 10 is reported FALSE and left as it is; in a theory importing
+    pvs_cad alone, the hint names pi.
+- Gate cad_terms_ex 28/28 (3 runs + traces, 0 warnings).  Replayed with the new strategies:
+  cad_star_ex 16/16, cad_forms_ex 83/83, cad_showcase 63/63, cad_decide8_ex 6/6, cad_examples
+  9/9, cad_examples2-4 14/14, 9/9, 5/5, cad_endgame_ex 20/20, qe_cad_ex 10/10, qe8_ex 6/6,
+  cad_bath 8/8 (cad_demo as before: its FALSE d_inverse and two unproved playground lemmas).
+  Whole library (proveit -a top.pvs in a fresh copy): 5381/5381, 369 theories.
+
+## 2026-10-02 — Measurements after P1-P3 (PROJ_PLAN.md)
+
+- **decide8's decq8 at u = 0** (scratch servers, the P2 library against the P3 one, the same
+  problems, a warm-up problem first; 300 s limit):
+
+  | problem | P2 | P3 |
+  |---|---|---|
+  | g_root9 | 3.3 s | 1.0 s |
+  | g_amgm8 | 1.2 s | 0.1 s |
+  | g_amgm10 | not done | 0.1 s |
+  | c_amgm3 | 0.2 s | 0.2 s |
+  | c_schur | 0.3 s | 0.3 s |
+  | l3_quad | 0.6 s | 0.6 s |
+  | l4_quad, l5_quad | not done | not done |
+
+  So PROJ_PLAN's gate for P3 is met for b10_amgm and g_amgm10, but not for the L_n family.
+  bath_04, bath_05 and bath_07 are still not done in 300 s as decisions [corrected 2026-10-03:
+  this said "cad_bath proves them through the witness search"; with the witness search, (cad)
+  proves bath_04 and refutes bath_05 and bath_07 as hypotheses in under 14 s, measurements of
+  2026-09-27 and 2026-10-01, not lemmas of the library; cad_bath holds only bath_08_false], and
+  d_amgm4 exhausts the heap.
+- **(cad) proofs, IMPORTING pvs_cad**, wall clock through pvs-cli, 120 s limit (README's
+  limits paragraph updated):
+  - h_wilk20 3.2 s, h_cheb10 2.6 s, h_cheb30 8.2 s, t_forall_exists_forall 1.7 s;
+  - b_motzkin 1.6 s, c_cubic_root 1.4 s, d_quad_suf 3.0 s;
+  - c_amgm3 3.0 s, c_schur 3.6 s, d_two_squares 7.3 s, d_cs2 2.0 s;
+  - g_amgm8 1.5 s (was 26.0 s), g_root7 1.3 s, g_meet8 2.2 s (was 25.9 s), g_root9 2.3 s,
+    g_amgm10 1.5 s, b7_root 1.4 s, b8_meet 3.8 s (was 30.1 s), b10_amgm 1.5 s;
+  - h_mignotte and d_amgm4 not done in 120 s.
+
+
+## 2026-10-02 — T4: sqrt, abs, max and min under binders (TERMS_PLAN.md 1a)
+
+- **What (cad) does now.** A formula whose atoms apply sqrt, abs, max or min to terms that
+  mention bound variables (FORALL (x: real): sqrt(x^2 + 1) > x) was refused.  It is now read
+  into an equivalent formula A without them (cadt-form), A is decided by (cad), and the formula
+  is proved from A, or A from it, by the general route's mirror walk (cadg-walk), as for
+  grouped binders.
+- **The rewriting**, from the innermost term outward:
+  - M(sqrt(T)) becomes FORALL (s: nnreal): s * s = T IMPLIES M(s).  This holds where T >= 0,
+    which is where sqrt(T) is defined.
+  - M(abs(T)) becomes (T >= 0 AND M(T)) OR (T < 0 AND M(-T)).
+  - max and min likewise, by their definitions.
+- **The walk's two new leaves.**
+  - :sqrtdef.  Where A is a hypothesis, s is instantiated with sqrt(T); the TCC T >= 0 and
+    the guard sqrt(T) * sqrt(T) = T are proved by typepred and (cad).  Where A is a goal, s is
+    skolemized, T is replaced by s * s in the formula by the guard, and NASALib's sqrt_square
+    turns sqrt(s * s) into s.
+  - :casedef.  The operators are expanded in the formula, their IFs lifted, and ground closes
+    the cases.  An atom may hold several abs, max and min, but no sqrt inside their cases.
+- **TCCs of the facts** (cadstar-tcc__): when the TCC is decided neither alone nor with the
+  hypotheses, it is tried with the hidden hypotheses revealed.  The walk hides the other side
+  of an AND, which is where x > 0 is for sqrt(x) in x > 0 AND sqrt(x) > y.
+- **cad_terms_ex:** 12 more lemmas (36 + 8 TCCs).  They cover sqrt under FORALL, EXISTS and an
+  alternation, a nested sqrt, sqrt and abs in a hypothesis inside the goal, NOT EXISTS, two abs
+  in one atom, sqrt and abs in one atom under grouped binders, max under an alternation, and
+  min.  Each takes 0.7-8 s.
+- **Not done:** quotients by a term with a bound variable; a sqrt inside the cases of an abs,
+  max or min (refused).
+- **Measured:** FORALL x: EXISTS y: y >= 0 AND sqrt(y) = abs(x), a three-level alternation once
+  read, takes 2.5 s (corrected after the commit; see T4b).
+- Gate cad_terms_ex 44/44 (3 runs + traces, 0 warnings).  Whole library (proveit -a top.pvs in a
+  fresh copy): 5397/5397, 369 theories, 42 minutes.
+
+## 2026-10-02 — T4b: quotients under binders; the terms in any order and nesting (TERMS_PLAN.md 1a)
+
+- **Quotients.** M(T / U), where U mentions a bound variable and is not a number, is read as
+  FORALL (q: real): q * U = T IMPLIES M(q).  This holds where U /= 0, which is where T / U is
+  defined.  The walk's new leaf is :divdef.
+  - Where the reading is a hypothesis, q is instantiated with T / U.  The TCC U /= 0 is decided
+    by cadstar-tcc__, and the guard (T / U) * U = T is div_cancel2.
+  - Where it is a goal, q is skolemized.  T / U = q follows from the guard by div_cancel3 and
+    replaces T / U in the formula.
+  - FORALL (x: posreal): x + 1 / x >= 2 takes 1.2 s.
+- **abs, max and min around a sqrt or a quotient.** Their cases were closed by expanding the
+  operators and ground.  That cannot go on into a case that still holds a sqrt or a quotient, so
+  sqrt(abs(x)), 1 / abs(x) and sqrt(max(x, 0)) were refused.
+  - A new leaf, :casesplit, takes each case on its own.  The term's value there (abs(a) = a
+    where a >= 0, ...) is proved by expanding the operator and replaced in the formula, and the
+    walk goes on inside the case.
+  - :casedef is kept for cases that hold only abs, max and min.
+- **The order of the terms.** The innermost term was taken leftmost first.  So
+  abs(x) <= sqrt(x^2 + 1) was refused while sqrt(x^2 + 1) >= abs(x) was proved, and likewise for
+  abs(x) * (1 / x).  A sqrt or a quotient is now taken before an abs, max or min.  Their cases are
+  then free of sqrt and quotients wherever the nesting allows, and the reading has one variable
+  per sqrt instead of one per case.
+- **sqrt where the reading is a goal and T also occurs outside the sqrt.** T4 replaced T by s * s
+  in the whole formula, and the walk then met atoms that differ (x against s * s), so
+  FORALL (a: real): (FORALL (x: nnreal): sqrt(x) <= x + a) IMPLIES a >= 1/4 failed.  When T occurs
+  more than once, sqrt(T) = s is now proved from the guard (NASALib's sqrt_lem) and replaced.
+- **mapobject.** It keeps one table of the objects it has visited.  So a mapobject inside another
+  skips what the outer one has reached, and a subterm that PVS shares is visited once.
+  - The block's walks (cadt-mentions?, cadt-has-op?, cadt-find, cadt-count-tc) now use their
+    own recursion.
+  - With mapobject, the count of T's occurrences above came out as 1.
+- **Facts and enclosures in formulas that are not prenex.** cad-facts, cad-num's enclosures, the
+  pvs_cad_num hint and (cad)'s test for them collected the terms with cadstar-collect, which
+  reads prenex formulas only.
+  - So FORALL (x: real): (EXISTS (y: real): y * y = x) OR pi > 3 got no enclosure of pi, and the
+    same with sqrt(2) * sqrt(2) = 2 got no fact; both failed.
+  - cadstar-terms reads a formula prenex or else whole, by the general route's reader.  The
+    reading of sqrt(max(x, 0)) needs this, since its second case holds sqrt(0).
+- **Messages.**
+  - The leaves take their direction as "ab" / "ba".  A keyword drew "Warning: keyword AB used
+    for required arg" in every T4 proof that used a sqrt.
+  - The leaves build the operators from their full names (real_defs.max).  Checking the bare
+    name typechecked max alone, which is ambiguous with NASALib loaded, and PVS shows even a
+    caught type error when the strategy fails.
+  - When the reading is decided FALSE, (cad) stops there.  Before, it went on to the decision
+    without the reading, which refused the formula with a message about bound variables.  When
+    there is no reading, (cad) says that it does not read the form.
+- **Correction to the T4 entry:** FORALL x: EXISTS y: y >= 0 AND sqrt(y) = abs(x) takes 2.5 s
+  with T4 as committed.  The "more than 3 minutes" there was measured with an earlier draft, so
+  the bullet now gives the time.
+- **cad_terms_ex:** 16 more lemmas (52 + 12 TCCs).
+  - Quotients under each quantifier and in a hypothesis.
+  - sqrt with T outside it, and sqrt(y) = abs(x) under an alternation.
+  - abs written before a sqrt and before a quotient.
+  - sqrt of abs, max and min, and a quotient by abs, as a goal, as a hypothesis and under
+    EXISTS.
+  - Two constants in formulas that are not prenex.
+- **Also checked in a lab theory** (not committed):
+  - sqrt(1 / x), 1 / sqrt(x), abs(abs(x) - 1), max(abs(x), sqrt(y)), 1 / (1 / x),
+    min(x, 1 / x), sqrt(sqrt(abs(x))), x / (x^2 + 1) <= 1/2 and abs(x) + 1 / abs(x) in a
+    hypothesis: 1.3-7.9 s each.
+  - A FALSE one, FORALL x: sqrt(max(x, 0)) <= max(x, 0), is reported FALSE.
+- Gate cad_terms_ex 64/64 (3 runs + traces, 0 warnings).  Whole library (proveit -a top.pvs in a
+  fresh copy): 5417/5417, 369 theories, 42 minutes.
+
+## 2026-10-03 — P5: determinants by fraction-free elimination (NEXT_PLAN.md section 1)
+
+- **bareiss_def (executable, 13 TCCs):** `bdet(n, M)` eliminates the rows (Bareiss).
+  - Step k replaces every entry of the trailing block by (a·s_j − s_0·r_j) / p, with a the pivot,
+    r its row and p the previous pivot.
+  - Each exact division is mex (mpoly_gcd_def, not proved), accepted only when the quotient
+    times p has the normal form of the numerator (`bdiv`).
+  - A pivot that is the zero polynomial: the first row whose first entry is not is added to the
+    first row (`badd`), which leaves the determinant. There is no exchange, so no sign to track.
+  - A zero first column gives 0. When a check fails, `bdet` is `detf` (P1).
+- **mpoly_dom (13):** no zero divisors among polynomials. When p is not the zero function and
+  p·q is, q is (`cancel`, `cancel_pow`).
+  - By induction on msize(p) + msize(q), through mpoly_coefs' bridge (`zfun_mpol`,
+    `coef_pair`).
+  - The one-variable case is NASALib's polynomials: the top coefficient of a product is the
+    product of the top coefficients (`prod_top`, `top_index`, `poly_nodiv`).
+- **bareiss (75):** `bdet_det`: mnorm(bdet(n, M)) = mnorm(det(n, M)) (`bdet_eval` at every
+  point). The block invariant `bar_inv` (value × p^(m−1) = det) is by induction:
+  - Chiò's identity (`chio_id`) from column operations (`rdet_colop`, `rdet_chm`): each column
+    j ≥ 1 replaced by a·col_j − c_0j·col_0 multiplies the determinant by a.
+  - Scaling (`rdet_sclm`), row addition (`rdet_addr`), a zero column (`rdet_zcol`), all from
+    rdet_lin's column linearity and rdet_nl's transpose and equal columns.
+  - The eliminated entries times p are Chiò's (`elim_val`, from `bdiv_ok`, `bent_val`,
+    `bblock_*`).
+  - The step (`step_inv`): a^(m−1)·(v·p^(m−1) − det) is the zero polynomial, and the pivot a is
+    not, so mpoly_dom's cancellation applies.
+- **Integration.**
+  - cad_projn_def's `pscg` is mnorm(bdet(...)), and `pscg_eq` is pscg = mnorm(psc).
+  - pj2k_mem ... pj3_mem name the normal form; `projn_ok` reaches the psc through `cinv_norm`.
+  - cad_projb's `pscg1_ev` and `pscg2_ev` go through meval_mnorm.
+- **The unproved gcd (mpoly_gcd_def) is faster.**
+  - The subresultant remainder sequence (Cohen, Algorithm 3.3.1; `gsr`) replaces the primitive
+    one, which took the content of every remainder: a gcd one variable down at each step.
+  - The pseudo-remainder no longer builds the quotient it threw away (`prl`).
+  - The results are checked as before (mpoly_cert).
+  - On AM–GM in four variables, the basis of the second projection's ten polynomials went from
+    more than 300 s to 6 s.
+- **Measured:**
+  - AM–GM in four variables no longer exhausts the heap. The determinants (side 23) take
+    milliseconds, and the basis is fast. It still has no answer within 900 s.
+  - The profile now puts its time in the lifting: the sign tables and Sturm remainder chains at
+    the sample points of four variables. That is the plan's named risk, for P6/P7 rather than
+    P5.
+  - decq8 at u = 0 (scratch server, 300 s limit), P3 → P5:
+    - g_root9 1.0 → 0.1 s;
+    - g_amgm8 and g_amgm10 0.1 → 0.1 s;
+    - c_amgm3 0.2 → 0.3 s, c_schur 0.3 → 0.4 s;
+    - l3_quad 0.6 → 0.7 s;
+    - l4_quad and l5_quad not done in 300 s, as before;
+    - bath_04, bath_05 and bath_07 not done in 300 s, as before.
+  - The L_n family's largest determinant has side 4 after P3, so P5 cannot help it.
+  - With (cad), on the README's set nothing is slower and some runs are faster (g_root9 2.0 →
+    1.1 s, d_two_squares 7.7 → 6.9 s, b8_meet 3.7 → 3.4 s, against the P3 library measured the
+    same way; the P1-P3 entry recorded 2.3, 7.3 and 3.8 s).  [Re-measured 2026-10-03 after T5:
+    g_root9 1.3 s, d_two_squares 7.4 s, b8_meet 3.5 s; the README gives these.]
+- Gates (3 runs + traces each, 0 warnings): mpoly_dom 13/13, bareiss_def 13/13, bareiss 75/75,
+  mpoly_gcd_def 49/49, cad_projn_def 18/18, cad_projn 30/30, cad_projb 30/30.
+- Whole library (proveit -a top.pvs in a fresh copy): 5526/5526, 372 theories, 46 minutes with
+  other jobs running.  The changed theories' .prf files are the replay's, which keep each
+  formula's default proof.
+- README: the timings paragraph says what P5 changed.  The two documents give the new counts.
+
+## 2026-10-03 — T5: sin, cos, exp, ln and atan of constants the sequent bounds (NEXT_PLAN.md section 2)
+
+- **trans_bounds (18 lemmas + 9 TCCs), imported by pvs_cad_num.** Polynomial bounds in the form
+  (cad) reads: no division but by numbers, and no condition on the argument but a comparison, so
+  an instance raises no TCC.
+  - The ranges: −1 ≤ sin, cos ≤ 1, −8/5 < atan < 8/5 (atan's type with NASALib's pi_bnds).
+  - Degree 3: t − t³/6 ≤ sin(t) ≤ t for t ≥ 0 and the mirror; 1 − t²/2 ≤ cos(t);
+    1 + t ≤ exp(t), (1 − t)·exp(t) ≤ 1 for t < 1; ln(t) ≤ t − 1 and t·ln(t) ≥ t − 1 for t > 0;
+    t ≤ (1 + t²)·atan(t) and atan(t) ≤ t for t ≥ 0, and the mirror. From NASALib's sincos,
+    ln_exp_ineq and atan lemmas.
+  - Higher degree: sin to degree 7 and cos to degree 6, from NASALib's sin_bounds and cos_bounds at
+    n = 1, whose Taylor sums are the polynomials (sin_approx_5, _7, cos_approx_4, _6).
+  - exp(t) > 0 is exp's type, which (cad) already reads.
+- **The ladder (pvs-strategies, cad-num).** Each rung is one finalize, so a rung that fails
+  changes nothing:
+  1. the exact facts and the ranges, with T2's enclosures of the constant terms;
+  2. the bounds of degree 3, for the terms with constants;
+  3. enclosures of the terms by NASALib's (numerical) over the box of rational ranges that the
+     hypotheses give the constants;
+     - each range is first stated as a hypothesis, since numerical reads only top-level ones (it
+       reported ranges given through its :vars as unbounded);
+     - where the decision fails, the box is halved at the middle of its widest range, by a case
+       c ≤ m OR m < c split into two hypotheses;
+     - each half is enclosed and decided in its own branch, up to SPLITS (5) halvings deep;
+  4. the bounds of higher degree.
+- **Changes from the plan.**
+  - The pieces are decided one per branch, not as one formula with every piece's enclosure (the
+    tube). Each decision stays small, which the plan named as the risk, and halving goes only
+    where the decision fails.
+  - The ranges come before the bounds of degree 3, which bring the argument's constants into the
+    decision: sin(a)·cos(b) ≤ 1 took 43 s with both at once, 3 s with the ranges alone.
+- **Two findings about speed.**
+  - A piece is decided first over the formulas whose unknowns are among the goal's and the
+    enclosures' (cadt5-core), then over all. exp(x)·exp(y) ≤ 8 with its two enclosures is
+    decided over two unknowns in 4 s; with x and y kept, it ran for more than 600 s.
+  - The order of the unknowns: T5's decisions read the facts first, which puts each constant next
+    to its terms (y, exp(y), x, exp(x)). In the order x, y, exp(x), exp(y), the decision of
+    exp(x)·exp(y) ≤ 8 with its bounds of degree 3 took 477 s instead of 13 s. T2's decisions keep
+    their order.
+- **FALSE as in T2.** The test that moves the goals among the hypotheses needs the pieces' case
+  formulas among the hypotheses. With the plain case c ≤ m, the upper half's formula was a goal,
+  and a true piece was reported FALSE (exp(x) ≤ 1 + 2x on [3/4, 1]); the split form fixes that.
+- **Bound variables.** A formula whose sin, cos, tan, atan, exp or ln apply to variables that
+  flatten and skolem constants free (a goal's FORALL, a hypothesis's EXISTS, also inside the parts
+  flatten takes apart) is flattened and skolemized first. Such terms under other binders are
+  refused, with the term in the message.
+- **Also fixed:** the hint for a theory without pvs_cad_num counted a theory's constant without a
+  definition (c: real) as a constant that interval arithmetic evaluates. It now counts it with
+  the skolem constants, and the hint for terms with constants names T5.
+- **cad_terms_ex:** 14 more lemmas (66 + 13 TCCs):
+  - sin(x) ≤ x and sin(x) ≥ x/2 on [0, 1];
+  - exp(x) ≤ 1 + 2x on [0, 1] (pieces) and sin(x) ≥ 0 on [0, 3] (the bound near 0, enclosures
+    further on);
+  - sin(a)·cos(b) ≤ 1, and exp(x)·exp(y) ≤ 8 on the unit square;
+  - ln(x) ≤ x − 1, atan(x) ≤ x for x ≥ 0, atan(x) < 2;
+  - sin(x) < pi/3 on [0, 1];
+  - a theory's constant, a posreal, a hypothesis EXISTS inside an IMPLIES;
+  - cos(x) ≤ 1 − x²/2 + x⁴/24 (degree 4).
+- **Checked in a lab theory (not lemmas):**
+  - sin(x) ≥ x on [1/2, 1]: "for x in [1/2, 33/64] the goal is FALSE wherever the hypotheses
+    hold", 13 s;
+  - EXISTS (x: real): sin(x) = 1/2 is refused, with sin(x) in the message.
+- **Measured** (lab server, warm): sin(x) ≤ x 8 s; sin(x) ≥ x/2 8 s; exp(x) ≤ 1 + 2x 41 s;
+  sin(x) ≥ 0 on [0, 3] 30 s; exp(x)·exp(y) ≤ 8 21 s; the rest 3–8 s.
+- **Limit:** a term with two constants that needs fine pieces is out of reach. exp(x·y) ≤ 1 + 2xy
+  on the unit square fails after 5 halvings (167 s, on [5/8, 3/4] × [3/4, 1]), and with 9 it does
+  not finish in 600 s. A constant enclosure must shrink with the piece's side, so two constants
+  need about the square of the pieces. Enclosures that follow the constants linearly (Taylor
+  models) would be the fix.
+- README: T5 in the terms section; the sentence that said sqrt(x) under a binder is refused (T4
+  reads it) now says which terms under binders are read.
+- Gates (3 runs + traces each, 0 warnings): trans_bounds 27/27, cad_terms_ex 79/79.
+- Whole library (proveit -a top.pvs in a fresh copy): 5568/5568, 373 theories, 46 minutes.  The
+  .prf files of trans_bounds and cad_terms_ex are the replay's.
+- The two documents give the new counts; the overview says what T5 adds.
+
+## 2026-10-04 — the review (NEXT_PLAN.md step 3): findings, fixes, decide8's CAD theorem
+
+- **Method.** Eight area reviews (README and NOTICE, the documents, the theories, the
+  strategies in two halves, the plans, the tests, the repository and tools), each finding checked
+  by an adversarial verifier, then a completeness critic: 231 findings (14 high, 80 medium, 135
+  low; plans, tests and repository reviewed twice). 2 were refuted, 2 are documented instead of
+  changed (the regression set keeps a few copies of showcase lemmas on purpose; a decision can be
+  evaluated twice, uncached, since a cache would sit on the trusted path), one is the owner's call
+  (whether CLAUDE.md goes into the public export); every other one is fixed. A literature check
+  (web) confirmed the priority claim with narrower wording and corrected several citations.
+- **decide8's run is a CAD (new theory decb_run, 8 formulas).** decb_cad_run: for every F and
+  k >= 1, the cells of decb_o (the line cut at the roots of the smaller bottom step when nzb?
+  holds, else of pbot) cover R^(k+1), are disjoint, connected and first-order definable at every
+  level, the tower is a CAD over each sector, the root graphs are definable, and F has one sign
+  vector on every cell; decb_cad_input: the input family too, when decide8 runs over its checked
+  basis. The proof of the nzb? case is col_cad_run's, replayed with the bottom family changed
+  (csectorb_cad from decb_ok's sect_cadb).
+- **Strategies.** The review's fixes:
+  - the FALSE verdict with two or more goals tests each goal on its own (a true goal with an OR
+    in its conclusion was reported FALSE);
+  - the witness search's timeout no longer interrupts the evaluator's first translation (the
+    typecheck and translation run before the timed evaluation);
+  - cad-depth counts TRUE and IFF; the witness fold's proof closes ^;
+  - qe-exists: rounds from the formula's size, IFF read, unread parts refused, the bound
+    variable real and fresh;
+  - bound-variable names that clash with declared names (lnexp's e, trig's pi) go to the general
+    route, which uses fresh names;
+  - T2-T5: pi and theory parameters as T5 sees them, constant enclosures in every rung, the
+    range hypotheses labelled, the formula labelled cad on every failure path, TCCs whose guard
+    sits inside a goal, :cad-only? through T2-T5, binders inside terms;
+  - SBCL-only forms guarded; cad-mn's call to decn_o; messages for a missing formula and for
+    hints.
+  Found while testing them:
+  - **an infinite recursion** in cadstar-tcc__: deciding a TCC with the whole sequent took the
+    same sqrt term as an unknown again, whose type fact raised the same TCC (c >= 0 IMPLIES
+    sqrt(c) * sqrt(c) = c never finished); the TCC is now decided alone, with the hypotheses,
+    then after flatten, never with the whole sequent, and a TCC already decided further up the
+    proof is tried alone only;
+  - **cad-num's ladder order**: with a term of constants of the sequent (sin(x)), more decimals
+    for pi or e cannot help before the bounds, so the first precision goes before T5's rungs and
+    the rest after: sin(x) <= x e / 2.7 for x >= 0 went from more than 600 s to 52 s, sin(x) <
+    pi/4 on [0, 3/4] from 275 s to 64 s;
+  - the general route's proof stops at a term whose TCCs its theory leaves open
+    (card({n: below(3) | ...})): it falls back to (cad *) on that formula;
+  - (cad), poly-sign, poly-nosign and qe-exists say which theory is missing when their decision
+    is not imported (it was a resolution error); (cad-qe) defaults to -1 as (cad) does, and says
+    "no free real term" for every closed formula.
+- **Tests.** New regression lemmas (all one command each, replayed): cad_terms_ex 30 (96 in all;
+  the review's T2-T5 cells, (cad-num) and (cad-facts) called directly with their options, a
+  failing (cad) that changes nothing), cad_forms_ex 15 (79), cad_examples 3, cad_examples3 1,
+  cad_decide8_ex 2, cad_bath 2 (the witness search's reduction), cad_endgame_ex 3 restated,
+  qe_cad_ex 2, qe8_ex 2, sgn_examples 1 (poly-nosign's facts needed); new theories
+  cad_decide7_ex (:cad-only? through decide7) and cad_diag_ex (every measuring command, once).
+  tools/msgcheck.sh checks 18 messages (FALSE, refusals, hints, labels) on cad/cad_msg_ex.pvs,
+  outside top.pvs. tests/outside/use_pvs_cad.pvs imports the library as cad@pvs_cad from another
+  directory; tools/outside.sh replays it (6 of 6).
+- **Names.** Four lemmas hid NASALib's from a theory outside cad/ ("Found 2 resolutions for
+  sign3_pos"): renamed sign3_posmul (sturm_sg), pdiff_zero (poly_unique), mprod_bound (mpar),
+  tw_last_cdr (cad_decn), their proofs replayed with the new names. cad_meas's allrat and
+  ratsamp? (also in cad_pdec, which cad-bench evaluates) are allratm and ratsampm?. eval_probe,
+  the Phase 0 experiment, left top.pvs: it defined meval, as_list and deg again.
+- **.prf files.** col_line.prf and ev_nat.prf held entries for formulas declared elsewhere; PVS
+  rewrote them. The 55 entries written by tools/prf_from_cmds.py (ineq_ok, tarski_tree, many_ok,
+  many_tree) were re-proved in pvs-cli and the script's entries deleted through pvs-cli;
+  prf_from_cmds.py and build_prf_from_transcript.py are removed.
+- **NASALib's cache.** On 2026-10-03 63 cache files of reals, analysis and lnexp pointed into
+  another session's copy of the PVS installation; with the owner's approval the three libraries'
+  pvsbin and .pvscontext files were moved aside and rebuilt (0 files referring to the copy).
+- **NASALib's proofs.** NASALib's shipped summaries (December 2023) list no unfinished proof in
+  the libraries this one loads (unfinished ones are only in algebra, ASP, float, linear_algebra,
+  measure_integration, PVS0, sorting, TU_Games); mult_poly's summary is an error log. A replay of
+  those libraries at the installed commit was not run (owner's decision of 2026-09-30).
+- **Documents.** The overview: decide8's run and decb_cad_run, the trusted base (every
+  evaluation the strategies use), pvs_cad_num, the limits of the ladder, two new stages (P1-P5,
+  T2-T5), the narrower priority claim, Basu-Pollack-Roy Defs. 5.1 and 5.5, corrected citations,
+  the numbers below. collins_cad: the checked basis, the smaller bottom step, decb_cad_run, the
+  limits after P2/P3, a reference list. qe_capabilities: answers re-captured (the checked basis
+  shortened four of them and the general quadratic, now 9 cases and 387 characters);
+  cad_proof_traces: Motzkin's multiplier, Wilkinson's coefficients (1.4e19), the trust sentence.
+  README, plans, theory headers and top.pvs as the findings asked.
+- **Tools.** gate.sh's traces check read stdout, where the warnings never appear (it could not
+  fail since 2026-09-11); it reads proveit's log now. setup.sh fails when something is missing;
+  env.sh follows a symlinked pvs; prof.sh and cad_prof.lisp pass decn_o's fuel; import_paths.py
+  reads parametric theories (30 billion import paths from top.pvs); export_public.sh writes the
+  public export down; tools/README.md lists every tool; .gitignore, modes and shebangs.
+- **Verified.** Gates (three fresh runs and a traces run each, 0 warnings) for the 26 theories whose
+  proofs changed: decb_run, cad_terms_ex, cad_forms_ex, cad_endgame_ex, qe8_ex, qe_cad_ex, qe_run,
+  qe_symbolic, cad_decide8_ex, cad_decide7_ex, cad_diag_ex, cad_bath, cad_examples, cad_examples3,
+  sgn_examples, sturm_sg, poly_unique, mpar, cad_decn, cad_meas, col_line, ev_nat, ineq_ok,
+  tarski_tree, many_ok, many_tree. A whole-library run with traces found one "fewer subproofs"
+  warning, in qe_run, whose proofs the first version of qe-exists's import check refused (it asked
+  for qe_ctx, which only the parametric decision needs; fixed, gated); none anywhere else. The
+  whole library then replayed from a fresh copy: 5,628 of 5,628 formulas, 375 theories, 58
+  minutes (5 October 2026). tools/msgcheck.sh 18 of 18; tools/outside.sh 6 of 6. Timings
+  (warm server, 4 October): Wilkinson 2.9 s, Chebyshev T30 7.7 s, AM-GM in three variables 2.9 s,
+  Schur 3.5 s, u^2 + v^2 = a, uv = b 7.2 s, Cauchy-Schwarz 2.0 s, two variables of degree 7-10
+  1.1-3.3 s, (cad *) on s_disc 2.0 s; h_mignotte and AM-GM in four variables still open at 120 s.
+- **Left.** 1,828 non-default proofs that are only (POSTPONE) (from interrupted pvs-cli sessions)
+  stay in 168 .prf files: harmless, removable with proveit's --purge. mlen and Cx are declared in
+  two theories each, which makes them ambiguous in a theory that imports all of top.
+
+## 2026-10-05 — ambiguous names renamed; the non-default proofs purged
+
+- **Asked.** Whether the non-default proofs that are only (POSTPONE) mean unfinished proofs
+  (they do not: PVS checks each formula's default proof, and every default proof replays); to
+  purge them; and to fix the names that are ambiguous for someone who imports the library.
+  The review's report counted 1,828 such proofs with a regular expression; read as
+  s-expressions, the .prf files of 8165307 held 2,927 non-default proofs in 200 files (1,742
+  only (POSTPONE), left by interrupted pvs-cli sessions; 1,185 older attempts) and 41 default
+  proofs that were only (POSTPONE).
+- **Ambiguous names.** PVS's own declarations table, in a theory that imports pvs_cad_num and
+  the theorem theories the README names (col_line, col_found_ok, cad_verified, cad_found_ok,
+  cad_sa, qe_all, complete_all, decb_run), grouped by declaration name:
+  - 31 lemma names declared in two or more theories, one of them also NASALib's (sign3_mult):
+    a citation by bare name, (lemma "len_cons"), found several declarations;
+  - the type Cx, declared twice (the same type);
+  - no same-type pair among functions and constants: the 27 names they share are overloads
+    that PVS resolves by type.
+  Through top, also abs_sq, min_max, density and length_cdr (NASALib's too), qe_alt (cad_forms_ex
+  and qe_cad_ex) and mlen (many_ok and alg_lift2).
+- **Renamed** 46 declarations. Each name stays with the declaration that is cited most; the
+  others take their theory's name as a suffix (len_cons_tclf, map_mem_inv_map_member,
+  sect_sem_delin, ...), with a few exceptions: croot_near's root_near is croot_root_near,
+  snorm_ctx's Cx is Cx_snorm, alg_lift2's mlen is mlen_alg_lift2; spec_deg's sign3_zero (visible
+  only through top) is sign3_zero_spec_deg. 185 proofs that cite them were rerun through pvs-cli
+  with the new names (citations by name, qualified, and with actual parameters). The dependency
+  lists the .prf files record found most of them; they leave out some lemmas of the proof's own
+  theory, and the 12 proofs that this missed failed in a replay and were fixed the same way. The
+  analysis now finds no ambiguous name under the documented imports. Through top only short
+  local names of example theories remain (e1-e8, s1-s4, P1, f, g, negx, x2m1, meet_ctl); they
+  meet only when the example theories are imported together, as top does for the replay.
+- **Non-default proofs purged.** proveit --purge -a top.pvs, run in the library, removed the
+  non-default proofs of every proved formula; the rest (those of the 12 formulas above, and of
+  the playground theories outside top.pvs: cad_demo, cad_meas2 to cad_meas4) were deleted through
+  pvs-cli, after cad_demo's d_meet and d_inverse were pointed back at their own proofs (their
+  defaults had become (POSTPONE) stubs); tests/outside's five went by proveit --purge in a
+  scratch copy. 40 of the 41 (POSTPONE) defaults were entries for the axioms PVS generates for
+  the inline datatypes Sect (sect_inv) and OD (walk_od). PVS attaches no proof to an axiom, so
+  they did nothing; pvs-cli deleted them (it answers "Could not delete", yet the next save drops
+  the entry). The 41st, d_inverse in cad_demo, is FALSE by design ("0 has no inverse"); its
+  attempt, (cad) then (POSTPONE), was deleted the same way, so it is untried, like t_amgm3 (also
+  FALSE) and the exercise s_pos. Each deletion came after a rerun of the theory on the server,
+  (prove-theory "thy" t): a save without the rerun rewrites the dependency lists of every proof
+  in the file. Now every formula of every .prf file has exactly one proof, and no .prf file
+  contains (POSTPONE).
+- **Verified.** Three fresh whole-library replays and one with traces after the renames found the
+  12 proofs above failing, the same in each run, and nothing else. After their fix: gates (three
+  fresh runs and a traces run each) for the ten theories whose proofs changed last (cad_lift,
+  clos_ok, col_eff, col_pair, ev_nat, many_ok, mpoly_univ, thom_enc, spec_deg, sturm_habicht);
+  tools/outside.sh 6 of 6; and the purged library replayed from a fresh copy with traces:
+  5,628 of 5,628 formulas, 375 theories, 0 "fewer subproofs" warnings (82 minutes with traces,
+  5 October 2026). After the axiom entries went: gates for sect_inv and walk_od passed (94 and 68 formulas)
+  (their proofs and dependency lists otherwise unchanged); the theories outside top.pvs with
+  .prf files replayed: cad_demo 10 of 10 recorded proofs, cad_meas2 3, cad_meas3 1, cad_meas4
+  6, eval_probe 28.
+
+## 2026-10-05 — CLAUDE.md and a personal note kept out of the public repository
+
+- **Asked.** CLAUDE.md out of the public repository (the review's one item left to the owner).
+  It holds no contact or family details, but it is the working instructions for Claude Code
+  sessions and names the private repository and parts of the setup. Also out of the public
+  history: a personal scheduling note in an old GAP_PLAN.md (in the second public commit; removed
+  from GAP_PLAN.md since).
+- **Done.** tools/export_public.sh leaves out CLAUDE.md as it leaves out paper/; tools/README.md
+  lists export_public.sh; README says that the plans and this log cite CLAUDE.md's rules, which
+  stay in the development repository, and states the rules; CLAUDE.md records the exclusion.
+  CLAUDE.md stays here: the sessions read it. A rebuilt public history (the same five commits
+  without CLAUDE.md, without the note, and without two .gitignore lines about local drafts;
+  messages, authors and dates unchanged) is prepared for the owner's review.

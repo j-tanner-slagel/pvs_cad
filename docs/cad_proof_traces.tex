@@ -78,7 +78,8 @@ the strategy's messages, and the result, for twenty-one examples, plus the full 
 \section{Reading the traces}
 Each example is a real PVS session on the pvs\_cad library, fed from a script to \texttt{pvs -raw} and captured as printed.
 The typed commands are put back after each \texttt{Rule?} prompt (a scripted session does not echo them), and
-library-loading messages are cut. Nothing else is changed.
+library-loading messages are cut; the other cuts and one change of indentation are listed in ``About this document'' at
+the end. Nothing else is changed.
 
 \textbf{Note (1 October 2026).} These transcripts were recorded on 28 September 2026 in theories that import
 \texttt{cad\_decide5}, so \texttt{(cad)} ran \texttt{decide5} and instantiated \texttt{decide5\_correct}, and the times
@@ -167,7 +168,7 @@ The meeting points have $x^2 = (\sqrt5-1)/2$, which is irrational, so there is n
 \end{Verbatim}
 \end{termbox}
 \example{The Motzkin polynomial is nonnegative}{b\_motzkin}{$\forall\forall$, degree 6}{1.1\,s}
-The classic polynomial that is nonnegative everywhere but is \emph{not} a sum of squares, so sum-of-squares certificates cannot prove it. A cylindrical decision needs no certificate of that kind.
+The classic polynomial that is nonnegative everywhere but is \emph{not} a sum of squares: a sum-of-squares certificate needs a multiplier ($x^2+y^2+1$ times it is a sum of squares). A cylindrical decision needs no certificate of that kind.
 
 \begin{Verbatim}[commandchars=\\«», fontsize=\small]
   b_motzkin: \Kw«LEMMA» \Kw«FORALL» (x: real): \Kw«FORALL» (y: real): x^4*y^2 + x^2*y^4 - 3*x^2*y^2 + 1 >= 0
@@ -192,7 +193,7 @@ The classic polynomial that is nonnegative everywhere but is \emph{not} a sum of
 \end{Verbatim}
 \end{termbox}
 \example{The folium of Descartes reaches past $(1,1)$}{b\_folium}{$\exists\exists$, degree 3}{0.09\,s}
-(cad) looks for a witness before deciding. A model search finds $x = y = 3/2$ and the proof is one instantiation, in 0.09\,s. Section~\ref{sec:inside} shows the steps.
+(cad) looks for a witness before deciding. A model search finds $x = y = 3/2$ and the proof is one witness point, instantiated in two steps, in 0.09\,s. Section~\ref{sec:inside} shows the steps.
 
 \begin{Verbatim}[commandchars=\\«», fontsize=\small]
   b_folium: \Kw«LEMMA» \Kw«EXISTS» (x: real): \Kw«EXISTS» (y: real): x^3 + y^3 = 3*x*y \Kw«AND» x > 1 \Kw«AND» y > 1
@@ -301,7 +302,7 @@ Four variables: for every $a \neq 0$, $b$, $c$ with $b^2 \ge 4ac$ there is a roo
 \end{Verbatim}
 \end{termbox}
 \example{Wilkinson's polynomial of degree 20}{h\_wilk20}{$\forall$, degree 20}{2.9\,s}
-$(x-1)(x-2)\cdots(x-20)$ expanded, with coefficients up to $2.4\times10^{18}$. The arithmetic is exact rational arithmetic, so the famously ill-conditioned roots cause no trouble.
+$(x-1)(x-2)\cdots(x-20)$ expanded, with coefficients up to $1.4\times10^{19}$. The arithmetic is exact rational arithmetic, so the famously ill-conditioned roots cause no trouble.
 
 \begin{Verbatim}[commandchars=\\«», fontsize=\small]
   h_wilk20: \Kw«LEMMA» \Kw«FORALL» (x: real): x < 1 \Kw«IMPLIES» x^20 - 210*x^19 + 20615*x^18 - 1256850*x^17 + 53327946*x^16 - 1672280820*x^15 + 40171771630*x^14 - 756111184500*x^13 + 11310276995381*x^12 - 135585182899530*x^11 + 1307535010540395*x^10 - 10142299865511450*x^9 + 63030812099294896*x^8 - 311333643161390640*x^7 + 1206647803780373360*x^6 - 3599979517947607200*x^5 + 8037811822645051776*x^4 - 12870931245150988800*x^3 + 13803759753640704000*x^2 - 8752948036761600000*x + 2432902008176640000 > 0
@@ -1003,7 +1004,8 @@ Recording and printing every step makes it slower: 3.4\,s instead of 0.5\,s.
 \item \textbf{Translate the sentence to data and run the decision.} The quantifier prefix becomes \code{(: FALSE :)}
 (FALSE for $\exists$), the polynomial $x^2 - 2$ becomes its coefficient list \texttt{(: mconst(-2), mconst(0), mconst(1) :)},
 and the matrix becomes \code{batom(0, 0)}: ``polynomial number 0 has sign 0''. \texttt{eval-expr} runs \texttt{decide5} on
-this data in PVS's ground evaluator, the one trusted computation, and adds the result as a hypothesis:
+this data in PVS's ground evaluator, which is trusted (as are its other evaluations below, of normal forms), and adds
+the result as a hypothesis:
 the certificate passed (\texttt{ok}) and the sentence is true (\texttt{val}).
 \begin{termbox}
 \begin{Verbatim}[commandchars=\\«»]

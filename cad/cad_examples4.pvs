@@ -2,8 +2,9 @@ cad_examples4: THEORY
 %----------------------------------------------------------------------------
 % FOUR quantifiers through (cad) (FINISH_PLAN 3i, stage N10): the n-level
 % decision decn_o of towern_od, proved correct in decn_ok (decn_correct) and
-% reached through decide5.  Each sentence below is closed by the single step
-% (cad); a FALSE one is stated in the antecedent form and refuted by (cad -1).
+% reached through decide5.  Each TRUE sentence below is closed by the single
+% step (cad); a FALSE one is stated in the antecedent form and refuted by
+% (flatten) then (cad -1).
 % Times of the decision alone (cad-mn, this machine): e4_above 16 s,
 % e4_between 12 s, e4_sum 1 s, e4_square 2 s.
 %----------------------------------------------------------------------------

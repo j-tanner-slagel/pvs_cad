@@ -1,6 +1,7 @@
 #!/bin/bash
-# gate.sh <file> [...]   verification gate: three fresh proveit -f runs plus a
-# traces run.  Runs one PVS at a time.
+# gate.sh <theory> [...]   verification gate: three fresh proveit -f runs plus
+# a traces run, per theory (a name; a trailing .pvs is dropped).  Runs one PVS
+# at a time.
 #
 # A run FAILS on any of:
 #   - no "Grand Totals" line at all             (crash, kill, or the library
@@ -9,10 +10,16 @@
 #   - counts that disagree: proofs / attempted / succeeded must be equal and
 #                                                nonzero
 #   - "unfinished" / "unproved" / "missing"      (formula not closed)
-#   - "proved - incomplete"                      (closed but depends on an
-#                                                 incomplete subproof)
 #   - "*** Error occurred while rerunning"       (rerun aborted)
-#   - "fewer subproofs" (traces run only)        (proof script shrank)
+#   - the traces run: any "has fewer subproofs" / "has fewer subgoals"
+#     warning (a saved proof whose shape no longer matches its goals), read
+#     from proveit's full log <theory>.log, which proveit writes in the
+#     library directory; its stdout never shows these warnings.  A traces
+#     run without that log fails.
+#
+# ("proved - incomplete" is not checked: proveit's stdout does not show the
+# per-formula lines, and in its log the label only says that a proof rests on
+# NASALib's saved proofs, which proveit does not replay.)
 #
 # History of this script's own blind spots, each found the hard way:
 #   1. the last three patterns above were invisible, so a killed or partially
@@ -22,6 +29,9 @@
 #      produced nothing at all, yet the gate said PASSED.  Absence of evidence
 #      was being read as evidence of success.  Hence the count checks and the
 #      volume guard below.
+#   3. until 2026-10-03 the traces check counted the warnings in proveit's
+#      stdout, where they never appear, so it could not fail (cell1 passed
+#      with five); it now reads the full log.
 . "$(dirname "$0")/env.sh"
 # proveit runs in a fresh copy of the library, so it cannot clobber the
 # .pvscontext / .prf / pvsbin files of a pvs-cli server working in cad/, and
@@ -56,30 +66,35 @@ check() { # check <log> <exitcode> ; echoes problems, returns 1 if any
   fi
   if grep -aqi "unfinished\|unproved\|missing" "$out"; then
     echo "  !! unfinished/unproved/missing in $out"; bad=1; fi
-  n=$(grep -ac "proved - incomplete" "$out")
-  if [ "$n" != 0 ]; then echo "  !! $n 'proved - incomplete' in $out"; bad=1; fi
   n=$(grep -ac '\*\*\* Error occurred while rerunning' "$out")
   if [ "$n" != 0 ]; then echo "  !! $n rerun errors in $out"; bad=1; fi
   return $bad
 }
 
 for f in "$@"; do
+  f=${f%.pvs}
   ok=1
   for i in 1 2 3; do
     [ -d "$DIR" ] || { echo "  !! $DIR vanished before run $i"; ok=0; break; }
     rm -rf pvsbin
-    out="$SCRATCH/gate_${f}_$i.log"
+    out="$SCRATCH/gate_${f}_$$_$i.log"
     "$PROVEIT" -f "$f.pvs" > "$out" 2>&1; rc=$?
     printf '%-16s run %d  %s\n' "$f" "$i" "$(grep -a 'Grand Totals\|Totals for' "$out" | tail -1)"
     check "$out" "$rc" || ok=0
   done
   if [ -d "$DIR" ]; then
-    rm -rf pvsbin
-    out="$SCRATCH/gate_${f}_traces.log"
+    rm -rf pvsbin "$f.log"
+    out="$SCRATCH/gate_${f}_$$_traces.log"
     "$PROVEIT" -l --traces -f "$f.pvs" > "$out" 2>&1; rc=$?
-    n=$(grep -ac "fewer subproofs" "$out")
-    printf '%-16s traces  fewer-subproofs warnings: %s  %s\n' "$f" "$n" "$(grep -a 'Grand Totals' "$out" | tail -1)"
-    [ "$n" = "0" ] || ok=0
+    full="$SCRATCH/gate_${f}_$$_traces.pvslog"
+    if [ -f "$f.log" ]; then
+      cp "$f.log" "$full"
+      n=$(grep -ac "has fewer sub" "$full")
+      printf '%-16s traces  fewer-subproofs warnings: %s (log %s)  %s\n' "$f" "$n" "$full" "$(grep -a 'Grand Totals' "$out" | tail -1)"
+      [ "$n" = "0" ] || { grep -a "has fewer sub" "$full" | head -5 | sed 's/^/  !! /'; ok=0; }
+    else
+      echo "  !! the traces run wrote no $f.log, so its warnings cannot be read"; ok=0
+    fi
     check "$out" "$rc" || ok=0
   else
     echo "  !! $DIR vanished before the traces run"; ok=0

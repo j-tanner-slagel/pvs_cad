@@ -22,7 +22,7 @@ BEGIN
   R: VAR list[mpoly]
   sg1, sg2: VAR SG
 
-  agree_sym: LEMMA agree(sg1, sg2, R) IMPLIES agree(sg2, sg1, R)
+  agree_sym_od_exact: LEMMA agree(sg1, sg2, R) IMPLIES agree(sg2, sg1, R)
 
   okqs_complete: THEOREM FORALL od: FORALL R: wf?(od) IMPLIES okqs(od, R)
 

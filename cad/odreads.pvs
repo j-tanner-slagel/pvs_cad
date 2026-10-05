@@ -32,7 +32,7 @@ BEGIN
   %% the table returns the construction reads themselves
   ird_t_eq: LEMMA FORALL tb: valid?(tb) IMPLIES ird_t(k, sg, f, tb) = i_rd(k, sg, f)
 
-  mem_cons: LEMMA member(g, cons(f, G)) IFF (g = f OR member(g, G))
+  mem_cons_odreads: LEMMA member(g, cons(f, G)) IFF (g = f OR member(g, G))
   %% the effective family, member by member
   feff_null: LEMMA feff(null[list[mpoly]], od) = null[list[mpoly]]
   feff_cons: LEMMA feff(cons(g, G), od) =

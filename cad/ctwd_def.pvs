@@ -36,8 +36,10 @@ BEGIN
   %% the family below F at position k of the tower (positions 1..k, lowest first)
   dnf(F, k, d): list[list[mpoly]] = IF k - 1 <= d THEN dclf(pdown(F)) ELSE pdown(F) ENDIF
 
+  %% (k = 1 is its own case so that evaluation does not compute dnf(F, 1, d) only to drop it)
   ctwd(F, k, d): RECURSIVE Tower =
     IF k = 0 THEN null[list[list[mpoly]]]
+    ELSIF k = 1 THEN (: F :)
     ELSE append(ctwd(dnf(F, k, d), k - 1, d), (: F :))
     ENDIF
   MEASURE k

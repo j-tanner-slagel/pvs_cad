@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import re,sys
 path,f=sys.argv[1],sys.argv[2]; labels=sys.argv[3].split(','); L=int(sys.argv[4]) if len(sys.argv)>4 else 2500
 parts=re.split(r'Rule\?\s*',open(path).read())

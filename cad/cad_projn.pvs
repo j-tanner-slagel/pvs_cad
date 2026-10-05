@@ -9,14 +9,16 @@ cad_projn: THEORY
 %   kept_kd   a reductum colh? keeps is one kd keeps (a coefficient that
 %             normalizes to a nonzero constant is nonzero everywhere, nzc_nz)
 %   pj1_mem, pj2_mem, pj3_mem   its coefficient, its psc with the derivative
-%             and its psc with the kept reducta of later members are there
+%             and its psc with the kept reducta of later members are there,
+%             the psc in normal form (pscg_eq, through bareiss' bdet_det)
 %             (a leading coefficient that is not identically zero does not
 %             normalize to 0, zc_z)
 % and clean only normalizes (meval_mnorm) and drops constants, which have one
-% sign everywhere (clean_cinv).
+% sign everywhere (clean_cinv); a normal form has the signs of the polynomial
+% (cinv_norm).
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING cad_projn_def, col_stack, det_fast
+  IMPORTING cad_projn_def, col_stack, det_fast, bareiss
 
   g, h: VAR list[mpoly]
   G: VAR list[list[mpoly]]
@@ -38,19 +40,19 @@ BEGIN
   pscs_mem: LEMMA FORALL n: j < n IMPLIES member(pscg(g, h, j), pscs(g, h, n))
 
   memmap: LEMMA FORALL K: member(k, K) IMPLIES member(cf(g, k), map(LAMBDA (k: nat): cf(g, k))(K))
-  pscg_eq: LEMMA 2 * j <= dg(g) + dg(h) IMPLIES pscg(g, h, j) = psc(g, h, j)
+  pscg_eq: LEMMA 2 * j <= dg(g) + dg(h) IMPLIES pscg(g, h, j) = mnorm(psc(g, h, j))
   pj1_mem: LEMMA kept?(g, k) IMPLIES member(nth(g, k), pj1(g))
   pj2k_mem: LEMMA FORALL K: member(k, K) AND k < length(g) AND NOT zall?(nth(g, k)) AND j + 2 <= k IMPLIES
-    member(psc(rdc(g, k), lderiv(rdc(g, k)), j), pj2k(g, K))
+    member(mnorm(psc(rdc(g, k), lderiv(rdc(g, k)), j)), pj2k(g, K))
   pj2_mem: LEMMA kept?(g, k) AND NOT zall?(nth(g, k)) AND j + 2 <= k IMPLIES
-    member(psc(rdc(g, k), lderiv(rdc(g, k)), j), pj2(g))
+    member(mnorm(psc(rdc(g, k), lderiv(rdc(g, k)), j)), pj2(g))
   pj3k_mem: LEMMA FORALL K2: k1 < length(g) AND member(k2, K2) AND k2 < length(h) AND NOT zall?(nth(h, k2))
-    AND j < k1 AND j < k2 IMPLIES member(psc(rdc(g, k1), rdc(h, k2), j), pj3k(g, k1, h, K2))
+    AND j < k1 AND j < k2 IMPLIES member(mnorm(psc(rdc(g, k1), rdc(h, k2), j)), pj3k(g, k1, h, K2))
   pj3kk_mem: LEMMA FORALL K1: member(k1, K1) AND k1 < length(g) AND NOT zall?(nth(g, k1))
     AND member(k2, K2) AND k2 < length(h) AND NOT zall?(nth(h, k2)) AND j < k1 AND j < k2 IMPLIES
-    member(psc(rdc(g, k1), rdc(h, k2), j), pj3kk(g, K1, h, K2))
+    member(mnorm(psc(rdc(g, k1), rdc(h, k2), j)), pj3kk(g, K1, h, K2))
   pj3_mem: LEMMA kept?(g, k1) AND kept?(h, k2) AND NOT zall?(nth(g, k1)) AND NOT zall?(nth(h, k2))
-    AND j < k1 AND j < k2 IMPLIES member(psc(rdc(g, k1), rdc(h, k2), j), pj3(g, h))
+    AND j < k1 AND j < k2 IMPLIES member(mnorm(psc(rdc(g, k1), rdc(h, k2), j)), pj3(g, h))
 
   pjr_mem: LEMMA FORALL G: member(h, G) AND member(u, pj3(g, h)) IMPLIES member(u, pjr(g, G))
   pjall_own: LEMMA FORALL G: i < length(G) AND (member(u, pj1(nth(G, i))) OR member(u, pj2(nth(G, i))))

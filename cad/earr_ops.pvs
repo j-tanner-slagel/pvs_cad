@@ -81,5 +81,5 @@ BEGIN
     prop(select(snorm(l1), ys), select(snorm(l2), ys), c, ys)
   prop_sign: LEMMA c > 0 AND prop(l1, l2, c, ys) IMPLIES
     sign3(meval(llast(l1))(ys)) = sign3(meval(llast(l2))(ys))
-  sign3_mult: LEMMA FORALL (x, y: real): sign3(x * y) = sign3(x) * sign3(y)
+  sign3_mult_earr_ops: LEMMA FORALL (x, y: real): sign3(x * y) = sign3(x) * sign3(y)
 END earr_ops

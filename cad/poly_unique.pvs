@@ -41,7 +41,7 @@ BEGIN
   diff_eval: LEMMA polynomial(diff(a, n, b, m), max(n, m))(x) =
     polynomial(a, n)(x) - polynomial(b, m)(x)
 
-  diff_zero: LEMMA polynomial(diff(a, n, b, m), max(n, m))(x) = 0 IMPLIES
+  pdiff_zero: LEMMA polynomial(diff(a, n, b, m), max(n, m))(x) = 0 IMPLIES
     polynomial(a, n)(x) = polynomial(b, m)(x)
 
   %% the quotient and remainder of NASALib's division, named

@@ -81,7 +81,7 @@ BEGIN
     bt(m, lv, Fp, eps)(a) < bt(m, lv, Fp, eps)(b)
 
   %% ---- sorted lists ----------------------------------------------------------------------------
-  mem_map: LEMMA FORALL L: FORALL (f: [real -> real]): member(y, map(f)(L)) IFF EXISTS a: member(a, L) AND y = f(a)
+  mem_map_col_real: LEMMA FORALL L: FORALL (f: [real -> real]): member(y, map(f)(L)) IFF EXISTS a: member(a, L) AND y = f(a)
   bt_sincr: LEMMA FORALL L: hyp?(m, lv, F1, Fp, eps) AND sincr?(L) AND (FORALL a: member(a, L) IMPLIES rr?(m, lv, F1)(a))
     IMPLIES sincr?(map(bt(m, lv, Fp, eps))(L))
   bt_list: LEMMA hyp?(m, lv, F1, Fp, eps) AND sincr?(L) AND (FORALL a: member(a, L) IFF rr?(m, lv, F1)(a)) IMPLIES

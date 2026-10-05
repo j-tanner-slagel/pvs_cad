@@ -3,17 +3,17 @@
   (|rsv0_TCC1-1| NIL 3998601329 ("" (SUBTYPE-TCC) NIL NIL)
    ((|lin?| CONST-DECL "bool" |cad_meas| NIL)
     (/= CONST-DECL "boolean" |notequal| NIL))
-   NIL (|rsv0| SUBTYPE "cf(pt(sc), 1)" "nznum" (118 59 118 72))))
- (|allrat_TCC1| 0
-  (|allrat_TCC1-1| NIL 3998601329 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
-   (|allrat| SUBTYPE "ss" "(list_adt[sect_inv.Sect].cons?)" (122 45 122 47))))
- (|allrat_TCC2| 0
-  (|allrat_TCC2-1| NIL 3998601329 ("" (TERMINATION-TCC) NIL NIL)
+   NIL (|rsv0| SUBTYPE "cf(pt(sc), 1)" "nznum" (120 59 120 72))))
+ (|allratm_TCC1| 0
+  (|allratm_TCC1-0| "" 4000129594 ("" (SUBTYPE-TCC) NIL NIL) NIL SHOSTAK
+   (|allratm| SUBTYPE "ss" "(list_adt[sect_inv.Sect].cons?)" (124 46 124 48))))
+ (|allratm_TCC2| 0
+  (|allratm_TCC2-0| "" 4000129594 ("" (TERMINATION-TCC) NIL NIL)
    ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
     (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
     (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
-    (|ratsamp?| CONST-DECL "bool" |cad_meas| NIL)
+    (|ratsampm?| CONST-DECL "bool" |cad_meas| NIL)
     (|lin?| CONST-DECL "bool" |cad_meas| NIL)
     (|cf| CONST-DECL "rat" |cad_meas| NIL)
     (|nth| DEF-DECL "T" |list_props| NIL)
@@ -23,20 +23,22 @@
     (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
     (|length| DEF-DECL "nat" |list_props| NIL))
-   NIL
-   (|allrat| TERMINATION "allrat(cdr[Sect](ss))" #A((3) BASE-CHAR . "NIL")
-    (122 54 122 69))))
+   SHOSTAK
+   (|allratm| TERMINATION "allratm(cdr[Sect](ss))" #A((3) BASE-CHAR . "NIL")
+    (124 55 124 71))))
  (|okY_TCC1| 0
   (|okY_TCC1-1| NIL 3998601329 ("" (TERMINATION-TCC) NIL NIL)
    ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
     (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
     (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
-    (|allrat| DEF-DECL "bool" |cad_meas| NIL)
-    (|ratsamp?| CONST-DECL "bool" |cad_meas| NIL)
+    (|allratm| DEF-DECL "bool" |cad_meas| NIL)
+    (|ratsampm?| CONST-DECL "bool" |cad_meas| NIL)
     (|ysects| CONST-DECL "list[Sect]" |cad_meas| NIL)
     (|sects| CONST-DECL "list[Sect]" |sect_inv| NIL)
     (|rts| CONST-DECL "list[Alg]" |cad_lift| NIL)
+    (|sortu| CONST-DECL "list[Alg]" |cell1| NIL)
+    (|sortsep| CONST-DECL "list[Alg]" |alg_sortc_def| NIL)
     (|evalF| CONST-DECL "list[list[mpoly]]" |svs_pt| NIL)
     (|spec| CONST-DECL "list[mpoly]" |svs_pt| NIL)
     (|pmc| CONST-DECL "list[mpoly]" |sect_inv| NIL)
@@ -56,7 +58,7 @@
     (|length| DEF-DECL "nat" |list_props| NIL))
    NIL
    (|okY| TERMINATION "okY(P, cdr[Sect](ss))" #A((3) BASE-CHAR . "NIL")
-    (130 46 130 61))))
+    (132 47 132 62))))
  (|proj_not_inv1| 0
   (|proj_not_inv1-2| "" 3998599235
    ("" (EVAL-EXPR "okp(f_line)") (("" (ASSERT) NIL NIL)) NIL)
@@ -104,9 +106,9 @@
     NIL)
    ((|pv_circle_f| CONST-DECL "bool" |cad_meas| NIL)
     (|cv_circle_f| CONST-DECL "bool" |cad_meas| NIL)
-    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (|pv_three_f| CONST-DECL "bool" |cad_meas| NIL)
     (FALSE CONST-DECL "bool" |booleans| NIL)
+    (|pv_three_f| CONST-DECL "bool" |cad_meas| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
     (TRUE CONST-DECL "bool" |booleans| NIL)
     (|id| CONST-DECL "(bijective?[T, T])" |identity| NIL)
     (|bijective?| CONST-DECL "bool" |functions| NIL)

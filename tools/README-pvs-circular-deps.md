@@ -18,10 +18,10 @@ layered library the number of paths grows multiplicatively with the depth of the
 
 Measured with PVS's original function on this library: about 32 µs per explored theory;
 `sturm_sg` (97 theories below it) 174,157 explorations, 5.6 s; `towern_od` (114) 5.9 million,
-186 s; a file importing the decision, about 280 million, roughly 2.5 hours. For comparison, the
-worst-case path counts in NASALib directories range from 19 (`structures`) to 1,182 (`dL`); this
-library's single directory had about 852 million from `top.pvs` before redundant imports were
-removed, about 91 million after.
+186 s; a file importing the decision, about 280 million, roughly 2.5 hours (September 2026). The
+path counts grow with the library: `tools/import_paths.py` counts about 30 billion paths from
+`top.pvs` (403 theories, 4 October 2026), against 162 (`structures`) to 15,754
+(`exact_real_arith`) from the worst theory of a NASALib directory.
 
 ## Fix
 `pvs-circular-deps.lisp` redefines `circular-file-dependencies` and `circular-file-dependencies*`
@@ -29,8 +29,9 @@ with a visited set, so each theory is explored once per check. It reports the sa
 the circularity test still runs, on every path, before the visited test, and whether a path from a
 theory returns to the starting file does not depend on the route that reached the theory.
 
-Install: copy it to `~/.pvs.lisp` (PVS loads that file at startup; `pvs -q` skips it). Undo: delete
-`~/.pvs.lisp`. If PVS is upgraded, check whether `context.lisp` changed before keeping it.
+Install: add the line `(load "<checkout>/tools/pvs-circular-deps.lisp")` to `~/.pvs.lisp`, with the
+repository's path for `<checkout>` (PVS loads `~/.pvs.lisp` at startup; `pvs -q` skips it). Undo:
+remove that line. If PVS is upgraded, check whether `context.lisp` changed before keeping it.
 
 The proper fix belongs in PVS itself (the same visited set in `src/context.lisp`). Large
 developments can also avoid the problem by splitting into several directories, as NASALib does,

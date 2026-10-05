@@ -1,5 +1,9 @@
 # QE_PLAN: verified quantifier elimination (GAP_PLAN.md Tier 2)
 
+> **Finished 2026-10-01** (qelim: quantifier elimination for every formula, no prenex form needed;
+> cad/PROGRESS.md). The status below is the record of the work; its file:line pointers are as of
+> 2026-09-30 and have drifted since.
+
 > **Status (2026-09-30).** User decision: do all of it -- stage 1, stage 2, epc_ok (decision 2) and
 > 2C.  **Stage 1 (one free variable): done**, dev commit after 2c6f9c3 -- qe_ldd, qe_fm_def, qe_def,
 > qe_ldd_ok, qe_fm, qe1_ok (46 formulas, gated) and (cad-qe) with qe_cad_ex.  As built, stage 1
@@ -268,7 +272,7 @@ Evaluate each of the following, for Fwin/Pw and for Fcw/Pc:
 
 - Commit locally after each verified item, following the order of rule 10 (PROGRESS.md, top.pvs, memory).
 - **Do not push.** Show the user the list of pending commits and their exact messages, and push only after the user reviews them. This overrides rule 10's "and push".
-- Omit the Claude-Session line, per memory.
+- Omit the Claude-Session line from commits.
 
 ## 10. Decisions for the user
 

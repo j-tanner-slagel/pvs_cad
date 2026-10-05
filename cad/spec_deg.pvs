@@ -20,7 +20,7 @@ BEGIN
   j: VAR nat
 
   %% sign3 decides vanishing, which is all deg looks at
-  sign3_zero: LEMMA FORALL (a: real): sign3(a) = 0 IFF a = 0
+  sign3_zero_spec_deg: LEMMA FORALL (a: real): sign3(a) = 0 IFF a = 0
 
   %% one inequality; the hypothesis is symmetric in p and q, so the other
   %% comes free and deg_signs is antisymmetry.  Proving the equality directly

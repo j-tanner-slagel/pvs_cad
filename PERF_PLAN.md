@@ -1,5 +1,8 @@
 # PERF_PLAN — making the n-level decision fast (2026-09-27)
 
+> **Finished 2026-09-27/28** (the status sections below). Later speed work: QE_PLAN.md section 12,
+> COLLINS_PLAN.md (the Collins run) and PROJ_PLAN.md (P1-P3, P5).
+
 ## Are the timings normal?
 
 No.  Mature CAD systems (QEPCAD B, Mathematica, Maple, Redlog) decide most of

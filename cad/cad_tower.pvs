@@ -10,7 +10,7 @@ cad_tower: THEORY
 % that, and so on.
 %
 % cad_over?(TW, C) says the tower decomposes the cylinder over C as a CAD:
-% each family is classically delineable over each cell below it (delin_cl?:
+% each family is delineable over each cell below it (delin_cl?, the sign-invariant sense:
 % finitely many continuous non-crossing roots, the family sign-invariant on
 % every section and band) and every cell is connected.
 %

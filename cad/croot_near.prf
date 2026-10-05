@@ -35,19 +35,19 @@
     NIL)
    ((|cprod_succ| FORMULA-DECL NIL |croots| NIL)
     (|real_times_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (|abs_mult| FORMULA-DECL NIL |polar| |complex|)
     (|nnreal_times_nnreal_is_nnreal| APPLICATION-JUDGEMENT "nnreal"
      |real_types| NIL)
     (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
-    (|abs_mult| FORMULA-DECL NIL |polar| |complex|)
-    (|abs_real| FORMULA-DECL NIL |polar| |complex|)
-    (|nzrat_abs_is_pos| APPLICATION-JUDGEMENT "{r: posrat | r >= q}"
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|int_abs_is_nonneg| APPLICATION-JUDGEMENT "{j: nonneg_int | j >= i}"
      |real_defs| NIL)
     (|nzint_abs_is_pos| APPLICATION-JUDGEMENT "{j: posint | j >= i}"
      |real_defs| NIL)
-    (|int_abs_is_nonneg| APPLICATION-JUDGEMENT "{j: nonneg_int | j >= i}"
+    (|nzrat_abs_is_pos| APPLICATION-JUDGEMENT "{r: posrat | r >= q}"
      |real_defs| NIL)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|abs_real| FORMULA-DECL NIL |polar| |complex|)
     (|abs| CONST-DECL "{n: nonneg_real | n >= m AND n >= -m}" |real_defs| NIL)
     (|cprod_0| FORMULA-DECL NIL |croots| NIL)
     (|nat_induction| FORMULA-DECL NIL |naturalnumbers| NIL)
@@ -145,32 +145,32 @@
    ((|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
     (|cprod_succ| FORMULA-DECL NIL |croots| NIL)
     (|both_sides_times_pos_le2_imp| FORMULA-DECL NIL |extra_real_props| NIL)
-    (|real_times_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
+    (|real_times_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
     (|both_sides_times_pos_le1_imp| FORMULA-DECL NIL |extra_real_props| NIL)
     (|nonneg_real| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
     (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
-    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|abs_mult| FORMULA-DECL NIL |polar| |complex|)
     (|nnreal_times_nnreal_is_nnreal| APPLICATION-JUDGEMENT "nnreal"
      |real_types| NIL)
-    (|abs_mult| FORMULA-DECL NIL |polar| |complex|)
-    (|abs_real| FORMULA-DECL NIL |polar| |complex|)
-    (|nzrat_abs_is_pos| APPLICATION-JUDGEMENT "{r: posrat | r >= q}"
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|int_abs_is_nonneg| APPLICATION-JUDGEMENT "{j: nonneg_int | j >= i}"
      |real_defs| NIL)
     (|nzint_abs_is_pos| APPLICATION-JUDGEMENT "{j: posint | j >= i}"
      |real_defs| NIL)
-    (|int_abs_is_nonneg| APPLICATION-JUDGEMENT "{j: nonneg_int | j >= i}"
+    (|nzrat_abs_is_pos| APPLICATION-JUDGEMENT "{r: posrat | r >= q}"
      |real_defs| NIL)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
-    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
+    (|abs_real| FORMULA-DECL NIL |polar| |complex|)
     (|real_gt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
     (|expt| DEF-DECL "real" |exponentiation| NIL)
     (|abs| CONST-DECL "{n: nonneg_real | n >= m AND n >= -m}" |real_defs| NIL)
     (|cprod_0| FORMULA-DECL NIL |croots| NIL)
@@ -319,12 +319,12 @@
     (* CONST-DECL "complex" |fundamental_algebra| |complex|)
     (|cpow| DEF-DECL "complex" |complex_types| |complex|)
     (|sigma_const| FORMULA-DECL NIL |sigma| |reals|)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
-    (|abs_mult| FORMULA-DECL NIL |polar| |complex|)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|subrange| TYPE-EQ-DECL NIL |integers| NIL)
     (|nnreal_times_nnreal_is_nnreal| APPLICATION-JUDGEMENT "nnreal"
      |real_types| NIL)
+    (|subrange| TYPE-EQ-DECL NIL |integers| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|abs_mult| FORMULA-DECL NIL |polar| |complex|)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
     (|cpow_real| FORMULA-DECL NIL |complex_types| |complex|)
     (|posreal| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
     (> CONST-DECL "bool" |reals| NIL)
@@ -339,20 +339,20 @@
     (|abs_real| FORMULA-DECL NIL |polar| |complex|)
     (|abs_cpow_increasing| FORMULA-DECL NIL |fundamental_algebra| |complex|)
     (|complex_| CONST-DECL "complex" |complex_types| |complex|)
-    (|nnreal_exp| APPLICATION-JUDGEMENT "nnreal" |exponentiation| NIL)
     (|abs_cpow| FORMULA-DECL NIL |fundamental_algebra| |complex|)
-    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
-    (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
-    (|real_plus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
-    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+    (|nnreal_exp| APPLICATION-JUDGEMENT "nnreal" |exponentiation| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|sigma_nnreal| APPLICATION-JUDGEMENT "nnreal" |sigma_nat| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
-    (|sigma_nnreal| APPLICATION-JUDGEMENT "nnreal" |sigma_nat| |reals|)
-    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
+    (|real_plus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
     (|T_low| TYPE-EQ-DECL NIL |sigma| |reals|)
     (|T_high| TYPE-EQ-DECL NIL |sigma| |reals|)
     (<= CONST-DECL "bool" |reals| NIL)
@@ -599,13 +599,13 @@
     (<= CONST-DECL "bool" |reals| NIL)
     (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
     (|nnreal_exp| APPLICATION-JUDGEMENT "nnreal" |exponentiation| NIL)
-    (|zero_times1| FORMULA-DECL NIL |real_props| NIL)
-    (|pos_times_ge| FORMULA-DECL NIL |real_props| NIL)
-    (|div_mult_pos_ge1| FORMULA-DECL NIL |real_props| NIL)
-    (|nnreal_times_nnreal_is_nnreal| APPLICATION-JUDGEMENT "nnreal"
-     |real_types| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
+    (|nnreal_times_nnreal_is_nnreal| APPLICATION-JUDGEMENT "nnreal"
+     |real_types| NIL)
+    (|div_mult_pos_ge1| FORMULA-DECL NIL |real_props| NIL)
+    (|pos_times_ge| FORMULA-DECL NIL |real_props| NIL)
+    (|zero_times1| FORMULA-DECL NIL |real_props| NIL)
     (/= CONST-DECL "boolean" |notequal| NIL)
     (|nznum| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
     (/ CONST-DECL "[numfield, nznum -> numfield]" |number_fields| NIL)
@@ -629,25 +629,25 @@
     (|nnreal_expt| APPLICATION-JUDGEMENT "nnreal" |exponentiation| NIL)
     (|expt| DEF-DECL "real" |exponentiation| NIL)
     (|abs_cpow| FORMULA-DECL NIL |fundamental_algebra| |complex|)
-    (|abs_mult| FORMULA-DECL NIL |polar| |complex|)
     (|abs_neg| FORMULA-DECL NIL |polar| |complex|)
-    (TRUE CONST-DECL "bool" |booleans| NIL)
+    (|abs_mult| FORMULA-DECL NIL |polar| |complex|)
     (|div_mult_pos_le2| FORMULA-DECL NIL |real_props| NIL)
+    (TRUE CONST-DECL "bool" |booleans| NIL)
     (|both_sides_times_pos_le1| FORMULA-DECL NIL |real_props| NIL)
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (^ CONST-DECL "real" |exponentiation| NIL)
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
-    (|real_minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
-    (NIL APPLICATION-JUDGEMENT "above(n)" |exp2| NIL)
-    (|minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (|complex_| CONST-DECL "complex" |complex_types| |complex|)
+    (* CONST-DECL "complex" |fundamental_algebra| |complex|)
+    (+ CONST-DECL "complex" |complex_types| |complex|)
+    (|csigma| DEF-DECL "complex" |fundamental_algebra| |complex|)
+    (|sq| CONST-DECL "nonneg_real" |sq| |reals|)
+    (|sq_abs| CONST-DECL "nnreal" |complex_types| |complex|)
     (|nnreal_plus_nnreal_is_nnreal| APPLICATION-JUDGEMENT "nnreal" |real_types|
      NIL)
-    (|sq_abs| CONST-DECL "nnreal" |complex_types| |complex|)
-    (|sq| CONST-DECL "nonneg_real" |sq| |reals|)
-    (|csigma| DEF-DECL "complex" |fundamental_algebra| |complex|)
-    (+ CONST-DECL "complex" |complex_types| |complex|)
-    (* CONST-DECL "complex" |fundamental_algebra| |complex|)
-    (|complex_| CONST-DECL "complex" |complex_types| |complex|)
+    (|minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (NIL APPLICATION-JUDGEMENT "above(n)" |exp2| NIL)
+    (|real_minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
     (- CONST-DECL "[numfield -> numfield]" |number_fields| NIL)
     (|real_times_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
     (|real_div_nzreal_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
@@ -658,8 +658,8 @@
     (|real_gt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL))
    SHOSTAK))
- (|root_near| 0
-  (|root_near-0| "" 3998387108
+ (|croot_root_near| 0
+  (|croot_root_near-0| "" 4000196641
    ("" (SKEEP)
     (("" (LEMMA "cfact" ("n" "n" "a" "a"))
       (("" (ASSERT)
@@ -1562,14 +1562,14 @@
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
     (|cfact| FORMULA-DECL NIL |croots| NIL)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
-    (|real_plus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
     (* CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
     (/ CONST-DECL "[numfield, nznum -> numfield]" |number_fields| NIL)
     (|nznum| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
     (/= CONST-DECL "boolean" |notequal| NIL)
     (+ CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
     (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
+    (|real_plus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
     (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
     (|sigma_ge_0| FORMULA-DECL NIL |sigma| |reals|)
@@ -1577,70 +1577,70 @@
     (|sigma_middle| FORMULA-DECL NIL |sigma| |reals|)
     (> CONST-DECL "bool" |reals| NIL)
     (|min_gt| FORMULA-DECL NIL |real_defs| NIL)
-    (|pos_div_gt| FORMULA-DECL NIL |real_props| NIL)
     (|neg_times_gt| FORMULA-DECL NIL |real_props| NIL)
+    (|pos_div_gt| FORMULA-DECL NIL |real_props| NIL)
     (|div_mult_pos_lt2| FORMULA-DECL NIL |real_props| NIL)
     (|pos_times_le| FORMULA-DECL NIL |real_props| NIL)
     (|nnreal_plus_posreal_is_posreal| APPLICATION-JUDGEMENT "posreal"
      |real_types| NIL)
     (|abs_triangle_minus| FORMULA-DECL NIL |polar| |complex|)
-    (|sq| CONST-DECL "nonneg_real" |sq| |reals|)
-    (|sq_abs| CONST-DECL "nnreal" |complex_types| |complex|)
     (NIL APPLICATION-JUDGEMENT "above(n)" |exp2| NIL)
-    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
-     "(strict_total_order?[real])" |real_props| NIL)
-    (|nnreal_plus_nnreal_is_nnreal| APPLICATION-JUDGEMENT "nnreal" |real_types|
-     NIL)
-    (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
-     NIL)
-    (|nnreal_times_nnreal_is_nnreal| APPLICATION-JUDGEMENT "nnreal"
-     |real_types| NIL)
+    (|sq_abs| CONST-DECL "nnreal" |complex_types| |complex|)
+    (|sq| CONST-DECL "nonneg_real" |sq| |reals|)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
+    (|nnreal_times_nnreal_is_nnreal| APPLICATION-JUDGEMENT "nnreal"
+     |real_types| NIL)
+    (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|nnreal_plus_nnreal_is_nnreal| APPLICATION-JUDGEMENT "nnreal" |real_types|
+     NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
     (|complex_| CONST-DECL "complex" |complex_types| |complex|)
     (|cpolynomial| CONST-DECL "complex" |fundamental_algebra| |complex|)
     (- CONST-DECL "complex" |complex_types| |complex|)
     (|cprod_far| FORMULA-DECL NIL |croot_near| NIL)
-    (|abs_mult| FORMULA-DECL NIL |polar| |complex|)
     (|cprod| DEF-DECL "complex" |croots| NIL)
+    (|abs_mult| FORMULA-DECL NIL |polar| |complex|)
     (|pos_times_gt| FORMULA-DECL NIL |real_props| NIL)
-    (|div_mult_pos_ge2| FORMULA-DECL NIL |real_props| NIL)
     (|complex_minus_0| FORMULA-DECL NIL |complex_types| |complex|)
+    (|div_mult_pos_ge2| FORMULA-DECL NIL |real_props| NIL)
     (|min_le| FORMULA-DECL NIL |real_defs| NIL)
     (|div_cancel3| FORMULA-DECL NIL |real_props| NIL)
-    (|div_mult_neg_le2| FORMULA-DECL NIL |real_props| NIL)
     (|n| SKOLEM-CONST-DECL "nat" |croot_near| NIL)
     (BB SKOLEM-CONST-DECL "real" |croot_near| NIL)
-    (TRUE CONST-DECL "bool" |booleans| NIL)
-    (|times_div1| FORMULA-DECL NIL |real_props| NIL)
-    (|times_div2| FORMULA-DECL NIL |real_props| NIL)
-    (|div_distributes| FORMULA-DECL NIL |real_props| NIL)
+    (|div_mult_neg_le2| FORMULA-DECL NIL |real_props| NIL)
     (|both_sides_times_pos_le2| FORMULA-DECL NIL |real_props| NIL)
+    (|div_distributes| FORMULA-DECL NIL |real_props| NIL)
+    (|times_div2| FORMULA-DECL NIL |real_props| NIL)
+    (|times_div1| FORMULA-DECL NIL |real_props| NIL)
+    (TRUE CONST-DECL "bool" |booleans| NIL)
     (|both_sides_times_pos_le1_imp| FORMULA-DECL NIL |extra_real_props| NIL)
     (|both_sides_times_pos_le2_imp| FORMULA-DECL NIL |extra_real_props| NIL)
     (|expt_pos| FORMULA-DECL NIL |exponentiation| NIL)
     (|nonneg_real| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
     (|posreal| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
     (< CONST-DECL "bool" |reals| NIL)
-    (* CONST-DECL "complex" |complex_types| |complex|)
-    (|cpow| DEF-DECL "complex" |complex_types| |complex|)
-    (* CONST-DECL "complex" |fundamental_algebra| |complex|)
-    (+ CONST-DECL "complex" |complex_types| |complex|)
-    (|csigma| DEF-DECL "complex" |fundamental_algebra| |complex|)
-    (|real_minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
     (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (|real_minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (|csigma| DEF-DECL "complex" |fundamental_algebra| |complex|)
+    (+ CONST-DECL "complex" |complex_types| |complex|)
+    (* CONST-DECL "complex" |fundamental_algebra| |complex|)
+    (|cpow| DEF-DECL "complex" |complex_types| |complex|)
+    (* CONST-DECL "complex" |complex_types| |complex|)
     (|cpoly_diff_bound| FORMULA-DECL NIL |croot_near| NIL)
     (|le_div_le_pos| FORMULA-DECL NIL |real_props| NIL)
     (|div_div1| FORMULA-DECL NIL |real_props| NIL)
-    (|div_mult_pos_le1| FORMULA-DECL NIL |real_props| NIL)
     (|div_mult_pos_le2| FORMULA-DECL NIL |real_props| NIL)
+    (|div_mult_pos_le1| FORMULA-DECL NIL |real_props| NIL)
     (|nonzero_real| NONEMPTY-TYPE-EQ-DECL NIL |reals| NIL)
     (|root_bound| FORMULA-DECL NIL |croot_near| NIL)
     (|abs_neg| FORMULA-DECL NIL |polar| |complex|)
-    (|expt| DEF-DECL "real" |exponentiation| NIL)
+    (|minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
     (|posreal_plus_nnreal_is_posreal| APPLICATION-JUDGEMENT "posreal"
      |real_types| NIL)
-    (|minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (|expt| DEF-DECL "real" |exponentiation| NIL)
     (|complex_plus_neg| FORMULA-DECL NIL |complex_types| |complex|)
     (|abs_triangle| FORMULA-DECL NIL |polar| |complex|)
     (- CONST-DECL "complex" |complex_types| |complex|)
@@ -1654,13 +1654,13 @@
     (|posint_times_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
     (|even_times_int_is_even| APPLICATION-JUDGEMENT "even_int" |integers| NIL)
+    (|real_times_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (|nnreal_div_posreal_is_nnreal| APPLICATION-JUDGEMENT "nnreal" |real_types|
+     NIL)
+    (|real_div_nzreal_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
     (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL)
     (^ CONST-DECL "real" |exponentiation| NIL)
-    (|real_div_nzreal_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
-    (|nnreal_div_posreal_is_nnreal| APPLICATION-JUDGEMENT "nnreal" |real_types|
-     NIL)
-    (|real_times_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
     (|abs| CONST-DECL "nnreal" |polar| |complex|)
     (|nnreal| TYPE-EQ-DECL NIL |real_types| NIL)
     (|sigma| DEF-DECL "real" |sigma| |reals|)

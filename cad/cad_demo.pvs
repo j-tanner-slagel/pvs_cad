@@ -3,8 +3,11 @@ cad_demo: THEORY
 % A playground for (cad).  Each lemma is a closed prenex formula over the
 % reals: quantifiers first, then a Boolean combination of polynomial sign
 % conditions.  Prove one with M-x prove and the command (cad), or from a
-% shell (in ~/src/CAD/cad):  ../tools/cli/pv.sh cad_demo d_amgm '(cad)'
-% Add your own lemmas at the end and try them.
+% shell, in the checkout's cad/ directory, after running ../tools/setup.sh
+% once: start a server with ../tools/cli/srv.sh cad_demo, then
+% ../tools/cli/pv.sh cad_demo d_amgm '(cad)'.  This theory imports
+% cad_decide5 (the read-closure decision); IMPORTING pvs_cad gives the
+% default, decide8.  Add your own lemmas at the end and try them.
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING cad_decide5, mpoly_embed

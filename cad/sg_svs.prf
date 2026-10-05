@@ -89,7 +89,7 @@
     "rsc_sg(k, g, cdr[list[mpoly]](L), E, cons[list[mpoly]](car[list[mpoly]](L), Q), cons[Sign3](1, acc), sg)"
     #A((3) BASE-CHAR . "NIL") (36 16 36 74))))
  (|cst_sign| 0
-  (|cst_sign-0| "" 3998573278
+  (|cst_sign-1| "" 4000196701
    ("" (SKEEP)
     (("" (USE "snorm_sg_at" ("l" "l" "ys" "ys"))
       (("" (REPLACE -1)
@@ -106,7 +106,9 @@
                       (("2" (ASSERT)
                         (("2" (CASE "null?(select(snorm(l), ys))")
                           (("1" (PROPAX) NIL NIL)
-                           ("2" (USE "length_cdr" ("l" "select(snorm(l), ys)"))
+                           ("2"
+                            (USE "length_cdr_mpoly_univ"
+                                 ("l" "select(snorm(l), ys)"))
                             (("2" (ASSERT)
                               (("2" (REPLACE -1) (("2" (ASSERT) NIL NIL)) NIL))
                               NIL))
@@ -116,7 +118,9 @@
                       NIL)
                      ("3" (CASE "null?(select(snorm(l), ys))")
                       (("1" (PROPAX) NIL NIL)
-                       ("2" (USE "length_cdr" ("l" "select(snorm(l), ys)"))
+                       ("2"
+                        (USE "length_cdr_mpoly_univ"
+                             ("l" "select(snorm(l), ys)"))
                         (("2" (ASSERT)
                           (("2"
                             (USE "pval_one"
@@ -155,18 +159,18 @@
     (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
     (|lcs| CONST-DECL "Sign3" |sg_norm| NIL)
     (|sel_eval| FORMULA-DECL NIL |sg_conj2| NIL)
-    (|meval_mnorm| FORMULA-DECL NIL |mpoly_norm| NIL)
     (|llast| DEF-DECL "mpoly" |mpoly_pdiv| NIL)
+    (|meval_mnorm| FORMULA-DECL NIL |mpoly_norm| NIL)
     (|pval_one| FORMULA-DECL NIL |root_dec| NIL)
     (|sel_const| FORMULA-DECL NIL |sg_conj2| NIL)
     (|snorm| DEF-DECL "btree[list[mpoly]]" |branch_norm| NIL)
     (|select| DEF-DECL "T" |branch_tree| NIL)
     (|btree| TYPE-DECL NIL |btree_adt| NIL)
     (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
     (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
-    (|length_cdr| FORMULA-DECL NIL |mpoly_univ| NIL)
+    (|length_cdr_mpoly_univ| FORMULA-DECL NIL |mpoly_univ| NIL)
     (|sign3| CONST-DECL "Sign3" |sign3| |reals|)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
@@ -339,21 +343,21 @@
       NIL))
     NIL)
    ((|svec_cons_sign| FORMULA-DECL NIL |rsc_tree| NIL)
-    (|mem_app3| FORMULA-DECL NIL |rsc_tree| NIL)
-    (|lneg| CONST-DECL "list[mpoly]" |sign_oracle| NIL)
-    (|sign3| CONST-DECL "Sign3" |sign3| |reals|)
-    (|meval| DEF-DECL "real" |mpoly_def| NIL)
-    (|mpol?| ADT-RECOGNIZER-DECL "[mpoly -> boolean]" |mpoly_adt| NIL)
     (|mpol| ADT-CONSTRUCTOR-DECL "[list[mpoly] -> (mpol?)]" |mpoly_adt| NIL)
+    (|mpol?| ADT-RECOGNIZER-DECL "[mpoly -> boolean]" |mpoly_adt| NIL)
+    (|meval| DEF-DECL "real" |mpoly_def| NIL)
+    (|sign3| CONST-DECL "Sign3" |sign3| |reals|)
+    (|lneg| CONST-DECL "list[mpoly]" |sign_oracle| NIL)
+    (|mem_app3| FORMULA-DECL NIL |rsc_tree| NIL)
     (|rfuel_eq| FORMULA-DECL NIL |rsc_tree| NIL)
     (|rfuel_lt| FORMULA-DECL NIL |rsc_tree| NIL)
-    (|minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
     (|lneg_eval| FORMULA-DECL NIL |sign_oracle| NIL)
+    (|minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
     (|rev_cons_app| FORMULA-DECL NIL |rsc_tree| NIL)
-    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|allgt_cons| FORMULA-DECL NIL |rsc_tree| NIL)
     (|real_gt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
-    (|allgt_cons| FORMULA-DECL NIL |rsc_tree| NIL)
+    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|rfuel_gt| FORMULA-DECL NIL |rsc_tree| NIL)
     (> CONST-DECL "bool" |reals| NIL)
     (NIL APPLICATION-JUDGEMENT "above(n)" |exp2| NIL)
@@ -364,19 +368,19 @@
     (|svec_null| FORMULA-DECL NIL |sign_vec| NIL)
     (|append_null| FORMULA-DECL NIL |list_props| NIL)
     (|eqs_at_cons| FORMULA-DECL NIL |rsc_tree| NIL)
-    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
-    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
-    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
-     NIL)
-    (|even_times_int_is_even| APPLICATION-JUDGEMENT "even_int" |integers| NIL)
-    (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
-     NIL)
     (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
+    (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|even_times_int_is_even| APPLICATION-JUDGEMENT "even_int" |integers| NIL)
+    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|rfuel_now| FORMULA-DECL NIL |rsc_tree| NIL)
     (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
@@ -626,18 +630,18 @@
         NIL))
       NIL))
     NIL)
-   ((|mem_app3| FORMULA-DECL NIL |rsc_tree| NIL)
-    (|lneg| CONST-DECL "list[mpoly]" |sign_oracle| NIL)
-    (|minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+   ((|lneg| CONST-DECL "list[mpoly]" |sign_oracle| NIL)
+    (|mem_app3| FORMULA-DECL NIL |rsc_tree| NIL)
     (|lneg_eval| FORMULA-DECL NIL |sign_oracle| NIL)
+    (|minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
     (|rfuel_lt| FORMULA-DECL NIL |rsc_tree| NIL)
     (|rfuel_eq| FORMULA-DECL NIL |rsc_tree| NIL)
     (|svec_cons_sign| FORMULA-DECL NIL |rsc_tree| NIL)
     (|rev_cons_app| FORMULA-DECL NIL |rsc_tree| NIL)
-    (|allgt_cons| FORMULA-DECL NIL |rsc_tree| NIL)
+    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_gt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
-    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|allgt_cons| FORMULA-DECL NIL |rsc_tree| NIL)
     (|sign3| CONST-DECL "Sign3" |sign3| |reals|)
     (|rfuel_gt| FORMULA-DECL NIL |rsc_tree| NIL)
     (NIL APPLICATION-JUDGEMENT "above(n)" |exp2| NIL)
@@ -650,19 +654,19 @@
     (|append_null| FORMULA-DECL NIL |list_props| NIL)
     (|eqs_at_cons| FORMULA-DECL NIL |rsc_tree| NIL)
     (|svec_null| FORMULA-DECL NIL |sign_vec| NIL)
-    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
-    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
-    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
-     NIL)
-    (|even_times_int_is_even| APPLICATION-JUDGEMENT "even_int" |integers| NIL)
-    (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
-     NIL)
     (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
+    (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|even_times_int_is_even| APPLICATION-JUDGEMENT "even_int" |integers| NIL)
+    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|ctree2_sg_sound| FORMULA-DECL NIL |sg_conj2| NIL)
     (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
@@ -794,7 +798,6 @@
       NIL))
     NIL)
    ((NIL APPLICATION-JUDGEMENT "above(n)" |exp2| NIL)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
     (|lneg| CONST-DECL "list[mpoly]" |sign_oracle| NIL)
     (|append| DEF-DECL "list[T]" |list_props| NIL)
     (|ctree2_sg| CONST-DECL "bool" |sg_conj2| NIL)
@@ -803,14 +806,15 @@
         "[boolean, T, T -> T]"
         |if_def|
         NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
     (|ctree2_det| FORMULA-DECL NIL |sg_conj2| NIL)
-    (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
-    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
-    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|ctree2_rd| CONST-DECL "list[mpoly]" |sg_conj2| NIL)
     (|agree_append| FORMULA-DECL NIL |sg_norm| NIL)
+    (|ctree2_rd| CONST-DECL "list[mpoly]" |sg_conj2| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
+    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
     (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
@@ -988,18 +992,18 @@
     (|at| CONST-DECL "bool" |rsc_tree| NIL)
     (|allgt| CONST-DECL "bool" |qe_conj| NIL)
     (|reverse| DEF-DECL "list[T]" |list_props| NIL)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|append| DEF-DECL "list[T]" |list_props| NIL)
     (|eqs_at| CONST-DECL "bool" |conj_tree| NIL)
-    (|rsc_sg_sound| FORMULA-DECL NIL |sg_svs| NIL)
     (NIL APPLICATION-JUDGEMENT "above(n)" |exp2| NIL)
+    (|rsc_sg_sound| FORMULA-DECL NIL |sg_svs| NIL)
     (|pf| CONST-DECL "[real -> real]" |pos_dec| NIL)
     (|between_rep| FORMULA-DECL NIL |svs_tree| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
-    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|right_rep| FORMULA-DECL NIL |svs_tree| NIL)
     (|left_rep| FORMULA-DECL NIL |svs_tree| NIL)
     (|sector_cases| FORMULA-DECL NIL |sector_rep| NIL)
@@ -1110,17 +1114,17 @@
     (|rfuel| CONST-DECL "nat" |rsc_tree| NIL)
     (<= CONST-DECL "bool" |reals| NIL)
     (|far_vec_left| FORMULA-DECL NIL |far_sign| NIL)
-    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|far_vec_right| FORMULA-DECL NIL |far_sign| NIL)
-    (NIL APPLICATION-JUDGEMENT "above(n)" |exp2| NIL)
     (|rsc_sg_complete| FORMULA-DECL NIL |sg_svs| NIL)
+    (NIL APPLICATION-JUDGEMENT "above(n)" |exp2| NIL)
     (|reverse| DEF-DECL "list[T]" |list_props| NIL)
     (|append| DEF-DECL "list[T]" |list_props| NIL)
-    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|max| CONST-DECL "{p: real | p >= m AND p >= n}" |real_defs| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
@@ -1239,8 +1243,8 @@
     (|lderiv| CONST-DECL "list[mpoly]" |earr_deriv| NIL)
     (|slofs_rd| DEF-DECL "list[mpoly]" |sg_conj| NIL)
     (|slofs_det| FORMULA-DECL NIL |sg_conj| NIL)
-    (|rsc_det| FORMULA-DECL NIL |sg_svs| NIL)
     (NIL APPLICATION-JUDGEMENT "above(n)" |exp2| NIL)
+    (|rsc_det| FORMULA-DECL NIL |sg_svs| NIL)
     (|svs_srd| CONST-DECL "list[mpoly]" |sg_svs| NIL))
    SHOSTAK)))
 

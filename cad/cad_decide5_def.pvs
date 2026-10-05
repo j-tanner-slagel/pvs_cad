@@ -1,6 +1,7 @@
 cad_decide5_def: THEORY
 %----------------------------------------------------------------------------
-% The decision (cad) runs, executable part (FINISH_PLAN 3i, stage N10;
+% The decision (cad) runs in a theory that does not import cad_decide8,
+% executable part (FINISH_PLAN 3i, stage N10;
 % dispatch revised 2026-09-27).  With THREE or more quantifiers it is the
 % n-level decision decn_o of towern_od alone.  With TWO it is the fast
 % two-level decision decw, and decn_o when decw's certificate does not come

@@ -4,6 +4,13 @@ bench_c: THEORY
 % decision decn_o (COLLINS_PLAN.md M-I, M-K; not in top.pvs, like bench_n).
 % Measure one with (cad-mx 1 "decc_o" 0) or (cad-mx 1 "decn_o" 0): it prints
 % the record and the wall-clock time and changes nothing.
+%
+% bath_01 to bath_04 are problems of the Bath CAD example bank (Wilson,
+% Bradford and Davenport, "A repository for CAD examples", ACM Communications
+% in Computer Algebra 46(3/4) 67-69, doi 10.1145/2429135.2429137; dataset
+% maintained by David Wilson, University of Bath Research Data Archive,
+% version 4 (2013), doi 10.15125/BATH-00069, CC-BY-SA 4.0), as translated in
+% bench_n; this file is distributed under CC BY-SA 4.0 (NOTICE.md).
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING decc_def, cad_decide8_def, mpoly_embed

@@ -1,5 +1,10 @@
 # FORMS_PLAN: (cad) and (cad-qe) on formulas as people write them
 
+> **Finished 2026-10-01 (note of 2026-10-03).** F0-F6 are done. Since TERMS_PLAN.md T2 and
+> NEXT_PLAN.md T5, the interval enclosures of constants and the bounds of sin, cos, exp, ln and
+> atan need IMPORTING pvs_cad_num (pvs_cad with interval_arith@strategies and trans_bounds);
+> pvs_cad remains everything else (cad) and (cad-qe) need.
+>
 > **Status (2026-10-01).** Plan written; user: "we gotta fix that for real. Make a plan to fix all
 > of this and do it."  Stages F0-F6 below; progress in cad/PROGRESS.md and in these lines.
 > - F0 done (labels: flatten gives every piece the label; relabel :pairing? t names them; plain

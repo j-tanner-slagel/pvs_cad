@@ -17,7 +17,7 @@ cad_run: THEORY
 %       (sector and indices);
 %   (2) every cell is connected;
 %   (3) over each sector the tower is a CAD (cad_over?): every level is
-%       classically delineable -- continuous, non-crossing root functions
+%       delineable (delin_cl?) -- continuous, non-crossing root functions
 %       -- over every cell below it, and its cells are the sections and
 %       bands of those functions;
 %   (4) every polynomial of F has one sign on every cell.

@@ -1,5 +1,8 @@
 # Endgame plan — (cad) builds its proof without a case explosion
 
+> **Finished 2026-09-29** (section 4: atom equations and bddsimp, the old endgame as a fallback
+> inside finalize).
+
 Written 2026-09-28 after the overnight run of `m_cover20` (one variable, 42
 atoms) exhausted the 6 GB SBCL heap: the decision answers in 0.8 s, the
 proof is never built.

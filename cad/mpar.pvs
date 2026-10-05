@@ -36,7 +36,7 @@ BEGIN
 
   %% sums and products of nearby numbers
   sum_near: LEMMA abs(a - a0) < e / 2 AND abs(b - b0) < e / 2 IMPLIES abs((a + b) - (a0 + b0)) < e
-  prod_bound: LEMMA abs(a - a0) < d AND abs(b - b0) < d AND d <= 1 IMPLIES
+  mprod_bound: LEMMA abs(a - a0) < d AND abs(b - b0) < d AND d <= 1 IMPLIES
     abs(a * b - a0 * b0) < (abs(a0) + abs(b0) + 1) * d
   prod_cont: LEMMA EXISTS d: FORALL a, b: abs(a - a0) < d AND abs(b - b0) < d IMPLIES
     abs(a * b - a0 * b0) < e

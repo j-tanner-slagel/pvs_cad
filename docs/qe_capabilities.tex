@@ -68,7 +68,7 @@
 \begin{document}
 \thispagestyle{empty}
 \begin{flushleft}
-{\sffamily\small\bfseries\color{moss}\MakeUppercase{pvs\_cad \quad·\quad PVS 8.1 \quad·\quad 2 October 2026}}\par\vspace{8pt}
+{\sffamily\small\bfseries\color{moss}\MakeUppercase{pvs\_cad \quad·\quad PVS 8.1 \quad·\quad 4 October 2026}}\par\vspace{8pt}
 {\fontsize{27}{33}\selectfont\bfseries What quantifier elimination can do}\par\vspace{10pt}
 {\large\color{muted} Verified procedures that turn a formula with quantifiers over the reals into an equivalent
 formula without them, and a proof command that uses them inside PVS proofs: the theorems, fourteen examples with
@@ -130,7 +130,7 @@ quantifier-free definable) follows from \texttt{qelim\_ok}.
 \textsf{\small\bfseries Theorem} & \textsf{\small\bfseries What it says}\\
 \midrule
 qe8\_correct & for every $m\ge1$ and at least one quantifier: \texttt{qe8}'s answer holds at a point of $\mathbb{R}^m$ iff the quantified formula does; \texttt{(cad-qe)} instantiates it for prenex input under \texttt{IMPORTING pvs\_cad}\\
-qe8\_isqf & the answer is always quantifier-free (the flag is always set)\\
+qe8\_isqf & with at least one quantifier, the answer is always quantifier-free (the flag is set)\\
 qe1cc\_bf & one free variable: \texttt{qe1cc}, over one Collins run, always answers, quantifier-free and equivalent (each sector of the free line described exactly, \texttt{epc\_ok})\\
 qe2cd\_bf & two or more free variables: over the Collins tower with derivative-closed free levels (\texttt{ctwd}), \texttt{qe2cd} always answers, quantifier-free and equivalent\\
 ents\_sep & Thom's lemma at work: when the free families are closed under the derivative, different cells always have different sign patterns\\
@@ -142,16 +142,18 @@ qe2c\_ev & \texttt{qe}'s derivative-closed run succeeds for every large enough f
 \end{longtable}}
 
 \textbf{What you trust.} The PVS kernel, which checks every step; PVS's ground evaluator, which runs \texttt{qe8},
-\texttt{qe\_g} or \texttt{qe} on the concrete input inside the proof (proof by reflection); NASALib's saved proofs
+\texttt{qe\_g} or \texttt{qe} on the concrete input inside the proof (proof by reflection), and the normal forms the
+strategies compare; NASALib's saved proofs
 of the theorems the library imports (from \texttt{reals}, \texttt{Sturm}, \texttt{Tarski}, \texttt{structures},
-\texttt{analysis}, \texttt{complex}, \texttt{matrices}, \texttt{mult\_poly} and \texttt{interval\_arith}, and
-through them from other NASALib libraries such as \texttt{ints}, \texttt{power} and \texttt{trig}), which were not
+\texttt{analysis}, \texttt{complex}, \texttt{matrices}, \texttt{mult\_poly}, \texttt{interval\_arith},
+\texttt{trig} and \texttt{lnexp}, and through them from other NASALib libraries such as \texttt{ints} and
+\texttt{power}), which were not
 replayed here; and the reading of the statements: that \texttt{fsem} and \texttt{gsem} (the meaning of
 the quantified formula) and \texttt{qfsem} (the meaning of the answer) say what is intended. The procedures and
 the strategy code are not trusted; the procedures' correctness is the theorems.
 
 \textbf{Size.} The quantifier elimination described here is 45 theories of the library (\texttt{cad/top.pvs},
-2 October 2026) with 550 proved formulas: the first procedure \texttt{qe} (26 theories, with
+4 October 2026) with 557 proved formulas: the first procedure \texttt{qe} (26 theories, with
 \texttt{qe\_all} and its examples \texttt{qe\_cad\_ex}), merged answers (\texttt{qe\_mrg\_def}, \texttt{qe\_mrg}),
 \texttt{qe8} over the Collins run (13 theories, from \texttt{qe1c\_def} to \texttt{qe8\_ex}), \texttt{qelim}
 (\texttt{qelim\_def}, \texttt{qelim\_ok}) and formulas as PVS writes them (\texttt{gform\_def}, \texttt{gform\_ok}).
@@ -199,7 +201,7 @@ elimination). The other direction is the same command on the goal. The whole lem
 \texttt{qe}).
 
 \section{Examples}
-Captured on 1 October 2026 in a theory that imports \texttt{pvs\_cad}; every input here is prenex, so
+Captured on 4 October 2026 in a theory that imports \texttt{pvs\_cad}; every input here is prenex, so
 \texttt{(cad-qe)} eliminates by \texttt{qe8}. Answers are as \texttt{(cad-qe)} prints them, except that parentheses that do
 not change the reading (around atoms and around nested disjunctions) are dropped (the transcripts show them). ``Reads as'' is a hand
 simplification for the reader; the proved statement is about the printed answer. Times are wall-clock for the
@@ -218,24 +220,24 @@ a proved step; closing the arithmetic afterwards was not attempted).
 \endhead
 \multicolumn{5}{@{}l}{\sffamily\small\bfseries\color{moss} One free variable}\\[2pt]
 $\exists t\in[0,10].\; (5-t)^2 + (t/2)^2 < D^2$ \newline {\footnotesize\color{muted} a moving point comes within $D$} &
-\texttt{125/4 + (-25/4)*D\^{}2 < 0} & $D^2 > 5$ & 3\,s & \proved\\
-$\exists t.\; t^2 = D$ & \texttt{(-4)*D = 0 OR (-4)*D < 0} & $D \ge 0$ & 2\,s & \proved\\
-$\forall x.\; x^2 + b x + 1 > 0$ & \texttt{4 + (-1)*b\^{}2 > 0} & $b^2 < 4$ & 2\,s & \proved\\
-$\exists x\, \exists y.\; x^2 + y^2 < D$ \newline {\footnotesize\color{muted} two bound variables} & \texttt{(-256)*D < 0} & $D > 0$ & 2\,s & \proved\\
-$\exists x.\; x > 0 \land x^2 < c$ & \texttt{(-1)*c < 0} & $c > 0$ & 2\,s & \stepok\\
-$\forall x\, \exists y.\; y^2 = x^2 + c$ \newline {\footnotesize\color{muted} alternating quantifiers} & \texttt{(-256)*c = 0 OR (-256)*c < 0} & $c \ge 0$ & 2\,s & \stepok\\
-$\exists x.\; x^4 - 2x^2 = c$ \newline {\footnotesize\color{muted} degree 4} & \texttt{(-64) + (-64)*c = 0 OR (-64) + (-64)*c < 0} & $c \ge -1$ & 2\,s & \stepok\\
-$\exists x.\; x^3 - 3x = c$ & \texttt{TRUE} & always & 2\,s & \onestep\\
+\texttt{125/4 + (-25/4)*D\^{}2 < 0} & $D^2 > 5$ & 4\,s & \proved\\
+$\exists t.\; t^2 = D$ & \texttt{D = 0 OR D > 0} & $D \ge 0$ & 3\,s & \proved\\
+$\forall x.\; x^2 + b x + 1 > 0$ & \texttt{4 + (-1)*b\^{}2 > 0} & $b^2 < 4$ & 3\,s & \proved\\
+$\exists x\, \exists y.\; x^2 + y^2 < D$ \newline {\footnotesize\color{muted} two bound variables} & \texttt{D > 0} & $D > 0$ & 3\,s & \proved\\
+$\exists x.\; x > 0 \land x^2 < c$ & \texttt{c > 0} & $c > 0$ & 3\,s & \stepok\\
+$\forall x\, \exists y.\; y^2 = x^2 + c$ \newline {\footnotesize\color{muted} alternating quantifiers} & \texttt{c = 0 OR c > 0} & $c \ge 0$ & 3\,s & \stepok\\
+$\exists x.\; x^4 - 2x^2 = c$ \newline {\footnotesize\color{muted} degree 4} & \texttt{(-64) + (-64)*c = 0 OR (-64) + (-64)*c < 0} & $c \ge -1$ & 3\,s & \stepok\\
+$\exists x.\; x^3 - 3x = c$ & \texttt{TRUE} & always & 3\,s & \onestep\\
 \addlinespace
 \multicolumn{5}{@{}l}{\sffamily\small\bfseries\color{moss} Two free variables}\\[2pt]
 $\exists t.\; t = a \land t = b$ & \texttt{TRUE AND (-1)*b + a = 0} & $a = b$ & 3\,s & \proved\\
-$\exists t.\; t^2 + a t + b = 0$ & \texttt{(b < 0) OR (b = 0) OR (b > 0 AND (4*b + (-1)*a\^{}2 = 0 OR 4*b + (-1)*a\^{}2 < 0))} & $a^2 \ge 4b$ & 3\,s & \proved\\
-$\exists t.\; t^2 + a t + b < 0$ & \texttt{(b < 0) OR (b = 0 AND 4*b + (-1)*a\^{}2 < 0) OR (b > 0 AND 4*b + (-1)*a\^{}2 < 0)} & $a^2 > 4b$ & 3\,s & \stepok\\
-$\forall t.\; t^2 + a t + b \ge 0$ & \texttt{(b = 0 AND 4*b + (-1)*a\^{}2 = 0) OR (b > 0 AND (4*b + (-1)*a\^{}2 > 0 OR 4*b + (-1)*a\^{}2 = 0))} & $a^2 \le 4b$ & 3\,s & \stepok\\
-$\exists t.\; t > 0 \land t^2 + a t + b = 0$ \newline {\footnotesize\color{muted} a positive root} & \texttt{(b < 0) OR (b = 0 AND (-2)*a > 0) OR (b > 0 AND ((4*b + (-1)*a\^{}2 < 0 AND (-2)*a > 0) OR (4*b + (-1)*a\^{}2 = 0 AND (-2)*a > 0)))} & $b<0$, or $a<0$ and $a^2\ge4b$ & 4\,s & \stepok\\
+$\exists t.\; t^2 + a t + b = 0$ & \texttt{(b < 0) OR (b = 0) OR (b > 0 AND (4*b + (-1)*a\^{}2 = 0 OR 4*b + (-1)*a\^{}2 < 0))} & $a^2 \ge 4b$ & 4\,s & \proved\\
+$\exists t.\; t^2 + a t + b < 0$ & \texttt{(b < 0) OR (b = 0 AND 4*b + (-1)*a\^{}2 < 0) OR (b > 0 AND 4*b + (-1)*a\^{}2 < 0)} & $a^2 > 4b$ & 4\,s & \stepok\\
+$\forall t.\; t^2 + a t + b \ge 0$ & \texttt{(b = 0 AND 4*b + (-1)*a\^{}2 = 0) OR (b > 0 AND (4*b + (-1)*a\^{}2 > 0 OR 4*b + (-1)*a\^{}2 = 0))} & $a^2 \le 4b$ & 4\,s & \stepok\\
+$\exists t.\; t > 0 \land t^2 + a t + b = 0$ \newline {\footnotesize\color{muted} a positive root} & \texttt{(b < 0) OR (b = 0 AND (-2)*a > 0) OR (b > 0 AND ((4*b + (-1)*a\^{}2 < 0 AND (-2)*a > 0) OR (4*b + (-1)*a\^{}2 = 0 AND (-2)*a > 0)))} & $b<0$, or $a<0$ and $a^2\ge4b$ & 5\,s & \stepok\\
 \addlinespace
 \multicolumn{5}{@{}l}{\sffamily\small\bfseries\color{moss} Three free variables}\\[2pt]
-$\exists x.\; a x^2 + b x + c = 0$ \newline {\footnotesize\color{muted} the general quadratic} & 1,187 characters, below & solvable & 8\,s & \stepok\\
+$\exists x.\; a x^2 + b x + c = 0$ \newline {\footnotesize\color{muted} the general quadratic} & 387 characters, below & solvable & 7\,s & \stepok\\
 \bottomrule
 \end{longtable}}
 
@@ -273,12 +275,13 @@ s_pos.1 :
 \end{termbox}
 
 \subsection{Three free variables: the general quadratic}
-$\exists x.\; a x^2 + b x + c = 0$, eliminated in 8\,s. The answer is correct but long: a disjunction of
-19 cases over the cells of the decomposition (the sectors of $c$, then of $b$, then of $a$), each described by
-sign conditions on $a$, $b$, $c$ and one more polynomial; as a whole it is equivalent to
-$(a \ne 0 \land b^2 \ge 4ac) \lor (a = 0 \land (b \ne 0 \lor c = 0))$. In the answer below (1,187 characters,
-captured with the table) that polynomial is printed \texttt{((-1)*b\^{}2)*a + (4*c)*a\^{}2}, that is,
-$4ca^2 - ab^2 = -a\,(b^2 - 4ac)$: minus $a$ times the discriminant $b^2 - 4ac$.
+$\exists x.\; a x^2 + b x + c = 0$, eliminated in 7\,s. The answer is a disjunction of 9 cases over the cells
+of the decomposition (the sectors of $c$, then of $a$), each described by sign conditions on $a$, $c$ and one more
+polynomial; as a whole it is equivalent to $(a \ne 0 \land b^2 \ge 4ac) \lor (a = 0 \land (b \ne 0 \lor c = 0))$,
+and it agrees with that condition at every point of a grid of $13^3$ rationals. In the answer below (387
+characters, captured with the table) that polynomial is printed \texttt{(-1)*b\^{}2 + (4*c)*a}, that is,
+$4ac - b^2$, minus the discriminant. Before the projections were replaced by checked bases (October 2026), the
+answer had 19 cases and 1,187 characters, with $-a\,(b^2 - 4ac)$ in place of the discriminant.
 \begin{termbox}
 \VerbatimInput[fontsize=\scriptsize]{s_gen_answer.txt}
 \end{termbox}
@@ -327,7 +330,7 @@ prenex conversion is needed. \texttt{(cad-qe)} needs at least one free real term
 prenex formulas over \texttt{real}.
 \item \textbf{Answers are not minimal.} They are disjunctions over cells and sectors; the $a,b,c$ example
 shows how long they get. Shortening them further is output polish, not correctness.
-\item \textbf{Cost} is the cost of the CAD run: 2 to 8\,s for the examples here; runs with
+\item \textbf{Cost} is the cost of the CAD run: 3 to 7\,s for the examples here; runs with
 several bound and free variables together can take minutes (measured with \texttt{qe}: \texttt{QE\_PLAN.md},
 section 12).
 \item \textbf{Where it is.} In \texttt{cad/}; in the imports of \texttt{cad/top.pvs}, which describes every

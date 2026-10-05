@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import re,sys
 # prfshow.py <file.prf> <formula>: print the proof script compactly
 s=open(sys.argv[1]).read()

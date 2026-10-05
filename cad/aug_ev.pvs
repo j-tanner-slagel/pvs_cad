@@ -56,7 +56,7 @@ BEGIN
     FORALL TW: member(TW, TWs) IMPLIES taug(T, TW, d) = T
   pg: VAR [list[mpoly] -> bool]
   L: VAR list[list[mpoly]]
-  every_intro_l: LEMMA FORALL L: (FORALL (g: list[mpoly]): member(g, L) IMPLIES pg(g)) IMPLIES every(pg)(L)
+  every_intro_l_aug_ev: LEMMA FORALL L: (FORALL (g: list[mpoly]): member(g, L) IMPLIES pg(g)) IMPLIES every(pg)(L)
   dvs_dcl: LEMMA sub?(dvs(G), G) IMPLIES dclx?(G)
   taug_dcl: LEMMA FORALL d: FORALL T, TW: taug(T, TW, d) = T AND tsub?(T, TW) AND length(T) = length(TW)
     IMPLIES every(dclx?)(ttake(TW, d))

@@ -3,11 +3,16 @@ col_stack: THEORY
 % DELINEABILITY FROM COLLINS' PROJECTION (COLLINS_PLAN.md M-F).
 %
 % collins_stack: if C is connected and the N-reducta projection of G is
-% sign-invariant on C (col_def's colh?), then G is classically delineable
+% sign-invariant on C (col_def's colh?), then G is delineable (in the sign-invariant sense)
 % over C (cad_stack's delin_cl?): the roots over the points of C are listed
 % increasing, equally many over every point, each root is a continuous
 % function on C, and the members have one sign vector on each piece of the
 % stack.
+%
+% kcol_stack (2026-10-02) is the same conclusion from col_pair's kconst? --
+% constant effective degrees and common-divisor degrees on C -- which is all
+% the proof uses, and which colh? gives (colh_kconst); cad_projb gets it for
+% the base cells of a smaller bottom-step projection.
 %
 % The proof is cad_stack's stack_const with col_loc's collins_loc for the
 % local picture: the stack is locally constant on C, so constant on the
@@ -25,9 +30,12 @@ BEGIN
   y, z: VAR real
   i: VAR nat
 
-  col_same: LEMMA conn?(C) AND colh?(G, C) AND C(p0) AND C(p) IMPLIES
+  col_same: LEMMA conn?(C) AND kconst?(G, C) AND C(p0) AND C(p) IMPLIES
     rsvl(G, p) = rsvl(G, p0) AND bsvl(G, p) = bsvl(G, p0) AND nroot(G, p) = nroot(G, p0)
-  col_cont: LEMMA colh?(G, C) IMPLIES cont_on?(LAMBDA p: rt(G, p, i), C)
+  col_cont: LEMMA kconst?(G, C) IMPLIES cont_on?(LAMBDA p: rt(G, p, i), C)
 
+  %% what the proof uses: constant effective degrees and common-divisor degrees (col_pair's
+  %% kconst?, 2026-10-02); Collins' hypothesis gives them (colh_kconst)
+  kcol_stack: THEOREM conn?(C) AND C(p0) AND kconst?(G, C) IMPLIES delin_cl?(G, C)
   collins_stack: THEOREM conn?(C) AND C(p0) AND colh?(G, C) IMPLIES delin_cl?(G, C)
 END col_stack

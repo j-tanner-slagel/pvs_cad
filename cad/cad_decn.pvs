@@ -67,7 +67,7 @@ BEGIN
   %% conjunct has nothing to its left to license it, and PVS generates the
   %% unprovable TCC "FORALL TW: cons?(TW)" -- which the gate catches and a
   %% Q.E.D. on the lemma itself does not
-  last_cdr: LEMMA cons?(TW) AND cons?(cdr(TW))
+  tw_last_cdr: LEMMA cons?(TW) AND cons?(cdr(TW))
     IMPLIES last(cdr(TW)) = last(TW)
 
   %% and at the bottom the last entry IS the head.  Kept separate because

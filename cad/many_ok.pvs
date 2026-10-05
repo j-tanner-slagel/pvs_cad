@@ -15,7 +15,7 @@ many_ok: THEORY
 % change their values (allgt_nlists) and does not lengthen them
 % (mlen_nlists), a normalized list that is not empty has a nonvanishing
 % leading coefficient (allok_nlists), and a condition that normalizes to
-% nothing is the zero polynomial and so is nowhere positive (allgt_cons).
+% nothing is the zero polynomial and so is nowhere positive (allgt_cons_many_ok).
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING qe_conj
@@ -47,7 +47,7 @@ BEGIN
   nlists_null: LEMMA nlists(null[list[mpoly]], ys) = null[list[mpoly]]
   nlists_cons: LEMMA nlists(cons(l, Q), ys) = cons(select(snorm(l), ys), nlists(Q, ys))
 
-  allgt_cons: LEMMA allgt(cons(l, Q), ys, x) IFF
+  allgt_cons_many_ok: LEMMA allgt(cons(l, Q), ys, x) IFF
     (meval(mpol(l))(cons(x, ys)) > 0 AND allgt(Q, ys, x))
   allcons(L): bool = every(LAMBDA (l: list[mpoly]): cons?(l))(L)
   allcons_cons: LEMMA allcons(cons(l, L)) IFF (cons?(l) AND allcons(L))

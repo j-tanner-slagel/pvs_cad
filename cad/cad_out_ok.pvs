@@ -90,7 +90,7 @@ BEGIN
            EXISTS kd: member(kd, kids(E, od, tb, Y, 0)) AND kd`1 = a)
 
   %% ---- the tree -------------------------------------------------------------------------------
-  mem_app: LEMMA FORALL (l1, l2: list[CRec]): member(r, append(l1, l2)) IFF (member(r, l1) OR member(r, l2))
+  mem_app_out_ok: LEMMA FORALL (l1, l2: list[CRec]): member(r, append(l1, l2)) IFF (member(r, l1) OR member(r, l2))
   lflat_mem: LEMMA FORALL (L: list[list[CRec]]): member(r, lflat(L)) IFF EXISTS (l: list[CRec]): member(l, L) AND member(r, l)
   ctree_mem: LEMMA cons?(TW) AND cons?(TB) AND member(r, ctree(u, TW, TB, od)) IMPLIES
     EXISTS kd, (r1: CRec): member(kd, kids(feff(car(TW), od), od, car(TB), seps_t(u, feff(car(TW), od), od, car(TB)), 0))

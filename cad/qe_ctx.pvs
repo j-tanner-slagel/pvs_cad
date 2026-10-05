@@ -19,10 +19,10 @@ BEGIN
   ys: VAR list[real]
   k: VAR nat
   x: VAR real
-  cx: VAR snorm_ctx.Cx
+  cx: VAR snorm_ctx.Cx_snorm
 
   cjtreec(k, E, Q, cx): btree[bool] =
-    bbindc(snormc(sqsum(E), cx), cx, LAMBDA (p0: SL, cx1: snorm_ctx.Cx):
+    bbindc(snormc(sqsum(E), cx), cx, LAMBDA (p0: SL, cx1: snorm_ctx.Cx_snorm):
       IF null?(p0`slist) THEN itreec(k, Q, cx1)
       ELSIF length(p0`slist) = 1 THEN bleaf(FALSE)
       ELSE mcorec(k, p0, Q, cx1)
@@ -34,16 +34,16 @@ BEGIN
 
   qtreec(k, F, cx): RECURSIVE btree[bool] =
     IF null?(F) THEN bleaf(FALSE)
-    ELSE bbindc(cjtreec(k, car(F)`ceqs, car(F)`cgts, cx), cx, LAMBDA (b: bool, cx1: snorm_ctx.Cx):
+    ELSE bbindc(cjtreec(k, car(F)`ceqs, car(F)`cgts, cx), cx, LAMBDA (b: bool, cx1: snorm_ctx.Cx_snorm):
            IF b THEN bleaf(TRUE) ELSE qtreec(k, cdr(F), cx1) ENDIF)
     ENDIF
   MEASURE length(F)
   qtreec_null: LEMMA qtreec(k, null[Conj], cx) = bleaf(FALSE)
   qtreec_cons: LEMMA qtreec(k, cons(C, F), cx) =
-    bbindc(cjtreec(k, C`ceqs, C`cgts, cx), cx, LAMBDA (b: bool, cx1: snorm_ctx.Cx):
+    bbindc(cjtreec(k, C`ceqs, C`cgts, cx), cx, LAMBDA (b: bool, cx1: snorm_ctx.Cx_snorm):
       IF b THEN bleaf(TRUE) ELSE qtreec(k, F, cx1) ENDIF)
 
-  qtreec_sound: THEOREM FORALL (F: list[Conj]): FORALL (k: nat, cx: snorm_ctx.Cx, ys: list[real]):
+  qtreec_sound: THEOREM FORALL (F: list[Conj]): FORALL (k: nat, cx: snorm_ctx.Cx_snorm, ys: list[real]):
     branch_tree[bool].conds_hold(cx, ys) AND tfuel(F) <= k IMPLIES
     (select(qtreec(k, F, cx), ys) IFF (EXISTS (x: real): feval(F, ys, x)))
 

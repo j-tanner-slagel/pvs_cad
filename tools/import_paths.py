@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import re, os, sys, functools
 sys.setrecursionlimit(1000000)
 def theories_in(d):
@@ -7,7 +8,7 @@ def theories_in(d):
         s = open(os.path.join(d, f), errors='ignore').read()
         s = re.sub(r'%[^\n]*', '', s)
         # split into theory blocks
-        for m in re.finditer(r'(?m)^\s*([A-Za-z][A-Za-z0-9_?]*)\s*(\[[^:]*?\])?\s*:\s*(THEORY|DATATYPE|CODATATYPE)\b(.*?)(?=^\s*END\s+\1\b)', s, re.S):
+        for m in re.finditer(r'(?m)^\s*([A-Za-z][A-Za-z0-9_?]*)\s*(\[[^\]]*\])?\s*:\s*(THEORY|DATATYPE|CODATATYPE)\b(.*?)(?=^\s*END\s+\1\b)', s, re.S):
             th[m.group(1)] = m.group(4)
     names = set(th)
     g = {}

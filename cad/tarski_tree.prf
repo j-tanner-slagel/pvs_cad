@@ -1,20 +1,66 @@
 (|tarski_tree|
  (|mtree_TCC1| 0
-  (|mtree_TCC1-1| NIL 3998300000 ("" (SUBTYPE-TCC) NIL NIL) NIL SHOSTAK))
+  (|mtree_TCC1-0| "" 4000130076 ("" (SUBTYPE-TCC) NIL NIL) NIL SHOSTAK
+   (|mtree| SUBTYPE "Q" "(list_adt[list_adt[mpoly_adt.mpoly].list].cons?)"
+    (30 31 30 32))))
  (|mtree_TCC2| 0
-  (|mtree_TCC2-1| NIL 3998300000 ("" (TERMINATION-TCC) NIL NIL) NIL SHOSTAK))
+  (|mtree_TCC2-0| "" 4000130076 ("" (TERMINATION-TCC) NIL NIL) NIL SHOSTAK
+   (|mtree| TERMINATION "mtree(k, p0, cdr[list[mpoly]](Q), g1`slist)"
+    #A((3) BASE-CHAR . "NIL") (31 17 31 47))))
  (|mtree_null| 0
-  (|mtree_null-1| NIL 3998300000 ("" (THEN (EXPAND "mtree") (ASSERT)) NIL NIL) NIL SHOSTAK))
+  (|mtree_null-0| "" 4000130077
+   ("" (EXPAND "mtree") (("" (PROPAX) NIL NIL)) NIL) NIL SHOSTAK))
  (|mtree_cons| 0
-  (|mtree_cons-1| NIL 3998300000 ("" (THEN (EXPAND "mtree" 1 1) (ASSERT)) NIL NIL) NIL SHOSTAK))
+  (|mtree_cons-0| "" 4000130078
+   ("" (EXPAND "mtree" 1 1) (("" (PROPAX) NIL NIL)) NIL) NIL SHOSTAK))
  (|snormp_lmul| 0
-  (|snormp_lmul-1| NIL 3998300000 ("" (THEN (SKEEP) (REWRITE "snormp_sel") (REWRITE "sl_of_slist") (EXPAND "lmn") (PROPAX)) NIL NIL) NIL SHOSTAK))
+  (|snormp_lmul-0| "" 4000130078
+   ("" (SKEEP)
+    (("" (REWRITE "snormp_sel")
+      (("" (REWRITE "sl_of_slist")
+        (("" (EXPAND "lmn") (("" (PROPAX) NIL NIL)) NIL)) NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK))
  (|select_mtree| 0
-  (|select_mtree-1| NIL 3998300000 ("" (SPREAD (INDUCT "Q")
- ((THEN (SKEEP) (REWRITE "mtree_null") (REWRITE "select_bmap") (REWRITE "select_ctree_at") (REWRITE "mts_null") (REWRITE "tq_tqf"))
-  (THEN (SKEEP) (SKEEP) (REWRITE "mtree_cons") (REWRITE "mts_cons")
-        (REWRITE "select_bbind") (REWRITE "select_bbind") (REWRITE "select_bbind") (REWRITE "select_bmap")
-        (REPEAT (REWRITE "snormp_lmul"))
-        (INST-CP -1 "k" "l0" "lmn(cons1_var, g, ys)" "ys")
-        (INST -1 "k" "l0" "lmn(cons1_var, lmn(cons1_var, g, ys), ys)" "ys")
-        (ASSERT)))) NIL NIL) NIL SHOSTAK)))
+  (|select_mtree-0| "" 4000130079
+   ("" (INDUCT "Q")
+    (("1" (SKEEP)
+      (("1" (REWRITE "mtree_null")
+        (("1" (REWRITE "select_bmap")
+          (("1" (REWRITE "select_ctree_at")
+            (("1" (REWRITE "mts_null") (("1" (REWRITE "tq_tqf") NIL NIL)) NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL)
+     ("2" (SKEEP)
+      (("2" (SKEEP)
+        (("2" (REWRITE "mtree_cons")
+          (("2" (REWRITE "mts_cons")
+            (("2" (REWRITE "select_bbind")
+              (("2" (REWRITE "select_bbind")
+                (("2" (REWRITE "select_bbind")
+                  (("2" (REWRITE "select_bmap")
+                    (("2" (REWRITE "snormp_lmul")
+                      (("2" (REWRITE "snormp_lmul")
+                        (("2"
+                          (INST-CP -1 "k" "l0" "lmn(cons1_var, g, ys)" "ys")
+                          (("2"
+                            (INST -1 "k" "l0"
+                             "lmn(cons1_var, lmn(cons1_var, g, ys), ys)" "ys")
+                            (("2" (ASSERT) NIL NIL)) NIL))
+                          NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   NIL SHOSTAK)))
+

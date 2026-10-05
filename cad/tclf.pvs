@@ -49,7 +49,7 @@ BEGIN
   tlast(TW): RECURSIVE list[list[mpoly]] =
     IF null?(TW) THEN null[list[mpoly]] ELSIF null?(cdr(TW)) THEN car(TW) ELSE tlast(cdr(TW)) ENDIF
   MEASURE length(TW)
-  len_cons: LEMMA length(TW) >= 1 IMPLIES cons?(TW)
+  len_cons_tclf: LEMMA length(TW) >= 1 IMPLIES cons?(TW)
   tlast_cons: LEMMA cons?(TW) AND cons?(cdr(TW)) IMPLIES tlast(TW) = tlast(cdr(TW))
 
   CLF(TW, ws): RECURSIVE bool =

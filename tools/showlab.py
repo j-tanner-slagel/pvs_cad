@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import re,sys
 # usage: showlab.py transcript formula label maxchars [hyps_only_first_lines]
 path,f,lab=sys.argv[1],sys.argv[2],sys.argv[3]; L=int(sys.argv[4]) if len(sys.argv)>4 else 2000

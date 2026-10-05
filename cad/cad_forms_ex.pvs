@@ -10,7 +10,8 @@ cad_forms_ex: THEORY
 % subtype, constant and NOT groups are one (cad) call each, except where a
 % (skeep) is noted; the (cad *) and (cad-qe) lemmas take (skeep) then (cad *),
 % or (skeep), (split), and on each side (flatten), (cad-qe) and (cad *).
-% cad_showcase has the commented tour.
+% cad_showcase has the commented tour; a few lemmas here repeat its examples
+% on purpose, so that the regression set stands on its own.
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING pvs_cad
@@ -103,8 +104,33 @@ BEGIN
   %% quantifier whose body folds to a constant; sq against x * x --------------------------------
   fx_below_star: LEMMA FORALL (i: below(5)): i * i + i >= 0
   fx_below: LEMMA FORALL (i: below(5)): i * i <= 16
-  fx_qf_imp_false: LEMMA FORALL (c: real): ((c * c - 2 * c + 1 >= 0) IMPLIES FALSE) IMPLIES 1 = 2
+  %% a theory constant, so that nothing is substituted: (flatten) (cad -1) gets the hypothesis
+  %% P IMPLIES FALSE itself; fx_qf_imp_goal, the same by (cad), the goal side
+  qc: real
+  fx_qf_imp_false: LEMMA ((qc * qc - 2 * qc + 1 >= 0) IMPLIES FALSE) IMPLIES 1 = 2
+  fx_qf_imp_goal: LEMMA ((qc * qc - 2 * qc + 1 >= 0) IMPLIES FALSE) IMPLIES 1 = 2
   fx_leaf_refl: LEMMA FORALL (x: real): EXISTS (y: posreal): y <= y AND y > x
   fx_fold_q: LEMMA (FORALL (x: real): NOT (x < x)) AND (EXISTS (y: real): y^3 = 2)
   fx_sq: LEMMA FORALL (c: real): sq(c) = c * c
+
+  %% ---- found by the review of 2026-10-03 -------------------------------------------------------
+  %% the synonym ⇔; binders written nonneg_real, nonpos_real, nonzero_real; a posnat unknown
+  %% after (skeep)
+  fx_syn_iff_uni: LEMMA FORALL (a: real): (EXISTS (t: real): t^2 = a) ⇔ a >= 0
+  fx_s_nonneg: LEMMA FORALL (x: nonneg_real): x + 1 > 0
+  fx_s_nonpos: LEMMA FORALL (x: nonpos_real): x - 1 < 0
+  fx_s_nonzero: LEMMA FORALL (x: nonzero_real): x^2 > 0
+  fx_typed_posnat: LEMMA FORALL (n: posnat): n^2 >= n
+  %% OR, IMPLIES and IFF refuted as hypotheses; a grouped binder and subtype binders in one
+  fx_h_or2: LEMMA NOT ((FORALL (x: real): x^2 < 0) OR (EXISTS (y: real): y^2 < -1))
+  fx_h_imp2: LEMMA NOT ((EXISTS (x: real): x^2 = 2) IMPLIES (FORALL (y: real): y^2 > 0))
+  fx_h_iff2: LEMMA NOT ((EXISTS (x: real): x^2 = 2) IFF (FORALL (y: real): y^2 > 0))
+  fx_h_grouped: LEMMA NOT (FORALL (x, y: real): x^2 + y^2 > 0)
+  fx_s_hyp_nn: LEMMA NOT (EXISTS (x: nnreal): x + 1 <= 0)
+  fx_s_hyp_np: LEMMA NOT (EXISTS (x: npreal): x > 0)
+  fx_s_hyp_nz: LEMMA NOT (EXISTS (x: nzreal): x^2 = 0)
+  %% (cad-direct) on a formula that is not prenex
+  cd_general: LEMMA FORALL (a: real): (EXISTS (x: real): x^2 = a) OR a < 0
+  %% (cad-qe) on an alternating prefix: (skeep), (split), on each side (flatten), (cad-qe), (cad *)
+  qe_alt_forms_ex: LEMMA (FORALL (x: real): EXISTS (y: real): x * y = a) IFF a = 0
 END cad_forms_ex

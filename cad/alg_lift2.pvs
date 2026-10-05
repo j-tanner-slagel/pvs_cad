@@ -29,8 +29,8 @@ BEGIN
   ss: VAR list[Sect]
 
   %% fuel: the chain of f and its derivative is no longer than f
-  mlen(F): RECURSIVE nat =
-    IF null?(F) THEN 0 ELSE max(length(car(F)), mlen(cdr(F))) ENDIF
+  mlen_alg_lift2(F): RECURSIVE nat =
+    IF null?(F) THEN 0 ELSE max(length(car(F)), mlen_alg_lift2(cdr(F))) ENDIF
   MEASURE length(F)
 
   %% the sign of a member on the section between two rational neighbours
@@ -53,7 +53,7 @@ BEGIN
   MEASURE length(ss)
 
   svs_alg2(F, a): SVL =
-    awalk2(mlen(F), a, F, sects(sortu(acands(a, F))))
+    awalk2(mlen_alg_lift2(F), a, F, sects(sortu(acands(a, F))))
 
   %% ---- the condition: NO discriminant anywhere in it -------------------
   aok1b(k, a, f): bool =
@@ -65,7 +65,7 @@ BEGIN
     IF null?(F) THEN TRUE ELSE aok1b(k, a, car(F)) AND aokF(k, a, cdr(F)) ENDIF
   MEASURE length(F)
 
-  aok2?(a, F): bool = aokF(mlen(F), a, F)
+  aok2?(a, F): bool = aokF(mlen_alg_lift2(F), a, F)
 
   %% ---- the two-quantifier decision on top of it ------------------------
   dec2b(q1: bool, q2: bool, (G: list[list[mpoly]]), (Psi: [SV -> bool])): bool =

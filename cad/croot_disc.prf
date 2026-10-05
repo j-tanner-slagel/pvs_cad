@@ -1,21 +1,21 @@
 (|croot_disc|
  (|rm1_TCC1| 0
   (|rm1_TCC1-0| "" 3999842402 ("" (SUBTYPE-TCC) NIL NIL) NIL SHOSTAK
-   (|rm1| SUBTYPE "L" "(list_adt[complex].cons?)" (30 14 30 15)))
-  (|rm1_TCC1-1| NIL 3999842401 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
    (|rm1| SUBTYPE "L" "(list_adt[complex].cons?)" (30 14 30 15))))
  (|rm1_TCC2| 0
-  (|rm1_TCC2-0| "" 3999842402 ("" (TERMINATION-TCC) NIL NIL) NIL SHOSTAK
-   (|rm1| TERMINATION "rm1(x, cdr[complex](L))" #A((3) BASE-CHAR . "NIL")
-    (31 22 31 36)))
-  (|rm1_TCC2-1| NIL 3999842401 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
+  (|rm1_TCC2-0| "" 3999842402 ("" (TERMINATION-TCC) NIL NIL)
+   ((|length| DEF-DECL "nat" |list_props| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL))
+   SHOSTAK
    (|rm1| TERMINATION "rm1(x, cdr[complex](L))" #A((3) BASE-CHAR . "NIL")
     (31 22 31 36))))
- (|mem_cons| 0
-  (|mem_cons-0| "" 3999842460
+ (|mem_cons_croot_disc| 0
+  (|mem_cons_croot_disc-0| "" 4000196637
    ("" (SKEEP) (("" (EXPAND "member" 1 1) (("" (PROPAX) NIL NIL)) NIL)) NIL)
-   NIL SHOSTAK)
-  (|mem_cons-1| NIL 3999842460 ("" (POSTPONE) NIL NIL) NIL SHOSTAK))
+   ((|member| DEF-DECL "bool" |list_props| NIL)) SHOSTAK))
  (|rm1_len| 0
   (|rm1_len-0| "" 3999842430
    ("" (INDUCT "L")
@@ -55,20 +55,43 @@
         NIL))
       NIL))
     NIL)
-   NIL SHOSTAK)
-  (|rm1_len-1| NIL 3999842403 ("" (POSTPONE) NIL NIL)
-   ((|list_induction| FORMULA-DECL NIL |list_adt| NIL)
+   ((|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
     (|complex| TYPE-EQ-DECL NIL |complex_types| |complex|)
+    (|rm1| DEF-DECL "list[complex]" |croot_disc| NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (+ CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
+    (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|member| DEF-DECL "bool" |list_props| NIL)
+    (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL))
    SHOSTAK))
  (|rm1_mem| 0
-  (|rm1_mem-2| "" 3999842478
+  (|rm1_mem-0| "" 4000196847
    ("" (INDUCT "L")
     (("1" (SKEEP) (("1" (EXPAND "member") (("1" (PROPAX) NIL NIL)) NIL)) NIL)
      ("2" (SKOLEM 1 ("c" "L"))
       (("2" (FLATTEN)
         (("2" (SKEEP)
-          (("2" (REWRITE "mem_cons" -2)
+          (("2" (REWRITE "mem_cons_croot_disc" -2)
             (("2" (EXPAND "rm1" 2)
               (("2" (CASE "c = x")
                 (("1" (ASSERT) NIL NIL)
@@ -83,21 +106,19 @@
         NIL))
       NIL))
     NIL)
-   NIL SHOSTAK)
-  (|rm1_mem-1| NIL 3999842460 ("" (POSTPONE) NIL NIL)
-   ((|list| TYPE-DECL NIL |list_adt| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|member| DEF-DECL "bool" |list_props| NIL)
-    (/= CONST-DECL "boolean" |notequal| NIL)
-    (|rm1| DEF-DECL "list[complex]" |croot_disc| NIL)
-    (|complex| TYPE-EQ-DECL NIL |complex_types| |complex|)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+   ((= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (|mem_cons_croot_disc| FORMULA-DECL NIL |croot_disc| NIL)
     (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
-    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (|mem_cons| FORMULA-DECL NIL |croot_disc| NIL))
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|complex| TYPE-EQ-DECL NIL |complex_types| |complex|)
+    (|rm1| DEF-DECL "list[complex]" |croot_disc| NIL)
+    (/= CONST-DECL "boolean" |notequal| NIL)
+    (|member| DEF-DECL "bool" |list_props| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL))
    SHOSTAK))
  (|sep_one| 0
   (|sep_one-0| "" 3999842485
@@ -117,30 +138,28 @@
         NIL))
       NIL))
     NIL)
-   NIL SHOSTAK)
-  (|sep_one-1| NIL 3999842460 ("" (POSTPONE) NIL NIL)
-   ((|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|complex| TYPE-EQ-DECL NIL |complex_types| |complex|)
-    (- CONST-DECL "complex" |complex_types| |complex|)
-    (|abs_triangle| FORMULA-DECL NIL |polar| |complex|)
-    (+ CONST-DECL "complex" |complex_types| |complex|)
-    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|nnreal_plus_nnreal_is_nnreal| APPLICATION-JUDGEMENT "nnreal" |real_types|
-     NIL)
-    (|complex_ext| FORMULA-DECL NIL |complex_types| |complex|)
-    (|real_minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
-    (|real_plus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
-    (|Im_add1| FORMULA-DECL NIL |complex_types| |complex|)
-    (|Im_sub1| FORMULA-DECL NIL |complex_types| |complex|)
-    (|Re_add1| FORMULA-DECL NIL |complex_types| |complex|)
-    (|Re_sub1| FORMULA-DECL NIL |complex_types| |complex|)
-    (|cabs_sym| FORMULA-DECL NIL |croot_lsc| NIL)
+   ((|sep?| CONST-DECL "bool" |croot_disc| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
-    (|sep?| CONST-DECL "bool" |croot_disc| NIL))
+    (|cabs_sym| FORMULA-DECL NIL |croot_lsc| NIL)
+    (|Re_sub1| FORMULA-DECL NIL |complex_types| |complex|)
+    (|Re_add1| FORMULA-DECL NIL |complex_types| |complex|)
+    (|Im_sub1| FORMULA-DECL NIL |complex_types| |complex|)
+    (|Im_add1| FORMULA-DECL NIL |complex_types| |complex|)
+    (|real_plus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (|real_minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (|complex_ext| FORMULA-DECL NIL |complex_types| |complex|)
+    (|nnreal_plus_nnreal_is_nnreal| APPLICATION-JUDGEMENT "nnreal" |real_types|
+     NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (+ CONST-DECL "complex" |complex_types| |complex|)
+    (|abs_triangle| FORMULA-DECL NIL |polar| |complex|)
+    (- CONST-DECL "complex" |complex_types| |complex|)
+    (|complex| TYPE-EQ-DECL NIL |complex_types| |complex|)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL))
    SHOSTAK))
  (|sep_cdr| 0
   (|sep_cdr-0| "" 3999842495
@@ -154,20 +173,18 @@
         NIL))
       NIL))
     NIL)
-   NIL SHOSTAK)
-  (|sep_cdr-1| NIL 3999842460 ("" (POSTPONE) NIL NIL)
-   ((|member| DEF-DECL "bool" |list_props| NIL)
-    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
-    (|posreal_times_posreal_is_posreal| APPLICATION-JUDGEMENT "posreal"
-     |real_types| NIL)
+   ((|sep?| CONST-DECL "bool" |croot_disc| NIL)
     (|complex| TYPE-EQ-DECL NIL |complex_types| |complex|)
     (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|sep?| CONST-DECL "bool" |croot_disc| NIL))
+    (|posreal_times_posreal_is_posreal| APPLICATION-JUDGEMENT "posreal"
+     |real_types| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|member| DEF-DECL "bool" |list_props| NIL))
    SHOSTAK))
  (|cover_len| 0
-  (|cover_len-2| "" 3999842535
+  (|cover_len-3| "" 4000196846
    ("" (INDUCT "A")
     (("1" (SKEEP)
       (("1" (ASSERT)
@@ -193,7 +210,7 @@
                               (("2" (COPY "cA")
                                 (("2" (EXPAND "covers?" -1)
                                   (("2" (INST -1 "a0")
-                                    (("2" (REWRITE "mem_cons" -1)
+                                    (("2" (REWRITE "mem_cons_croot_disc" -1)
                                       (("2" (ASSERT)
                                         (("2" (SKOLEM -1 "z0")
                                           (("2" (FLATTEN)
@@ -237,7 +254,7 @@
                                                                    "a")
                                                                   (("4"
                                                                     (REWRITE
-                                                                     "mem_cons"
+                                                                     "mem_cons_croot_disc"
                                                                      "cA")
                                                                     (("4"
                                                                       (ASSERT)
@@ -269,11 +286,11 @@
                                                                                   "z0"))
                                                                                 (("1"
                                                                                   (REWRITE
-                                                                                   "mem_cons"
+                                                                                   "mem_cons_croot_disc"
                                                                                    -1)
                                                                                   (("1"
                                                                                     (REWRITE
-                                                                                     "mem_cons"
+                                                                                     "mem_cons_croot_disc"
                                                                                      -1)
                                                                                     (("1"
                                                                                       (ASSERT)
@@ -342,53 +359,7 @@
         NIL))
       NIL))
     NIL)
-   NIL SHOSTAK)
-  (|cover_len-0| "" 3999842520
-   ("" (INDUCT "A")
-    (("1" (SKEEP)
-      (("1" (EXPAND "length" 1 1)
-        (("1" (ASSERT) (("1" (SKEEP) (("1" (ASSERT) NIL NIL)) NIL)) NIL)) NIL))
-      NIL)
-     ("2" (SKOLEM 1 ("a0" "A1"))
-      (("2" (FLATTEN)
-        (("2" (LABEL "IH" -1)
-          (("2" (SKOLEM 1 "Lz")
-            (("2" (LABEL "dA" -1) (("2" (POSTPONE) NIL NIL)) NIL)) NIL))
-          NIL))
-        NIL))
-      NIL))
-    NIL)
-   NIL SHOSTAK)
-  (|cover_len-1| NIL 3999842460 ("" (POSTPONE) NIL NIL)
-   ((|list| TYPE-DECL NIL |list_adt| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (>= CONST-DECL "bool" |reals| NIL)
-    (|nonneg_real| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
-    (> CONST-DECL "bool" |reals| NIL)
-    (|posreal| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
-    (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|dist?| DEF-DECL "bool" |cpoly_dist| NIL)
-    (|sep?| CONST-DECL "bool" |croot_disc| NIL)
-    (|covers?| CONST-DECL "bool" |croot_disc| NIL)
-    (<= CONST-DECL "bool" |reals| NIL)
-    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
-    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
-    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
-    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|length| DEF-DECL "nat" |list_props| NIL)
-    (|complex| TYPE-EQ-DECL NIL |complex_types| |complex|)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
-    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|mem_cons| FORMULA-DECL NIL |croot_disc| NIL)
+   ((|mem_cons_croot_disc| FORMULA-DECL NIL |croot_disc| NIL)
     (|rm1| DEF-DECL "list[complex]" |croot_disc| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
@@ -401,7 +372,35 @@
     (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
     (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
-    (|rm1_len| FORMULA-DECL NIL |croot_disc| NIL))
+    (|rm1_len| FORMULA-DECL NIL |croot_disc| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|complex| TYPE-EQ-DECL NIL |complex_types| |complex|)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (<= CONST-DECL "bool" |reals| NIL)
+    (|covers?| CONST-DECL "bool" |croot_disc| NIL)
+    (|sep?| CONST-DECL "bool" |croot_disc| NIL)
+    (|dist?| DEF-DECL "bool" |cpoly_dist| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|posreal| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (> CONST-DECL "bool" |reals| NIL)
+    (|nonneg_real| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL))
    SHOSTAK))
  (|disc_one| 0
   (|disc_one-0| "" 3999842551
@@ -468,34 +467,32 @@
         NIL))
       NIL))
     NIL)
-   NIL SHOSTAK)
-  (|disc_one-1| NIL 3999842460 ("" (POSTPONE) NIL NIL)
-   ((|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
-     "(strict_total_order?[real])" |real_props| NIL)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+   ((|list| TYPE-DECL NIL |list_adt| NIL)
+    (|complex| TYPE-EQ-DECL NIL |complex_types| |complex|)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|rm1_len| FORMULA-DECL NIL |croot_disc| NIL)
+    (|cover_len| FORMULA-DECL NIL |croot_disc| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|nonneg_real| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (> CONST-DECL "bool" |reals| NIL)
+    (|posreal| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (|rm1| DEF-DECL "list[complex]" |croot_disc| NIL)
+    (|covers?| CONST-DECL "bool" |croot_disc| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (|rm1_mem| FORMULA-DECL NIL |croot_disc| NIL)
+    (|sep_one| FORMULA-DECL NIL |croot_disc| NIL)
     (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
-    (|sep_one| FORMULA-DECL NIL |croot_disc| NIL)
-    (|rm1_mem| FORMULA-DECL NIL |croot_disc| NIL)
-    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (|covers?| CONST-DECL "bool" |croot_disc| NIL)
-    (|rm1| DEF-DECL "list[complex]" |croot_disc| NIL)
-    (|posreal| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
-    (> CONST-DECL "bool" |reals| NIL)
-    (|nonneg_real| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
-    (>= CONST-DECL "bool" |reals| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (|cover_len| FORMULA-DECL NIL |croot_disc| NIL)
-    (|rm1_len| FORMULA-DECL NIL |croot_disc| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|complex| TYPE-EQ-DECL NIL |complex_types| |complex|)
-    (|list| TYPE-DECL NIL |list_adt| NIL))
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL))
    SHOSTAK)))
 

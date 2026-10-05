@@ -1,5 +1,9 @@
 # (cad *) -- deciding the polynomial content of a whole sequent
 
+> **Status (2026-10-03).** Finished 2026-09-28 (`(cad *)`, cad/PROGRESS.md). Later extended by
+> FORMS_PLAN.md F5 (formulas of any shape) and TERMS_PLAN.md T2-T5 (constants, algebraic
+> operators, functions of constants).
+
 ## Goal
 `(cad)` decides ONE closed prenex formula.  In the middle of a proof the
 facts are spread over the sequent, with free (skolem) constants, next to

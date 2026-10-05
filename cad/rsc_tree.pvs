@@ -28,7 +28,7 @@ BEGIN
   L, E, Q: VAR list[list[mpoly]]
   acc, v: VAR SV
   s: VAR Sign3
-  cx: VAR snorm_ctx.Cx
+  cx: VAR snorm_ctx.Cx_snorm
   ys: VAR list[real]
   x: VAR real
   a, b, c: VAR SVL
@@ -64,13 +64,13 @@ BEGIN
   %% the enumeration
   rsc(k, g, L, E, Q, acc, cx): RECURSIVE btree[SVL] =
     bbindc(cjtreec(k, cons(g, E), Q, cx), cx,
-      LAMBDA (b0: bool, cx1: snorm_ctx.Cx):
+      LAMBDA (b0: bool, cx1: snorm_ctx.Cx_snorm):
         IF NOT b0 THEN bleaf(null[SV])
         ELSIF null?(L) THEN bleaf((: reverse(acc) :))
         ELSE bbindc(rsc(k, g, cdr(L), E, cons(car(L), Q), cons(1, acc), cx1), cx1,
-               LAMBDA (v1: SVL, cx2: snorm_ctx.Cx):
+               LAMBDA (v1: SVL, cx2: snorm_ctx.Cx_snorm):
                  bbindc(rsc(k, g, cdr(L), cons(car(L), E), Q, cons(0, acc), cx2), cx2,
-                   LAMBDA (v2: SVL, cx3: snorm_ctx.Cx):
+                   LAMBDA (v2: SVL, cx3: snorm_ctx.Cx_snorm):
                      bmap(LAMBDA (v3: SVL): append(v1, append(v2, v3)),
                           rsc(k, g, cdr(L), E, cons(lneg(car(L)), Q), cons(-1, acc), cx3))))
         ENDIF)

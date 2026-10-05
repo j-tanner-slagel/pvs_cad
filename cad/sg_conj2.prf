@@ -122,7 +122,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|ctree1_sg_sound| 0
-  (|ctree1_sg_sound-0| "" 3998505571
+  (|ctree1_sg_sound-1| "" 4000196700
    ("" (SKEEP)
     (("" (EXPAND "ctree1_sg" 1)
       (("" (LEMMA "snorm_sg_at" ("l" "g" "ys" "ys"))
@@ -186,7 +186,8 @@
                         (("2" (LEMMA "sel_lok" ("l" "g" "ys" "ys"))
                           (("2" (LEMMA "snorm_length" ("l" "g" "ys" "ys"))
                             (("2"
-                              (LEMMA "length_cdr" ("l" "select(snorm(g), ys)"))
+                              (LEMMA "length_cdr_mpoly_univ"
+                               ("l" "select(snorm(g), ys)"))
                               (("2" (ASSERT)
                                 (("2"
                                   (LEMMA "length0_null"
@@ -248,12 +249,12 @@
     NIL)
    ((|ctree1_sg| CONST-DECL "bool" |sg_conj2| NIL)
     (|sel_lok| FORMULA-DECL NIL |sg_conj2| NIL)
-    (|length_cdr| FORMULA-DECL NIL |mpoly_univ| NIL)
+    (|length_cdr_mpoly_univ| FORMULA-DECL NIL |mpoly_univ| NIL)
     (|length0_null| FORMULA-DECL NIL |mpoly_univ| NIL)
     (|sel_eval| FORMULA-DECL NIL |sg_conj2| NIL)
-    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|snorm_length| FORMULA-DECL NIL |branch_norm| NIL)
     (|mcore_sound| FORMULA-DECL NIL |many_tree| NIL)
     (|mcore_sg_at| FORMULA-DECL NIL |sg_conj| NIL)
@@ -494,8 +495,8 @@
       NIL))
     NIL)
    ((|snorm_det| FORMULA-DECL NIL |sg_norm| NIL)
-    (|snorm_rd| DEF-DECL "list[mpoly]" |sg_norm| NIL)
     (|agree_append| FORMULA-DECL NIL |sg_norm| NIL)
+    (|snorm_rd| DEF-DECL "list[mpoly]" |sg_norm| NIL)
     (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
@@ -814,18 +815,18 @@
     NIL)
    ((|sqsum_len_cons| FORMULA-DECL NIL |rsc_tree| NIL)
     (|max| CONST-DECL "{p: real | p >= m AND p >= n}" |real_defs| NIL)
-    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
-    (|nonneg_rat_max| APPLICATION-JUDGEMENT
-     "{s: nonneg_rat | s >= q AND s >= r}" |real_defs| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|nat_max| APPLICATION-JUDGEMENT "{k: nat | i <= k AND j <= k}" |real_defs|
      NIL)
+    (|nonneg_rat_max| APPLICATION-JUDGEMENT
+     "{s: nonneg_rat | s >= q AND s >= r}" |real_defs| NIL)
     (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|snorm_sg| DEF-DECL "list[mpoly]" |sg_norm| NIL)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
@@ -1231,16 +1232,16 @@
     (>= CONST-DECL "bool" |reals| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|sqsum_live_len| FORMULA-DECL NIL |sg_conj2| NIL)
-    (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
-     NIL)
-    (|even_times_int_is_even| APPLICATION-JUDGEMENT "even_int" |integers| NIL)
-    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
-     NIL)
-    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|even_times_int_is_even| APPLICATION-JUDGEMENT "even_int" |integers| NIL)
+    (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
     (|live_eqs| FORMULA-DECL NIL |sg_conj2| NIL)
     (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|live| DEF-DECL "list[list[mpoly]]" |sg_conj2| NIL)

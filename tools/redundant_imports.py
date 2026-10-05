@@ -1,4 +1,5 @@
-"""redundant.py <dir> [--apply]: find (and optionally remove) IMPORTING entries that are
+#!/usr/bin/env python3
+"""redundant_imports.py <dir> [--apply]: find (and optionally remove) IMPORTING entries that are
 already imported through another import of the same theory.  Instance-aware and
 conservative: an entry is redundant when the SAME entry (name, library, actuals text)
 is reached through another direct import, following only non-parametric theories of

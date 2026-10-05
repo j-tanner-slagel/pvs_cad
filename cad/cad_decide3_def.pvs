@@ -1,6 +1,7 @@
 cad_decide3_def: THEORY
 %----------------------------------------------------------------------------
-% The decision behind (cad), executable part (FINISH_PLAN stage S4).
+% The decision behind (cad) at stage S4, executable part (FINISH_PLAN stage S4;
+% (cad) runs decide8, or decide5 without cad_decide8, today).
 %
 % decide3 has decide2's signature and decide2's meaning.  With two
 % quantifiers it first runs the fast decision decw of cad_fast_def -- sectors

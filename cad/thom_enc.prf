@@ -47,8 +47,8 @@
     (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
-    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|list2array_sound| FORMULA-DECL NIL |array2list| |structures|)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
@@ -80,13 +80,13 @@
       (FORALL (j: below(length(pl))): j > d IMPLIES nth(pl, j) = 0))
      AND (d > 0 IMPLIES nth(pl, d) /= 0)}"
      |polylist| |Sturm|)
-    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
- (|arr_lc| 0
-  (|arr_lc-1| NIL 3998007760
+ (|arr_lc_thom_enc| 0
+  (|arr_lc_thom_enc-0| "" 4000196711
    ("" (SKEEP)
     (("" (TYPEPRED "deg(pl)")
       (("" (REWRITE "arr_nth") (("" (ASSERT) NIL NIL)) NIL)) NIL))
@@ -101,8 +101,8 @@
       (FORALL (j: below(length(pl))): j > d IMPLIES nth(pl, j) = 0))
      AND (d > 0 IMPLIES nth(pl, d) /= 0)}"
      |polylist| |Sturm|)
-    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|polylist_arr| 0
@@ -181,58 +181,20 @@
         NIL))
       NIL))
     NIL)
-   ((|rat_times_rat_is_rat| APPLICATION-JUDGEMENT "rat" |rationals| NIL)
-    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
-    (|rat_plus_rat_is_rat| APPLICATION-JUDGEMENT "rat" |rationals| NIL)
-    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|list_null_extensionality| FORMULA-DECL NIL |list_adt| NIL)
-    (|pl| SKOLEM-CONST-DECL "Polylist" |thom_enc| NIL)
-    (|list_inclusive| FORMULA-DECL NIL |list_adt| NIL)
-    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|list2array| DEF-DECL "T" |array2list| |structures|)
-    (+ CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
-    (* CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
-    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
-    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (- CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
-    (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
+   ((|list| TYPE-DECL NIL |list_adt| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|listn| TYPE-EQ-DECL NIL |listn| |structures|)
     (|array2list| CONST-DECL
      "{l: listn(n) | FORALL (i: below(n)): a(i) = nth(l, i)}" |array2list|
      |structures|)
-    (|nth| DEF-DECL "T" |list_props| NIL)
-    (|below| TYPE-EQ-DECL NIL |nat_types| NIL)
-    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (< CONST-DECL "bool" |reals| NIL)
-    (|listn| TYPE-EQ-DECL NIL |listn| |structures|)
-    (|length| DEF-DECL "nat" |list_props| NIL)
-    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
-    (>= CONST-DECL "bool" |reals| NIL)
-    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
-    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
-    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
-    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL))
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
+    (|list2array| DEF-DECL "T" |array2list| |structures|)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|list_inclusive| FORMULA-DECL NIL |list_adt| NIL)
+    (|list_null_extensionality| FORMULA-DECL NIL |list_adt| NIL)
+    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    NIL
    (|pderiv| SUBTYPE
     "array2list[rat](length[rat](pl) - 1)(LAMBDA (i: nat): (i + 1) * list2array[rat](0)(pl)(i + 1))"
@@ -274,13 +236,13 @@
     (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
-    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|list2array| DEF-DECL "T" |array2list| |structures|)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|listn| TYPE-EQ-DECL NIL |listn| |structures|)
     (|array2list| CONST-DECL
      "{l: listn(n) | FORALL (i: below(n)): a(i) = nth(l, i)}" |array2list|
      |structures|)
-    (|listn| TYPE-EQ-DECL NIL |listn| |structures|)
+    (|list2array| DEF-DECL "T" |array2list| |structures|)
     (|list_cons_eta| FORMULA-DECL NIL |list_adt| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
@@ -358,10 +320,10 @@
     (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|list2array_sound| FORMULA-DECL NIL |array2list| |structures|)
+    (|listn| TYPE-EQ-DECL NIL |listn| |structures|)
     (|array2list| CONST-DECL
      "{l: listn(n) | FORALL (i: below(n)): a(i) = nth(l, i)}" |array2list|
      |structures|)
-    (|listn| TYPE-EQ-DECL NIL |listn| |structures|)
     (|array2list_inv| FORMULA-DECL NIL |array2list| |structures|)
     (|list2array| DEF-DECL "T" |array2list| |structures|)
     (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
@@ -396,8 +358,8 @@
         NIL))
       NIL))
     NIL)
-   ((|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|dk_succ| FORMULA-DECL NIL |thom_lemma| NIL)
+   ((|dk_succ| FORMULA-DECL NIL |thom_lemma| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
     (|dk_0| FORMULA-DECL NIL |thom_lemma| NIL)
     (|dk| DEF-DECL "[nat -> real]" |thom_lemma| NIL)
@@ -454,8 +416,8 @@
         NIL))
       NIL))
     NIL)
-   ((|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|dk_succ| FORMULA-DECL NIL |thom_lemma| NIL)
+   ((|dk_succ| FORMULA-DECL NIL |thom_lemma| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|poly_deriv| CONST-DECL "real" |polynomials| |reals|)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
     (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
@@ -528,11 +490,11 @@
       (FORALL (j: below(length(pl))): j > d IMPLIES nth(pl, j) = 0))
      AND (d > 0 IMPLIES nth(pl, d) /= 0)}"
      |polylist| |Sturm|)
-    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|dk| DEF-DECL "[nat -> real]" |thom_lemma| NIL)
-    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|thom_list_TCC1| 0
@@ -579,8 +541,8 @@
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    NIL
    (|thom_list_nth| SUBTYPE "k - j" "below[length[Sign3](thom_list(pl, a, k))]"
@@ -631,9 +593,9 @@
     (("" (EXPAND "thom")
       (("" (REWRITE "thom_list_length") (("" (ASSERT) NIL NIL)) NIL)) NIL))
     NIL)
-   ((|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+   ((|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|deg| CONST-DECL "{d: below(length(pl)) |
    (d > 0 IFF EXISTS (j: below(length(pl))): j > 0 AND nth(pl, j) /= 0) AND
     (d > 0 IMPLIES
@@ -690,16 +652,16 @@
      |polylist| |Sturm|)
     (|alg_sign_def| FORMULA-DECL NIL |alg_sign| NIL)
     (|value| CONST-DECL "real" |alg_def| NIL)
-    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|thom_encoding_distinct| 0
-  (|thom_encoding_distinct-1| NIL 3998008111
+  (|thom_encoding_distinct-0| "" 4000203053
    ("" (SKEEP)
     (("" (LEMMA "thom_lemma.thom_distinct")
       (("" (INST -1 "arr(pl)" "deg(pl)" "value(a)" "value(b)")
-        (("" (LEMMA "arr_lc")
+        (("" (LEMMA "arr_lc_thom_enc")
           (("" (INST -1 "pl")
             (("" (LEMMA "polylist_arr")
               (("" (INST -1 "pl" "value(a)")
@@ -726,25 +688,7 @@
         NIL))
       NIL))
     NIL)
-   ((|thom_distinct| FORMULA-DECL NIL |thom_lemma| NIL)
-    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|value| CONST-DECL "real" |alg_def| NIL)
-    (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
-    (|alg?| CONST-DECL "bool" |alg_def| NIL)
-    (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
-    (|deg| CONST-DECL "{d: below(length(pl)) |
-   (d > 0 IFF EXISTS (j: below(length(pl))): j > 0 AND nth(pl, j) /= 0) AND
-    (d > 0 IMPLIES
-      (FORALL (j: below(length(pl))): j > d IMPLIES nth(pl, j) = 0))
-     AND (d > 0 IMPLIES nth(pl, d) /= 0)}"
-     |polylist| |Sturm|)
-    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
-    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
-   SHOSTAK))
+   NIL SHOSTAK))
  (|thom_same_p| 0
   (|thom_same_p-1| NIL 3998007955
    ("" (SKEEP)

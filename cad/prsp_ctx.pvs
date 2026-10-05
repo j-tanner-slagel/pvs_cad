@@ -15,18 +15,18 @@ BEGIN
   ys: VAR list[real]
   k: VAR nat
   p0, p1, p2: VAR SL
-  cx: VAR snorm_ctx.Cx
+  cx: VAR snorm_ctx.Cx_snorm
 
   prspc(k, p1, p2, cx): RECURSIVE btree[list[SL]] =
     IF cons?(p2`slist) AND k > 0
     THEN bbindc(snormc(sstep(p1`slist, p2`slist), cx), cx,
-                LAMBDA (p3: SL, cx2: snorm_ctx.Cx):
+                LAMBDA (p3: SL, cx2: snorm_ctx.Cx_snorm):
                   bmap(LAMBDA (cs: list[SL]): cons(p2, cs), prspc(k - 1, p2, p3, cx2)))
     ELSE bleaf((: (# slist := null[mpoly], ssign := 0 #) :))
     ENDIF
   MEASURE k
 
-  select_prspc: THEOREM FORALL (k: nat): FORALL (p1, p2: SL, cx: snorm_ctx.Cx, ys: list[real]):
+  select_prspc: THEOREM FORALL (k: nat): FORALL (p1, p2: SL, cx: snorm_ctx.Cx_snorm, ys: list[real]):
     branch_tree[bool].conds_hold(cx, ys) AND p2 = sl_of(p2`slist, ys) IMPLIES
     select(prspc(k, p1, p2, cx), ys) =
       map(LAMBDA (l: list[mpoly]): sl_of(l, ys), rchain(k, p1`slist, p2`slist, ys))
@@ -34,7 +34,7 @@ BEGIN
   %% the Tarski chain: the second element branches, the rest is prspc
   ctreec(k, p0, g, cx): btree[list[SL]] =
     bbindc(snormc(lmul(g, lderiv(p0`slist)), cx), cx,
-           LAMBDA (p1: SL, cx2: snorm_ctx.Cx):
+           LAMBDA (p1: SL, cx2: snorm_ctx.Cx_snorm):
              bmap(LAMBDA (cs: list[SL]): cons(p0, cs), prspc(k, p0, p1, cx2)))
 
   select_ctreec: LEMMA branch_tree[bool].conds_hold(cx, ys) AND p0 = sl_of(p0`slist, ys) IMPLIES

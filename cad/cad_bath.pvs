@@ -1,8 +1,8 @@
 cad_bath: THEORY
 %----------------------------------------------------------------------------
-% A problem of the Bath CAD example bank decided by (cad) (FINISH_PLAN 3i,
-% stage N11).  Source: Bradford, Davenport and Wilson, "A repository for CAD
-% examples", ACM Communications in Computer Algebra 46(3) 67-69; dataset
+% Problems of the Bath CAD example bank decided by (cad) (FINISH_PLAN 3i,
+% stage N11; bath_02 and bath_05_false added by the review of 2026-10-03).  Source: Wilson, Bradford and Davenport, "A repository for CAD
+% examples", ACM Communications in Computer Algebra 46(3/4) 67-69; dataset
 % maintained by David Wilson, University of Bath Research Data Archive,
 % version 4 (2013), doi 10.15125/BATH-00069, CC-BY-SA 4.0 (bench_pdec has
 % the ten usable closed problems as PVS formulas; bath_06 and bath_11 are
@@ -26,5 +26,14 @@ BEGIN
 
   bath_08_false: LEMMA
     (EXISTS (z: real): FORALL (y: real): EXISTS (x: real): (((z^7 - 1/2 * z^6 + 1/16 * z^5 + 13/4 * z^4 + 75/16 * z^3 - 171/8 * z^2 + 133/8 * z - 15/4 = 0) AND (y^2 - 19188/497 * z^6 + 318/497 * z^5 - 4197/1988 * z^4 - 251555/1988 * z^3 - 481837/1988 * z^2 + 1407741/1988 * z - 297833/994 = 0) AND (x + 4638/497 * z^6 - 75/497 * z^5 + 2111/3976 * z^4 + 61031/1988 * z^3 + 232833/3976 * z^2 - 85042/497 * z + 144407/1988 = 0))))
+    IMPLIES FALSE
+
+  %% the witness search's reduction: the full decision does not finish within its 10 s budget,
+  %% so (cad) fixes one variable to a constant and decides the smaller sentence (bath_02 by
+  %% (cad); bath_05, FALSE, refuted as a hypothesis by (flatten) (cad -1))
+  bath_02: LEMMA
+    EXISTS (r: real): FORALL (x: real): FORALL (y: real): ((((x - r > 0) AND (y - r > 0)) IMPLIES (x^2 * (1 + 2 * y)^2 - y^2 * (1 + 2 * x^2) > 0)))
+  bath_05_false: LEMMA
+    (EXISTS (x: real): FORALL (y: real): EXISTS (z: real): (((4 * x^2 + x * y^2 - z + 1/4 = 0) AND (2 * x + y^2 * z + 1/2 = 0) AND (x^2 * z - 1/2 * x - y^2 = 0 ))))
     IMPLIES FALSE
 END cad_bath

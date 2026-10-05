@@ -1,8 +1,9 @@
 (|cad_proj|
  (|cofs_TCC1| 0
-  (|cofs_TCC1-0| "" 3998596554
-   ("" (SKOSIMP*) (("" (USE "length_cdr") (("" (ASSERT) NIL NIL)) NIL)) NIL)
-   ((|length_cdr| FORMULA-DECL NIL |mpoly_univ| NIL)
+  (|cofs_TCC1-1| "" 4000196615
+   ("" (SKOSIMP*)
+    (("" (USE "length_cdr_mpoly_univ") (("" (ASSERT) NIL NIL)) NIL)) NIL)
+   ((|length_cdr_mpoly_univ| FORMULA-DECL NIL |mpoly_univ| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|odd_minus_odd_is_even| APPLICATION-JUDGEMENT "even_int" |integers| NIL)
@@ -12,12 +13,13 @@
     (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
     (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
    SHOSTAK
-   (|cofs| SUBTYPE "f" "(list_adt[mpoly_adt.mpoly].cons?)" (43 26 43 27))))
+   (|cofs| SUBTYPE "f" "(list_adt[mpoly_adt.mpoly].cons?)" (49 26 49 27))))
  (|cofs_TCC2| 0
-  (|cofs_TCC2-2| "" 3998596583
-   ("" (SKEEP) (("" (USE "length_cdr" ("l" "f")) (("" (ASSERT) NIL NIL)) NIL))
+  (|cofs_TCC2-0| "" 4000196616
+   ("" (SKEEP)
+    (("" (USE "length_cdr_mpoly_univ" ("l" "f")) (("" (ASSERT) NIL NIL)) NIL))
     NIL)
-   ((|length_cdr| FORMULA-DECL NIL |mpoly_univ| NIL)
+   ((|length_cdr_mpoly_univ| FORMULA-DECL NIL |mpoly_univ| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
@@ -25,7 +27,7 @@
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
    SHOSTAK
    (|cofs| TERMINATION "cofs(cdr[mpoly](f))" #A((3) BASE-CHAR . "NIL")
-    (43 31 43 43))))
+    (49 31 49 43))))
  (|projr_TCC1| 0
   (|projr_TCC1-0| "" 3998596556
    ("" (SKOSIMP*) (("" (USE "len_cdr_LL") (("" (ASSERT) NIL NIL)) NIL)) NIL)
@@ -40,7 +42,7 @@
     (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
    SHOSTAK
    (|projr| SUBTYPE "G" "(list_adt[list_adt[mpoly_adt.mpoly].list].cons?)"
-    (54 33 54 34))))
+    (60 33 60 34))))
  (|projr_TCC2| 0
   (|projr_TCC2-2| "" 3998596584
    ("" (SKEEP) (("" (USE "len_cdr_LL" ("LL" "G")) (("" (ASSERT) NIL NIL)) NIL))
@@ -53,7 +55,7 @@
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
    SHOSTAK
    (|projr| TERMINATION "projr(f, cdr[list[mpoly]](G))"
-    #A((3) BASE-CHAR . "NIL") (54 72 54 88))))
+    #A((3) BASE-CHAR . "NIL") (60 72 60 88))))
  (|projr_TCC3| 0
   (|projr_TCC3-0| "" 3998596558
    ("" (SKOSIMP*) (("" (USE "len_cdr_LL") (("" (ASSERT) NIL NIL)) NIL)) NIL)
@@ -68,7 +70,7 @@
     (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
    SHOSTAK
    (|projr| SUBTYPE "G" "(list_adt[list_adt[mpoly_adt.mpoly].list].cons?)"
-    (55 22 55 23))))
+    (61 22 61 23))))
  (|projr_TCC4| 0
   (|projr_TCC4-2| "" 3998596585
    ("" (SKEEP) (("" (USE "len_cdr_LL" ("LL" "G")) (("" (ASSERT) NIL NIL)) NIL))
@@ -81,7 +83,7 @@
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
    SHOSTAK
    (|projr| TERMINATION "projr(f, cdr[list[mpoly]](G))"
-    #A((3) BASE-CHAR . "NIL") (55 9 55 25))))
+    #A((3) BASE-CHAR . "NIL") (61 9 61 25))))
  (|proj_TCC1| 0
   (|proj_TCC1-0| "" 3998596560
    ("" (SKOSIMP*) (("" (USE "len_cdr_LL") (("" (ASSERT) NIL NIL)) NIL)) NIL)
@@ -96,7 +98,7 @@
     (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
    SHOSTAK
    (|proj| SUBTYPE "F" "(list_adt[list_adt[mpoly_adt.mpoly].list].cons?)"
-    (62 26 62 27))))
+    (68 26 68 27))))
  (|proj_TCC2| 0
   (|proj_TCC2-2| "" 3998596585
    ("" (SKEEP) (("" (USE "len_cdr_LL" ("LL" "F")) (("" (ASSERT) NIL NIL)) NIL))
@@ -109,7 +111,7 @@
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
    SHOSTAK
    (|proj| TERMINATION "proj(cdr[list[mpoly]](F))" #A((3) BASE-CHAR . "NIL")
-    (62 61 62 73))))
+    (68 61 68 73))))
  (|proj_null| 0
   (|proj_null-5| "" 3998596537 ("" (EXPAND "proj") (("" (PROPAX) NIL NIL)) NIL)
    ((|proj| DEF-DECL "list[list[mpoly]]" |cad_proj| NIL)) SHOSTAK)))

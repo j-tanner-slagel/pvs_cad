@@ -36,7 +36,7 @@ BEGIN
     IF null?(L) THEN 0 ELSIF car(L) < y THEN 1 + nlt(cdr(L), y) ELSE nlt(cdr(L), y) ENDIF
   MEASURE length(L)
 
-  len_cons: LEMMA length(cons(a, L)) = 1 + length(L)
+  len_cons_fibre: LEMMA length(cons(a, L)) = 1 + length(L)
   nlt_le: LEMMA FORALL L: nlt(L, y) <= length(L)
   nlt_mono: LEMMA FORALL L: y <= z IMPLIES nlt(L, y) <= nlt(L, z)
   nlt_strict: LEMMA FORALL L: y <= w AND w < z AND member(w, L) IMPLIES nlt(L, y) < nlt(L, z)

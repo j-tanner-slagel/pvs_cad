@@ -4,9 +4,9 @@ qe_symbolic: THEORY
 % (Phase 3).
 %
 % qe-exists on a formula whose coefficients mention parameters evaluates the
-% pruned decision tree qdecide of qe_tree and adds one fact per branch,
+% pruned decision tree qdecidec of qe_ctx and adds one fact per branch,
 %     <sign conditions on the parameters> IMPLIES <the formula or its negation>,
-% each proved from qe_branch.  The statements below are closed by those facts
+% each proved from qe_branchc.  The statements below are closed by those facts
 % and arithmetic: the conflict-detection question of the paper with the
 % protected radius D left symbolic, and a parametric universal statement.
 %----------------------------------------------------------------------------

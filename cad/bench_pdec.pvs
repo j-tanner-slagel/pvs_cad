@@ -2,12 +2,14 @@ bench_pdec: THEORY
 %----------------------------------------------------------------------------
 % The closed prenex problems of the Bath CAD example bank, as PVS formulas.
 %
-% Source: Bradford, Davenport and Wilson, "A repository for CAD examples",
-% ACM Communications in Computer Algebra 46(3) 67-69, doi 10.1145/2429135.2429137;
+% Source: Wilson, Bradford and Davenport, "A repository for CAD examples",
+% ACM Communications in Computer Algebra 46(3/4) 67-69, doi 10.1145/2429135.2429137;
 % dataset maintained by David Wilson, University of Bath Research Data Archive
-% version 4 (2013), doi 10.15125/BATH-00069, CC-BY-SA 4.0.  Translated from the
-% QEPCAD-syntax file by tools/bath2pvs.py: (E x)/(A x) to quantifiers, /\ \/ ==>
-% to AND OR IMPLIES, brackets to parentheses, juxtaposition made explicit.
+% version 4 (2013), doi 10.15125/BATH-00069, CC-BY-SA 4.0; this file is
+% distributed under CC BY-SA 4.0 (NOTICE.md).  Translated from the QEPCAD-syntax
+% file (by a script not kept in this repository): (E x)/(A x) to quantifiers,
+% /\ \/ ==> to AND OR IMPLIES, brackets to parentheses, juxtaposition made
+% explicit.
 %
 % These are the 12 entries with no free variables and a full quantifier prefix,
 % i.e. the decision problems (cad) is meant to discharge.  Every one needs at

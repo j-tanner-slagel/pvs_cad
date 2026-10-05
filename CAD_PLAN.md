@@ -1,6 +1,12 @@
 # A formally verified computer algebra core for PVS, centered on CAD
 
-Status: plan approved by the user on 2026-09-09; decisions recorded in section 10. Nothing in the library has been built yet.
+Status: plan approved by the user on 2026-09-09; decisions recorded in section 10.
+
+> **Status (2026-10-03).** Phases 0-6 are built (cad/PROGRESS.md). The "what next" parts of this
+> plan were superseded by FINISH_PLAN.md, COMPLETENESS_PLAN.md, GAP_PLAN.md and now NEXT_PLAN.md;
+> it is kept for its survey, prior art and design decisions. Since 2026-09-29 `pvs_cad` is the
+> public release and development is in the private `pvs_cad-dev`; proofs are developed through
+> pvs-cli (CLAUDE.md), not raw `pvs -raw` sessions.
 
 ## 1. Bottom line
 
@@ -35,7 +41,8 @@ Djalal, Vermande; paper: Q. Vermande, CPP 2026) but it is stated over an abstrac
 classical root function and is not executable and has no tactic. Isabelle/HOL has a
 complete multivariate quantifier elimination procedure (Kosaian, Tan, Platzer; CPP 2023)
 that is executable through code export but, in the authors' words, "hangs on all but the
-simplest univariate examples". No prover has an executable, proof-producing CAD. PVS has
+simplest univariate examples". As of September 2026, as far as we found, no prover had an
+executable, proof-producing CAD. PVS has
 the strongest executable univariate engine (Sturm, Tarski, hutch), so it is the natural
 place to build one.
 
@@ -191,7 +198,8 @@ at both `rat` (for computation) and `complex` (for the proof), so Phase 4 must b
 written generically from the start.
 
 D7. Standing workflow rules from `CLAUDE.md` apply: small topic-scoped theories, raw
-`pvs -raw` sessions, no skipped lemmas, three clean `proveit -f` runs plus a traces run
+`pvs -raw` sessions [superseded: proofs are developed through pvs-cli, CLAUDE.md rule 1], no
+skipped lemmas, three clean `proveit -f` runs plus a traces run
 per file, `top.pvs` description blocks, commit after each verified file.
 
 ## 6. Phases
@@ -473,7 +481,8 @@ after Phase 5.
    `WCV_taumod.pvs`, and the `_interval` lemmas), a Boolean combination of quadratics in
    `s`, `v`, `t` with parameters `DTHR`, `TAUMOD`, `ZTHR`, `TCOA`. Phase 0 imports a copy
    of those theories as the benchmark set.
-6. This directory is the CAD repository: private GitHub `j-tanner-slagel/pvs_cad`.
+6. This directory is the CAD repository: private GitHub `j-tanner-slagel/pvs_cad`. [Since
+   2026-09-29 `pvs_cad` is the public release; development is in the private `pvs_cad-dev`.]
 8. Benchmarks for the decision procedure (agreed 2026-09-09): the WCV_inclusion and
    ACCoRD universal lemmas with symbolic parameters, and the literature CAD problems,
    in addition to the executable and symbolic bands (section 11.4).
@@ -481,7 +490,7 @@ after Phase 5.
    item); `paper/main.tex` is the report of the entire formalization, intended for a
    conference submission, with a methods section on LLM-assisted formalization whose
    usage table (tokens, wall-clock, turns, tool calls per session) is generated from
-   the Claude Code transcripts by `tools/llm_usage.py`, never estimated.
+   the Claude Code transcripts by `paper/llm_usage.py` (with the paper draft, not public), never estimated.
 7. PVS was updated to 8.1 (built from `SRI-CSL/PVS` master of 2026-08-06) and NASALib
    to 8.1 (master of 2026-07-23) on 2026-09-09; all work targets that pair. Sturm
    (81/81), Tarski (39/39) and hutch (35/35) examples replay on it.

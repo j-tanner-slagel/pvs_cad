@@ -1,5 +1,13 @@
 # Phase 6 completion plan — from a validated projection route to a proved one
 
+> **Corrected and superseded (2026-09-29, GAP_PLAN.md Tier 0; note added 2026-10-03).**
+> `cad_projc` has no reducta, so it is Collins-like, not Collins' operator. The reduction below
+> ("equivalently, two univariate families with the same psc signs realize the same sign
+> vectors") is false: `psc_det_ce.psc_det_false` proves it fails. `delin_projc` is sector-local
+> and needs connectedness. This plan was superseded by FINISH_PLAN.md (2026-09-21) and, for
+> Collins' projection, by COLLINS_PLAN.md (finished 2026-10-01). It is kept as written, for the
+> record.
+
 Status as of 2026-09-16: the projection route decides ex_line, ex_circle,
 ex_disc and ex_three correctly (negative controls pass) at 0.39–1.25 s, versus
 1.59–68.89 s for the read closure and "does not finish" for ex_three. Measured

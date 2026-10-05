@@ -11,10 +11,10 @@ snorm_ctx: THEORY
 BEGIN
   IMPORTING hutch_oracle
 
-  Cx: TYPE = list[branch_tree[bool].SignCond]
+  Cx_snorm: TYPE = list[branch_tree[bool].SignCond]
   l: VAR list[mpoly]
   ys: VAR list[real]
-  cx: VAR Cx
+  cx: VAR Cx_snorm
   c: VAR mpoly
 
   snormc(l, cx): RECURSIVE btree[SL] =
@@ -54,7 +54,7 @@ BEGIN
   %% the two readings of a sign
   msign_sl: LEMMA branch_tree[SL].msign(c, ys) = branch_tree[bool].msign(c, ys)
 
-  snormc_sel: THEOREM FORALL (l: list[mpoly]): FORALL (cx: Cx, ys: list[real]):
+  snormc_sel: THEOREM FORALL (l: list[mpoly]): FORALL (cx: Cx_snorm, ys: list[real]):
     branch_tree[bool].conds_hold(cx, ys) IMPLIES
     select(snormc(l, cx), ys) = sl_of(select(snorm(l), ys), ys)
 END snorm_ctx

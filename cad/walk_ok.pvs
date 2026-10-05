@@ -154,7 +154,7 @@ BEGIN
   gap_mem: LEMMA FORALL G: some(LAMBDA (g: list[mpoly]): rootin?(F, sg, g, lo, hi))(G)
     IMPLIES EXISTS g: member(g, G) AND rootin?(F, sg, g, lo, hi)
   strip_live: LEMMA length(strip(g)) >= 2 IMPLIES live?(g)
-  some_intro: LEMMA FORALL G: member(g, G) AND rootin?(F, sg, g, lo, hi)
+  some_intro_walk_ok: LEMMA FORALL G: member(g, G) AND rootin?(F, sg, g, lo, hi)
     IMPLIES some(LAMBDA (g: list[mpoly]): rootin?(F, sg, g, lo, hi))(G)
   %% nothing outside [car(Y), rlast(Y)], member by member, hence for the product
   leftok_mem: LEMMA FORALL G: leftok?(F, msg(ys), y0, G) AND member(g, G) AND length(strip(g)) >= 2
@@ -192,7 +192,7 @@ BEGIN
     IMPLIES member(svec(F, cons(z, ys)), walk(F, msg(ys), Y))
 
   %% a section the walk emits is the vector at the gap's root
-  sec_fib: LEMMA cons?(Y) AND cons?(cdr(Y)) AND yok?(F, ys, Y)
+  sec_fib_walk_ok: LEMMA cons?(Y) AND cons?(cdr(Y)) AND yok?(F, ys, Y)
     AND gap?(F, msg(ys), car(Y), car(cdr(Y)))
     IMPLIES fib(F, ys)(sec_sg(F, msg(ys), car(Y), car(cdr(Y))))
 

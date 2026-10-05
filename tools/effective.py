@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import re,sys
 # usage: effective.py session.txt transcript.txt out_cmds.txt  -> writes commands that had an effect (in order)
 raw=open(sys.argv[1]).read().split('\n')[4:]

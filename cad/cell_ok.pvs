@@ -39,9 +39,9 @@ BEGIN
     (member(v, svs_w(F, sg_pt(msg(ys), y0))) IFF fib(F, cons(y0, ys))(v))
 
   %% ---- normalizing a coefficient list through msg ----------------------------------
-  snorm_eval: LEMMA FORALL l: meval(mpol(snorm_sg(l, msg(ys))))(cons(z, ys))
+  snorm_eval_cell_ok: LEMMA FORALL l: meval(mpol(snorm_sg(l, msg(ys))))(cons(z, ys))
     = meval(mpol(l))(cons(z, ys))
-  snorm_lc: LEMMA cons?(snorm_sg(l, msg(ys))) IMPLIES
+  snorm_lc_cell_ok: LEMMA cons?(snorm_sg(l, msg(ys))) IMPLIES
     meval(llast(snorm_sg(l, msg(ys))))(ys) /= 0
   single_eval: LEMMA cons?(g) AND null?(cdr(g)) IMPLIES
     meval(mpol(g))(cons(z, ys)) = meval(car(g))(ys)

@@ -50,7 +50,7 @@ BEGIN
   edeg_eq_neg: LEMMA (FORALL j: earr(g, p)(j) = 0) IMPLIES edeg(g, p) = -1
 
   %% ---- one effective degree on C ------------------------------------------------------------
-  sign3_zero: LEMMA sign3(y) = 0 IFF y = 0
+  sign3_zero_col_eff: LEMMA sign3(y) = 0 IFF y = 0
   sign3_eq_zero: LEMMA FORALL (x: real): sign3(x) = sign3(y) IMPLIES (x = 0 IFF y = 0)
   col_kept: LEMMA edeg(g, q) < k AND k < length(g) IMPLIES kept?(g, k)
   col_kept_top: LEMMA edeg(g, q) = k IMPLIES kept?(g, k)

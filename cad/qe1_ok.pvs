@@ -14,8 +14,8 @@ qe1_ok: THEORY
 % qe1_o's output holds at x iff the bound quantifiers hold with x as the
 % free variable.  qe1_qf: when qf is set the output is quantifier-free.
 % qe1_u_ok: the escalation always ends with the certificate (decn_u's
-% measure); qe1_bf: the form (cad-qe) uses, for a Boolean combination of
-% sign conditions.
+% measure); qe1_bf: the same for a Boolean combination of sign conditions
+% ((cad-qe) proves from qe8_correct or qe_correct).
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING qe_def, qe_fm, qe_ldd_ok[list[int]], qe_ep, qe_mrg, cad_out_ok, sect_svec, cad_decide,
@@ -41,7 +41,7 @@ BEGIN
 
   %% ---- lists --------------------------------------------------------------------------------
   filter_mem: LEMMA FORALL es: member(e, filter(pe)(es)) IFF (member(e, es) AND pe(e))
-  every_mem: LEMMA FORALL es: every(pe)(es) AND member(e, es) IMPLIES pe(e)
+  every_mem_qe1_ok: LEMMA FORALL es: every(pe)(es) AND member(e, es) IMPLIES pe(e)
   sigJ_len: LEMMA FORALL J: length(sigJ(J, v)) = length(J)
 
   %% ---- the sign conditions ------------------------------------------------------------------

@@ -14,27 +14,27 @@ BEGIN
   k: VAR nat
   x: VAR real
   ps: VAR list[SL]
-  cx: VAR snorm_ctx.Cx
+  cx: VAR snorm_ctx.Cx_snorm
 
   wtreec(ps, cx): RECURSIVE btree[SL] =
     IF null?(ps) THEN bleaf(one_sl)
-    ELSE bbindc(wtreec(cdr(ps), cx), cx, LAMBDA (w: SL, cx1: snorm_ctx.Cx):
+    ELSE bbindc(wtreec(cdr(ps), cx), cx, LAMBDA (w: SL, cx1: snorm_ctx.Cx_snorm):
            snormc(lmul(car(ps)`slist, w`slist), cx1))
     ENDIF
   MEASURE length(ps)
   wtreec_null: LEMMA wtreec(null[SL], cx) = bleaf(one_sl)
   wtreec_cons: LEMMA FORALL (p: SL): wtreec(cons(p, ps), cx) =
-    bbindc(wtreec(ps, cx), cx, LAMBDA (w: SL, cx1: snorm_ctx.Cx):
+    bbindc(wtreec(ps, cx), cx, LAMBDA (w: SL, cx1: snorm_ctx.Cx_snorm):
       snormc(lmul(p`slist, w`slist), cx1))
-  select_wtreec: THEOREM FORALL (ps: list[SL]): FORALL (cx: snorm_ctx.Cx, ys: list[real]):
+  select_wtreec: THEOREM FORALL (ps: list[SL]): FORALL (cx: snorm_ctx.Cx_snorm, ys: list[real]):
     branch_tree[bool].conds_hold(cx, ys) IMPLIES
     select(wtreec(ps, cx), ys) = sl_of(qprod(slists(ps), ys), ys)
 
   itreec(k, Q, cx): btree[bool] =
-    bbindc(snormpsc(Q, cx), cx, LAMBDA (ps: list[SL], cx1: snorm_ctx.Cx):
+    bbindc(snormpsc(Q, cx), cx, LAMBDA (ps: list[SL], cx1: snorm_ctx.Cx_snorm):
       IF NOT allcons(slists(ps)) THEN bleaf(FALSE)
       ELSIF posinfp(ps) OR neginfp(ps) THEN bleaf(TRUE)
-      ELSE bbindc(wtreec(ps, cx1), cx1, LAMBDA (w: SL, cx2: snorm_ctx.Cx):
+      ELSE bbindc(wtreec(ps, cx1), cx1, LAMBDA (w: SL, cx2: snorm_ctx.Cx_snorm):
              IF length(w`slist) <= 2 THEN bleaf(FALSE)
              ELSE mcountc(k, dsl(w), ps, cx2)
              ENDIF)

@@ -1,10 +1,11 @@
 cad_examples3: THEORY
 %----------------------------------------------------------------------------
 % THREE quantifiers through (cad): since 3i/N10 the n-level decision decn_o
-% of towern_od (decn_correct) reached through decide5, with the earlier fast
-% route decw3 of cad3_def (decw3_correct, through decide4) as its fallback.
-% Each sentence below is closed by the single step (cad); a FALSE one is
-% stated negated in the antecedent form and refuted by (cad -1).
+% of towern_od (decn_correct) reached through decide5 (decn_u; there is no
+% fallback; the earlier route decw3 of cad3_def is decide4's).
+% Each TRUE sentence below is closed by the single step (cad); a FALSE one is
+% stated negated in the antecedent form and refuted by (flatten) then
+% (cad -1).
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING cad_decide5, mpoly_embed
@@ -25,4 +26,7 @@ BEGIN
     x^2 + y^2 + z^2 = 1 OR x^2 + y^2 > 1
   %% the cone has a point over every (x, y)
   t_cone: LEMMA FORALL (x: real): FORALL (y: real): EXISTS (z: real): z^2 = x^2 + y^2
+
+  %% grouped binders, decided through the nested form
+  t_grouped: LEMMA FORALL (x, y: real): EXISTS (z: real): z > x AND z > y
 END cad_examples3

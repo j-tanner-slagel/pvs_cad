@@ -22,7 +22,7 @@
    ("" (SKEEP) (("" (EXPAND "wtreec" 1 1) (("" (PROPAX) NIL NIL)) NIL)) NIL)
    ((|wtreec| DEF-DECL "btree[SL]" |ineq_ctx| NIL)) SHOSTAK))
  (|select_wtreec| 0
-  (|select_wtreec-0| "" 3998355367
+  (|select_wtreec-1| "" 4000196657
    ("" (INDUCT "ps")
     (("1" (SKEEP)
       (("1" (REWRITE "wtreec_null")
@@ -43,7 +43,7 @@
                 (("2" (LEMMA "select_bbindc[SL, SL]")
                   (("2"
                     (INST -1 "wtreec(cons2_var, cx)" "cx" "ys"
-                     "LAMBDA (w: SL, cx1: snorm_ctx.Cx): snormc(lmul(cons1_var`slist, w`slist), cx1)"
+                     "LAMBDA (w: SL, cx1: snorm_ctx.Cx_snorm): snormc(lmul(cons1_var`slist, w`slist), cx1)"
                      "sl_of(lmn(cons1_var`slist, qprod(slists(cons2_var), ys), ys), ys)")
                     (("2" (SPLIT -1)
                       (("1" (PROPAX) NIL NIL) ("2" (PROPAX) NIL NIL)
@@ -81,15 +81,15 @@
     (|select_bbindc| FORMULA-DECL NIL |branch_ctx| NIL)
     (|snormc_sel| FORMULA-DECL NIL |snorm_ctx| NIL)
     (|sl_of_slist| FORMULA-DECL NIL |branch_sgn| NIL)
-    (|lmn| CONST-DECL "list[mpoly]" |tarski_two| NIL)
-    (|lmul| CONST-DECL "list[mpoly]" |mpoly_prod| NIL)
-    (|snormc| DEF-DECL "btree[SL]" |snorm_ctx| NIL)
     (|Cx| TYPE-EQ-DECL NIL |branch_ctx| NIL)
+    (|snormc| DEF-DECL "btree[SL]" |snorm_ctx| NIL)
+    (|lmul| CONST-DECL "list[mpoly]" |mpoly_prod| NIL)
+    (|lmn| CONST-DECL "list[mpoly]" |tarski_two| NIL)
     (|qprod_cons| FORMULA-DECL NIL |poly_rolle| NIL)
     (|wtreec_cons| FORMULA-DECL NIL |ineq_ctx| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
-    (|select_leaf| FORMULA-DECL NIL |branch_tree| NIL)
     (|one_sl| CONST-DECL "SL" |ineq_tree| NIL)
+    (|select_leaf| FORMULA-DECL NIL |branch_tree| NIL)
     (|qprod_null| FORMULA-DECL NIL |poly_rolle| NIL)
     (|one_sl_at| FORMULA-DECL NIL |ineq_tree| NIL)
     (|slists_null| FORMULA-DECL NIL |ineq_ok| NIL)
@@ -116,19 +116,19 @@
     (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (|Cx| TYPE-EQ-DECL NIL |snorm_ctx| NIL)
+    (|Cx_snorm| TYPE-EQ-DECL NIL |snorm_ctx| NIL)
     (|SignCond| TYPE-EQ-DECL NIL |branch_tree| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
    SHOSTAK))
  (|itreec_sound| 0
-  (|itreec_sound-0| "" 3998355440
+  (|itreec_sound-1| "" 4000196658
    ("" (SKEEP)
     (("" (EXPAND "itreec")
       (("" (LEMMA "select_bbindc[list[SL], bool]")
         ((""
           (INST -1 "snormpsc(Q, cx)" "cx" "ys"
-           "LAMBDA (ps: list[SL], cx1: snorm_ctx.Cx): IF NOT allcons(slists(ps)) THEN bleaf(FALSE) ELSIF posinfp(ps) OR neginfp(ps) THEN bleaf(TRUE) ELSE bbindc(wtreec(ps, cx1), cx1, LAMBDA (w: SL, cx2: snorm_ctx.Cx): IF length(w`slist) <= 2 THEN bleaf(FALSE) ELSE mcountc(k, dsl(w), ps, cx2) ENDIF) ENDIF"
+           "LAMBDA (ps: list[SL], cx1: snorm_ctx.Cx_snorm): IF NOT allcons(slists(ps)) THEN bleaf(FALSE) ELSIF posinfp(ps) OR neginfp(ps) THEN bleaf(TRUE) ELSE bbindc(wtreec(ps, cx1), cx1, LAMBDA (w: SL, cx2: snorm_ctx.Cx_snorm): IF length(w`slist) <= 2 THEN bleaf(FALSE) ELSE mcountc(k, dsl(w), ps, cx2) ENDIF) ENDIF"
            "EXISTS (x: real): allgt(Q, ys, x)")
           (("" (SPLIT -1)
             (("1" (ASSERT) (("1" (IFF) (("1" (PROPAX) NIL NIL)) NIL)) NIL)
@@ -196,7 +196,7 @@
                                                             (INST -1
                                                              "wtreec(slofs(Q, ys), cx2_1)"
                                                              "cx2_1" "ys"
-                                                             "LAMBDA (w: SL, cx2: snorm_ctx.Cx): IF length(w`slist) <= 2 THEN bleaf(FALSE) ELSE mcountc(k, dsl(w), slofs(Q, ys), cx2) ENDIF"
+                                                             "LAMBDA (w: SL, cx2: snorm_ctx.Cx_snorm): IF length(w`slist) <= 2 THEN bleaf(FALSE) ELSE mcountc(k, dsl(w), slofs(Q, ys), cx2) ENDIF"
                                                              "EXISTS (x: real): allgt(Q, ys, x)")
                                                             (("2" (SPLIT -1)
                                                               (("1" (ASSERT)
@@ -488,7 +488,7 @@
    ((|itreec| CONST-DECL "btree[bool]" |ineq_ctx| NIL)
     (|btree| TYPE-DECL NIL |btree_adt| NIL)
     (|SignCond| TYPE-EQ-DECL NIL |branch_tree| NIL)
-    (|Cx| TYPE-EQ-DECL NIL |snorm_ctx| NIL)
+    (|Cx_snorm| TYPE-EQ-DECL NIL |snorm_ctx| NIL)
     (|snormpsc| DEF-DECL "btree[list[SL]]" |tarski_ctx| NIL)
     (|Cx| TYPE-EQ-DECL NIL |branch_ctx| NIL)
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
@@ -537,37 +537,37 @@
     (|ex_allgt_nlists| FORMULA-DECL NIL |ineq_ok| NIL)
     (|ineq_far| FORMULA-DECL NIL |ineq_ok| NIL)
     (|allok_nlists| FORMULA-DECL NIL |many_ok| NIL)
-    (|odd_plus_even_is_odd| APPLICATION-JUDGEMENT "odd_int" |integers| NIL)
     (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
+    (|odd_plus_even_is_odd| APPLICATION-JUDGEMENT "odd_int" |integers| NIL)
     (|select_wtreec| FORMULA-DECL NIL |ineq_ctx| NIL)
     (|ineq_small| FORMULA-DECL NIL |ineq_ok| NIL)
     (|lderiv_big| FORMULA-DECL NIL |ineq_ok| NIL)
     (|qprod_len| FORMULA-DECL NIL |ineq_ok| NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|lderiv| CONST-DECL "list[mpoly]" |earr_deriv| NIL)
     (|mcountc_sound| FORMULA-DECL NIL |tarski_ctx| NIL)
     (|ineq_big| FORMULA-DECL NIL |ineq_ok| NIL)
     (|mlen_nlists| FORMULA-DECL NIL |many_ok| NIL)
     (|dgs_le| FORMULA-DECL NIL |ineq_ok| NIL)
     (|dsl_ok| FORMULA-DECL NIL |root_dec| NIL)
-    (|qprod| DEF-DECL "list[mpoly]" |poly_rolle| NIL)
     (|sl_of_slist| FORMULA-DECL NIL |branch_sgn| NIL)
+    (|qprod| DEF-DECL "list[mpoly]" |poly_rolle| NIL)
     (|slofs| CONST-DECL "list[SL]" |many_tree| NIL)
     (|nlists| CONST-DECL "list[list[mpoly]]" |many_ok| NIL)
     (|select_snormpsc| FORMULA-DECL NIL |tarski_ctx| NIL)
-    (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
-     NIL)
-    (|even_times_int_is_even| APPLICATION-JUDGEMENT "even_int" |integers| NIL)
-    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
-    (|even_plus_odd_is_odd| APPLICATION-JUDGEMENT "odd_int" |integers| NIL)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|even_plus_odd_is_odd| APPLICATION-JUDGEMENT "odd_int" |integers| NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|even_times_int_is_even| APPLICATION-JUDGEMENT "even_int" |integers| NIL)
+    (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
     (SL TYPE-EQ-DECL NIL |branch_sgn| NIL)

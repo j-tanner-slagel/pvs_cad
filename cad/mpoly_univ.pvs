@@ -61,7 +61,7 @@ BEGIN
     ENDCASES
 
   length0_null: LEMMA null?(l) IFF length(l) = 0
-  length_cdr: LEMMA cons?(l) IMPLIES length(l) = 1 + length(cdr(l))
+  length_cdr_mpoly_univ: LEMMA cons?(l) IMPLIES length(l) = 1 + length(cdr(l))
   deriv_list_length: LEMMA length(deriv_list(l, k)) = length(l)
   deriv_list_nth: LEMMA i < length(l) IMPLIES nth(deriv_list(l, k), i) = mscal(k + i, nth(l, i))
   deg_mderiv: LEMMA deg(mderiv(p)) = IF deg(p) = 0 THEN 0 ELSE deg(p) - 1 ENDIF

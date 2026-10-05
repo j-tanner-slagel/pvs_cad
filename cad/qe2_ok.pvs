@@ -122,7 +122,7 @@ BEGIN
     IMPLIES (afold(qb, Psi, dnrs(A, L)) IFF sem(qb, F, Psi, pt))
   G2: VAR list[list[mpoly]]
   lm: VAR list[mpoly]
-  svec_mem: LEMMA FORALL G2: member(lm, G2) AND svec(G2, xs) = svec(G2, pt)
+  svec_mem_qe2_ok: LEMMA FORALL G2: member(lm, G2) AND svec(G2, xs) = svec(G2, pt)
     IMPLIES sign3(meval(mpol(lm))(xs)) = sign3(meval(mpol(lm))(pt))
   stk_sv: LEMMA delin_cl?(G2, C) AND stk(G2, C, a)(xs) AND stk(G2, C, a)(pt) IMPLIES svec(G2, xs) = svec(G2, pt)
   gg: VAR mpoly
@@ -142,7 +142,7 @@ BEGIN
   po: VAR [ORec -> bool]
   filter_memo: LEMMA FORALL L: member(r, filter(po)(L)) IFF (member(r, L) AND po(r))
   recof_ok: LEMMA member(A, fkeys(m, L)) IMPLIES member(recof(A, m, L), L) AND ntake(recof(A, m, L)`radr, m - 1) = A
-  ents_mem: LEMMA member(e2, ents2(m, qb, Psi, G, L)) IFF
+  ents_mem_qe2_ok: LEMMA member(e2, ents2(m, qb, Psi, G, L)) IFF
     EXISTS A: member(A, fkeys(m, L)) AND
       e2 = (# key := A, ev := afold(qb, Psi, dnrs(A, L)), sig := sigat(G, length(qb), recof(A, m, L)) #)
 
@@ -174,7 +174,7 @@ BEGIN
   runok_eq: LEMMA length(qs) >= 2 IMPLIES decn_o(u, qs, F, Psi)`ok = runok(u, length(cdr(qs)), F)
 
   qsn_cdr: LEMMA n >= 1 IMPLIES cons?(qsn(n)) AND length(cdr(qsn(n))) = n - 1
-  sect_sem: LEMMA m >= 2 AND cons?(qb) AND runok(u, m - 1 + length(qb), F) AND length(pt) = m
+  sect_sem_qe2_ok: LEMMA m >= 2 AND cons?(qb) AND runok(u, m - 1 + length(qb), F) AND length(pt) = m
     AND member(s, runsects(u, m - 1 + length(qb), F)) AND in?(s, car(dropn(m - 1, pt)))
     IMPLIES (qfsem(secout(m, qb, Psi, s, runtw(u, m - 1 + length(qb), F)(s),
                           secr(s, cad_out(u, qsn(m + length(qb)), F))))(pt)

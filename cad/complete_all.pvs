@@ -1,6 +1,7 @@
 complete_all: THEORY
 %----------------------------------------------------------------------------
-% The decision of (cad) is complete: decide5 answers every closed formula
+% decide5, the decision (cad) runs in a theory without cad_decide8, is
+% complete: decide5 answers every closed formula
 % (COMPLETENESS_PLAN C8).  At most one quantifier: complete1.  Two: decw's
 % certificate, or else decn_u.  Three or more: decn_u (decide_u's
 % decn_u_complete).  With decide5_correct: decide5 always answers, and its
@@ -14,7 +15,7 @@ BEGIN
   Psi: VAR [SV -> bool]
   phi: VAR BF
 
-  len2: LEMMA length(qs) >= 2 IMPLIES cons?(qs) AND cons?(cdr(qs))
+  len2_complete_all: LEMMA length(qs) >= 2 IMPLIES cons?(qs) AND cons?(cdr(qs))
   decq5_complete: THEOREM decq5(qs, F, Psi)`ok
   decide5_complete: THEOREM decide5(reverse(os), F, phi)`ok
   decide5_decides: THEOREM decide5(reverse(os), F, phi)`val IFF fsem(os, F, phi, null)

@@ -94,6 +94,14 @@
 
 ## What remains (2026-10-01)
 
+*[2026-10-03: P5 is done too (determinants by fraction-free elimination), and T2-T5 (constants,
+algebraic operators, functions of constants in (cad)). bath_04/05/07 and L_4, L_5 still take more
+than 300 s and AM–GM in four variables more than 900 s; the open routes are PROJ_PLAN.md P4, P6
+and P7 (NEXT_PLAN.md step 4). b10_amgm takes 0.1 s with decq8. P2's projb is a smaller
+bottom-step projection proved delineating (projb_delin), and P3's checked basis is
+mpoly_gcd_def with mpoly_cert. References to the paper draft are to paper/, which is not in the
+public tree. File:line pointers in this plan are as of 2026-09-29/30 and have drifted since.]*
+
 Only items the plans list; the roadmap below is the plan as of 2026-09-29.
 - **A smaller projection with a delineability proof**: McCallum's or Brown-McCallum's, at first
   Tier 3's Brown reduced McCallum projection on full-dimensional cells with its G/F decision
@@ -108,6 +116,11 @@ Only items the plans list; the roadmap below is the plan as of 2026-09-29.
   bath_04 puts the cost in the size of the projection, and the remedies named are a smaller
   projection, equational constraints and square-free factors; section 4, "Not planned", lists the
   published routes).
+  *[2026-10-02: PROJ_PLAN.md's P1-P3 are done: the determinant through a trie, the minimal
+  bottom step, and a checked squarefree basis of every family. Two-variable problems of degree
+  9 and 10 are now decided (b10_amgm in 0.3 s), but bath_04, 05 and 07 still take more than
+  300 s as decisions. Their cost is now in the lifting, not the projection, so this item stays
+  open (PROJ_PLAN.md P4-P6).]*
 - **Tier 1D** (optional): a static projection operator read off the walk; not done.
 - **Optional geometry** (Tier 1B, section 7 item 8): cells homeomorphic to open cubes, or
   path-connected; not proved.
@@ -132,7 +145,7 @@ Only items the plans list; the roadmap below is the plan as of 2026-09-29.
 1. **The gap is missing definitions and one global theorem. The analysis underneath is already there.**
    - decide5 is proved sound and complete, and its computation is cylindrical.
    - The library already proves the analytic core:
-     - continuity of roots: `root_cont.root_near` (cad/root_cont.pvs:68), `mroot_near` (cad/mroot.pvs:49) and complex `croot_near.root_near` (cad/croot_near.pvs:56);
+     - continuity of roots: `root_cont.root_near` (cad/root_cont.pvs:68), `mroot_near` (cad/mroot.pvs:49) and complex `croot_near.croot_root_near` (cad/croot_near.pvs:56);
      - local sign-invariance of F near section and separator points in Rⁿ (`near_cells`, cad/mwalk.pvs:45-53);
      - fibre-set constancy along sectors (`fib_const`, cad/walk_transfer.pvs:259; `sect_delin`, cad/cad_fast.pvs:44).
    - What is missing:
@@ -179,7 +192,7 @@ decide5 decides every closed prenex sentence of real arithmetic: rational polyno
 - The semantics `fsem` is defined with PVS's own real quantifiers (cad/cad_decide.pvs:91-97).
 - "Closed" is a convention, not a hypothesis. The theorems hold for every F and φ, and any variable beyond the prefix is read as 0 (mpoly_def.pvs:12, 52-53).
 - No axioms are used beyond datatype-generated ones (mpoly_adt, btree_adt, PolyExpr_adt).
-- The proofs are relative to NASALib's saved proofs. That is why PVS labels 2696 of the 3502 formulas "proved - incomplete" in the whole-library summary (/tmp/cad_scratch/endgame/after_all/top.summary; explained at PROGRESS.md:922-933).
+- The proofs are relative to NASALib's saved proofs. That is why PVS labels 2696 of the 3502 formulas "proved - incomplete" in the whole-library summary (of a replay in a scratch copy, not kept; explained at PROGRESS.md:922-933).
 
 How it works:
 - It isolates roots exactly and walks rational separators with a sign oracle.
@@ -197,7 +210,7 @@ What the proofs already establish:
 - Continuity of roots and local sign-invariance, all conditional on read agreements that are certified at run time:
   - `root_cont.root_near` (root_cont.pvs:68);
   - `mroot_near` (mroot.pvs:49), with every coordinate moving;
-  - `croot_near.root_near` (croot_near.pvs:56), for complex roots;
+  - `croot_near.croot_root_near` (croot_near.pvs:56), for complex roots;
   - `near_cells` (mwalk.pvs:45-53), local sign-invariance of F at section and separator points in Rⁿ.
 
 ### 1.2 What a CAD specialist means
@@ -242,12 +255,12 @@ Specialists also expect **quantifier elimination** with free variables as output
 | Where | Text | Problem |
 |---|---|---|
 | README.md:1, :6 | "a verified, complete CAD decision procedure"; "The procedure is cylindrical algebraic decomposition (CAD)" | No theorem says the run produces a CAD (until T1C) |
-| paper/main.tex:10 | "An Executable, Formally Verified Cylindrical Algebraic Decomposition in PVS" | Same |
+| the paper draft (10) | "An Executable, Formally Verified Cylindrical Algebraic Decomposition in PVS" | Same |
 | docs/cad_overview.tex:196 | "delineability and separation are certified at run time" | What is certified is sign-invariance of the reads. That gives fibre-set invariance, not classical delineability |
 | docs/cad_overview.tex:234-236 | "the first executable, proof-producing CAD that is formally verified sound and complete and is usable as a tactic" | Defensible only as "decision procedure in the CAD family" until T1C |
 | cad/top.pvs:1076-1078 | "psc_det? is the only open statement" | `psc_det?` is false (§2.1) |
 | cad/top.pvs:1110-1113; cad/cad_delin.pvs:16-19, 86-88 | "ONLY remaining correctness obligation … equivalently … same psc signs" | The equivalence is wrong. `delin_projc` is sector-local and strictly weaker than `psc_det?` |
-| paper/main.tex:35 (LaTeX comment) | "Rocq (Cohen, Djalal, Vermande 2026): correct, not executable" | Needs precision, not retraction. The authors are right for the development; the CPP paper is by Vermande alone. The lifting uses the choice-based `rootsR`, so it is not practically executable, and no runs are reported |
+| the paper draft (35) (LaTeX comment) | "Rocq (Cohen, Djalal, Vermande 2026): correct, not executable" | Needs precision, not retraction. The authors are right for the development; the CPP paper is by Vermande alone. The lifting uses the choice-based `rootsR`, so it is not practically executable, and no runs are reported |
 | PERF_PLAN.md:121-122 (internal) | "every published tool times out on them without a hand reformulation" | Contradicted by Chen–Moreno Maza (ICMS 2014): RegularChains CAD solved a Joukowski instance in under a minute after mechanical negation and splitting |
 
 ---
@@ -345,7 +358,7 @@ Four risk factors recur in the history:
   - untrusted prototypes (`cad_tree`, the Brown–McCallum prototype, a multivariate gcd that does not exist yet);
   - a full replay before any public proof count changes (994 s each);
   - syncing to the public `pvs_cad` repository.
-- **Paper writing** is not estimated. Intro, Background, Related work, Application and Conclusion are stubs (paper/main.tex:23-38, :729-733, :874-880), and no venue or deadline has been named.
+- **Paper writing** is not estimated. Intro, Background, Related work, Application and Conclusion are stubs (the paper draft (23-38, :729-733, :874-880)), and no venue or deadline has been named.
 
 ---
 
@@ -381,7 +394,7 @@ Gate outcomes marked **[your decision]** change what gets proved. CLAUDE.md:45-4
 - Add a dated PROGRESS.md entry. Do not rewrite earlier entries.
 - Public text:
   - README.md:1 and :6;
-  - paper/main.tex:10 and :35;
+  - the paper draft (10) and :35;
   - docs/cad_overview.tex:196 and :234-236;
   - make_card.py and make_card_surface.py, if the cards will be reused.
 
@@ -506,7 +519,7 @@ cad_exact:    THEOREM ... every recorded sign vector equals svec(fam, den(od)) a
 **Benefit.**
 - **Claim that becomes true after 1C:**
   > "For every finite family F of rational polynomials in n ≥ 2 variables, pvs_cad's n-level procedure builds, with proof, a cylindrical algebraic decomposition of Rⁿ adapted to F: finitely many connected, definable cells, arranged cylindrically over continuous root functions, with every polynomial of F sign-invariant on every cell and an exact sample in every cell. The procedure is total. Its projection sets are a fixpoint of what the lifting reads, certified at run time, and a proved theorem shows that sign-invariant reads imply classical delineability."
-- It makes paper/main.tex:10 and the README literally correct. Keep "(cad) computes a CAD" scoped: at two quantifiers `(cad)` may answer through `decw` (§2.9).
+- It makes the paper draft (10) and the README literally correct. Keep "(cad) computes a CAD" scoped: at two quantifiers `(cad)` may answer through `decw` (§2.9).
 - **Community.**
   - CAD specialists get a `cad?` definition, about 60 lines, that they can audit.
   - `stack_const` is a delineability theorem for a method that replaces a fixed operator's theorem with determinacy plus a run-time certificate. The literature report found no precedent; related work is Strzebonski's local projections, NLSAT and coverings. It is paper-worthy on its own.
@@ -605,7 +618,7 @@ odecide_correct: THEOREM odecide(F, gs, Psi)`ok IMPLIES (odecide(F, gs, Psi)`val
 - **Mathematics (elementary), four steps.**
   1. The easy half of the resultant theorem: a common root puts its power vector in the kernel of the Sylvester matrix. This needs the kernel lemma below first; the repository has none.
   2. Near each simple root: joint continuity gives a box where f_y ≠ 0. The end signs persist, so the IVT plus monotonicity gives exactly one root in the box.
-  3. No stray roots between the boxes. lc ≠ 0 near x₀ bounds all roots uniformly. The proved `croot_near.root_near` (croot_near.pvs:56, with `root_bound` :50 and `cpoly_diff_bound` :43) puts every root of a nearby polynomial of the same degree within ε of a root of f(x₀,·). The alternative is a compactness argument: a positive minimum of |f(x₀,·)| off the boxes.
+  3. No stray roots between the boxes. lc ≠ 0 near x₀ bounds all roots uniformly. The proved `croot_near.croot_root_near` (croot_near.pvs:56, with `root_bound` :50 and `cpoly_diff_bound` :43) puts every root of a nearby polynomial of the same degree within ε of a root of f(x₀,·). The alternative is a compactness argument: a positive minimum of |f(x₀,·)| off the boxes.
   4. Local constancy, extended by `conn?` (Tier 1's layer, through `stack_glob`).
 
   No implicit function theorem or Zariski equimultiplicity is needed.
@@ -812,10 +825,10 @@ How the disagreements were settled:
 
 | Location | Interim wording (until T1C) | After T1C |
 |---|---|---|
-| README.md:1, :6; paper/main.tex:10 | "An Executable, Formally Verified Cylindrical Decision Procedure for Real Arithmetic in PVS"; "The procedure is a cylindrical, CAD-style decision procedure" | The original wording is accurate, scoped to the n-level engine |
+| README.md:1, :6; the paper draft (10) | "An Executable, Formally Verified Cylindrical Decision Procedure for Real Arithmetic in PVS"; "The procedure is a cylindrical, CAD-style decision procedure" | The original wording is accurate, scoped to the n-level engine |
 | docs/cad_overview.tex:196 | "sign-invariance of the lifting's reads, hence invariance of each fibre's set of sign vectors, and root separation are certified at run time" | Add: "and a proved theorem turns this into classical delineability" |
 | docs/cad_overview.tex:234-236 | "to our knowledge the first executable decision procedure in the CAD family that is formally verified sound and complete and usable as a tactic" | "…the first executable CAD construction proved to produce a CAD and usable as a tactic" (re-check the literature first) |
-| paper/main.tex:35 | "Rocq/MathComp (development: Cohen, Djalal, Vermande; paper: Vermande, CPP 2026): Collins-type CAD with delineability proved; choice-based lifting (`rootsR`), not practically executable; no runs reported" | – |
+| the paper draft (35) | "Rocq/MathComp (development: Cohen, Djalal, Vermande; paper: Vermande, CPP 2026): Collins-type CAD with delineability proved; choice-based lifting (`rootsR`), not practically executable; no runs reported" | – |
 
 **Do not say yet:**
 - "verified CAD" without qualification;
@@ -870,7 +883,7 @@ How the disagreements were settled:
 - Han, Jin, Xia, https://arxiv.org/pdf/1205.1223 (generic projection = reduced McCallum); Han, Dai, Xia, https://arxiv.org/pdf/1401.4953
 - Tau Ceti roadmap PR #420: https://github.com/TauCetiProject/TauCetiRoadmap/pull/420 ; hex-dev: https://github.com/kim-em/hex-dev/issues/10300
 - McLaughlin–Harrison, CADE 2005, HOL Light `Rqe/` (https://github.com/jrh13/hol-light); Isabelle AFP `Quantifier_Elimination_Hybrid` (Kosaian–Tan–Platzer); Cohen–Mahboubi, LMCS 2012.
-- Chen, Moreno Maza, ICMS 2014 (RegularChains CAD on the Bath challenges); local copy in the session scratchpad.
+- Chen, Moreno Maza, ICMS 2014 (RegularChains CAD on the Bath challenges).
 - Basu, Pollack, Roy, *Algorithms in Real Algebraic Geometry*, ch. 5.
 - Narkawicz, Muñoz, Dutle, J. Automated Reasoning 54 (2015), doi:10.1007/s10817-015-9320-x
 
@@ -931,7 +944,7 @@ How the disagreements were settled:
 - FINISH_PLAN.md
 - CAD_PLAN.md
 - ITEM1_PLAN.md
-- paper/main.tex
+- the paper draft
 - docs/cad_overview.tex
 - $NASALIB/matrices/matrix_props.pvs
 - $NASALIB/matrices/matrix_inv.pvs

@@ -24,7 +24,7 @@ BEGIN
   arr_nth: LEMMA i < length(pl) IMPLIES arr(pl)(i) = nth(pl, i)
   arr_beyond: LEMMA i >= length(pl) IMPLIES arr(pl)(i) = 0
   arr_above_deg: LEMMA i > deg(pl) IMPLIES arr(pl)(i) = 0
-  arr_lc: LEMMA deg(pl) > 0 IMPLIES arr(pl)(deg(pl)) /= 0
+  arr_lc_thom_enc: LEMMA deg(pl) > 0 IMPLIES arr(pl)(deg(pl)) /= 0
   polylist_arr: LEMMA deg(pl) > 0 IMPLIES polylist(pl)(x) = polynomial(arr(pl), deg(pl))(x)
   polylist_arr_any: LEMMA polylist(pl)(x) = polynomial(arr(pl), length(pl) - 1)(x)
 

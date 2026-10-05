@@ -220,7 +220,7 @@ BEGIN
 
   %% membership in a mapped list
   g: VAR [Alg -> list[Sign3]]
-  map_mem: LEMMA FORALL rs: member(a, rs) IMPLIES member(g(a), map(g)(rs))
+  map_mem_cell1: LEMMA FORALL rs: member(a, rs) IMPLIES member(g(a), map(g)(rs))
   map_mem_inv: LEMMA FORALL rs: member(v, map(g)(rs)) IMPLIES EXISTS a: member(a, rs) AND v = g(a)
 
   %% no root of the family where the isolated roots have no value

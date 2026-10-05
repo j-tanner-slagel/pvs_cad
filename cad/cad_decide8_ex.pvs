@@ -1,9 +1,10 @@
 cad_decide8_ex: THEORY
 %----------------------------------------------------------------------------
 % (cad) through the Collins run (COLLINS_PLAN.md M-I): this theory imports
-% cad_decide8, so (cad) decides by decide8 (decc_u over the tower of Collins
-% projections) and the proof instantiates decide8_correct.  l3_quad took
-% more than 600 s with the read-closure run (decn_o).
+% cad_decide8, so (cad) decides by decide8 (decb_u over the tower of Collins
+% projections, with the checked basis of each family) and the proof
+% instantiates decide8_correct.  l3_quad took more than 600 s with the
+% read-closure run (decn_o).
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING cad_decide8, cad_decide5, mpoly_embed
@@ -15,4 +16,9 @@ BEGIN
 
   c8_l3_quad: LEMMA FORALL (c: real): EXISTS (x1: real): EXISTS (x2: real): EXISTS (x3: real):
     (x1^2 <= 1 AND x2^2 <= 1 AND x3^2 <= 1 AND x1 + x2 + x3 >= c) OR c > 3
+
+  %% (cad :cad-only? t) with one quantifier (the sectors of the line), and on a hypothesis:
+  %% (cad -1 :cad-only? t)
+  c8_one: LEMMA FORALL (x: real): x^4 - 2*x^2 + 1 >= 0
+  c8_hyp: LEMMA NOT (FORALL (x: real): EXISTS (y: real): x * y = 1)
 END cad_decide8_ex

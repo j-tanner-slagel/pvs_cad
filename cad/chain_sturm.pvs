@@ -33,7 +33,7 @@ BEGIN
   %% small facts about the array of a list
   dg_cons: LEMMA cons?(l) IMPLIES dg(l) = length(l) - 1
   dg_null: LEMMA dg(null[mpoly]) = 0
-  earr_null: LEMMA earr(null[mpoly], ys)(i) = 0
+  earr_null_chain_sturm: LEMMA earr(null[mpoly], ys)(i) = 0
   arr_lc: LEMMA cons?(l) IMPLIES earr(l, ys)(dg(l)) = meval(llast(l))(ys)
   lc_arr: LEMMA cons?(l) AND meval(llast(l))(ys) /= 0 IMPLIES earr(l, ys)(dg(l)) /= 0
   poly_null: LEMMA polynomial(earr(null[mpoly], ys), dg(null[mpoly]))(x) = 0

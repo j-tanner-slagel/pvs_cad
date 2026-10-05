@@ -13,6 +13,12 @@ det_fast: THEORY
 % a member keeps a list increasing (drem_incr), so every minor the expansion
 % looks up is in the table below (dtab_ok, by induction on m).  The whole
 % matrix is the set dcols(0, n) of all its columns.
+%
+% The trie (2026-10-02, PROJ_PLAN.md P1): inserting into a trie and then looking
+% up behaves like an association list (tlook_tins), the bits of increasing
+% column sets in range are injective (dbits_inj), so the trie of a table
+% answers what dlook answers (tlook_tbuild), dtabt is dtab (dtabt_dtab), and
+% detf, which uses the trie, is the former detf (detf_eq, detf0_det).
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING det_fast_def, map_member[list[nat], list[nat]], structures@list2set_props[list[nat]]
@@ -76,5 +82,41 @@ BEGIN
   dtab_ok: LEMMA FORALL m: m <= n IMPLIES FORALL S: member(S, dsubs(0, n, m)) IMPLIES
     dlook(S, dtab(n, M, m)) = det(m, smat(M, n - m, S))
 
+  detf0_det: THEOREM detf0(n, M) = det(n, M)
+
+  %% ---- the trie --------------------------------------------------------------------------------
+  bs, bs2, rs: VAR list[bool]
+  v: VAR mpoly
+  t, TT: VAR DTrie
+  y: VAR bool
+
+  tlook_null: LEMMA tlook(null, t) = tv(t)
+  tlook_cons: LEMMA tlook(cons(y, rs), t) = IF y THEN tlook(rs, tt(t)) ELSE tlook(rs, ts(t)) ENDIF
+  tlook_tins: LEMMA FORALL bs: FORALL bs2, v, t:
+    tlook(bs, tins(bs2, v, t)) = IF bs = bs2 THEN v ELSE tlook(bs, t) ENDIF
+
+  inr_empty: LEMMA n <= c AND inr?(c, n)(S) IMPLIES null?(S)
+  inr_skip: LEMMA dincr?(S) AND inr?(c, n)(S) AND NOT (cons?(S) AND car(S) = c) IMPLIES inr?(c + 1, n)(S)
+  inr_take: LEMMA dincr?(S) AND inr?(c, n)(S) AND cons?(S) AND car(S) = c IMPLIES
+    dincr?(cdr(S)) AND inr?(c + 1, n)(cdr(S))
+  dbits_inj: LEMMA FORALL (k: nat): FORALL S1, S2, c, n: n - c <= k
+    AND dincr?(S1) AND inr?(c, n)(S1) AND dincr?(S2) AND inr?(c, n)(S2)
+    AND dbits(S1, c, n) = dbits(S2, c, n) IMPLIES S1 = S2
+
+  keyok?(n)(e: DEnt): bool = dincr?(e`1) AND inr?(0, n)(e`1)
+  tlook_tbuild: LEMMA FORALL T: every(keyok?(n))(T) AND dincr?(S) AND inr?(0, n)(S) IMPLIES
+    tlook(dbits(S, 0, n), tbuild(n, T)) = dlook(S, T)
+
+  dxrowt_dxrow: LEMMA (FORALL b: b < length(S) IMPLIES tlook(dbits(drem(S, b), 0, n), TT) = dlook(drem(S, b), T))
+    IMPLIES FORALL (k: nat): FORALL b: length(S) - b <= k IMPLIES dxrowt(n, M, r, S, TT, b) = dxrow(M, r, S, T, b)
+
+  f, g: VAR [list[nat] -> DEnt]
+  map_ext: LEMMA FORALL L: (FORALL S: member(S, L) IMPLIES f(S) = g(S)) IMPLIES map(f)(L) = map(g)(L)
+  every_mapk: LEMMA FORALL L: (FORALL S: member(S, L) IMPLIES dincr?(S) AND inr?(0, n)(S)) IMPLIES
+    every(keyok?(n))(map(LAMBDA (S1: list[nat]): (S1, h(S1)))(L))
+  every_dtab: LEMMA m <= n IMPLIES every(keyok?(n))(dtab(n, M, m))
+
+  dtabt_dtab: LEMMA FORALL m: m <= n IMPLIES dtabt(n, M, m) = dtab(n, M, m)
+  detf_eq: LEMMA detf(n, M) = detf0(n, M)
   detf_det: THEOREM detf(n, M) = det(n, M)
 END det_fast

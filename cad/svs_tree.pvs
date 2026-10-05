@@ -18,7 +18,7 @@ BEGIN
 
   k: VAR nat
   F: VAR list[list[mpoly]]
-  cx: VAR snorm_ctx.Cx
+  cx: VAR snorm_ctx.Cx_snorm
   ys: VAR list[real]
   x, a, b, c, z: VAR real
   v: VAR SV
@@ -32,14 +32,14 @@ BEGIN
 
   svs(k, F, cx): btree[SVL] =
     bbindc(rsc(k, prodl(F), F, null, null, null, cx), cx,
-      LAMBDA (a: SVL, cx1: snorm_ctx.Cx):
+      LAMBDA (a: SVL, cx1: snorm_ctx.Cx_snorm):
         bbindc(rsc(k, lderiv(prodl(F)), F, null, null, null, cx1), cx1,
-          LAMBDA (b: SVL, cx2: snorm_ctx.Cx):
+          LAMBDA (b: SVL, cx2: snorm_ctx.Cx_snorm):
             bmap(LAMBDA (c: SVL): append(a, append(b, c)), infvs(F, cx2))))
 
   %% the leaf, at a valuation the context admits
   select_svs: LEMMA branch_tree[bool].conds_hold(cx, ys) IMPLIES
-    EXISTS (cx1, cx2: snorm_ctx.Cx):
+    EXISTS (cx1, cx2: snorm_ctx.Cx_snorm):
       branch_tree[bool].conds_hold(cx1, ys) AND branch_tree[bool].conds_hold(cx2, ys) AND
       select(svs(k, F, cx), ys) =
         append(select(rsc(k, prodl(F), F, null, null, null, cx), ys),

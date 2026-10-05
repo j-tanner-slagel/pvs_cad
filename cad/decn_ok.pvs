@@ -7,7 +7,7 @@ decn_ok: THEORY
 %                  (decn_o(u, qs, F, Psi)`val IFF sem(qs, F, Psi, null))
 %
 % Per outer sector s: the tower lvln_o(u, T0, s) has k families and ends with F
-% (lvln_len, lvln_last); its tables are valid and the sample's descriptor is
+% (lvln_shape); its tables are valid and the sample's descriptor is
 % well formed and denotes the sample (tables_vtb, odS_wf, odS_den).  Claim A
 % (innern_sem) reads the inner quantifiers at the sample and gives the
 % closure there; on an open sector the top family's reads keep their signs

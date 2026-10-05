@@ -39,8 +39,8 @@
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL))
    SHOSTAK))
- (|map_mem_inv| 0
-  (|map_mem_inv-3| "" 3998425985
+ (|map_mem_inv_map_member| 0
+  (|map_mem_inv_map_member-0| "" 4000196660
    ("" (INDUCT "l")
     (("1" (SKEEP)
       (("1" (EXPAND "map" -1)

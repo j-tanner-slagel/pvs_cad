@@ -13,28 +13,10 @@
   (|plv_TCC2-1| NIL 3998674480 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
    (|plv| TERMINATION "plv(m - 1)" #A((3) BASE-CHAR . "NIL") (32 49 32 59))))
  (|hybrid_examples| 0
-  (|hybrid_examples-0| "" 3998674481 ("" (EVAL-FORMULA) NIL NIL) NIL SHOSTAK)
-  (|hybrid_examples-1| NIL 3998674480 ("" (POSTPONE) NIL NIL)
-   ((|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (|bijective?| CONST-DECL "bool" |functions| NIL)
-    (|id| CONST-DECL "(bijective?[T, T])" |identity| NIL)
-    (TRUE CONST-DECL "bool" |booleans| NIL))
-   SHOSTAK))
+  (|hybrid_examples-0| "" 3998674481 ("" (EVAL-FORMULA) NIL NIL) NIL SHOSTAK))
  (|hybrid_controls| 0
   (|hybrid_controls-0| "" 3998674482
    ("" (EVAL-EXPR "h_three_f")
     (("" (EVAL-EXPR "h_circle_f") (("" (ASSERT) NIL NIL)) NIL)) NIL)
-   NIL SHOSTAK)
-  (|hybrid_controls-1| NIL 3998674482 ("" (POSTPONE) NIL NIL)
-   ((|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (|bijective?| CONST-DECL "bool" |functions| NIL)
-    (|id| CONST-DECL "(bijective?[T, T])" |identity| NIL)
-    (TRUE CONST-DECL "bool" |booleans| NIL)
-    (FALSE CONST-DECL "bool" |booleans| NIL)
-    (|h_three_f| CONST-DECL "bool" |cad_meas4| NIL)
-    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (|h_circle_f| CONST-DECL "bool" |cad_meas4| NIL))
-   SHOSTAK)))
+   NIL SHOSTAK)))
 

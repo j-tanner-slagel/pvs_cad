@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import re,sys
 path,f=sys.argv[1],sys.argv[2]
 parts=re.split(r'Rule\?\s*',open(path).read())

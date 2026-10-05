@@ -40,7 +40,7 @@
         (osstr  (format nil "(: ~{~a~^, ~} :)"
                         (loop for q in pre collect (if (cdr q) "TRUE" "FALSE"))))
         (expr   (or *cad-prof-expr*
-                    (format nil "decn_o(~a, ~a, LAMBDA (v: SV): bfsv(~a, v))" osstr fstr phistr)))
+                    (format nil "decn_o(0, ~a, ~a, LAMBDA (v: SV): bfsv(~a, v))" osstr fstr phistr)))
         (dummy3 (cad-prof-run expr)))
     (printf "cad-prof: report written"))
   "scratch: profile the n-level decision on FNUM" "")

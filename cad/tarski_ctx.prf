@@ -2,7 +2,7 @@
  (|mtreec_TCC1| 0
   (|mtreec_TCC1-0| "" 3998355101 ("" (SUBTYPE-TCC) NIL NIL) NIL SHOSTAK
    (|mtreec| SUBTYPE "Q" "(list_adt[list_adt[mpoly_adt.mpoly].list].cons?)"
-    (28 32 28 33))))
+    (27 32 27 33))))
  (|mtreec_TCC2| 0
   (|mtreec_TCC2-0| "" 3998355102 ("" (TERMINATION-TCC) NIL NIL)
    ((|length| DEF-DECL "nat" |list_props| NIL)
@@ -13,7 +13,7 @@
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
    SHOSTAK
    (|mtreec| TERMINATION "mtreec(k, p0, cdr[list[mpoly]](Q), g1`slist, cx1)"
-    #A((3) BASE-CHAR . "NIL") (29 18 29 54))))
+    #A((3) BASE-CHAR . "NIL") (28 18 28 54))))
  (|mtreec_null| 0
   (|mtreec_null-0| "" 3998355103
    ("" (SKEEP) (("" (EXPAND "mtreec") (("" (PROPAX) NIL NIL)) NIL)) NIL)
@@ -50,7 +50,7 @@
     (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (|Cx| TYPE-EQ-DECL NIL |snorm_ctx| NIL)
+    (|Cx_snorm| TYPE-EQ-DECL NIL |snorm_ctx| NIL)
     (|SignCond| TYPE-EQ-DECL NIL |branch_tree| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
@@ -61,7 +61,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|select_mtreec| 0
-  (|select_mtreec-0| "" 3998355244
+  (|select_mtreec-1| "" 4000196707
    ("" (INDUCT "Q")
     (("1" (SKEEP)
       (("1" (REWRITE "mtreec_null")
@@ -87,7 +87,7 @@
               (("2" (LEMMA "select_bbindc[SL, int]")
                 (("2"
                   (INST -1 "snormc(lmul(cons1_var, g), cx)" "cx" "ys"
-                   "LAMBDA (g1: SL, cx1: snorm_ctx.Cx): bbindc(mtreec(k, sl_of(l0, ys), cons2_var, g1`slist, cx1), cx1, LAMBDA (n1: int, cx2: snorm_ctx.Cx): bbindc(snormc(lmul(cons1_var, g1`slist), cx2), cx2, LAMBDA (g2: SL, cx3: snorm_ctx.Cx): bmap(LAMBDA (n2: int): n1 + n2, mtreec(k, sl_of(l0, ys), cons2_var, g2`slist, cx3))))"
+                   "LAMBDA (g1: SL, cx1: snorm_ctx.Cx_snorm): bbindc(mtreec(k, sl_of(l0, ys), cons2_var, g1`slist, cx1), cx1, LAMBDA (n1: int, cx2: snorm_ctx.Cx_snorm): bbindc(snormc(lmul(cons1_var, g1`slist), cx2), cx2, LAMBDA (g2: SL, cx3: snorm_ctx.Cx_snorm): bmap(LAMBDA (n2: int): n1 + n2, mtreec(k, sl_of(l0, ys), cons2_var, g2`slist, cx3))))"
                    "mts(k, l0, cons2_var, lmn(cons1_var, g, ys), ys) + mts(k, l0, cons2_var, lmn(cons1_var, lmn(cons1_var, g, ys), ys), ys)")
                   (("2" (SPLIT -1)
                     (("1" (ASSERT) NIL NIL) ("2" (PROPAX) NIL NIL)
@@ -106,7 +106,7 @@
                                             (INST -1
                                              "mtreec(k, sl_of(l0, ys), cons2_var, select(snorm(lmul(cons1_var, g)), ys), cx2_1)"
                                              "cx2_1" "ys"
-                                             "LAMBDA (n1: int, cx2: snorm_ctx.Cx): bbindc(snormc(lmul(cons1_var, select(snorm(lmul(cons1_var, g)), ys)), cx2), cx2, LAMBDA (g2: SL, cx3: snorm_ctx.Cx): bmap(LAMBDA (n2: int): n1 + n2, mtreec(k, sl_of(l0, ys), cons2_var, g2`slist, cx3)))"
+                                             "LAMBDA (n1: int, cx2: snorm_ctx.Cx_snorm): bbindc(snormc(lmul(cons1_var, select(snorm(lmul(cons1_var, g)), ys)), cx2), cx2, LAMBDA (g2: SL, cx3: snorm_ctx.Cx_snorm): bmap(LAMBDA (n2: int): n1 + n2, mtreec(k, sl_of(l0, ys), cons2_var, g2`slist, cx3)))"
                                              "mts(k, l0, cons2_var, select(snorm(lmul(cons1_var, select(snorm(lmul(cons1_var, g)), ys))), ys), ys) + mts(k, l0, cons2_var, select(snorm(lmul(cons1_var, g)), ys), ys)")
                                             (("3" (SPLIT -1)
                                               (("1" (PROPAX) NIL NIL)
@@ -125,7 +125,7 @@
                                                           (INST -1
                                                            "snormc(lmul(cons1_var, select(snorm(lmul(cons1_var, g)), ys)), cx2_1!1)"
                                                            "cx2_1!1" "ys"
-                                                           "LAMBDA (g2: SL, cx3: snorm_ctx.Cx): bmap(LAMBDA (n2: int): n2 + select(mtreec(k, sl_of(l0, ys), cons2_var, select(snorm(lmul(cons1_var, g)), ys), cx2_1), ys), mtreec(k, sl_of(l0, ys), cons2_var, g2`slist, cx3))"
+                                                           "LAMBDA (g2: SL, cx3: snorm_ctx.Cx_snorm): bmap(LAMBDA (n2: int): n2 + select(mtreec(k, sl_of(l0, ys), cons2_var, select(snorm(lmul(cons1_var, g)), ys), cx2_1), ys), mtreec(k, sl_of(l0, ys), cons2_var, g2`slist, cx3))"
                                                            "mts(k, l0, cons2_var, select(snorm(lmul(cons1_var, select(snorm(lmul(cons1_var, g)), ys))), ys), ys) + mts(k, l0, cons2_var, select(snorm(lmul(cons1_var, g)), ys), ys)")
                                                           (("3" (SPLIT -1)
                                                             (("1" (PROPAX) NIL
@@ -215,24 +215,24 @@
       NIL))
     NIL)
    ((|mts_cons| FORMULA-DECL NIL |tarski_many| NIL)
-    (|snormc| DEF-DECL "btree[SL]" |snorm_ctx| NIL)
-    (|lmul| CONST-DECL "list[mpoly]" |mpoly_prod| NIL)
-    (|Cx| TYPE-EQ-DECL NIL |branch_ctx| NIL)
-    (|bbindc| DEF-DECL "btree[U]" |branch_ctx| NIL)
-    (|bmap| DEF-DECL "btree[U]" |branch_map| NIL)
-    (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
-    (+ CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
     (|lmn| CONST-DECL "list[mpoly]" |tarski_two| NIL)
-    (|sl_of_slist| FORMULA-DECL NIL |branch_sgn| NIL)
+    (+ CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
+    (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
+    (|bmap| DEF-DECL "btree[U]" |branch_map| NIL)
+    (|bbindc| DEF-DECL "btree[U]" |branch_ctx| NIL)
+    (|Cx| TYPE-EQ-DECL NIL |branch_ctx| NIL)
+    (|lmul| CONST-DECL "list[mpoly]" |mpoly_prod| NIL)
+    (|snormc| DEF-DECL "btree[SL]" |snorm_ctx| NIL)
     (|snorm| DEF-DECL "btree[list[mpoly]]" |branch_norm| NIL)
+    (|sl_of_slist| FORMULA-DECL NIL |branch_sgn| NIL)
     (|snormc_sel| FORMULA-DECL NIL |snorm_ctx| NIL)
     (|select_bbindc| FORMULA-DECL NIL |branch_ctx| NIL)
-    (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
     (|mtreec_cons| FORMULA-DECL NIL |tarski_ctx| NIL)
+    (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
-    (|select_bmap| FORMULA-DECL NIL |branch_map| NIL)
-    (|tqf| CONST-DECL "int" |sign_tree| NIL)
     (|ctreec| CONST-DECL "btree[list[SL]]" |prsp_ctx| NIL)
+    (|tqf| CONST-DECL "int" |sign_tree| NIL)
+    (|select_bmap| FORMULA-DECL NIL |branch_map| NIL)
     (|mts_null| FORMULA-DECL NIL |tarski_many| NIL)
     (|tq_tqf| FORMULA-DECL NIL |sign_tree| NIL)
     (|select_ctreec_at| FORMULA-DECL NIL |prsp_ctx| NIL)
@@ -253,7 +253,7 @@
     (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (|Cx| TYPE-EQ-DECL NIL |snorm_ctx| NIL)
+    (|Cx_snorm| TYPE-EQ-DECL NIL |snorm_ctx| NIL)
     (|SignCond| TYPE-EQ-DECL NIL |branch_tree| NIL)
     (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
@@ -279,7 +279,7 @@
    ("" (SKEEP) (("" (EXPAND "snormpsc" 1 1) (("" (PROPAX) NIL NIL)) NIL)) NIL)
    ((|snormpsc| DEF-DECL "btree[list[SL]]" |tarski_ctx| NIL)) SHOSTAK))
  (|select_snormpsc| 0
-  (|select_snormpsc-0| "" 3998355267
+  (|select_snormpsc-1| "" 4000196709
    ("" (INDUCT "Q")
     (("1" (SKEEP)
       (("1" (REWRITE "snormpsc_null")
@@ -295,7 +295,7 @@
               (("2" (LEMMA "select_bbindc[SL, list[SL]]")
                 (("2"
                   (INST -1 "snormc(cons1_var, cx)" "cx" "ys"
-                   "LAMBDA (p: SL, cx1: snorm_ctx.Cx): bmap(LAMBDA (qs: list[SL]): cons(p, qs), snormpsc(cons2_var, cx1))"
+                   "LAMBDA (p: SL, cx1: snorm_ctx.Cx_snorm): bmap(LAMBDA (qs: list[SL]): cons(p, qs), snormpsc(cons2_var, cx1))"
                    "cons(sl_of(select(snorm(cons1_var), ys), ys), slofs(cons2_var, ys))")
                   (("2" (SPLIT -1)
                     (("1" (PROPAX) NIL NIL) ("2" (PROPAX) NIL NIL)
@@ -325,21 +325,21 @@
       NIL))
     NIL)
    ((|slofs_cons| FORMULA-DECL NIL |many_tree| NIL)
-    (|snormc| DEF-DECL "btree[SL]" |snorm_ctx| NIL)
-    (|Cx| TYPE-EQ-DECL NIL |branch_ctx| NIL)
-    (|bmap| DEF-DECL "btree[U]" |branch_map| NIL)
-    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
-    (|sl_of| CONST-DECL "SL" |branch_sgn| NIL)
     (|snorm| DEF-DECL "btree[list[mpoly]]" |branch_norm| NIL)
+    (|sl_of| CONST-DECL "SL" |branch_sgn| NIL)
+    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|bmap| DEF-DECL "btree[U]" |branch_map| NIL)
+    (|Cx| TYPE-EQ-DECL NIL |branch_ctx| NIL)
+    (|snormc| DEF-DECL "btree[SL]" |snorm_ctx| NIL)
     (|select_bmap| FORMULA-DECL NIL |branch_map| NIL)
     (|snormc_sel| FORMULA-DECL NIL |snorm_ctx| NIL)
     (|select_bbindc| FORMULA-DECL NIL |branch_ctx| NIL)
     (|snormpsc_cons| FORMULA-DECL NIL |tarski_ctx| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
-    (|select_leaf| FORMULA-DECL NIL |branch_tree| NIL)
-    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
+    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|select_leaf| FORMULA-DECL NIL |branch_tree| NIL)
     (|slofs_null| FORMULA-DECL NIL |many_tree| NIL)
     (|snormpsc_null| FORMULA-DECL NIL |tarski_ctx| NIL)
     (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
@@ -361,7 +361,7 @@
     (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (|Cx| TYPE-EQ-DECL NIL |snorm_ctx| NIL)
+    (|Cx_snorm| TYPE-EQ-DECL NIL |snorm_ctx| NIL)
     (|SignCond| TYPE-EQ-DECL NIL |branch_tree| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
@@ -400,17 +400,17 @@
     NIL)
    ((|mcountc| CONST-DECL "btree[bool]" |tarski_ctx| NIL)
     (|select_mtreec| FORMULA-DECL NIL |tarski_ctx| NIL)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
-    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
-    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
-    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
     (|mok_at| FORMULA-DECL NIL |many_ok| NIL)
     (|one_list_ok| FORMULA-DECL NIL |tarski_many| NIL)
     (|allgt| CONST-DECL "bool" |qe_conj| NIL)
@@ -434,7 +434,7 @@
     (|sl_of| CONST-DECL "SL" |branch_sgn| NIL)
     (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (|mtreec| DEF-DECL "btree[int]" |tarski_ctx| NIL)
-    (|Cx| TYPE-EQ-DECL NIL |snorm_ctx| NIL)
+    (|Cx_snorm| TYPE-EQ-DECL NIL |snorm_ctx| NIL)
     (|SignCond| TYPE-EQ-DECL NIL |branch_tree| NIL)
     (SL TYPE-EQ-DECL NIL |branch_sgn| NIL)
     (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
@@ -453,13 +453,13 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|mcorec_sound| 0
-  (|mcorec_sound-0| "" 3998355330
+  (|mcorec_sound-1| "" 4000196710
    ("" (SKEEP)
     (("" (EXPAND "mcorec")
       (("" (LEMMA "select_bbindc[list[SL], bool]")
         ((""
           (INST -1 "snormpsc(Q, cx)" "cx" "ys"
-           "LAMBDA (ps: list[SL], cx1: snorm_ctx.Cx): IF allcons(slists(ps)) THEN mcountc(k, sl_of(l0, ys), ps, cx1) ELSE bleaf(FALSE) ENDIF"
+           "LAMBDA (ps: list[SL], cx1: snorm_ctx.Cx_snorm): IF allcons(slists(ps)) THEN mcountc(k, sl_of(l0, ys), ps, cx1) ELSE bleaf(FALSE) ENDIF"
            "EXISTS (x: real): meval(mpol(l0))(cons(x, ys)) = 0 AND allgt(Q, ys, x)")
           (("" (SPLIT -1)
             (("1" (ASSERT) (("1" (IFF) (("1" (PROPAX) NIL NIL)) NIL)) NIL)
@@ -547,7 +547,7 @@
    ((|mcorec| CONST-DECL "btree[bool]" |tarski_ctx| NIL)
     (|btree| TYPE-DECL NIL |btree_adt| NIL)
     (|SignCond| TYPE-EQ-DECL NIL |branch_tree| NIL)
-    (|Cx| TYPE-EQ-DECL NIL |snorm_ctx| NIL)
+    (|Cx_snorm| TYPE-EQ-DECL NIL |snorm_ctx| NIL)
     (|snormpsc| DEF-DECL "btree[list[SL]]" |tarski_ctx| NIL)
     (|Cx| TYPE-EQ-DECL NIL |branch_ctx| NIL)
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
@@ -593,17 +593,17 @@
     (|mcountc_sound| FORMULA-DECL NIL |tarski_ctx| NIL)
     (|slofs| CONST-DECL "list[SL]" |many_tree| NIL)
     (|select_snormpsc| FORMULA-DECL NIL |tarski_ctx| NIL)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
-    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
-    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
-    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
     (SL TYPE-EQ-DECL NIL |branch_sgn| NIL)

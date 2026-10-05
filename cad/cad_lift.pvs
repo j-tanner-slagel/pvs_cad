@@ -283,8 +283,8 @@ BEGIN
   %% the points of R^m
   pts(m): set[list[real]] = {ys | length(ys) = m}
   len0: LEMMA FORALL ys: length(ys) = 0 IMPLIES ys = null[real]
-  len_cons: LEMMA FORALL ys: length(ys) = m + 1 IMPLIES cons?(ys) AND length(cdr(ys)) = m
-  len1: LEMMA FORALL ys: length(ys) = 1 IMPLIES ys = (: car(ys) :)
+  len_cons_lift: LEMMA FORALL ys: length(ys) = m + 1 IMPLIES cons?(ys) AND length(cdr(ys)) = m
+  len1_lift: LEMMA FORALL ys: length(ys) = 1 IMPLIES ys = (: car(ys) :)
   len_split: LEMMA FORALL ys: length(ys) = m + 1 IMPLIES
     EXISTS (x, (ys1: list[real])): ys = cons(x, ys1) AND length(ys1) = m
 

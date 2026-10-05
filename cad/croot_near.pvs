@@ -6,10 +6,10 @@ croot_near: THEORY
 % factorization (croots) and the size of its coefficients.
 %   root_bound: every root of p has modulus at most 1 + M / |a(n)| when
 %   every coefficient has modulus at most M.
-%   root_near: for every eps > 0 there is a delta > 0 such that every root of
+%   croot_root_near: for every eps > 0 there is a delta > 0 such that every root of
 %   a polynomial of the same degree whose coefficients are within delta of
 %   those of p lies within eps of some root of p.
-% Applied both ways, root_near says that when q moves to p the root sets
+% Applied both ways, croot_root_near says that when q moves to p the root sets
 % converge in the Hausdorff sense; with a constant number of distinct real
 % roots that makes the ordered real roots continuous, which is
 % delineability.  Everything is stated with the roots as a function
@@ -53,7 +53,7 @@ BEGIN
     IMPLIES abs(z) <= 1 + n * M / abs(a(n))
 
   %% the main statement
-  root_near: THEOREM proper_polynomial?(n)(a) AND eps > 0 IMPLIES
+  croot_root_near: THEOREM proper_polynomial?(n)(a) AND eps > 0 IMPLIES
     EXISTS (delta: real): delta > 0 AND
       FORALL (b: sequence[complex], z: complex):
         (FORALL (i: nat): i <= n IMPLIES abs(a(i) - b(i)) <= delta) AND

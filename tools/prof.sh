@@ -21,7 +21,7 @@ s=open(sys.argv[1]).read()
 F=' '.join(s.split('F=',1)[1].split('\nQS=')[0].split())
 QS=s.split('QS=',1)[1].split('\n')[0].strip()
 PHI=s.split('PHI=',1)[1].strip()
-print('decn_o(%s, %s, LAMBDA (v: SV): bfsv(%s, v))' % (QS, F, PHI))
+print('decn_o(0, %s, %s, LAMBDA (v: SV): bfsv(%s, v))' % (QS, F, PHI))
 PY
 )
 L "(setq *cad-prof-expr* \"$EXPR\")"; L "(setq *cad-prof-secs* $SECS)"

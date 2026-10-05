@@ -1,5 +1,12 @@
 # COLLINS_PLAN: a proved Collins projection for the CAD and QE engine (GAP_PLAN Tier 4)
 
+> **Finished 2026-10-01 (note of 2026-10-03).** Every milestone below is done. Later work:
+> P5 computes the psc by fraction-free elimination (`bdet`, with `detf` as the fallback when a
+> check fails); the smaller projection continued as PROJ_PLAN.md P1-P3 and P5, and since P2
+> `decide8` runs `decb_u` (a smaller bottom-step projection over the checked basis of P3,
+> `decc_o` as its fallback). McCallum / Brown is PROJ_PLAN.md P7, under review (NEXT_PLAN.md
+> step 4); the witness search on top of decide8 is in (cad).
+>
 > **Status (2026-10-01).** Gate measured (section 1): passed.  User decision: "if it seems good make
 > a plan to prove it and do it completely".  Milestones in section 4; progress in cad/PROGRESS.md
 > and in the lines below.
@@ -70,6 +77,12 @@ not a nonzero constant (the dropped reducta can never be the effective polynomia
 operator's members as computed; "factored" = split into irreducible factors (untrusted
 factorizer, for comparison only).
 
+*[2026-10-02: the "Collins" columns here and in 1a, and the "7 critical values" of section 0 and
+"2n + 1" below, came from the prototype, which keeps every coefficient and computes extra psc, so
+they overstate the library's `projn`.  Measured with a term-by-term mirror of `projn`: K_n has
+n + 1 cuts, L_3 / L_4 / L_5 have 5 / 7 / 9, factored L_n has n + 1, and bath_04 has 11 then 569
+polynomials (the same 2,490 cuts).  PROJ_PLAN.md section 1.2.]*
+
 | family | read closure (today) | McCallum shape, raw | Collins, all reducta, raw | Collins, N-reducta, raw | Collins, N-reducta, factored |
 |---|---|---|---|---|---|
 | K_3 | 15 | 7 | 7 | 7 | 7 |
@@ -129,7 +142,7 @@ Let A be the distinct complex roots of all f_p1, and ε small: below half of eve
 below |Im α| for non-real α ∈ A, below η, and small enough for the sign persistence of (4).
 For p ∈ C near p1:
 
-1. Every root of f_p is within ε of a root of f_p1 (croot_near's `root_near`), and every root of
+1. Every root of f_p is within ε of a root of f_p1 (croot_near's `croot_root_near`), and every root of
    f_p1 has a root of f_p within ε (lower semicontinuity: |f_p(α)| = |lc| Π|α − s_i| ≥ |lc| ε^e
    otherwise, `cprod_far`, while f_p(α) → f_p1(α) = 0).
 2. #dist(f_p) = #dist(f_p1): the number of distinct complex roots is e − κ(f_p, f_p′), where κ is
@@ -170,7 +183,7 @@ Everything is phrased with real coefficient arrays A: [nat -> real] and sres_row
 complex polynomial with coefficients A(0..n)), the form sres_thm and cpoly_dist already use.
 
 D (analysis of one polynomial of fixed degree n, A(n) /= 0):
-- rp_near (upper semicontinuity, from croot_near's root_near): for eps > 0 there is delta > 0 such
+- rp_near (upper semicontinuity, from croot_near's croot_root_near): for eps > 0 there is delta > 0 such
   that every root of rp(B, n), B within delta of A coefficientwise, is within eps of a root of
   rp(A, n).
 - rp_lsc (lower semicontinuity): every root w of rp(A, n) has a root of rp(B, n) within eps, for
@@ -219,7 +232,7 @@ loc_stack / loc_cont: conn?(C), C(p0), colh?(G, C) imply delin_cl?(G, C).
 ## 3. What exists and what is missing
 
 Exists: ring_det (det, rdet, det_eval), sylvester, subres (sresm, psc, psc_eval), subres2 (sresc,
-sres: the subresultant polynomial), croots (cfact), croot_near (root_near, cprod_far,
+sres: the subresultant polynomial), croots (cfact), croot_near (croot_root_near, cprod_far,
 cpoly_diff_bound), cpoly_unique (coefs_eq, roots_bound, shift_poly), complex@cpolynomial_real
 (conjugate roots), NASALib matrices (det_transpose, det_rows_eq_0, det_replace_row_sum/scal,
 invertible_det, matrix_diag's diag_det_zero_row, det_mult), mpar (mev_mcont, msg_mpers),

@@ -1,0 +1,20 @@
+use_pvs_cad: THEORY
+%----------------------------------------------------------------------------
+% pvs_cad used the way a theory of one's own uses it: from a directory
+% outside cad/, with the repository's root on PVS_LIBRARY_PATH, as
+% cad@pvs_cad (tools/outside.sh replays it).  (cad), (cad *), (cad-qe) and a
+% formula of any shape, then proofs that cite NASALib lemmas whose names the
+% library must not hide.
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad@pvs_cad
+
+  a: VAR real
+
+  o_cad: LEMMA FORALL (x: real): EXISTS (y: real): x^2 + y^2 = 1 OR x^2 > 1
+  o_star: LEMMA FORALL (x: real): x > 1 IMPLIES x^2 > 1
+  o_qe: LEMMA (EXISTS (t: real): t^2 = a) IFF a >= 0
+  o_gen: LEMMA FORALL (b: real): (EXISTS (t: real): t^2 = b) IMPLIES b >= 0
+  %% NASALib's reals@sign3.sign3_pos, structures@list_lemmas.length_cdr
+  o_sign3: LEMMA FORALL (x: real): sign3(x) * x >= 0
+END use_pvs_cad

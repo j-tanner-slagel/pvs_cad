@@ -2,11 +2,11 @@ sgn_examples: THEORY
 %----------------------------------------------------------------------------
 % The sign-condition decision run by the strategies (Phase 3).
 %
-% poly-sign reads the branches of gdec and adds, for every branch on which the
+% poly-sign reads the branches of sdecide (sgn_prune) and adds, for every branch on which the
 % polynomial has a root where the query is positive, the implication from that
 % branch's sign conditions to the statement about the reals.  poly-nosign does
 % the same for the branches on which it has none.  The facts are proved from
-% sign_branch / nosign_branch, the ground evaluation of the tree and the
+% psign_branch / pnosign_branch (sgn_prune's sdecide), the ground evaluation of the tree and the
 % reflection of Phase 1, so nothing is trusted.
 %----------------------------------------------------------------------------
 BEGIN
@@ -27,4 +27,9 @@ BEGIN
 
   %% a positive number has a positive square root, decided by the tree
   g5: LEMMA a > 0 IMPLIES (EXISTS (x: real): x^2 - a = 0 AND x > 0)
+
+  %% a parameter with no positive root on the branch the hypothesis selects: the
+  %% contradiction needs poly-nosign's fact (assert alone does not see x^2 + a /= 0); g4
+  %% above is linear, so assert closes it without the tree
+  g6: LEMMA a > 0 IMPLIES NOT (EXISTS (x: real): x^2 + a = 0 AND x > 0)
 END sgn_examples

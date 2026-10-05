@@ -1,0 +1,13 @@
+cad_decide7_ex: THEORY
+%----------------------------------------------------------------------------
+% (cad :cad-only? t) through decide7, the read-closure engine's verified CAD
+% run (cad_decide7), in a theory that imports neither cad_decide8 nor
+% gform_ok: c7_circle has two quantifiers (decn_u), c7_one one (the sectors
+% of the line, decq2).  Each is one (cad :cad-only? t).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad_decide7, mpoly_embed
+
+  c7_circle: LEMMA FORALL (x: real): EXISTS (y: real): x^2 + y^2 = 1 OR x^2 > 1
+  c7_one: LEMMA FORALL (x: real): x^4 - 2*x^2 + 1 >= 0
+END cad_decide7_ex

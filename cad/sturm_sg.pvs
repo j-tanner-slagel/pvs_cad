@@ -45,7 +45,7 @@ BEGIN
   %% bloated the read closure at four variables (FINISH_PLAN 3f/3g).
   schain(k, sg, f): list[list[mpoly]] = cons(f, rchain2_sg(k, f, lderiv(f), mconst(1), 0, sg))
   slc?(k, sg, f): bool = length(f) >= 2 AND sg(llast(f)) /= 0 AND length(f) <= k
-  sign3_pos: LEMMA FORALL (c: posreal, v: real): sign3(c * v) = sign3(v)
+  sign3_posmul: LEMMA FORALL (c: posreal, v: real): sign3(c * v) = sign3(v)
   prop_earr: LEMMA FORALL (l1, l2: list[mpoly]), (c: posreal): prop(l1, l2, c, ys) IMPLIES earr(l1, ys) = c * earr(l2, ys)
   prop_dg: LEMMA FORALL (l1, l2: list[mpoly]), (c: posreal): prop(l1, l2, c, ys) IMPLIES dg(l1) = dg(l2)
   schain_prop: LEMMA slc?(k, msg(ys), f) IMPLIES chprop(schain(k, msg(ys), f), fchain(k, f, ys), ys)

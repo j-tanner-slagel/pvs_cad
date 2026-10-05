@@ -98,7 +98,7 @@ BEGIN
   %% below always decide.
 
   %% two roots with exactly two roots in a closed interval are counted twice
-  nroots_two: LEMMA deg(ql) > 0 AND lb < ub AND roots_in(ql, lb, ub)(x) AND
+  nroots_two_sect_inv: LEMMA deg(ql) > 0 AND lb < ub AND roots_in(ql, lb, ub)(x) AND
     roots_in(ql, lb, ub)(z) AND x /= z AND
     (FORALL r: roots_in(ql, lb, ub)(r) IMPLIES r = x OR r = z) IMPLIES nroots(ql, lb, ub) = 2
 

@@ -221,19 +221,19 @@
     (|someS_intro| FORMULA-DECL NIL |cad_lift| NIL)
     (|someS_mem| FORMULA-DECL NIL |cad_lift| NIL))
    SHOSTAK))
- (|last_cdr_TCC1| 0
-  (|last_cdr_TCC1-0| "" 3998819135 ("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL) NIL
-   SHOSTAK
-   (|last_cdr| SUBTYPE "cdr[list[list[mpoly]]](TW)"
+ (|tw_last_cdr_TCC1| 0
+  (|tw_last_cdr_TCC1-0| "" 4000129442 ("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL)
+   NIL SHOSTAK
+   (|tw_last_cdr| SUBTYPE "cdr[list[list[mpoly]]](TW)"
     "{l: list_adt[list_adt[list_adt[mpoly_adt.mpoly].list].list].list | (booleans.NOT)(list_adt[list_adt[list_adt[mpoly_adt.mpoly].list].list].null?(l))}"
     (71 17 71 24))))
- (|last_cdr_TCC2| 0
-  (|last_cdr_TCC2-1| NIL 3998817205 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
-   (|last_cdr| SUBTYPE "TW"
+ (|tw_last_cdr_TCC2| 0
+  (|tw_last_cdr_TCC2-0| "" 4000129443 ("" (SUBTYPE-TCC) NIL NIL) NIL SHOSTAK
+   (|tw_last_cdr| SUBTYPE "TW"
     "{l: list_adt[list_adt[list_adt[mpoly_adt.mpoly].list].list].list | (booleans.NOT)(list_adt[list_adt[list_adt[mpoly_adt.mpoly].list].list].null?(l))}"
     (71 33 71 35))))
- (|last_cdr| 0
-  (|last_cdr-2| "" 3998819086
+ (|tw_last_cdr| 0
+  (|tw_last_cdr-0| "" 4000129440
    ("" (SKEEP)
     (("" (LEMMA "structures@more_list_props[list[list[mpoly]]].last_cons")
       (("" (INST -1 "car(TW)" "cdr(TW)")
@@ -322,9 +322,9 @@
       NIL))
     NIL)
    ((|length| DEF-DECL "nat" |list_props| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL)
-    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|cdr| ADT-ACCESSOR-DECL "[(cons?) -> list]" |list_adt| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
@@ -366,7 +366,7 @@
     "{l: list_adt[list_adt[list_adt[mpoly_adt.mpoly].list].list].list | (booleans.NOT)(list_adt[list_adt[list_adt[mpoly_adt.mpoly].list].list].null?(l))}"
     (101 32 101 34))))
  (|decn_sem| 0
-  (|decn_sem-2| "" 3998817878
+  (|decn_sem-0| "" 4000129441
    ("" (INDUCT "qs")
     (("1" (ASSERT) NIL NIL)
      ("2" (ASSERT)
@@ -420,7 +420,7 @@
                                     (("2" (ASSERT)
                                       (("2" (FLATTEN)
                                         (("2" (EXPAND "lsects")
-                                          (("2" (LEMMA "last_cdr")
+                                          (("2" (LEMMA "tw_last_cdr")
                                             (("2" (INST -1 "TW")
                                               (("2" (ASSERT)
                                                 (("2" (REPLACE -1)
@@ -567,20 +567,20 @@
     (|car| ADT-ACCESSOR-DECL "[(cons?) -> T]" |list_adt| NIL)
     (|length_singleton| FORMULA-DECL NIL |more_list_props| |structures|)
     (|lsects| CONST-DECL "list[Sect]" |cad_pdec| NIL)
-    (|Sect| TYPE-DECL NIL |sect_inv| NIL)
-    (|pred| TYPE-EQ-DECL NIL |defined_types| NIL)
-    (|cdr| ADT-ACCESSOR-DECL "[(cons?) -> list]" |list_adt| NIL)
-    (|rsv| CONST-DECL "rat" |cad_pdec| NIL)
-    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
-    (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
-    (|alg?| CONST-DECL "bool" |alg_def| NIL)
-    (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
-    (|sects| CONST-DECL "list[Sect]" |sect_inv| NIL)
-    (|rts| CONST-DECL "list[Alg]" |cad_lift| NIL)
     (|evalF| CONST-DECL "list[list[mpoly]]" |svs_pt| NIL)
+    (|rts| CONST-DECL "list[Alg]" |cad_lift| NIL)
+    (|sects| CONST-DECL "list[Sect]" |sect_inv| NIL)
+    (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|alg?| CONST-DECL "bool" |alg_def| NIL)
+    (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
+    (|rsv| CONST-DECL "rat" |cad_pdec| NIL)
+    (|cdr| ADT-ACCESSOR-DECL "[(cons?) -> list]" |list_adt| NIL)
+    (|pred| TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|Sect| TYPE-DECL NIL |sect_inv| NIL)
     (|fold_quant| FORMULA-DECL NIL |cad_decn| NIL)
     (|qfoldS_cong| FORMULA-DECL NIL |cad_decn| NIL)
-    (|last_cdr| FORMULA-DECL NIL |cad_decn| NIL)
+    (|tw_last_cdr| FORMULA-DECL NIL |cad_decn| NIL)
     (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
     (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
@@ -804,18 +804,18 @@
      |real_props| NIL)
     (|decn_sem| FORMULA-DECL NIL |cad_decn| NIL)
     (|length_null_list| FORMULA-DECL NIL |more_list_props| |structures|)
-    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
-    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
-    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|tower| DEF-DECL "list[list[list[mpoly]]]" |cad_pdec| NIL)
-    (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
+    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
     (|tower_length| FORMULA-DECL NIL |cad_pdec| NIL)
     (|tower_last_eq| FORMULA-DECL NIL |cad_decn| NIL))
    SHOSTAK)))
