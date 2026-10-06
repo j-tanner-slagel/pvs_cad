@@ -1,7 +1,7 @@
 #!/bin/bash
 # replay.sh [--traces]: replays the whole library and its examples with proveit -a, in a fresh
 # copy ($SCRATCH/replay_<pid>/cad), so a pvs-cli server working in cad/ is not disturbed and the
-# working tree never changes: first cad/top.pvs (the library), then cad/examples/top.pvs (the
+# working tree never changes: first cad/top.pvs (the library), then cad/cad_examples/top.pvs (the
 # examples, which import the library as cad@...; the copy's parent directory is first on
 # PVS_LIBRARY_PATH, so they import the copy).  Before the runs, prflint.py checks the .prf files
 # (each formula has exactly one proof; no proof contains POSTPONE); after each run, the checks of
@@ -19,7 +19,7 @@ rsync -a --delete --exclude pvsbin --exclude '._*' --exclude orphaned-proofs.prf
   { echo "REPLAY ABORTED: cannot copy $CAD_LIB_DIR"; exit 1; }
 export PVS_LIBRARY_PATH="$R:$PVS_LIBRARY_PATH"
 ok=1
-for d in "$DIR" "$DIR/examples"; do python3 "$CAD_TOOLS/prflint.py" "$d" || ok=0; done
+for d in "$DIR" "$DIR/cad_examples"; do python3 "$CAD_TOOLS/prflint.py" "$d" || ok=0; done
 start=$(date +%s)
 # run <dir> <label>: proveit -a top.pvs in <dir>, then the checks
 run() {
@@ -42,7 +42,7 @@ run() {
   echo "$2: $(grep -a 'Grand Totals' "$out" | tail -1)"
 }
 run "$DIR" library
-run "$DIR/examples" examples
+run "$DIR/cad_examples" examples
 secs=$(( $(date +%s) - start ))
 echo "wall ${secs} s  (copy: $R)"
 [ "$ok" = 1 ] && echo "REPLAY PASSED" || { echo "REPLAY FAILED"; exit 1; }

@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """stats.py <replay copy>: the numbers the documents quote, read from a whole replay (the
-directory replay.sh leaves: cad/top.summary for the library, cad/examples/top.summary for the
+directory replay.sh leaves: cad/top.summary for the library, cad/cad_examples/top.summary for the
 examples): theories, files (theory files and the generated datatype files), lines of PVS,
 formulas, lemmas, TCCs, and the lines of strategy code."""
 import sys, re, os, glob
 
 R = sys.argv[1]
-parts = [('library', os.path.join(R, 'cad')), ('examples', os.path.join(R, 'cad', 'examples'))]
+parts = [('library', os.path.join(R, 'cad')), ('examples', os.path.join(R, 'cad', 'cad_examples'))]
 
 def numbers(D):
     s = open(os.path.join(D, 'top.summary'), errors='replace').read()

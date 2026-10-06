@@ -1,7 +1,7 @@
 #!/bin/bash
 # check.sh <theory or file.pvs> ...: proves what a change touches, once.  affected.py lists the
 # given theories and every theory that imports one of them, directly or not: those of the
-# library (cad/top.pvs) and those of the examples (cad/examples/top.pvs).  One proveit session
+# library (cad/top.pvs) and those of the examples (cad/cad_examples/top.pvs).  One proveit session
 # proves the library's list (proveit -l --traces @thy1,...) and one the examples' list, so the
 # rest of the library is loaded, not proved again.  It runs in $SCRATCH/check_tree/cad, a copy of
 # cad/ that keeps its compiled theories between runs (only the changed ones are typechecked
@@ -12,7 +12,7 @@
 . "$CAD_TOOLS/proveit_check.sh"
 LISTS=$(python3 "$CAD_TOOLS/affected.py" "$@") || exit 1
 LIBL=$(printf '%s\n' "$LISTS" | sed -n 1p); EXL=$(printf '%s\n' "$LISTS" | sed -n 2p)
-[ -n "$LIBL$EXL" ] || { echo "check.sh: nothing in top.pvs or examples/top.pvs depends on $*"; exit 0; }
+[ -n "$LIBL$EXL" ] || { echo "check.sh: nothing in top.pvs or cad_examples/top.pvs depends on $*"; exit 0; }
 R="$SCRATCH/check_tree"; DIR="$R/cad"
 mkdir -p "$DIR"
 # --delete leaves the excluded pvsbin directories alone: the compiled theories stay
@@ -40,7 +40,7 @@ run() {
   echo "$3: $(grep -a 'Grand Totals' "$out" | tail -1)"
 }
 run "$DIR" "$LIBL" library
-run "$DIR/examples" "$EXL" examples
+run "$DIR/cad_examples" "$EXL" examples
 secs=$(( $(date +%s) - start ))
 echo "wall ${secs} s"
-[ "$ok" = 1 ] && echo "CHECK PASSED" || { echo "CHECK FAILED (logs: $DIR/check.log, $DIR/examples/check.log)"; exit 1; }
+[ "$ok" = 1 ] && echo "CHECK PASSED" || { echo "CHECK FAILED (logs: $DIR/check.log, $DIR/cad_examples/check.log)"; exit 1; }

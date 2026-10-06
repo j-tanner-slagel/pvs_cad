@@ -14,7 +14,7 @@ top: THEORY
 %----------------------------------------------------------------------------
 % Imports every theory of the library; each is described below, grouped by
 % topic, in the order of the imports.  README.md is the overview; the
-% examples are in examples/ (examples/top.pvs).
+% examples are in cad_examples/ (cad_examples/top.pvs).
 %
 % Multivariate polynomials: a normal form, proved unique, and reflection
 %   mpoly        DATATYPE: mconst(rat) | mpol(list[mpoly]) (imported through

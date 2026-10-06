@@ -10,7 +10,7 @@ built on it are proved sound and complete, and the proof strategies `(cad)` and 
 them inside PVS proofs.
 
 **The library is [`cad/`](cad/)**, in the form of a NASALib library: its theories and proofs,
-`top.pvs`, the strategies in `pvs-strategies`, and examples in `cad/examples/`. Its
+`top.pvs`, the strategies in `pvs-strategies`, and examples in `cad/cad_examples/`. Its
 [README](cad/README.md) lists the major theorems, the strategies with their syntax, and the
 examples. The rest of this repository supports it: documents, tests and tools.
 
@@ -78,8 +78,8 @@ Q.E.D.
 
 ## Repository layout
 
-- `cad/` — the library (`top.pvs` imports and describes every theory); `cad/examples/` — its
-  examples (`examples/top.pvs` describes them).
+- `cad/` — the library (`top.pvs` imports and describes every theory); `cad/cad_examples/` — its
+  examples (`cad_examples/top.pvs` describes them).
 - `docs/` — the documents above, with their LaTeX sources.
 - `tests/` — theories that import the library from another directory: `outside/` (the import
   itself), `msg/` (what the commands say when they do not prove a formula), `bath/` (problems

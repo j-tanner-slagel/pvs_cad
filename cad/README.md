@@ -167,12 +167,14 @@ and `min`, `(t / u) * u = t`), and the ranges of `sin`, `cos` and `atan`.
 
 ## Examples
 
-See `examples/` (`examples/top.pvs` describes each theory). `cad_showcase` shows every way to
+See `cad_examples/` (`cad_examples/top.pvs` describes each theory). `cad_showcase` shows every way to
 call the strategies on 43 examples; `cad_hard_ex` has problems that are hard for CAD
 (Wilkinson's polynomial of degree 20, Chebyshev's of degree 30, AM–GM and Schur's inequality
 in three variables, Cauchy–Schwarz in the plane), each proved in a few seconds; `cad_results_ex`
 applies the major theorems to the unit circle; `cad_forms_ex` and `cad_terms_ex` are the
 regression sets for the shapes of formulas and the terms the strategies accept.
+
+![dependency graph](./cad-zoomed.svg "Dependency Graph")
 
 ## Trust and limits
 
@@ -205,3 +207,5 @@ to these PVS specifications and proofs
 # Dependencies
 NASALib's `reals`, `Sturm`, `Tarski`, `structures`, `analysis`, `complex`, `matrices`,
 `interval_arith`, `trig` and `lnexp`.
+
+![dependency graph](./cad.svg "Dependency Graph")

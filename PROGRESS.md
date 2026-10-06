@@ -475,3 +475,34 @@ full development is `cad/PROGRESS.md` at tag `v1.0-full` (`HISTORY.md`).
   new place: `tools/check.sh` on the 14 example theories, in one session, 456
   of 456 (with the first draft of `cad_reduce_ex`), then `cad_reduce_ex` alone, 5 of 5. `tools/outside.sh`: `use_pvs_cad` 6 of 6, `cad_bath` 15 of 15.
   `tools/msgcheck.sh` 23 of 23.
+
+## 2026-10-06 — public v2.0; the NASALib pull request
+
+- **Public** (the owner's OK after seeing the files and the message): `main` = 756f155 (the export
+  of 79e802e, one commit on 2044e20), annotated tags `v1.0-full` (2044e20) and `v2.0` (756f155),
+  branch `full` (2044e20); dev tag `v2.0` at 79e802e.
+- **The examples are `cad/cad_examples`.** NASALib's current `proveit` names a summary after the
+  last part of the library's path, so `cad/examples` wrote `summaries/examples.summary`, which
+  is the summary of NASALib's own `examples` library. `cad_examples` follows NASALib's names for
+  example folders (`algebra/algebra_examples`, `dL/dL_examples`); the tools, the READMEs, the
+  notes and `CLAUDE.md` follow.
+- **The pull request** (`nasa/pvslib`, from the owner's fork `j-tanner-slagel/pvslib`, branch
+  `cad`, on master e4449648 of 4 October 2026): `cad/` as in this repository, `nasalib.all`
+  (`cad`, and `cad/cad_examples` under Examples), the root README's library and strategy rows and
+  counts (the owner is already among NASALib's contributors), `summaries/cad.summary` and
+  `summaries/cad_examples.summary`, and the dependency graphs `cad/cad.svg` and
+  `cad/cad-zoomed.svg` (NASALib's `dependency-all`, with Graphviz and the Perl modules Graph and
+  Graph::ReadWrite, the modules in scratch). The graphs are in this repository's `cad/` too, and
+  `cad/README.md` shows them as NASALib's READMEs do.
+- **The example proofs** were saved again by PVS in that run: their dependency lists now name the
+  library (`|cad|`), since the examples import it as `cad@...`; the repository has the same files.
+- **NASALib's scripts on master are out of step with each other** (reported in the pull request):
+  master's PVS patches need master's `proveit` and `provethem` (in `pvs-scripts/patches`, not
+  installed by default); `dependency-all` asks `find-pvslib` for `<dir>` where it now prints
+  `{dir}`; master's `proveit` writes `.dep` files in a format `dependencygraph` does not read. The
+  graphs were made with the scripts of the installed NASALib (56dab197), whose library-level
+  dependencies are the same.
+- **Checked against NASALib master** with its own `prove-all` (master's `proveit` and
+  `provethem`, from its `pvs-scripts/patches`, through a scratch overlay of the PVS installation,
+  since master's PVS patches expect them): `cad` 3,175 of 3,175, `cad/cad_examples` 457 of 457; no
+  theory name of `cad` is used elsewhere in NASALib.

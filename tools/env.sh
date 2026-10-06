@@ -4,7 +4,7 @@
 #   CAD_LIB_DIR   the PVS library (default: $CAD_ROOT/cad); its parent directory goes first on
 #                 PVS_LIBRARY_PATH, so that cad@<theory> (how the examples and the tests import
 #                 the library) finds this one
-#   CAD_WORK_DIR  where the pvs-cli tools work (default: $CAD_LIB_DIR; $CAD_LIB_DIR/examples to
+#   CAD_WORK_DIR  where the pvs-cli tools work (default: $CAD_LIB_DIR; $CAD_LIB_DIR/cad_examples to
 #                 work on an example)
 #   PVS_DIR       PVS installation (default: directory of `pvs` on PATH, links followed)
 #   NASALIB       NASALib checkout (default: $PVS_DIR/nasalib or $PVS_DIR/pvslib, else

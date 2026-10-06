@@ -1,6 +1,6 @@
 #!/bin/bash
 # srv.sh [theory]: (re)start the PVS server for pvs-cli on $PVS_PORT in $CAD_WORK_DIR (the
-# library directory, or examples/ in it), change workspace, then typecheck <theory> if
+# library directory, or cad_examples/ in it), change workspace, then typecheck <theory> if
 # given.  srv.sh --stop stops the server this script started on $PVS_PORT.
 . "$(dirname "$0")/../env.sh"
 PIDF="$SCRATCH/pvs_server_$PVS_PORT.pid"

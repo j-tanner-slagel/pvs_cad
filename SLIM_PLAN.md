@@ -3,7 +3,7 @@
 **Status (6 October 2026).** Study done; the owner's decisions are below. Phase 0 and Phase 1 done
 (`PROGRESS.md`); S1 to S11 and S3b (the cad-only? side decisions, after S11) done; Phase 3's library
 items done (comments, imports, renames, strategies) and the folder in NASALib's layout
-(`cad/README.md`, `top.pvs`'s tags, `cad/examples/`, the message tests and the Bath problems in
+(`cad/README.md`, `top.pvs`'s tags, `cad/cad_examples/`, the message tests and the Bath problems in
 `tests/`); contacting the maintainers and the packaging in a NASALib clone wait for the owner;
 Phase 4 (docs) done. The full library (5,628/5,628, 375 theories) is `v1.0-full` =
 `5700fd9`.

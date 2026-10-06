@@ -1,9 +1,7 @@
 (|cad_results_ex|
  (|circ_u| 0
   (|circ_u-0| "" 4000224647 ("" (EVAL-FORMULA) NIL NIL)
-   ((|real_times_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
-    (|int_times_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+   ((|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|bijective?| CONST-DECL "bool" |functions| NIL)
     (|id| CONST-DECL "(bijective?[T, T])" |identity| NIL)
@@ -33,7 +31,7 @@
         NIL))
       NIL))
     NIL)
-   ((|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+   ((|mpoly| TYPE-DECL NIL |mpoly_adt| |cad|)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|circF| CONST-DECL "list[list[mpoly]]" |cad_results_ex| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
@@ -42,7 +40,7 @@
     (|bijective?| CONST-DECL "bool" |functions| NIL)
     (|id| CONST-DECL "(bijective?[T, T])" |identity| NIL)
     (TRUE CONST-DECL "bool" |booleans| NIL)
-    (|col_found_cad| FORMULA-DECL NIL |col_found_ok| NIL))
+    (|col_found_cad| FORMULA-DECL NIL |col_found_ok| |cad|))
    SHOSTAK))
  (|circ_dec| 0
   (|circ_dec-2| "" 4000224671
@@ -55,7 +53,7 @@
         NIL))
       NIL))
     NIL)
-   ((|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+   ((|mpoly| TYPE-DECL NIL |mpoly_adt| |cad|)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|circF| CONST-DECL "list[list[mpoly]]" |cad_results_ex| NIL)
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
@@ -73,7 +71,7 @@
     (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (SV TYPE-EQ-DECL NIL |sign_vec| |cad|)
     (|psi_on| CONST-DECL "bool" |cad_results_ex| NIL)
     (|qs2| CONST-DECL "list[bool]" |cad_results_ex| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
@@ -82,7 +80,7 @@
     (FALSE CONST-DECL "bool" |booleans| NIL)
     (|id| CONST-DECL "(bijective?[T, T])" |identity| NIL)
     (|bijective?| CONST-DECL "bool" |functions| NIL)
-    (|col_found_decides| FORMULA-DECL NIL |col_found_ok| NIL))
+    (|col_found_decides| FORMULA-DECL NIL |col_found_ok| |cad|))
    SHOSTAK))
  (|circ_holds| 0
   (|circ_holds-0| "" 4000224661
@@ -116,7 +114,7 @@
         NIL))
       NIL))
     NIL)
-   ((|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+   ((|mpoly| TYPE-DECL NIL |mpoly_adt| |cad|)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|circF| CONST-DECL "list[list[mpoly]]" |cad_results_ex| NIL)
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
@@ -134,8 +132,8 @@
     (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
-    (|psi_c| CONST-DECL "[SV -> bool]" |col_found_def| NIL)
+    (SV TYPE-EQ-DECL NIL |sign_vec| |cad|)
+    (|psi_c| CONST-DECL "[SV -> bool]" |col_found_def| |cad|)
     (|qs2| CONST-DECL "list[bool]" |cad_results_ex| NIL)
     (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
     (>= CONST-DECL "bool" |reals| NIL)
@@ -144,7 +142,7 @@
     (|id| CONST-DECL "(bijective?[T, T])" |identity| NIL)
     (TRUE CONST-DECL "bool" |booleans| NIL)
     (|circ_ok| FORMULA-DECL NIL |cad_results_ex| NIL)
-    (|col_verified| FORMULA-DECL NIL |col_verified| NIL))
+    (|col_verified| FORMULA-DECL NIL |col_verified| |cad|))
    SHOSTAK))
  (|circ_decb| 0
   (|circ_decb-2| "" 4000224687
@@ -152,7 +150,7 @@
     (("" (INST -1 "circF" "1") (("" (ASSERT) (("" (FLATTEN) NIL NIL)) NIL))
       NIL))
     NIL)
-   ((|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+   ((|mpoly| TYPE-DECL NIL |mpoly_adt| |cad|)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|circF| CONST-DECL "list[list[mpoly]]" |cad_results_ex| NIL)
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
@@ -171,13 +169,13 @@
     (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
     (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|decb_cad_run| FORMULA-DECL NIL |decb_run| NIL))
+    (|decb_cad_run| FORMULA-DECL NIL |decb_run| |cad|))
    SHOSTAK))
  (|circ_sa| 0
   (|circ_sa-2| "" 4000224688
    ("" (LEMMA "col_cells_sa")
     (("" (INST -1 "circF" "1") (("" (FLATTEN) NIL NIL)) NIL)) NIL)
-   ((|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+   ((|mpoly| TYPE-DECL NIL |mpoly_adt| |cad|)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|circF| CONST-DECL "list[list[mpoly]]" |cad_results_ex| NIL)
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
@@ -193,7 +191,7 @@
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (>= CONST-DECL "bool" |reals| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|col_cells_sa| FORMULA-DECL NIL |cad_sa| NIL))
+    (|col_cells_sa| FORMULA-DECL NIL |cad_sa| |cad|))
    SHOSTAK))
  (|line_sv| 0
   (|line_sv-0| "" 4000224649 ("" (EVAL-FORMULA) NIL NIL)
@@ -214,7 +212,7 @@
  (|proj_qf| 0
   (|proj_qf-0| "" 4000224650
    ("" (LEMMA "qelim_qf") (("" (INST -1 "circ_proj" "1") NIL NIL)) NIL)
-   ((|Fm| TYPE-DECL NIL |rcf_fol| NIL)
+   ((|Fm| TYPE-DECL NIL |rcf_fol| |cad|)
     (|circ_proj| CONST-DECL "Fm" |cad_results_ex| NIL)
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
@@ -229,7 +227,7 @@
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (>= CONST-DECL "bool" |reals| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|qelim_qf| FORMULA-DECL NIL |qelim_ok| NIL))
+    (|qelim_qf| FORMULA-DECL NIL |qelim_ok| |cad|))
    SHOSTAK))
  (|proj_ok| 0
   (|proj_ok-0| "" 4000224662
@@ -240,7 +238,7 @@
         NIL))
       NIL))
     NIL)
-   ((|qelim_ok| FORMULA-DECL NIL |qelim_ok| NIL)
+   ((|qelim_ok| FORMULA-DECL NIL |qelim_ok| |cad|)
     (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
@@ -259,7 +257,7 @@
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
     (|circ_proj| CONST-DECL "Fm" |cad_results_ex| NIL)
-    (|Fm| TYPE-DECL NIL |rcf_fol| NIL)
+    (|Fm| TYPE-DECL NIL |rcf_fol| |cad|)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|proj_qfd| 0
@@ -285,7 +283,8 @@
     (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
     (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
     (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|Fm| TYPE-DECL NIL |rcf_fol| NIL) (|fsem| DEF-DECL "bool" |rcf_fol| NIL)
+    (|Fm| TYPE-DECL NIL |rcf_fol| |cad|)
+    (|fsem| DEF-DECL "bool" |rcf_fol| |cad|)
     (|circ_proj| CONST-DECL "Fm" |cad_results_ex| NIL)
     (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
     (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
@@ -293,8 +292,8 @@
     (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
     (>= CONST-DECL "bool" |reals| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|fod?| CONST-DECL "bool" |rcf_fol| NIL)
+    (|fod?| CONST-DECL "bool" |rcf_fol| |cad|)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
-    (|fod_qfd| FORMULA-DECL NIL |qelim_ok| NIL))
+    (|fod_qfd| FORMULA-DECL NIL |qelim_ok| |cad|))
    SHOSTAK)))
 

@@ -14,7 +14,7 @@ cad_bath: THEORY
 % sentence, within its time budgets.  The decision alone, without the witness
 % search, does not finish in 90 s on most of these problems.  These problems
 % are kept outside the library (cad/), which is CC0, because of their
-% license; cad/examples/cad_reduce_ex shows the same path on a sentence of
+% license; cad/cad_examples/cad_reduce_ex shows the same path on a sentence of
 % its own.
 %----------------------------------------------------------------------------
 BEGIN
