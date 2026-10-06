@@ -1,6 +1,6 @@
 det_fast_def: THEORY
 %----------------------------------------------------------------------------
-% The determinant with every minor computed once (COLLINS_PLAN.md M-J).
+% The determinant with every minor computed once.
 % Executable.
 %
 % ring_det's det is the Laplace expansion along the first row, which
@@ -12,7 +12,7 @@ det_fast_def: THEORY
 % first row, whose minors are the entries for the sets one smaller (dtab) --
 % n 2^n products.  det_fast proves detf(n, M) = det(n, M).
 %
-% The minors are looked up in a trie (2026-10-02, PROJ_PLAN.md P1): a column
+% The minors are looked up in a trie (2026-10-02): a column
 % set S of size m is the path of its n membership bits (dbits), so a lookup
 % costs O(n) steps instead of a scan of all C(n, m - 1) entries of the table
 % below (dlook, 87% of decide8's time on a degree-8 problem).  dtabt and
@@ -23,7 +23,7 @@ BEGIN
   IMPORTING ring_det
 
   n, m, r, b: VAR nat
-  M: VAR Mat
+  M: VAR MMat
   S: VAR list[nat]
 
   lo: VAR nat

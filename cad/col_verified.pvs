@@ -1,8 +1,7 @@
 col_verified: THEORY
 %----------------------------------------------------------------------------
 % THE COLLINS RUN COMPUTES A CYLINDRICAL ALGEBRAIC DECOMPOSITION ADAPTED TO
-% F (COLLINS_PLAN.md M-H), returned as data, as cad_verified for the
-% read-closure run.
+% F, returned as data.
 %
 % ccad_of?(u, qs, F) collects what the Collins run provides for the family F
 % in k + 1 = length(qs) variables.  Its cells of R^(j+1), j <= k, are
@@ -23,8 +22,7 @@ col_verified: THEORY
 %     and F's sign vector there.
 % col_verified: this holds whenever decc_o's certificate does -- the cells
 % themselves need no certificate (col_run's col_cad_run), the records need
-% the walk's.  col_exists: for every F and prefix of at least two
-% quantifiers some u makes it hold (decc_ok's decc_complete).
+% the walk's.
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING col_out_ok
@@ -65,5 +63,4 @@ BEGIN
            IMPLIES EXISTS r: member(r, cad_outc(u, qs, F)) AND r`rsec = s AND r`radr = A)
 
   col_verified: THEOREM decc_o(u, qs, F, Psi)`ok AND length(qs) >= 2 IMPLIES ccad_of?(u, qs, F)
-  col_exists: THEOREM length(qs) >= 2 IMPLIES EXISTS u: ccad_of?(u, qs, F)
 END col_verified

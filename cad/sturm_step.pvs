@@ -1,6 +1,6 @@
 sturm_step: THEORY
 %----------------------------------------------------------------------------
-% One step of the symbolic Sturm sequence (Phase 3).
+% One step of the symbolic Sturm sequence.
 %
 % The fifth condition of Sturm@sturm's constructed_sturm_sequence? asks each
 % element of the chain to be a NEGATIVE multiple of the remainder of the two

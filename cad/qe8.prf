@@ -56,13 +56,13 @@
     (|alg?| CONST-DECL "bool" |alg_def| NIL)
     (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
     (|sects| CONST-DECL "list[Sect]" |sect_inv| NIL)
-    (|rts| CONST-DECL "list[Alg]" |cad_lift| NIL)
+    (|rts| CONST-DECL "list[Alg]" |sect_inv| NIL)
     (|qe1cc_u_ok| FORMULA-DECL NIL |qe1c_ok| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (>= CONST-DECL "bool" |reals| NIL) (|bfsv| DEF-DECL "bool" |bform| NIL)
     (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
     (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (BF TYPE-DECL NIL |bform| NIL) (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (BF TYPE-DECL NIL |bform| NIL) (SV TYPE-EQ-DECL NIL |sign_vec| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
@@ -115,12 +115,12 @@
     (|qe1cc_bf| FORMULA-DECL NIL |qe1c_ok| NIL))
    SHOSTAK))
  (|qe8_correct| 0
-  (|qe8_correct-4| "" 3999869654
+  (|qe8_correct-0| "" 4000267857
    ("" (SKEEP)
     (("" (EXPAND "qe8")
       (("" (CASE "m = 1")
         (("1" (ASSERT)
-          (("1" (USE "len1" :SUBST ("p" "pt"))
+          (("1" (USE "len1_run" :SUBST ("p" "pt"))
             (("1" (ASSERT)
               (("1"
                 (USE "qe1cc_bf" :SUBST
@@ -177,7 +177,7 @@
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL) (BF TYPE-DECL NIL |bform| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|car| ADT-ACCESSOR-DECL "[(cons?) -> T]" |list_adt| NIL)
-    (|len1| FORMULA-DECL NIL |cad_run| NIL)
+    (|len1_run| FORMULA-DECL NIL |cad_run| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)

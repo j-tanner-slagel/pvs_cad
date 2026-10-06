@@ -1,7 +1,7 @@
 qe2cd_ok: THEORY
 %----------------------------------------------------------------------------
 % Collins quantifier elimination with derivative-closed free levels is
-% correct and always quantifier-free (COLLINS_PLAN.md M-I).
+% correct and always quantifier-free.
 %
 %   qe2cd_bf     for every prenex formula with m >= 2 free variables: qe2cd
 %                answers, its answer is quantifier-free, and it holds at a
@@ -14,7 +14,7 @@ qe2cd_ok: THEORY
 % free cells' signatures separate and secout quantifier-free (dsect_qf).
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING qe2cd_def, qe2c_full, qe2cc_ok
+  IMPORTING qe2cd_def, qe2_sep, qe1_full
 
   u, k, d: VAR nat
   m: VAR posnat

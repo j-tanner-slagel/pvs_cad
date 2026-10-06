@@ -1,7 +1,7 @@
 alg_sortc_def: THEORY
 %----------------------------------------------------------------------------
-% Sorting real algebraic numbers with each Sturm chain computed once
-% (QE_PLAN.md 12, fix 3).  Executable.
+% Sorting real algebraic numbers with each Sturm chain computed once.
+% Executable.
 %
 % Measured 2026-09-30 on (EXISTS x1, x2, x3: xi^2 <= 1, x1 + x2 + x3 >= c):
 % 96% of the outer closure's time was cell1's sortu, and in it refine:
@@ -20,10 +20,9 @@ alg_sortc_def: THEORY
 % alg_cmp after sfuelc steps.  sortf is cell1's insertion sort with one
 % comparison per step.  alg_sortc proves cmpc = sign3(value - value), and
 % cell1 that sortf is its insertion sort (sortf_eq), so sortu can be sortf.
-% sepcc is sect_inv's separation by bisection with the chains (sect_inv's
-% sepcc_eq), which inv_chk runs for every sector and every polynomial;
-% sortsep also separates every two neighbours of the sorted list once
-% (sepall), so that those separations find disjoint intervals at once.
+% sepcc separates two numbers by bisection with the chains; sortsep
+% separates every two neighbours of the sorted list once (sepall), so that
+% later separations find disjoint intervals at once.
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING alg_order
@@ -73,7 +72,7 @@ BEGIN
   kfuel: nat = 8
   sfuelc: nat = 128
 
-  %% separating two numbers by bisection, as sect_inv's sepf, with the chains
+  %% separating two numbers by bisection, with the chains
   SR: TYPE = [# ok: bool, sa: CA, sb: CA #]
   sepcc(fuel, c, d): RECURSIVE SR =
     IF c`a`ub < d`a`lb THEN (# ok := TRUE, sa := c, sb := d #)

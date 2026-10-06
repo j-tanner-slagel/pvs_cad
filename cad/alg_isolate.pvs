@@ -1,6 +1,6 @@
 alg_isolate: THEORY
 %----------------------------------------------------------------------------
-% Isolating all the real roots of a rational polynomial (Phase 2).
+% Isolating all the real roots of a rational polynomial.
 %
 % iso(p, lb, ub) returns the roots of p in the half-open interval (lb, ub]
 % as a list of algebraic numbers with strictly increasing values, by
@@ -39,7 +39,7 @@ BEGIN
   hopen(lb, ub): RealInt = (# lb := lb, ub := ub, bounded_below := TRUE, bounded_above := TRUE,
                              closed_below := FALSE, closed_above := TRUE #)
   roots_h(pl, lb, ub): set[real] = {z | lb < z AND z <= ub AND polylist(pl)(z) = 0}
-  %% the same count through sturm_fast's rcf (PERF_PLAN R3): one Horner
+  %% the same count through sturm_fast's rcf: one Horner
   %% evaluation per chain element instead of NASALib's repeated sums
   nrh(A: [nat -> int], (n: posnat | A(n) /= 0), lb, (ub | lb < ub), (sl: (Eq_computed_remainder?(A, n)))): int =
     rcf(A, n, lb, ub, sl) + IF hornA(A, n, lb) = 0 THEN -1 ELSE 0 ENDIF
@@ -54,7 +54,6 @@ BEGIN
      (nonempty?(roots_h(pl, lb, ub)) AND FORALL z1, z2: roots_h(pl, lb, ub)(z1) AND roots_h(pl, lb, ub)(z2) IMPLIES z1 = z2))
   nroots_h_two: LEMMA deg(pl) > 0 AND lb < ub AND nroots_h(pl, lb, ub) >= 2 IMPLIES
     EXISTS z1, z2: roots_h(pl, lb, ub)(z1) AND roots_h(pl, lb, ub)(z2) AND z1 /= z2
-  roots_h_closed: LEMMA polylist(pl)(lb) /= 0 IMPLIES roots_h(pl, lb, ub) = roots_in(pl, lb, ub)
   roots_h_split: LEMMA lb < r AND r < ub IMPLIES
     (roots_h(pl, lb, ub)(z) IFF roots_h(pl, lb, r)(z) OR roots_h(pl, r, ub)(z))
   %% two distinct roots in a closed interval with count >= 2
@@ -108,7 +107,5 @@ BEGIN
 
   %% all real roots
   roots(pl | deg(pl) > 0): list[Alg] = iso(pl, -rbound(pl), rbound(pl))
-  roots_alg: LEMMA FORALL (a: Alg): deg(pl) > 0 AND member(a, roots(pl)) IMPLIES a`p = pl AND polylist(pl)(value(a)) = 0
   roots_complete: LEMMA deg(pl) > 0 AND polylist(pl)(z) = 0 IMPLIES EXISTS (a: Alg): member(a, roots(pl)) AND value(a) = z
-  roots_increasing: LEMMA deg(pl) > 0 IMPLIES increasing(roots(pl))
 END alg_isolate

@@ -1,16 +1,4 @@
 (|alg_count|
- (|ipoly_beyond| 0
-  (|ipoly_beyond-1| NIL 3997998188
-   ("" (SKEEP) (("" (EXPAND "ipoly") (("" (ASSERT) NIL NIL)) NIL)) NIL)
-   ((|ipoly| CONST-DECL "[nat -> int]" |alg_count| NIL)
-    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
-     "(strict_total_order?[real])" |real_props| NIL)
-    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
-   SHOSTAK))
  (|ipoly_scale_TCC1| 0
   (|ipoly_scale_TCC1-1| NIL 3997998182
    ("" (SKEEP) (("" (TYPEPRED "deg(pl)") (("" (ASSERT) NIL NIL)) NIL)) NIL)
@@ -54,7 +42,7 @@
      "(strict_total_order?[real])" |real_props| NIL)
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
-   NIL (|ipoly_scale| SUBTYPE "j" "below[length[rat](pl)]" (29 97 29 98))))
+   NIL (|ipoly_scale| SUBTYPE "j" "below[length[rat](pl)]" (28 97 28 98))))
  (|ipoly_scale| 0
   (|ipoly_scale-1| NIL 3997998193
    ("" (SKEEP)
@@ -360,75 +348,13 @@
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
- (|ipoly_wrap| 0
-  (|ipoly_wrap-1| NIL 3997998307
-   ("" (SKEEP)
-    (("" (APPLY-EXTENSIONALITY :HIDE? T)
-      (("" (LIFT-IF)
-        (("" (LEMMA "ipoly_beyond")
-          (("" (INST? -1 :SUBST ("pl" "pl"))
-            (("" (PROP) (("1" (ASSERT) NIL NIL) ("2" (ASSERT) NIL NIL)) NIL))
-            NIL))
-          NIL))
-        NIL))
-      NIL))
-    NIL)
-   ((|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (IF CONST-DECL
-        "[boolean, T, T -> T]"
-        |if_def|
-        NIL)
-    (<= CONST-DECL "bool" |reals| NIL)
-    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
-    (< CONST-DECL "bool" |reals| NIL) (|list| TYPE-DECL NIL |list_adt| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
-    (|length| DEF-DECL "nat" |list_props| NIL)
-    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (IFF CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (> CONST-DECL "bool" |reals| NIL) (/= CONST-DECL "boolean" |notequal| NIL)
-    (|below| TYPE-EQ-DECL NIL |nat_types| NIL)
-    (|nth| DEF-DECL "T" |list_props| NIL)
-    (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (|deg| CONST-DECL "{d: below(length(pl)) |
-   (d > 0 IFF EXISTS (j: below(length(pl))): j > 0 AND nth(pl, j) /= 0) AND
-    (d > 0 IMPLIES
-      (FORALL (j: below(length(pl))): j > d IMPLIES nth(pl, j) = 0))
-     AND (d > 0 IMPLIES nth(pl, d) /= 0)}"
-     |polylist| |Sturm|)
-    (|ipoly| CONST-DECL "[nat -> int]" |alg_count| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
-    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
-    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
-    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (>= CONST-DECL "bool" |reals| NIL)
-    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|ipoly_beyond| FORMULA-DECL NIL |alg_count| NIL)
-    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
-     "(strict_total_order?[real])" |real_props| NIL)
-    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
-   SHOSTAK))
  (|chain_a_TCC1| 0
   (|chain_a_TCC1-1| NIL 3998000004
    ("" (SKEEP) (("" (EXPAND "wrap") (("" (ASSERT) NIL NIL)) NIL)) NIL)
    ((|wrap| CONST-DECL "[nat -> int]" |alg_count| NIL)) NIL
    (|chain_a| SUBTYPE "n"
     "{n_1: nat | alg_count.wrap(alg_count.A, alg_count.n)(n_1) /= 0}"
-    (39 96 39 97))))
+    (37 96 37 97))))
  (|chain_a_TCC2| 0
   (|chain_a_TCC2-1| NIL 3998000004
    ("" (SKEEP) (("" (EXPAND "poly_deriv") (("" (PROPAX) NIL NIL)) NIL)) NIL)
@@ -462,7 +388,7 @@
    (|chain_a| SUBTYPE
     "remainder_seq(wrap(A, n), n, poly_deriv(wrap(A, n)), n - 1)"
     "(compute_sturm.Eq_computed_remainder?(alg_count.A, alg_count.n))"
-    (39 72 39 98
+    (37 72 37 98
      #A((120) BASE-CHAR
         . "making lambda expr remainder_seq(wrap(A, n), n, poly_deriv(wrap(A, n)), n - 1) from macro remainder_sequence.sturm_chain")))))
  (|nroots_a_TCC1| 0
@@ -508,7 +434,7 @@
     (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|roots_closed_int_def_truetrue| FORMULA-DECL NIL |compute_sturm| |Sturm|))
    SHOSTAK
-   (|nroots_a| SUBTYPE "rcf(A, n, lb, ub, chain_a(A, n))" "nat" (44 4 44 36))))
+   (|nroots_a| SUBTYPE "rcf(A, n, lb, ub, chain_a(A, n))" "nat" (42 4 42 36))))
  (|nroots_a_bij| 0
   (|nroots_a_bij-0| "" 3999517961
    ("" (SKEEP)
@@ -691,7 +617,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    NIL
    (|chain| SUBTYPE "deg(pl)"
-    "{n: posnat | alg_count.ipoly(alg_count.pl)(n) /= 0}" (50 62 50 69))))
+    "{n: posnat | alg_count.ipoly(alg_count.pl)(n) /= 0}" (48 62 48 69))))
  (|roots_in_eq| 0
   (|roots_in_eq-1| NIL 3998000044
    ("" (SKEEP)

@@ -1,6 +1,6 @@
 mpoly_div: THEORY
 %----------------------------------------------------------------------------
-% Exact division at the coefficient level (Phase 6, performance).
+% Exact division at the coefficient level (for speed).
 %
 % The subresultant-style chain step divides every coefficient of a
 % pseudo-remainder by a polynomial d in the parameters. mdiv(fuel, p, d) is

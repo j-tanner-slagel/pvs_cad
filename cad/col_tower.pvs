@@ -1,6 +1,6 @@
 col_tower: THEORY
 %----------------------------------------------------------------------------
-% THE COLLINS TOWER IS A CAD (COLLINS_PLAN.md M-H).
+% THE COLLINS TOWER IS A CAD.
 %
 % For a family F in k + 1 variables, ctw(F, k) = [P_1, ..., P_k] is the tower
 % of projections: P_k = F and P_(j-1) = pdown(P_j), the N-reducta projection

@@ -1,18 +1,12 @@
 sector_rep: THEORY
 %----------------------------------------------------------------------------
-% Where a sign vector is realized (Phase 5).
-%
-% Along the top variable, the sign vector of a family is constant on any
-% interval free of roots of the product prodl(F) (svec_same, by the
-% intermediate value theorem). A point that is not a root of a polynomial g
-% lies between two consecutive roots, or beyond all roots on one side
-% (sector_cases, with the nearest roots of poly_rolle); between two roots
-% there is a root of the derivative (rolle_pf, the mean value theorem). So a
-% sign vector realized anywhere is realized at a root of prodl(F), at a root
-% of its derivative, or beyond all roots.
+% Polynomial functions and the product of a family: the
+% intermediate value theorem for a polynomial in the top variable (ivt_pf),
+% its sign constant where it has no root (same_sign), and prodl(F), the
+% product of a family, zero exactly where some member is (prodl_zero).
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING poly_rolle, sign_vec
+  IMPORTING mpoly_prod, sign_vec
 
   l, g, f: VAR list[mpoly]
   F: VAR list[list[mpoly]]
@@ -39,20 +33,4 @@ BEGIN
   mem_cons: LEMMA member(f, cons(l, F)) IFF (f = l OR member(f, F))
   prodl_zero: LEMMA FORALL F: meval(mpol(prodl(F)))(xs) = 0 IFF
     (EXISTS f: member(f, F) AND meval(mpol(f))(xs) = 0)
-
-  %% the vector is constant on an interval without roots of the product
-  svec_same: LEMMA FORALL F: a <= x AND x <= b AND a <= c AND c <= b AND
-    (FORALL z: a <= z AND z <= b IMPLIES meval(mpol(prodl(F)))(cons(z, ys)) /= 0)
-    IMPLIES svec(F, cons(x, ys)) = svec(F, cons(c, ys))
-
-  %% Rolle for the product
-  rolle_pf: LEMMA cons?(g) AND a < b AND pf(g, ys)(a) = 0 AND pf(g, ys)(b) = 0 IMPLIES
-    EXISTS c: a < c AND c < b AND meval(mpol(lderiv(g)))(cons(c, ys)) = 0
-
-  %% a non-root is between consecutive roots or beyond all roots on a side
-  sector_cases: LEMMA pf(g, ys)(x) /= 0 IMPLIES
-    (EXISTS a, b: a < x AND x < b AND pf(g, ys)(a) = 0 AND pf(g, ys)(b) = 0 AND
-       (FORALL z: a < z AND z < b IMPLIES pf(g, ys)(z) /= 0))
-    OR (FORALL z: z >= x IMPLIES pf(g, ys)(z) /= 0)
-    OR (FORALL z: z <= x IMPLIES pf(g, ys)(z) /= 0)
 END sector_rep

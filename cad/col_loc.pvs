@@ -1,6 +1,6 @@
 col_loc: THEORY
 %----------------------------------------------------------------------------
-% THE LOCAL COLLINS LEMMA (COLLINS_PLAN.md M-E, section 2.3).
+% THE LOCAL COLLINS LEMMA.
 %
 % collins_loc: if kconst?(G, C) holds (col_pair; colh? gives it) and p1 is in
 % C, then for every eta > 0 there is d > 0 such that over every p in C within

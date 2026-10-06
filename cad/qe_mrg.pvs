@@ -1,6 +1,6 @@
 qe_mrg: THEORY
 %----------------------------------------------------------------------------
-% qe_mrg_def's merged answers are right (QE_PLAN.md 12, fix 2).
+% qe_mrg_def's merged answers are right.
 %
 %   lowS / uppS   what lowX / uppX say (lowX_sem, uppX_sem, by cmpX_ok)
 %   in_lu         a sector is the points between its two ends
@@ -14,7 +14,6 @@ qe_mrg: THEORY
 %                 x is in the open run (from its start up to pv) or in a sector
 %                 still to come whose value is TRUE
 %   mrgX_sem      so mrgX holds at x iff x is in a sector with value TRUE
-%   qf_mrgX       mrgX is quantifier-free when every comparison cmpX is
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING qe_mrg_def, qe_ep, qe_fm
@@ -69,7 +68,6 @@ BEGIN
   MEASURE length(ss)
 
   L: VAR list[Fm]
-  ex_null: LEMMA NOT (EXISTS a: member(a, null[Fm]) AND qfsem(a)(pt))
   ex_cons: LEMMA (EXISTS a: member(a, cons(b, L)) AND qfsem(a)(pt)) IFF
     (qfsem(b)(pt) OR EXISTS a: member(a, L) AND qfsem(a)(pt))
 
@@ -87,15 +85,4 @@ BEGIN
     IMPLIES ((EXISTS a: member(a, mrg(ss, vs, on, one, lo, pv)) AND qfsem(a)(cons(x, ys)))
              IFF ((on AND qfsem(lo)(cons(x, ys)) AND uppS(pv)(x)) OR anyT(ss, vs)(x)))
   mrgX_sem: LEMMA chain?(ss) IMPLIES (qfsem(mrgX(ss, vs))(cons(x, ys)) IFF anyT(ss, vs)(x))
-
-  qf_or: LEMMA qf?(f_or(a, b)) IFF (qf?(a) AND qf?(b))
-  qf_lowX: LEMMA (FORALL (b: Alg), (t: int): qf?(cmpX(b, t))) IMPLIES qf?(lowX(s))
-  qf_uppX: LEMMA (FORALL (b: Alg), (t: int): qf?(cmpX(b, t))) IMPLIES qf?(uppX(s))
-  qf_fand2: LEMMA qf?(a) AND qf?(b) IMPLIES qf?(fand2(a, b))
-  qf_sectX_h: LEMMA (FORALL (b: Alg), (t: int): qf?(cmpX(b, t))) IMPLIES qf?(sectX(s))
-  qf_cls: LEMMA (FORALL (b: Alg), (t: int): qf?(cmpX(b, t))) AND qf?(lo) IMPLIES qf?(cls(one, lo, pv))
-  mrg_qf: LEMMA FORALL ss: FORALL vs, on, one, lo, pv:
-    (FORALL (b: Alg), (t: int): qf?(cmpX(b, t))) AND qf?(lo)
-    IMPLIES FORALL a: member(a, mrg(ss, vs, on, one, lo, pv)) IMPLIES qf?(a)
-  qf_mrgX: LEMMA (FORALL (b: Alg), (t: int): qf?(cmpX(b, t))) IMPLIES qf?(mrgX(ss, vs))
 END qe_mrg

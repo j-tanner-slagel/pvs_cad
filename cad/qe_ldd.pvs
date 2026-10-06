@@ -1,6 +1,6 @@
 qe_ldd[T: TYPE]: THEORY
 %----------------------------------------------------------------------------
-% Duplicate removal on a list (GAP_PLAN.md Tier 2, quantifier elimination).
+% Duplicate removal on a list.
 % Executable.  ldd keeps the last copy of each element; qe_ldd_ok proves it
 % has the same members.  The QE output uses it so that each disjunct is
 % written once.

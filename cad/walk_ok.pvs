@@ -1,6 +1,6 @@
 walk_ok: THEORY
 %----------------------------------------------------------------------------
-% The walk lists exactly the fibre's realized sign vectors (FINISH_PLAN S2).
+% The walk lists exactly the fibre's realized sign vectors.
 %
 %   walk_fib: wok?(F, msg(ys), Y) IMPLIES
 %             (member(v, walk(F, msg(ys), Y)) IFF fib(F, ys)(v))
@@ -14,9 +14,8 @@ walk_ok: THEORY
 %   - a member that is not live, or strips to length < 2, is CONSTANT along
 %     the fibre (short_const); a live one vanishes only where P does
 %     (bprod_zero).  So on an interval free of roots of P every member keeps
-%     its sign (mem_same) and the vector is constant (svec_same_live) -- this
-%     is sector_rep's svec_same without its assumption that NO member
-%     vanishes identically
+%     its sign (mem_same) and the vector is constant (svec_same_live), even
+%     when a member vanishes identically
 %   - in a gap whose count is one the root beta of P is unique (cnt_one).  A
 %     member with cnt > 0 there has a root in the gap, which is a root of P,
 %     hence beta; one with cnt = 0 has no root in the closed gap and keeps
@@ -24,7 +23,7 @@ walk_ok: THEORY
 %   - soundness and completeness are then inductions along Y
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING walk_def, cad_delin
+  IMPORTING walk_def
 
   ys: VAR list[real]
   F, G: VAR list[list[mpoly]]
@@ -79,16 +78,6 @@ BEGIN
     length(strip(g)) < 2 OR slc?(bk(F), msg(ys), strip(g))
 
   sent_P: LEMMA sent(msg(ys), bprod(F), y0) /= 0 IFF P(F, ys)(y0) /= 0
-
-  gap_beta: LEMMA slc?(bk(F), msg(ys), bprod(F)) AND lo < hi
-    AND P(F, ys)(lo) /= 0 AND P(F, ys)(hi) /= 0
-    AND cnt(bk(F), msg(ys), bprod(F), lo, hi) = 1
-    IMPLIES EXISTS beta: gapf?(F, ys, lo, hi, beta)
-
-  gap_none: LEMMA slc?(bk(F), msg(ys), bprod(F)) AND lo < hi
-    AND P(F, ys)(lo) /= 0 AND P(F, ys)(hi) /= 0
-    AND cnt(bk(F), msg(ys), bprod(F), lo, hi) = 0
-    IMPLIES FORALL z: lo <= z AND z <= hi IMPLIES P(F, ys)(z) /= 0
 
   %% one member at the section
   sgn_at: LEMMA member(g, F) AND mok?(F, ys, g) AND lo < hi

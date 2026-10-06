@@ -567,7 +567,7 @@
     (|secr| DEF-DECL "list[ORec]" |cad_fold| NIL)
     (|cad_outw| CONST-DECL "list[ORec]" |twrun_def| NIL)
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|every_dclx| FORMULA-DECL NIL |qe2c_ok| NIL)
+    (|every_dclx| FORMULA-DECL NIL |ctwd| NIL)
     (|ttake| DEF-DECL "Tower" |qe2_def| NIL)
     (|qe2cd_tw| CONST-DECL "Tower" |qe2cd_def| NIL)
     (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)

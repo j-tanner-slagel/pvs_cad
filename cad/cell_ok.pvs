@@ -1,22 +1,17 @@
 cell_ok: THEORY
 %----------------------------------------------------------------------------
-% The cells of a level below the outermost are read correctly
-% (FINISH_PLAN stage S5b).
+% The cells of a level below the outermost are read correctly.
 %
 % A level's cells are the rational separators of its walk and the gaps that
 % hold a root.  The inner walk runs at each cell through the cell's oracle:
 %
-%   pt_fib    at a separator y0 the oracle sg_pt(msg(ys), y0) IS
-%             msg(cons(y0, ys)) (sg_pt_msg), so the inner walk lists the fibre
-%             set over the point (y0, ys) by walk_fib
-%   sec_fib   at the section beta of a gap the oracle sg_sec answers by
-%             bounded Tarski queries at the ends of the gap.  Each sound query
-%             (qsec`ok) returns the sign at (beta, ys) (qsec_val, from tower),
-%             and at a gap the walk certified every query IS sound
-%             (qsec_ok_complete, allok_complete); when every query the
-%             inner walk makes is sound (secok?) the oracle agrees with
-%             msg(cons(beta, ys)) on all the walk reads, walk_det makes the
-%             two walks equal, and walk_fib applies again
+%   qsec_val    at the section beta of a gap the oracle sg_sec answers by
+%               bounded Tarski queries at the ends of the gap; each sound
+%               query (qsec`ok) returns the sign at (beta, ys) (from tower),
+%               and at a gap the walk certified every query IS sound
+%               (qsec_ok_complete, allok_complete); allok_agree: when every
+%               query on a list of reads is sound the oracle agrees with
+%               msg(cons(beta, ys)) on them
 %
 % No algebraic number appears: beta exists only in the statement.
 %----------------------------------------------------------------------------
@@ -31,12 +26,6 @@ BEGIN
   sg: VAR SG
   lo, hi, y0, a, b: VAR rat
   beta, z: VAR real
-  v: VAR SV
-
-  %% ---- at a separator -----------------------------------------------------------
-  sg_pt_msg: LEMMA sg_pt(msg(ys), y0) = msg(cons(y0, ys))
-  pt_fib: THEOREM wok_w(F, sg_pt(msg(ys), y0)) IMPLIES
-    (member(v, svs_w(F, sg_pt(msg(ys), y0))) IFF fib(F, cons(y0, ys))(v))
 
   %% ---- normalizing a coefficient list through msg ----------------------------------
   snorm_eval_cell_ok: LEMMA FORALL l: meval(mpol(snorm_sg(l, msg(ys))))(cons(z, ys))
@@ -67,7 +56,7 @@ BEGIN
   qsec_val: THEOREM lvl?(P, ys, lo, hi, beta) AND qsec(msg(ys), P, lo, hi, c)`ok
     IMPLIES qsec(msg(ys), P, lo, hi, c)`val = msg(cons(beta, ys))(c)
 
-  %% completeness (COMPLETENESS_PLAN C4): at a gap the walk above certified,
+  %% completeness: at a gap the walk above certified,
   %% every query is sound.  The member the query runs against vanishes only
   %% where the live product does, so it is nonzero at the two ends and has
   %% exactly one root between them, and the count says so (cnt_unique)
@@ -88,7 +77,4 @@ BEGIN
 
   allok_agree: LEMMA FORALL R: lvl?(P, ys, lo, hi, beta) AND allok?(msg(ys), P, lo, hi, R)
     IMPLIES agree(sg_sec(msg(ys), P, lo, hi), msg(cons(beta, ys)), R)
-
-  sec_fib: THEOREM lvl?(P, ys, lo, hi, beta) AND secok?(F, msg(ys), P, lo, hi) IMPLIES
-    (member(v, svs_w(F, sg_sec(msg(ys), P, lo, hi))) IFF fib(F, cons(beta, ys))(v))
 END cell_ok

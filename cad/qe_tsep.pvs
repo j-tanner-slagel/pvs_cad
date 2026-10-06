@@ -1,7 +1,7 @@
 qe_tsep: THEORY
 %----------------------------------------------------------------------------
 % In a CAD whose families are derivative-closed, distinct cells have
-% distinct signatures (QE_PLAN.md section 11, 2C).
+% distinct signatures.
 %
 % stk_sep: over a base cell C where G is delineable, two points of the
 % stacks a and b with the same sign vector on G have a = b.  The point of

@@ -1,7 +1,6 @@
 cad_tower: THEORY
 %----------------------------------------------------------------------------
-% A certified tower of families builds a CAD over a connected base cell
-% (GAP_PLAN.md Tier 1B).
+% A tower of families as a CAD over a base cell.
 %
 % A tower TW lists one family per level, the family of the lowest level
 % first; tlast(TW) is the family the sentence is about.  tcell(TW, C, A) is
@@ -12,14 +11,8 @@ cad_tower: THEORY
 % cad_over?(TW, C) says the tower decomposes the cylinder over C as a CAD:
 % each family is delineable over each cell below it (delin_cl?, the sign-invariant sense:
 % finitely many continuous non-crossing roots, the family sign-invariant on
-% every section and band) and every cell is connected.
-%
-% tower_cad: if the base cell is connected, the lowest family's reads keep
-% their signs across it (rdag?), and the tower's certificate CLF holds over
-% it -- what decide5 checks at run time -- then the tower is a CAD over C.
-% At each level the reads of the next family are members of the family
-% below (CLF's rdz?), which is sign-invariant on the new cell, so the reads
-% agree there (rdz_agree) and stack_const applies again.
+% every section and band) and every cell is connected.  col_tower proves it
+% for the Collins tower (ctw_cad).
 %
 % The cells partition the cylinder over C (tcell_cover, tcell_disj), each
 % nonempty stack has 2 nroot + 1 cells (sidx_le), and the top family has one
@@ -30,8 +23,8 @@ BEGIN
 
   TW: VAR Tower
   G: VAR list[list[mpoly]]
-  C, C1: VAR [list[real] -> bool]
-  p, p1, q, p0: VAR list[real]
+  C: VAR [list[real] -> bool]
+  p, p1, p0: VAR list[real]
   A, B: VAR list[nat]
   a, m: VAR nat
 
@@ -46,23 +39,8 @@ BEGIN
     ENDIF
   MEASURE length(TW)
 
-  clfc?(TW, C): bool = FORALL q: C(q) IMPLIES CLF(TW, q)
-
   %% ---- an empty base -------------------------------------------------------------------
   delin_empty: LEMMA (FORALL p: NOT C(p)) IMPLIES delin_cl?(G, C)
-  stk_empty: LEMMA (FORALL p: NOT C(p)) IMPLIES FORALL p: NOT stk(G, C, a)(p)
-  cad_empty: LEMMA FORALL TW: FORALL C: (FORALL p: NOT C(p)) IMPLIES cad_over?(TW, C)
-
-  %% ---- one level up ------------------------------------------------------------------------
-  stk_cons: LEMMA stk(G, C, a)(p) IMPLIES p = cons(car(p), cdr(p)) AND C(cdr(p))
-  clf_up: LEMMA cons?(TW) AND cons?(cdr(TW)) AND clfc?(TW, C) AND stk(car(TW), C, a)(p)
-    IMPLIES rdz?(car(cdr(TW)), car(TW), p) AND CLF(cdr(TW), p)
-  rdag_up: LEMMA cons?(TW) AND cons?(cdr(TW)) AND clfc?(TW, C) AND delin_cl?(car(TW), C)
-    AND stk(car(TW), C, a)(p0)
-    IMPLIES rdag?(car(cdr(TW)), stk(car(TW), C, a), p0)
-
-  tower_cad: THEOREM FORALL TW: FORALL C, p0: cons?(TW) AND conn?(C) AND C(p0)
-    AND rdag?(car(TW), C, p0) AND clfc?(TW, C) IMPLIES cad_over?(TW, C)
 
   %% ---- the cells ------------------------------------------------------------------------------
   tcell_conn: LEMMA FORALL TW: FORALL C, A: cad_over?(TW, C) AND conn?(C) AND length(A) <= length(TW)

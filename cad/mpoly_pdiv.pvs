@@ -1,6 +1,6 @@
 mpoly_pdiv: THEORY
 %----------------------------------------------------------------------------
-% Pseudo-division in the main variable (Phase 1).
+% Pseudo-division in the main variable.
 %
 % For coefficient lists L (dividend) and G (divisor, non-empty, with leading
 % coefficient b = llast(G)), pquo_rem(L, G) returns quo and rem with
@@ -11,8 +11,7 @@ mpoly_pdiv: THEORY
 % where pk(L, G) = length(L) - length(G) + 1 when L is at least as long as G
 % and 0 otherwise.  No division by coefficients takes place, so the
 % coefficients stay polynomials (rational when the inputs are rational): this
-% is Collins's pseudo-remainder, the primitive of remainder sequences and of
-% the branching quantifier elimination of Phase 3.
+% is Collins's pseudo-remainder, the primitive of remainder sequences.
 %
 % The one reduction step is  L' = b * lbut(L) - x^(n-m) * a * lbut(G)
 % (a = llast(L), n = length(L) - 1, m = length(G) - 1), whose top

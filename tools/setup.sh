@@ -20,7 +20,7 @@ echo "SCRATCH     $SCRATCH"
 if [ -x "$PROVEIT" ]; then "$PROVEIT" --version 2>&1 | head -1; else miss "proveit ($PROVEIT)"; fi
 if [ -n "$NASALIB" ] && [ -d "$NASALIB" ]; then
   # the NASALib libraries the library imports (T5's trans_bounds imports trig and lnexp)
-  for lib in reals Sturm Tarski structures analysis complex mult_poly matrices interval_arith trig lnexp; do
+  for lib in reals Sturm Tarski structures analysis complex matrices interval_arith trig lnexp; do
     [ -d "$NASALIB/$lib" ] || miss "NASALib library $lib"
   done
   [ -f "$NASALIB/pvs-scripts/pvs-cli/pvs-cli.py" ] || miss "NASALib's pvs-scripts/pvs-cli/pvs-cli.py (tools/pvscli.sh runs it)"

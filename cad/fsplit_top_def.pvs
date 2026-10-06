@@ -1,6 +1,6 @@
 fsplit_top_def: THEORY
 %----------------------------------------------------------------------------
-% The input family over a checked basis, executable (PROJ_PLAN.md P3).
+% The input family over a checked basis, executable.
 %
 % For a family F (members are coefficient lists in the main variable),
 % ubs(F) lists its members as polynomials.  When every u in ubs(F) passes

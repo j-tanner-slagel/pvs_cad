@@ -1,7 +1,6 @@
 cpoly_der: THEORY
 %----------------------------------------------------------------------------
-% The formal derivative of a complex polynomial function (COLLINS_PLAN.md
-% M-B2).
+% The formal derivative of a complex polynomial function.
 %
 % cder(a) is the derivative of a coefficient sequence; cder?(P, D) says D is
 % the derivative of the polynomial function P, computed from any
@@ -28,7 +27,6 @@ BEGIN
   cder_pad: LEMMA n <= m IMPLIES cpolynomial(cder(pad(a, n)), m)(z) = cpolynomial(cder(pad(a, n)), n)(z)
   cder_exists: LEMMA cpol?(P, n) IMPLIES EXISTS D: cder?(P, D) AND cpol?(D, n)
   cder_unique: LEMMA cder?(P, D) AND cder?(P, E) IMPLIES FORALL z: D(z) = E(z)
-  cder_cpol: LEMMA cpol?(P, n) AND cder?(P, D) IMPLIES cpol?(D, n)
   cder_ext: LEMMA cder?(P, D) AND (FORALL z: Q(z) = P(z)) AND (FORALL z: E(z) = D(z)) IMPLIES cder?(Q, E)
 
   %% the product rule with a linear factor

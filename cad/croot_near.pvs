@@ -1,6 +1,6 @@
 croot_near: THEORY
 %----------------------------------------------------------------------------
-% The roots of nearby polynomials are near (Phase 5).
+% The roots of nearby polynomials are near.
 %
 % Two facts about a proper complex polynomial p of degree n, from its
 % factorization (croots) and the size of its coefficients.
@@ -16,17 +16,13 @@ croot_near: THEORY
 % r: [nat -> complex] and the product cprod of croots.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING croots, complex@polar, reals@product[int]
+  IMPORTING croots, reals@product[int]
 
   a, b: VAR sequence[complex]
   r: VAR [nat -> complex]
-  n, i, k: VAR nat
+  n, i: VAR nat
   z, y, w: VAR complex
   M, B, eps, delta: VAR real
-
-  %% the modulus of a product of linear factors
-  abs_cprod: LEMMA FORALL (n: nat): FORALL (r: [nat -> complex], z: complex):
-    abs(cprod(r, n)(z)) = product(0, n - 1, LAMBDA (i: int): IF i >= 0 THEN abs(z - r(i)) ELSE 1 ENDIF)
 
   %% if every factor is at least eps, the product is at least eps^n
   cprod_far: LEMMA FORALL (n: nat): FORALL (r: [nat -> complex], z: complex, eps: real):

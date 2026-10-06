@@ -1,7 +1,7 @@
 mpoly_gcd_def: THEORY
 %----------------------------------------------------------------------------
 % Greatest common divisors, squarefree parts and a pairwise coprime basis of
-% multivariate polynomials over Q, executable (PROJ_PLAN.md P3).
+% multivariate polynomials over Q, executable.
 %
 % NOTHING HERE IS PROVED OR TRUSTED.  These functions only PROPOSE a basis B
 % of a list of polynomials U and, for each u in U, a constant c and

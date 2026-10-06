@@ -1,0 +1,54 @@
+cad_msg_ex: THEORY
+%----------------------------------------------------------------------------
+% Inputs for tools/msgcheck.sh, which checks what (cad), (cad *), (cad-num)
+% and (cad-qe) say when they do not prove a formula: FALSE
+% reports, refusals, hints, and the label cad on the formula that stays.
+% The formulas are false or refused on purpose, so these theories have no
+% proofs; they import the library by its name (cad@...), from outside it.
+% cad_msg_pc imports pvs_cad only (the hint for
+% constants), cad_msg_d8 cad_decide8 and mpoly_embed only (formulas of any
+% shape need pvs_cad; no qe8 for (cad-qe)), cad_msg_qe qe8 only (no decision
+% for (cad)).
+%----------------------------------------------------------------------------
+BEGIN
+  IMPORTING cad@pvs_cad_num
+  m_false: LEMMA FORALL (x: real): x^2 > 0
+  m_true_hyp: LEMMA (FORALL (x: real): x^2 >= 0) IMPLIES (EXISTS (y: real): y^2 < 0)
+  m_gen_false: LEMMA (FORALL (x: real): x^2 > 0) OR (EXISTS (y: real): y^2 < 0)
+  m_star: LEMMA FORALL (x: real): x > 0 IMPLIES x > 1
+  m_pi_false: LEMMA pi^2 > 10
+  m_pi_prec: LEMMA pi > 3.14159265358979323846264338327
+  m_nat: LEMMA FORALL (n: nat): n * n >= n
+  m_qe_closed: LEMMA FORALL (x: real): x^2 >= 0
+  m_qe_closed2: LEMMA FORALL (x, y: real): x^2 + y^2 >= 0
+  m_t5_bound: LEMMA EXISTS (x: real): sin(x) = 1/2
+  m_t5_false: LEMMA FORALL (x: real): 1/2 <= x AND x <= 1 IMPLIES sin(x) >= x
+  m_sqrt_false: LEMMA sqrt(2) > 2
+  m_t4_false: LEMMA FORALL (x: real): sqrt(x^2 + 1) > x + 1
+  m_one: LEMMA FORALL (x: real): x^2 >= 0
+  %% :cad-only? t keeps the witness search out of every decision (msgcheck
+  %% reads the count of witness searches)
+  m_only_main: LEMMA EXISTS (x: real): x * x = 4 AND x > 0
+  m_only_sqrt: LEMMA FORALL (x: real): x >= 1 IMPLIES sqrt(x) <= x
+  m_only_star: LEMMA FORALL (c: posreal): EXISTS (y: real): y > 0 AND y * y = c
+  m_only_num: LEMMA EXISTS (y: real): y > sqrt(2) AND y < 2
+END cad_msg_ex
+
+cad_msg_pc: THEORY
+BEGIN
+  IMPORTING cad@pvs_cad
+  m_hint: LEMMA FORALL (x: real): x^2 - pi * x + 3 > 0
+END cad_msg_pc
+
+cad_msg_d8: THEORY
+BEGIN
+  IMPORTING cad@cad_decide8, cad@mpoly_embed
+  m_shape: LEMMA (EXISTS (x: real): x > 0) AND (FORALL (y: real): y^2 >= 0)
+  m_noqe: LEMMA FORALL (a: real): (EXISTS (x: real): x^2 = a) IFF a >= 0
+END cad_msg_d8
+
+cad_msg_qe: THEORY
+BEGIN
+  IMPORTING cad@qe8, cad@mpoly_embed, cad@cad_endgame
+  m_nodec: LEMMA FORALL (x: real): x^2 >= 0
+END cad_msg_qe

@@ -1,6 +1,6 @@
 cad_out_ok: THEORY
 %----------------------------------------------------------------------------
-% The data cad_out returns is the CAD of cad_run (GAP_PLAN.md Tier 1C).
+% The records of a certified tower's cells are right.
 %
 % One level (kids_idx, kids_cover, kids_lvl): at a certified descriptor of a
 % level, the walk's children denote points of the fibre, each carries the
@@ -8,33 +8,30 @@ cad_out_ok: THEORY
 % and every stack index up to 2 nroot occurs.  The proof runs along the
 % separators, the root list being the walk's gap roots (rtl_groots).
 %
-% The tree (ctree_in, ctree_cover): every record's sample lies in the cell
-% its indices name over any base cell containing the start point, and over a
-% CAD base (cad_over?) every nonempty cell has a record -- nroot is constant
-% over a cell, so the indices of its stack occur at the start point.
+% The tree (ctree_mem, ctree_intro): a record of the tree is a child of the
+% top walk with a record of the tree below it, and every such pair gives a
+% record.  col_out_ok proves from these, under the walk's certificate okw_o,
+% that every record's sample lies in the cell its indices name and that over
+% a CAD base (cad_over?) every nonempty cell has a record.
 %
-% The run (cad_out_ok): when decn_o's certificate holds, every record of
-% cad_out has a sector of the run and indices whose cell (rcell) contains
-% its sample, and the recorded sign vector is F's at the sample; every
-% nonempty cell of the run has a record.  With cad_run, cad_out is a CAD of
-% R^(k+1) adapted to F with a sample point in every cell.
+% The recorded sign vector is F's at the sample (osv_ok).  col_out_ok proves
+% from these that the Collins run's records are its CAD.
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING cad_out, od_exact, map_member[KD, list[CRec]], map_member[CRec, CRec],
-    map_member[CRec, ORec], map_member[Sect, list[ORec]], clos_ok
+    map_member[CRec, ORec], map_member[Sect, list[ORec]], innern_sem
 
   G, E, F: VAR list[list[mpoly]]
   od: VAR OD
   tb: VAR CT
   Y: VAR list[rat]
-  n, a, u, m: VAR nat
+  n, a, u: VAR nat
   q: VAR list[real]
   kd: VAR KD
   TW: VAR Tower
   TB: VAR list[CT]
-  C: VAR [list[real] -> bool]
-  A: VAR list[nat]
   r: VAR CRec
+  o: VAR ORec
   lo, hi, y0: VAR rat
   y: VAR real
   f: VAR [OD -> bool]
@@ -48,6 +45,17 @@ BEGIN
 
   %% the stack index over the walk's root list for Y
   six(E, q, Y)(y): nat = 2 * nlt(groots(E, q, Y), y) + IF member(y, groots(E, q, Y)) THEN 1 ELSE 0 ENDIF
+
+  ys: VAR list[real]
+  %% a gap's root lies strictly inside the gap
+  gap_lt: LEMMA memok?(F, msg(ys), F) AND gapok?(F, msg(ys), lo, hi)
+    AND nzat?(F, msg(ys), hi, F) AND gap?(F, msg(ys), lo, hi)
+    IMPLIES lo < secbeta(F, ys, lo, hi) AND secbeta(F, ys, lo, hi) < hi
+
+  %% ---- two points, one gap pattern -------------------------------------------------------------
+  wsep?(F, ys, Y): bool = memok?(F, msg(ys), F) AND sepok?(F, msg(ys), Y)
+
+  gr_nlt_hd: LEMMA cons?(Y) AND wsep?(F, ys, Y) IMPLIES nlt(groots(F, ys, Y), car(Y)) = 0
 
   %% the level's hypotheses at od, with the walk's family E and a gap test that is exact
   lvh?(E, od, tb, Y): bool = wf?(od) AND wsep?(E, den(od), Y) AND cons?(lives(E))
@@ -100,47 +108,10 @@ BEGIN
     AND member(r, ctree(u, cdr(TW), cdr(TB), kd`2))
     IMPLIES member(addr(kd`1)(r), ctree(u, TW, TB, od))
 
-  %% the tree's certificate: okn_o on a long enough table list
-  okt?(u, TW, TB, od): bool = vtb?(TB) AND length(TB) >= length(TW) AND okn_o(u, TW, TB, od)
-
-  ctree_in: LEMMA FORALL TW: FORALL TB, od, C, r: cons?(TW) AND okt?(u, TW, TB, od) AND wf?(od)
-    AND C(den(od)) AND member(r, ctree(u, TW, TB, od))
-    IMPLIES length(r`adr) = length(TW) AND wf?(r`sod) AND tcell(TW, C, r`adr)(den(r`sod))
-
-  ctree_cover: LEMMA FORALL TW: FORALL TB, od, C, A: cons?(TW) AND okt?(u, TW, TB, od) AND wf?(od)
-    AND C(den(od)) AND cad_over?(TW, C) AND length(A) = length(TW)
-    AND (EXISTS q: tcell(TW, C, A)(q))
-    IMPLIES EXISTS r: member(r, ctree(u, TW, TB, od)) AND r`adr = A
-
   %% ---- the run ----------------------------------------------------------------------------------
-  qs: VAR list[bool]
-  Psi: VAR [SV -> bool]
-  s: VAR Sect
-  o: VAR ORec
 
   osv_ok: LEMMA wf?(od) IMPLIES osv_of(F, od) = svec(F, den(od))
 
   omem_app: LEMMA FORALL (l1, l2: list[ORec]): member(o, append(l1, l2)) IFF (member(o, l1) OR member(o, l2))
   olflat_mem: LEMMA FORALL (L: list[list[ORec]]): member(o, olflat(L)) IFF EXISTS (l: list[ORec]): member(l, L) AND member(o, l)
-  cad_out_mem: LEMMA length(qs) >= 2 IMPLIES
-    (member(o, cad_out(u, qs, F)) IFF
-       EXISTS s, r: member(s, runsects(u, length(cdr(qs)), F))
-         AND member(r, ctree(u, runtw(u, length(cdr(qs)), F)(s),
-                             tables(u, runtw(u, length(cdr(qs)), F)(s), odS(s)), odS(s)))
-         AND o = (# rsec := s, radr := r`adr, rsod := r`sod, rsv := osv_of(F, r`sod) #))
-
-  %% each sector's tree is certified and starts at the sector's sample
-  sector_okt: LEMMA decn_o(u, qs, F, Psi)`ok AND length(qs) >= 2 AND member(s, runsects(u, length(cdr(qs)), F))
-    IMPLIES okt?(u, runtw(u, length(cdr(qs)), F)(s), tables(u, runtw(u, length(cdr(qs)), F)(s), odS(s)), odS(s))
-      AND scell(s)(den(odS(s)))
-
-  cad_out_ok: THEOREM decn_o(u, qs, F, Psi)`ok AND length(qs) >= 2 IMPLIES
-    LET k = length(cdr(qs)) IN
-        (FORALL o: member(o, cad_out(u, qs, F)) IMPLIES
-           member(o`rsec, runsects(u, k, F)) AND length(o`radr) = k
-           AND rcell(u, k, F)(o`rsec, o`radr)(den(o`rsod))
-           AND o`rsv = svec(F, den(o`rsod)))
-    AND (FORALL s, A: member(s, runsects(u, k, F)) AND length(A) = k
-           AND (EXISTS q: rcell(u, k, F)(s, A)(q))
-           IMPLIES EXISTS o: member(o, cad_out(u, qs, F)) AND o`rsec = s AND o`radr = A)
 END cad_out_ok

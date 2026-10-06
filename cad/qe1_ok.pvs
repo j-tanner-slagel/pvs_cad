@@ -1,33 +1,23 @@
 qe1_ok: THEORY
 %----------------------------------------------------------------------------
-% Quantifier elimination for one free variable is correct (GAP_PLAN.md
-% Tier 2, stage 1).
+% Quantifier elimination for one free variable: the answer is correct.
 %
-% qe1_sJ_sem (no engine, any index set J; qe1_s_sem at minJ): if every entry's sector that contains x carries the
-% truth value P and Q's sign vector at x, and some entry's sector contains
-% x, then qe1_s's output holds at x iff P -- on the separating branch through
-% the sign conditions (atoms_sem, sep1?), on the other through sectX_ok.
-% qe1_sm_sem: so does qe1_sm's, which may be the merged answer qe1_mo (mo_sem:
-% qe_mrg's mrgX_sem on the sorted sectors, sects_chain and sortu_incr).
-% qe1_correct: under the run's certificate the sectors of the run's first
-% level are such entries (memn_ok, sectn_sem, sig1_inv; sects_cover), so
-% qe1_o's output holds at x iff the bound quantifiers hold with x as the
-% free variable.  qe1_qf: when qf is set the output is quantifier-free.
-% qe1_u_ok: the escalation always ends with the certificate (decn_u's
-% measure); qe1_bf: the same for a Boolean combination of sign conditions
-% ((cad-qe) proves from qe8_correct or qe_correct).
+% qe1_sJ_sem (any index set J; qe1_s_sem at minJ): if every entry's sector
+% that contains x carries the truth value P and Q's sign vector at x, and
+% some entry's sector contains x, then qe1_s's output holds at x iff P -- on
+% the separating branch through the sign conditions (atoms_sem, sep1?), on
+% the other through sectX_ok.  qe1_sm_sem: so does qe1_sm's, which may be the
+% merged answer qe1_mo (mo_sem: qe_mrg's mrgX_sem on the sorted sectors,
+% sects_chain and sortu_incr).  sig1_inv: Q's sign vector at a sector's
+% sample is its sign vector on the whole sector.  qe1c_ok applies them to
+% the Collins run.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING qe_def, qe_fm, qe_ldd_ok[list[int]], qe_ep, qe_mrg, cad_out_ok, sect_svec, cad_decide,
-            map_member[Sect, SC], map_member[SC, QEnt], map_member[QEnt, list[int]],
-            map_member[list[int], Fm], map_member[QEnt, Fm]
+  IMPORTING qe_def, qe_ldd_ok[list[int]], qe_mrg, cad_out_ok, sect_svec, map_member[Sect, SC],
+            map_member[SC, QEnt], map_member[QEnt, list[int]], map_member[list[int], Fm],
+            map_member[QEnt, Fm]
 
-  u: VAR nat
-  q: VAR bool
-  qb, os: VAR list[bool]
   F, Q: VAR list[list[mpoly]]
-  Psi: VAR [SV -> bool]
-  phi: VAR BF
   J: VAR list[nat]
   w: VAR list[int]
   v: VAR SV
@@ -46,9 +36,6 @@ BEGIN
 
   %% ---- the sign conditions ------------------------------------------------------------------
   a: VAR Fm
-  L: VAR list[Fm]
-  all_cons: LEMMA (FORALL (f: Fm): member(f, cons(a, L)) IMPLIES qfsem(f)(pt))
-    IFF (qfsem(a)(pt) AND FORALL (f: Fm): member(f, L) IMPLIES qfsem(f)(pt))
   atoms_all: LEMMA FORALL J: FORALL w: every(LAMBDA (j: nat): j < length(Q))(J) AND length(w) = length(J)
     IMPLIES ((FORALL (f: Fm): member(f, atomsF(Q, J, w)) IMPLIES qfsem(f)(pt)) IFF sigJ(J, svec(Q, pt)) = w)
   atoms_sem: LEMMA every(LAMBDA (j: nat): j < length(Q))(J) AND length(w) = length(J)
@@ -61,20 +48,18 @@ BEGIN
     AND (EXISTS e: member(e, es) AND in?(e`esec, x))
     IMPLIES (qfsem(qe1_sJ(Q, es, J)`out)((: x :)) IFF P)
   qe1_sJ_qf: LEMMA qe1_sJ(Q, es, J)`qf IMPLIES qf?(qe1_sJ(Q, es, J)`out)
-  qe1_s_ok: LEMMA qe1_s(Q, es)`ok
   qe1_s_sem: LEMMA
     (FORALL e: member(e, es) AND in?(e`esec, x) IMPLIES (e`ev IFF P) AND e`esig = svec(Q, (: x :)))
     AND (EXISTS e: member(e, es) AND in?(e`esec, x))
     IMPLIES (qfsem(qe1_s(Q, es)`out)((: x :)) IFF P)
   qe1_s_qf: LEMMA qe1_s(Q, es)`qf IMPLIES qf?(qe1_s(Q, es)`out)
 
-  %% ---- the merged answer (QE_PLAN.md 12, fix 2) ------------------------------------------------
+  %% ---- the merged answer ------------------------------------------------
   anyT_es: LEMMA FORALL es: anyT(map(LAMBDA (e: QEnt): e`esec)(es), map(LAMBDA (e: QEnt): e`ev)(es))(x)
     IFF EXISTS e: member(e, es) AND e`ev AND in?(e`esec, x)
   sox_sem: LEMMA qfsem(f_orl(map(LAMBDA (e: QEnt): sectX(e`esec))(filter(LAMBDA (e: QEnt): e`ev)(es))))((: x :))
     IFF EXISTS e: member(e, es) AND e`ev AND in?(e`esec, x)
   mo_sem: LEMMA qfsem(qe1_mo(Q, es))((: x :)) IFF EXISTS e: member(e, es) AND e`ev AND in?(e`esec, x)
-  qe1_sm_ok: LEMMA qe1_sm(Q, es)`ok
   qe1_sm_sem: LEMMA
     (FORALL e: member(e, es) AND in?(e`esec, x) IMPLIES (e`ev IFF P) AND e`esig = svec(Q, (: x :)))
     AND (EXISTS e: member(e, es) AND in?(e`esec, x))
@@ -84,30 +69,4 @@ BEGIN
   %% ---- the run's first level ------------------------------------------------------------------
   sig1_inv: LEMMA member(s, sects(rts(Q))) AND in?(s, value(sample(s))) AND in?(s, x)
     IMPLIES osv_of(Q, odS(s)) = svec(Q, (: x :))
-  qe_ok_eq1: LEMMA cons?(qb) IMPLIES qe1_o(u, qb, F, Psi)`ok = decn_o(u, cons(q, qb), F, Psi)`ok
-
-  %% at any projection set Q whose sectors pass the certificate
-  qe1_ent: LEMMA cons?(qb) AND gaps_ok(rts(Q))
-    AND every(scok?(u))(map(LAMBDA (s: Sect): scof(u, tw0(length(qb), F), s))(sects(rts(Q))))
-    AND member(e, map(qent(u, qb, Psi, Q))(map(LAMBDA (s: Sect): scof(u, tw0(length(qb), F), s))(sects(rts(Q)))))
-    AND in?(e`esec, x)
-    IMPLIES (e`ev IFF sem(qb, F, Psi, (: x :))) AND e`esig = svec(Q, (: x :))
-  qe1_cov: LEMMA EXISTS e:
-    member(e, map(qent(u, qb, Psi, Q))(map(LAMBDA (s: Sect): scof(u, tw0(length(qb), F), s))(sects(rts(Q)))))
-    AND in?(e`esec, x)
-  qe1_c_sem: LEMMA cons?(qb) AND qe1_c(u, qb, F, Psi, Q)`ok IMPLIES
-    (qfsem(qe1_c(u, qb, F, Psi, Q)`out)((: x :)) IFF sem(qb, F, Psi, (: x :)))
-  qe1_c_qf: LEMMA qe1_c(u, qb, F, Psi, Q)`qf IMPLIES qf?(qe1_c(u, qb, F, Psi, Q)`out)
-
-  qe1_correct: THEOREM qe1_o(u, qb, F, Psi)`ok IMPLIES
-    (qfsem(qe1_o(u, qb, F, Psi)`out)((: x :)) IFF sem(qb, F, Psi, (: x :)))
-  qe1_qf: THEOREM qe1_o(u, qb, F, Psi)`qf IMPLIES qf?(qe1_o(u, qb, F, Psi)`out)
-
-  %% ---- raising u -------------------------------------------------------------------------------
-  qe1_u_ok: THEOREM cons?(qb) IMPLIES qe1_u(qb, F, Psi, u)`ok
-  qe1_u_eq: LEMMA EXISTS (u2: nat): qe1_u(qb, F, Psi, u) = qe1_o(u2, qb, F, Psi)
-
-  qe1_bf: THEOREM cons?(os) IMPLIES
-    qe1(os, F, phi)`ok AND (qfsem(qe1(os, F, phi)`out)((: x :)) IFF fsem(os, F, phi, (: x :)))
-  qe1_bf_qf: THEOREM qe1(os, F, phi)`qf IMPLIES qf?(qe1(os, F, phi)`out)
 END qe1_ok

@@ -43,14 +43,5 @@
     (|rat_list_every_num| FORMULA-DECL NIL |mpoly_univ| NIL))
    SHOSTAK
    (|seps_n| SUBTYPE "append[real](sint(F, sg, -b, b, n), (: b :))" "list[rat]"
-    (22 18 22 56))))
- (|seps_n_fuel| 0
-  (|seps_n_fuel-0| "" 3999591810
-   ("" (SKEEP)
-    (("" (EXPAND "seps") (("" (EXPAND "seps_n") (("" (PROPAX) NIL NIL)) NIL))
-      NIL))
-    NIL)
-   ((|seps| CONST-DECL "list[rat]" |walk_def| NIL)
-    (|seps_n| CONST-DECL "list[rat]" |walk_fuel| NIL))
-   SHOSTAK)))
+    (22 18 22 56)))))
 

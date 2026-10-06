@@ -1,6 +1,6 @@
 bareiss: THEORY
 %----------------------------------------------------------------------------
-% bdet is the determinant (NEXT_PLAN.md P5): meval(bdet(n, M)) = meval(det(n, M))
+% bdet is the determinant: meval(bdet(n, M)) = meval(det(n, M))
 % at every point (bdet_eval), so mnorm(bdet(n, M)) = mnorm(det(n, M)) (bdet_det).
 %
 % The elimination of an m-block B with previous pivot p gives v with
@@ -22,7 +22,7 @@ BEGIN
   IMPORTING bareiss_def, mpoly_dom, rdet_lin, det_fast
 
   R, E: VAR RMat
-  M: VAR Mat
+  M: VAR MMat
   n, m, k, i, j, a, b: VAR nat
   s, c, z: VAR real
   p, q, u, s0: VAR mpoly
@@ -65,7 +65,7 @@ BEGIN
   %% entry (i, j) of B, zero outside
   ent(B, i, j): mpoly = IF i < length(B) AND j < length(nth(B, i)) THEN nth(nth(B, i), j) ELSE zero ENDIF
   bm(B, ys): RMat = LAMBDA (a, b: nat): meval(ent(B, a, b))(ys)
-  bmat(B): Mat = LAMBDA (a, b: nat): ent(B, a, b)
+  bmat(B): MMat = LAMBDA (a, b: nat): ent(B, a, b)
   %% m rows of m entries
   blk?(m, B): bool = length(B) = m AND (FORALL i: i < m IMPLIES length(nth(B, i)) = m)
 

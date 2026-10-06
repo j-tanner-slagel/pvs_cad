@@ -1,7 +1,6 @@
 cad_projb: THEORY
 %----------------------------------------------------------------------------
-% The smaller bottom-step projection delineates where it is nonzero
-% (PROJ_PLAN.md P2).
+% The smaller bottom-step projection delineates where it is nonzero.
 %
 % kconst_nz: if every member of pball(G) that does not normalize to 0 is
 % nonzero at every point of C, then col_pair's kconst?(G, C) holds:
@@ -19,7 +18,7 @@ cad_projb: THEORY
 % col_stack's kcol_stack, delineability over a connected set.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING cad_projb_def, cad_projn, col_stack
+  IMPORTING cad_projb_def, cad_projn
 
   g, h, f: VAR list[mpoly]
   G: VAR list[list[mpoly]]

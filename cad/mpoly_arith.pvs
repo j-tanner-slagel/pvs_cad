@@ -1,7 +1,7 @@
 mpoly_arith: THEORY
 %----------------------------------------------------------------------------
 % Ring operations on recursive multivariate polynomials and their evaluation
-% homomorphism lemmas (Phase 1 of CAD_PLAN.md).
+% homomorphism lemmas.
 %
 % Two terms are combined "at the same level": their main variables are the
 % same variable.  A constant may sit at any level.  Multiplication needs a

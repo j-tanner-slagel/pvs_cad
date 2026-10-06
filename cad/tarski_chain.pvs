@@ -1,6 +1,6 @@
 tarski_chain: THEORY
 %----------------------------------------------------------------------------
-% The chain of a Tarski query, symbolically (Phase 3).
+% The chain of a Tarski query, symbolically.
 %
 % A Tarski query TQ(p, g) counts the roots of p weighted by the sign of g, and
 % Tarski@sturmtarski computes it from a chain whose second element is

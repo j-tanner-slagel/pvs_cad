@@ -1,6 +1,6 @@
 qe8_def: THEORY
 %----------------------------------------------------------------------------
-% Quantifier elimination over the Collins run (COLLINS_PLAN.md M-I).
+% Quantifier elimination over the Collins run.
 % Executable; (cad-qe) uses it in a theory that imports qe8.
 %
 % qe8(m, os, F, phi): with one free variable qe1cc (the Collins run;

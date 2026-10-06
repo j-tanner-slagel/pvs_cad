@@ -1,7 +1,7 @@
 alg_order: THEORY
 %----------------------------------------------------------------------------
 % Comparing two algebraic numbers, possibly with different defining
-% polynomials (Phase 2).
+% polynomials.
 %
 % Equality: value(a) = value(b) iff value(a) is a root of b's polynomial and
 % lies in b's isolating interval, both decided by alg_sign (the sign of
@@ -47,6 +47,4 @@ BEGIN
   %% the comparison
   alg_cmp(a, b): Sign3 = IF alg_eq(a, b) THEN 0 ELSIF sepr(a, b) THEN -1 ELSE 1 ENDIF
   alg_cmp_def: THEOREM alg_cmp(a, b) = sign3(value(a) - value(b))
-  alg_lt(a, b): bool = alg_cmp(a, b) = -1
-  alg_lt_def: LEMMA alg_lt(a, b) IFF value(a) < value(b)
 END alg_order

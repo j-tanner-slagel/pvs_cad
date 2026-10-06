@@ -1,11 +1,9 @@
 decc_ok: THEORY
 %----------------------------------------------------------------------------
-% The Collins decision is correct and complete (COLLINS_PLAN.md M-I).
+% The Collins decision is correct.
 %
 %   decc_correct   decc_o(u, qs, F, Psi)`ok IMPLIES
 %                  (decc_o(u, qs, F, Psi)`val IFF sem(qs, F, Psi, null))
-%   decc_complete  at least two quantifiers: decc_o(u, qs, F, Psi)`ok for some u
-%                  (for every large enough u, decc_ev)
 %
 % Every sector of the outer line gets the same tower ctw(F, k) of F and its
 % Collins projections, and the outer family is the projection of the
@@ -55,5 +53,4 @@ BEGIN
 
   %% ---- completeness ---------------------------------------------------------------------------
   decc_ev: THEOREM cons?(qs) AND cons?(cdr(qs)) IMPLIES ev?(LAMBDA u: decc_o(u, qs, F, Psi)`ok)
-  decc_complete: THEOREM cons?(qs) AND cons?(cdr(qs)) IMPLIES EXISTS u: decc_o(u, qs, F, Psi)`ok
 END decc_ok

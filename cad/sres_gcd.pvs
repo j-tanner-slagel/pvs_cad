@@ -1,7 +1,6 @@
 sres_gcd: THEORY
 %----------------------------------------------------------------------------
-% The k-th subresultant polynomial, and its roots (COLLINS_PLAN.md M-C, 2.1
-% item 3).
+% The k-th subresultant polynomial, and its roots.
 %
 % Sk(A, p, B, q, k) is the polynomial whose coefficient of z^i (i <= k) is the
 % determinant of the k-th subresultant matrix with its last column replaced
@@ -17,7 +16,7 @@ sres_gcd: THEORY
 % So when the psc pattern of a pair is constant along a set, the common roots
 % of the pair are the roots of one polynomial with continuously varying
 % coefficients and a nonvanishing leading coefficient -- which is how common
-% roots persist (COLLINS_PLAN.md 2.1).
+% roots persist.
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING sres_thm

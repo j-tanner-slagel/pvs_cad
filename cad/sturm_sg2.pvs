@@ -1,7 +1,6 @@
 sturm_sg2: THEORY
 %----------------------------------------------------------------------------
-% The converses of sturm_sg's counting theorems (FINISH_PLAN stage S4, the
-% Sturm side of step T3).
+% The converses of sturm_sg's counting theorems.
 %
 % sturm_sg reads a count as a statement about roots in one direction: a zero
 % count means no root, a positive bounded count means some root, a count of

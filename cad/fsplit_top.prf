@@ -2,8 +2,7 @@
  (|spw_sign_TCC1| 0
   (|spw_sign_TCC1-0| "" 3999948994 ("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL)
    ((|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
+     |real_props| NIL))
    SHOSTAK
    (|spw_sign| SUBTYPE "e"
     "{i: integers.int | booleans.OR(fsplit_top.x /= 0, reals.>=(i, 0))}"
@@ -136,7 +135,7 @@
     (|sign3_mult_clos| APPLICATION-JUDGEMENT "Sign3" |sign3| |reals|)
     (|svec_cons| FORMULA-DECL NIL |sign_vec| NIL)
     (|as_list| CONST-DECL "list[mpoly]" |mpoly_def| NIL)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|listn_0| NAME-JUDGEMENT "listn[rat](0)" |polylist| |Sturm|)
     (|svec_null| FORMULA-DECL NIL |sign_vec| NIL)
     (|one| CONST-DECL "mpoly" |mpoly_def| NIL)
     (|map| ADT-DEF-DECL "list[T1]" |list_adt_map| NIL)
@@ -217,7 +216,7 @@
     (|pprod| DEF-DECL "mpoly" |mpoly_cert_def| NIL)
     (|sign3_mult_clos| APPLICATION-JUDGEMENT "Sign3" |sign3| |reals|)
     (|sce| CONST-DECL "[Sign3, list[nat]]" |fsplit_top_def| NIL)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
+    (|listn_0| NAME-JUDGEMENT "listn[rat](0)" |polylist| |Sturm|))
    SHOSTAK))
  (|svec_smap| 0
   (|svec_smap-0| "" 3999949088
@@ -278,7 +277,7 @@
     (|svec_cons| FORMULA-DECL NIL |sign_vec| NIL)
     (|sce_sign| FORMULA-DECL NIL |fsplit_top| NIL)
     (|sign3_mult_clos| APPLICATION-JUDGEMENT "Sign3" |sign3| |reals|)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|listn_0| NAME-JUDGEMENT "listn[rat](0)" |polylist| |Sturm|)
     (|svec_null| FORMULA-DECL NIL |sign_vec| NIL)
     (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
@@ -386,7 +385,7 @@
    ((|sem_cons| FORMULA-DECL NIL |cad_decide| NIL)
     (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
+    (|listn_0| NAME-JUDGEMENT "listn[rat](0)" |polylist| |Sturm|)
     (|svec_smap| FORMULA-DECL NIL |fsplit_top| NIL)
     (|sem_null| FORMULA-DECL NIL |cad_decide| NIL)
     (|smap| CONST-DECL "list[Sign3]" |fsplit_top_def| NIL)
@@ -400,7 +399,7 @@
     (>= CONST-DECL "bool" |reals| NIL)
     (|fam| CONST-DECL "list[list[mpoly]]" |col_tower_def| NIL)
     (|sem| DEF-DECL "bool" |cad_decide| NIL)
-    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (SV TYPE-EQ-DECL NIL |sign_vec| NIL)
     (IFF CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|ubs| CONST-DECL "list[mpoly]" |fsplit_top_def| NIL)
     (|ucheck?| CONST-DECL "bool" |mpoly_cert_def| NIL)

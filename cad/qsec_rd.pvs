@@ -1,6 +1,6 @@
 qsec_rd: THEORY
 %----------------------------------------------------------------------------
-% The reads of one section query (FINISH_PLAN 3h, S5e-2).
+% The reads of one section query.
 %
 % qsec(sg, P, lo, hi, c) answers the sign of c at the section of P in
 % (lo, hi] through the oracle sg: it normalizes c by the signs of its
@@ -15,10 +15,10 @@ qsec_rd: THEORY
 % list (innern_sem) instead of an exact oracle.
 %
 % (Until 2026-09-28 the query searched for its ends with a fixed fuel, and
-% the probes of that search were reads too; the search is gone, COMPLETENESS_PLAN C4.)
+% the probes of that search were reads too; the search is gone.)
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING tower_def
+  IMPORTING tower_def, walk_rd
 
   P, G: VAR list[list[mpoly]]
   l0, g, f: VAR list[mpoly]

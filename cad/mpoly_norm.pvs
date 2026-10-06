@@ -1,6 +1,6 @@
 mpoly_norm: THEORY
 %----------------------------------------------------------------------------
-% Canonical form of recursive multivariate polynomials (Phase 1).
+% Canonical form of recursive multivariate polynomials.
 %
 % mnorm strips trailing zero coefficients at every level, turns the empty
 % list into the constant 0, and collapses a one-element list whose element is
@@ -20,7 +20,7 @@ mpoly_norm: THEORY
 BEGIN
   IMPORTING mpoly_arith
 
-  p, q, h, r: VAR mpoly
+  p, h, r: VAR mpoly
   c: VAR rat
   l: VAR list[mpoly]
   xs: VAR list[real]
@@ -61,24 +61,10 @@ BEGIN
   normal?(p): bool = normalx(FALSE, p)
 
   normalx_c: LEMMA mconst?(p) IMPLIES (normalx(tail?, p) IFF NOT tail?)
-  normalx_null: LEMMA mpol?(p) AND null?(coeffs(p)) IMPLIES NOT normalx(tail?, p)
-  normalx_cons: LEMMA mpol?(p) AND cons?(coeffs(p)) IMPLIES
-    (normalx(tail?, p) IFF
-       normalx(FALSE, car(coeffs(p))) AND
-       (IF null?(cdr(coeffs(p)))
-        THEN (IF tail? THEN car(coeffs(p)) /= zero ELSE NOT mconst?(car(coeffs(p))) ENDIF)
-        ELSE normalx(TRUE, mpol(cdr(coeffs(p)))) ENDIF))
 
   % a normal non-zero term, viewed as a coefficient list, is a normal tail
   normal_as_list_cons: LEMMA normal?(r) AND r /= zero IMPLIES cons?(as_list(r))
   normal_as_list_tail: LEMMA normal?(r) AND r /= zero IMPLIES normalx(TRUE, mpol(as_list(r)))
 
   mnorm_normal: LEMMA normal?(mnorm(p))
-
-  % mnorm is the identity on normal terms; in tail mode it returns the list itself
-  normalx_tail_mpol: LEMMA normalx(TRUE, p) IMPLIES mpol?(p)
-  normal_mnorm_x: LEMMA normalx(tail?, p) IMPLIES
-    (IF tail? THEN as_list(mnorm(p)) = as_list(p) AND mnorm(p) /= zero ELSE mnorm(p) = p ENDIF)
-  normal_mnorm: LEMMA normal?(p) IMPLIES mnorm(p) = p
-
 END mpoly_norm

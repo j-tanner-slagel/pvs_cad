@@ -1,7 +1,7 @@
 qe2_ok: THEORY
 %----------------------------------------------------------------------------
-% Quantifier elimination for m >= 2 free variables is correct (GAP_PLAN.md
-% Tier 2, stage 2).
+% Quantifier elimination for m >= 2 free variables: the answer over one
+% sector is correct.
 %
 % secoutE_sem (no engine): if every entry whose cell formula holds at p
 % carries the truth value P and the signature of G at p, and some entry's
@@ -9,21 +9,21 @@ qe2_ok: THEORY
 % for the members J the cut signature is the signature of the cut G,
 % selv_sigv).  Over one sector of
 % the run: the free cells are tcell(ttake(TW, m - 1), scell(s), A); pushing
-% the sector's record facts (sector_recs) down m - 1 levels (desc_all) makes
+% the sector's record facts down m - 1 levels (desc_all) makes
 % a free cell's fold its meaning (afold_sem), every free cell holding a
 % point is a key (key_cover), a key's record lies over its cell
 % (rec_over), and the free levels' polynomials keep their signs on a free
 % cell (fp_inv), so the signature at the record is the signature at p.  So
-% secout is correct over its sector (secout_sem); the lifted sectX picks
-% the sector of p's last coordinate, and qe2_correct follows.
+% secout is correct over its sector (secout_sem); part_sem: the lifted
+% sectX picks the sector of p's last coordinate.  qe2cc_ok and qe2cd_ok
+% apply them to the Collins run.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING qe2_def, qe1_ok, qe_ep, cad_fold_ok, cad_sample, od_exact,
-            map_member[QE2, SV], map_member[SV, Fm], map_member[QE2, Fm], qe_ldd_ok[list[int]],
-            map_member[list[mpoly], mpoly], map_member[ORec, list[nat]], map_member[list[nat], QE2],
-            map_member[Sect, Fm], map_member[QE2, QE2]
+  IMPORTING qe2_def, qe1_ok, cad_fold_ok, map_member[QE2, SV], map_member[SV, Fm], map_member[QE2, Fm],
+            qe_ldd_ok[list[int]], map_member[list[mpoly], mpoly], map_member[ORec, list[nat]],
+            map_member[list[nat], QE2], map_member[Sect, Fm], map_member[QE2, QE2]
 
-  u, n, d, j, a: VAR nat
+  n, d, j, a: VAR nat
   m: VAR posnat
   qb, qs: VAR list[bool]
   F: VAR list[list[mpoly]]
@@ -46,7 +46,6 @@ BEGIN
   x: VAR real
 
   %% ---- lifting ----------------------------------------------------------------------------------
-  liftp_sem: LEMMA FORALL d: FORALL xs: length(xs) >= d IMPLIES meval(liftp(p, d))(xs) = meval(p)(dropn(d, xs))
   liftF_sem: LEMMA FORALL d: FORALL xs: length(xs) >= d IMPLIES (qfsem(liftF(phi, d))(xs) IFF qfsem(phi)(dropn(d, xs)))
   qf_shift: LEMMA FORALL phi: FORALL d: qf?(shiftF(phi, d)) = qf?(phi)
   qf_liftF: LEMMA FORALL d: qf?(phi) IMPLIES qf?(liftF(phi, d))
@@ -151,8 +150,6 @@ BEGIN
     AND tcell(ttake(TW, m - 1), C, A)(pt)
     IMPLIES sigat(fpolys(TW, m), length(qb), r) = sigv(fpolys(TW, m), pt)
 
-  rec_wf: LEMMA decn_o(u, qs, F, Psi)`ok AND length(qs) >= 2 AND member(r, cad_out(u, qs, F))
-    IMPLIES wf?(r`rsod)
   secout_sem: LEMMA length(TW) = m - 1 + length(qb) AND cad_over?(TW, scell(s))
     AND recin?(TW, scell(s), F, L) AND reccov?(TW, scell(s), L) AND fsinv?(TW, scell(s), F)
     AND (FORALL r: member(r, L) IMPLIES wf?(r`rsod))
@@ -171,24 +168,6 @@ BEGIN
     (qfsem(IF phi = ffalse THEN ffalse ELSIF phi = ftrue THEN liftF(sectX(s), m - 1)
            ELSE fand(liftF(sectX(s), m - 1), phi) ENDIF)(pt) IFF
       (in?(s, car(dropn(m - 1, pt))) AND qfsem(phi)(pt)))
-  runok_eq: LEMMA length(qs) >= 2 IMPLIES decn_o(u, qs, F, Psi)`ok = runok(u, length(cdr(qs)), F)
 
   qsn_cdr: LEMMA n >= 1 IMPLIES cons?(qsn(n)) AND length(cdr(qsn(n))) = n - 1
-  sect_sem_qe2_ok: LEMMA m >= 2 AND cons?(qb) AND runok(u, m - 1 + length(qb), F) AND length(pt) = m
-    AND member(s, runsects(u, m - 1 + length(qb), F)) AND in?(s, car(dropn(m - 1, pt)))
-    IMPLIES (qfsem(secout(m, qb, Psi, s, runtw(u, m - 1 + length(qb), F)(s),
-                          secr(s, cad_out(u, qsn(m + length(qb)), F))))(pt)
-             IFF sem(qb, F, Psi, pt))
-  qe2_c_sem: LEMMA m >= 2 AND cons?(qb) AND runok(u, m - 1 + length(qb), F) AND length(pt) = m IMPLIES
-    (qfsem(qe2_c(u, m, qb, F, Psi)`out)(pt) IFF sem(qb, F, Psi, pt))
-  qe2_correct: THEOREM qe2_o(u, m, qb, F, Psi)`ok AND length(pt) = m IMPLIES
-    (qfsem(qe2_o(u, m, qb, F, Psi)`out)(pt) IFF sem(qb, F, Psi, pt))
-  qe2_qf: THEOREM qe2_o(u, m, qb, F, Psi)`qf IMPLIES qf?(qe2_o(u, m, qb, F, Psi)`out)
-  qe2_u_ok: THEOREM m >= 2 AND cons?(qb) IMPLIES qe2_u(m, qb, F, Psi, u)`ok
-  qe2_u_eq: LEMMA EXISTS (u2: nat): qe2_u(m, qb, F, Psi, u) = qe2_o(u2, m, qb, F, Psi)
-  os: VAR list[bool]
-  bphi: VAR BF
-  qe2_bf: THEOREM m >= 2 AND cons?(os) AND length(pt) = m IMPLIES
-    qe2(m, os, F, bphi)`ok AND (qfsem(qe2(m, os, F, bphi)`out)(pt) IFF fsem(os, F, bphi, pt))
-  qe2_bf_qf: THEOREM qe2(m, os, F, bphi)`qf IMPLIES qf?(qe2(m, os, F, bphi)`out)
 END qe2_ok

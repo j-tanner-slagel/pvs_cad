@@ -1,7 +1,7 @@
 cpoly_dist: THEORY
 %----------------------------------------------------------------------------
 % The number of distinct roots is the degree minus the degree of
-% gcd(F, F') (COLLINS_PLAN.md M-B2, 2.1 item 2).
+% gcd(F, F').
 %
 % For a list L of distinct complex numbers and orders k, lpw(L, k) is the
 % product of the (z - a)^k(a), a in L: monic of degree lsum(L, k)

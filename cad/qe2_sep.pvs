@@ -1,7 +1,7 @@
 qe2_sep: THEORY
 %----------------------------------------------------------------------------
 % With derivative-closed free families, the signatures of a sector's free
-% cells always separate (QE_PLAN.md section 11, 2C).
+% cells always separate.
 %
 % fp_tsame: two points with the same signature on fpolys(TW, m) have the
 % same sign vector on every free family at its own level (fpolys is the

@@ -1,6 +1,6 @@
 alg_def: THEORY
 %----------------------------------------------------------------------------
-% Real algebraic numbers as isolating intervals (Phase 2).
+% Real algebraic numbers as isolating intervals.
 %
 % An algebraic number is a rational polynomial p together with a rational
 % interval [lb, ub] containing exactly one real root of p; alg? decides this
@@ -47,8 +47,8 @@ BEGIN
 
   %% the root is in the left half [lb, mid]: a zero at lb or at mid, or a sign
   %% change between them, decides at once (the root is the only one in
-  %% [lb, ub]); otherwise the root count.  Measured 2026-10-01 (QE_PLAN.md
-  %% 12): the count recomputes the Sturm chain of p at every bisection, which
+  %% [lb, ub]); otherwise the root count.  Measured 2026-10-01: the count
+  %% recomputes the Sturm chain of p at every bisection, which
   %% was most of the outer closure's time on a quadratic three-quantifier QE
   lhalf?(a: Alg): bool =
     LET l = polylist(a`p)(a`lb), m = polylist(a`p)(mid(a)) IN
@@ -77,8 +77,5 @@ BEGIN
     IF n = 0 THEN a ELSE refine(refine_n(a, n - 1)) ENDIF
   MEASURE n
 
-  refine_n_p: LEMMA alg?(a) IMPLIES refine_n(a, n)`p = a`p
-  refine_n_width: LEMMA alg?(a) IMPLIES width(refine_n(a, n)) = width(a) / 2^n
   refine_n_value: LEMMA alg?(a) IMPLIES value(refine_n(a, n)) = value(a)
-  refine_n_sub: LEMMA alg?(a) IMPLIES a`lb <= refine_n(a, n)`lb AND refine_n(a, n)`ub <= a`ub
 END alg_def

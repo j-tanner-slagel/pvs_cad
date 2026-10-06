@@ -107,58 +107,6 @@
    SHOSTAK
    (|nroots_hc| SUBTYPE "nrh(ipoly(pl), deg(pl), lb, ub, ch)" "nat"
     (20 4 20 39))))
- (|nroots_hc_h| 0
-  (|nroots_hc_h-2| "" 3999518021
-   ("" (SKEEP)
-    (("" (EXPAND "nroots_hc")
-      (("" (EXPAND "nroots_h") (("" (REWRITE "nrh_eq") NIL NIL)) NIL)) NIL))
-    NIL)
-   ((|nroots_hc| CONST-DECL "nat" |alg_fast| NIL)
-    (|nrh_eq| FORMULA-DECL NIL |alg_isolate| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
-    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
-    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
-    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
-    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (>= CONST-DECL "bool" |reals| NIL)
-    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
-    (|ipoly| CONST-DECL "[nat -> int]" |alg_count| NIL)
-    (|nonneg_int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (> CONST-DECL "bool" |reals| NIL)
-    (|posnat| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (/= CONST-DECL "boolean" |notequal| NIL) (< CONST-DECL "bool" |reals| NIL)
-    (|length| DEF-DECL "nat" |list_props| NIL)
-    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (IFF CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|below| TYPE-EQ-DECL NIL |nat_types| NIL)
-    (|nth| DEF-DECL "T" |list_props| NIL)
-    (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (|deg| CONST-DECL "{d: below(length(pl)) |
-   (d > 0 IFF EXISTS (j: below(length(pl))): j > 0 AND nth(pl, j) /= 0) AND
-    (d > 0 IMPLIES
-      (FORALL (j: below(length(pl))): j > d IMPLIES nth(pl, j) = 0))
-     AND (d > 0 IMPLIES nth(pl, d) /= 0)}"
-     |polylist| |Sturm|)
-    (|Eq_computed_remainder?| CONST-DECL "bool" |compute_sturm| |Sturm|)
-    (|chain| CONST-DECL "(Eq_computed_remainder?(ipoly(pl), deg(pl)))"
-     |alg_count| NIL)
-    (|nroots_h| CONST-DECL "nat" |alg_isolate| NIL)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
-   SHOSTAK))
  (|isoc_TCC1| 0
   (|isoc_TCC1-0| "" 3998508022
    ("" (SKEEP)
@@ -219,7 +167,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK
    (|isoc| WELL-FOUNDED "real_ord_ep(mrd(pl))" #A((3) BASE-CHAR . "NIL")
-    (30 25 30 45))))
+    (29 25 29 45))))
  (|isoc_TCC2| 0
   (|isoc_TCC2-1| NIL 3998488590 ("" (SUBTYPE-TCC) NIL NIL)
    ((|rat_poly_to_int| CONST-DECL "{ai: [nat -> int] |
@@ -247,7 +195,7 @@
      NIL)
     (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
      NIL))
-   NIL (|isoc| SUBTYPE "ub - lb" "posrat" (27 64 27 71))))
+   NIL (|isoc| SUBTYPE "ub - lb" "posrat" (26 64 26 71))))
  (|isoc_TCC3| 0
   (|isoc_TCC3-5| "" 3999518171
    ("" (SKEEP)
@@ -315,7 +263,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK
    (|isoc| SUBTYPE "(: (# p := pl, lb := lb, ub := ub #) :)" "list[Alg]"
-    (28 47 28 86))))
+    (27 47 27 86))))
  (|isoc_TCC4| 0
   (|isoc_TCC4-1| NIL 3998488590 ("" (SUBTYPE-TCC) NIL NIL)
    ((|rat_poly_to_int| CONST-DECL "{ai: [nat -> int] |
@@ -346,7 +294,7 @@
      NIL))
    NIL
    (|isoc| SUBTYPE "(lb + ub) / 2" "{ub: rat | reals.<(alg_fast.lb, ub)}"
-    (29 33 29 46))))
+    (28 33 28 46))))
  (|isoc_TCC5| 0
   (|isoc_TCC5-6| "" 3999518180
    ("" (SKEEP)
@@ -421,7 +369,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK
    (|isoc| TERMINATION "isoc(pl, ch, lb, (lb + ub) / 2)"
-    #A((3) BASE-CHAR . "NIL") (29 16 29 47))))
+    #A((3) BASE-CHAR . "NIL") (28 16 28 47))))
  (|isoc_TCC6| 0
   (|isoc_TCC6-1| NIL 3998488590 ("" (SUBTYPE-TCC) NIL NIL)
    ((|rat_poly_to_int| CONST-DECL "{ai: [nat -> int] |
@@ -453,7 +401,7 @@
    NIL
    (|isoc| SUBTYPE "ub"
     "{ub_1: rat | reals.<(number_fields./(((number_fields.+)(alg_fast.lb, alg_fast.ub)), 2), ub_1)}"
-    (29 77 29 79))))
+    (28 77 28 79))))
  (|isoc_TCC7| 0
   (|isoc_TCC7-5| "" 3999518181
    ("" (SKEEP)
@@ -528,7 +476,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK
    (|isoc| TERMINATION "isoc(pl, ch, (lb + ub) / 2, ub)"
-    #A((3) BASE-CHAR . "NIL") (29 49 29 80))))
+    #A((3) BASE-CHAR . "NIL") (28 49 28 80))))
  (|isoc_iso| 0
   (|isoc_iso-1| "" 3999518198
    ("" (SKEEP)
@@ -862,7 +810,7 @@
    NIL
    (|rootsc| SUBTYPE "rbound(pl)"
     "{ub: rat | reals.<((number_fields.-)(alg_isolate.rbound(alg_fast.pl)), ub)}"
-    (33 73 33 83))))
+    (32 73 32 83))))
  (|rootsc_roots| 0
   (|rootsc_roots-0| "" 3998488619
    ("" (SKEEP)

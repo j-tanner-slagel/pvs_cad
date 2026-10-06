@@ -1,6 +1,6 @@
 qe_ep: THEORY
 %----------------------------------------------------------------------------
-% qe_ep_def's comparisons are correct (GAP_PLAN.md Tier 2, QE_PLAN.md "EP").
+% qe_ep_def's comparisons are correct.
 %
 % Under epok?: a rational record names value(b) (ep_rat); an isolated one
 % puts value(b) strictly inside (elb, eub) as a root of eq (ep_in), the only

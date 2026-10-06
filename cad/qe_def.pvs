@@ -1,35 +1,32 @@
 qe_def: THEORY
 %----------------------------------------------------------------------------
-% Quantifier elimination from the verified CAD engine (GAP_PLAN.md Tier 2).
-% Executable.
+% Quantifier elimination for one free variable: the answer from the sectors
+% of the line.  Executable.
 %
-% One free variable (stage 1).  qe1_o(u, qb, F, Psi) runs decn_o's first
-% level for the bound quantifiers qb (outermost first) below one free
-% variable x: the projection set Q and the sectors of the line cut by the
-% roots of Q.  When the run's certificate holds (ok: the same condition as
-% decn_o's), each sector gets the truth value of the bound part at its sample
-% (scval) and Q's sign vector there (osv_of).  minJ picks, without proof, a
-% small set J of indices into Q (dropping the longest members first); sep1? checks that sectors with the same
-% signs on J have the same value.  If so, out is the disjunction, over the
-% sign vectors on J of the TRUE sectors, of the conjunction of those signs --
-% a quantifier-free formula in x (qf).  If not, out is the disjunction of the
+% An entry (QEnt) is a sector of the line of the free variable x, the truth
+% value of the bound quantifiers at its sample and the projection set Q's
+% sign vector there; qent makes one from a sector's tower (scval, osv_of),
+% and qe1c_def, the Collins QE for one free variable, lists one per sector.
+% minJ picks, without proof, a small set J of indices into Q (dropping the
+% longest members first); sep1? checks that sectors with the same signs on J
+% have the same value.  If so, out is the disjunction, over the sign vectors
+% on J of the TRUE sectors, of the conjunction of those signs -- a
+% quantifier-free formula in x (qf).  If not, out is the disjunction of the
 % TRUE sectors' descriptions sectX (qe_ep_def: quantifier-free when the
 % run-time check on each boundary passes), and qf records whether it is.
 % qe1_sm replaces that by qe1_mo, the TRUE sectors with neighbours merged into
-% intervals, when that is smaller (2026-09-30, QE_PLAN.md 12).  qe1_u raises
-% u until the certificate holds, on decn_u's measure; qe1 takes a Boolean
-% combination phi of sign conditions on F.  qe1_ok proves them correct.
+% intervals, when that is smaller (2026-09-30).  qe1_ok proves
+% the answers correct, qe1_full quantifier-free.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING qe_fm_def, qe_ldd[list[int]], qe_ep_def, qe_mrg_def, cad_out, decide_u_def
+  IMPORTING qe_ldd[list[int]], qe_mrg_def, cad_out
 
   u, n: VAR nat
   qb: VAR list[bool]
-  F, Q: VAR list[list[mpoly]]
+  Q: VAR list[list[mpoly]]
   Psi: VAR [SV -> bool]
   J, K: VAR list[nat]
   w: VAR list[int]
-  phi: VAR BF
 
   QER: TYPE = [# ok: bool, qf: bool, out: Fm #]
   qbad: QER = (# ok := FALSE, qf := FALSE, out := ftrue #)
@@ -85,7 +82,7 @@ BEGIN
   qe1_s(Q, es): QER = qe1_sJ(Q, es, minJ(Q, es))
 
   %% the TRUE sectors with neighbours merged (qe_mrg_def's mrgX), when the
-  %% entries' sectors are those of Q's sorted roots (QE_PLAN.md 12, fix 2);
+  %% entries' sectors are those of Q's sorted roots;
   %% qe1_sm takes it when it is quantifier-free and has fewer sign atoms
   qe1_mo(Q, es): Fm =
     LET ss = map(LAMBDA (e: QEnt): e`esec)(es) IN
@@ -98,19 +95,4 @@ BEGIN
 
   qent(u, qb, Psi, Q)(c: SC): QEnt =
     (# esec := c`ssec, ev := scval(u, qb, Psi)(c), esig := osv_of(Q, odS(c`ssec)) #)
-
-  %% the run's first level at a given projection set Q (Q = runq, computed once)
-  qe1_c(u, qb, F, Psi, Q): QER =
-    LET cs = map(LAMBDA (s: Sect): scof(u, tw0(length(qb), F), s))(sects(rts(Q))) IN
-    IF gaps_ok(rts(Q)) AND every(scok?(u))(cs) THEN qe1_sm(Q, map(qent(u, qb, Psi, Q))(cs)) ELSE qbad ENDIF
-
-  qe1_o(u, qb, F, Psi): QER =
-    IF null?(qb) THEN qbad ELSE qe1_c(u, qb, F, Psi, runq(u, length(qb), F)) ENDIF
-
-  qe1_u(qb, F, Psi, u): RECURSIVE QER =
-    LET d = qe1_o(u, qb, F, Psi) IN
-    IF d`ok OR null?(qb) THEN d ELSE qe1_u(qb, F, Psi, u + 1) ENDIF
-  MEASURE umeas(cons(TRUE, qb), F, Psi, u)
-
-  qe1(qb, F, phi): QER = qe1_u(qb, F, LAMBDA (v: SV): bfsv(phi, v), 0)
 END qe_def

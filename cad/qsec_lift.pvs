@@ -1,6 +1,6 @@
 qsec_lift: THEORY
 %----------------------------------------------------------------------------
-% A section oracle over an APPROXIMATE base oracle (FINISH_PLAN 3h, S5e-2).
+% A section oracle over an APPROXIMATE base oracle.
 %
 % cell_ok's allok_agree says: at the exact oracle msg(ys), every query the
 % section certifies (allok?) answers the sign at the section root beta.  At n

@@ -1,49 +1,17 @@
 tclf: THEORY
 %----------------------------------------------------------------------------
-% The closure of a tower, and constancy along a sector (FINISH_PLAN 3i,
-% stage N6, first half).
-%
-% A tower TW = (F_0, ..., F_{n-1}), outermost first; F_j has its coefficients
-% in the variables of a point j levels above the base point ws, and the
-% formula's family is tlast(TW).  CLF(TW, ws) is the semantic certificate the
-% executable's okn_o/clok? establish at a sample: the effective family of each
-% level passes cert? at EVERY point of that level over ws, and the reads of
-% each level's walk there are members of the family above (rdz?).
-%
-%   CLF_flat   the same, level by level: for every j and every point p that
-%              is j levels over ws (over?), rdz?(F_j, F_{j-1}, p)
-%   sem_ex     "some point j levels up has F's sign vector v" is the all-EX
-%              sentence exq(j) with Psi = (= v)
-%   pre        the prefix (F_0, ..., F_{j-1}): a tower whose last family is
-%              F_{j-1}, closed wherever TW is
-%
-% Three statements about towers of height n:
-%   CBh(n)  constancy on a sector S: the n quantified variables' truth over
-%           (x, xs) is the same for every x of S, given the top family's reads
-%           invariant on S (invz?) and the closure at the sample q
-%   LCh(n)  local constancy with EVERY coordinate moving: near vs0, at points
-%           whose oracle agrees on the top family's reads and that are closed
-%   CTh(n)  the closure transfers along the sector: level j of the closure
-%           at a point depends only on F_{j-1}'s sign vector there (rdz_vec),
-%           and the sign vectors realized j levels over x are those realized
-%           over the sample -- the all-EX sentence about the prefix of height
-%           j < n, constant by CBh(j)
-% ct_step (CTh from CBh below n) and cb_step (CBh from LCh and CTh at n, by
-% loc_const) are here; tlc proves LCh; tower_sem runs the induction.
+% Towers: a tower TW = (F_0, ..., F_{n-1}),
+% outermost first, whose formula's family is tlast(TW).  CLF(TW, ws) is the
+% closure of a tower at a base point ws: the effective family of each level
+% passes cert? at EVERY point of that level over ws, and the reads of each
+% level's walk there are members of the family above (rdz?).
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING towern_def, mwalk, mroot, cvl, inner_const
+  IMPORTING towern_def, zfam, cvl
 
   TW: VAR Tower
-  F, G, H: VAR list[list[mpoly]]
-  ws, vs0, vs1, xs, p, p1: VAR list[real]
-  qs: VAR list[bool]
-  Psi: VAR [SV -> bool]
-  S: VAR [real -> bool]
-  x, y, a, b, q, t, u: VAR real
-  j, k, n: VAR nat
-  v: VAR SV
-  d: VAR posreal
+  ws: VAR list[real]
+  y: VAR real
 
   %% ---- towers ------------------------------------------------------------------------
   tlast(TW): RECURSIVE list[list[mpoly]] =
@@ -59,62 +27,4 @@ BEGIN
           FORALL (y: real): rdz?(car(cdr(TW)), car(TW), cons(y, ws)) AND CLF(cdr(TW), cons(y, ws)))
     ENDIF
   MEASURE length(TW)
-
-  %% p is j levels over ws
-  over?(j, ws, p): RECURSIVE bool =
-    IF j = 0 THEN p = ws ELSE EXISTS (y: real): over?(j - 1, cons(y, ws), p) ENDIF
-  MEASURE j
-
-  CLL(TW, ws): bool = FORALL j, p: 1 <= j AND j < length(TW) AND over?(j, ws, p)
-    IMPLIES rdz?(nth(TW, j), nth(TW, j - 1), p)
-
-  CLF_flat: LEMMA FORALL TW: FORALL ws: cons?(TW) IMPLIES
-    (CLF(TW, ws) IFF (certz?(car(TW), ws) AND CLL(TW, ws)))
-
-  %% ---- the all-EX sentence --------------------------------------------------------------
-  exq(j): RECURSIVE list[bool] = IF j = 0 THEN null[bool] ELSE cons(FALSE, exq(j - 1)) ENDIF
-  MEASURE j
-  exq_len: LEMMA length(exq(j)) = j
-  sem_ex: LEMMA FORALL j: FORALL ws: sem(exq(j), F, Psi, ws) IFF EXISTS p: over?(j, ws, p) AND Psi(svec(F, p))
-
-  %% ---- prefixes --------------------------------------------------------------------------
-  pre(TW, j): RECURSIVE Tower =
-    IF j = 0 OR null?(TW) THEN null[list[list[mpoly]]] ELSE cons(car(TW), pre(cdr(TW), j - 1)) ENDIF
-  MEASURE j
-  pre_len: LEMMA FORALL TW: j <= length(TW) IMPLIES length(pre(TW, j)) = j
-  pre_car: LEMMA j >= 1 AND cons?(TW) IMPLIES car(pre(TW, j)) = car(TW)
-  pre_nth: LEMMA FORALL TW: k < j AND j <= length(TW) IMPLIES nth(pre(TW, j), k) = nth(TW, k)
-  pre_last: LEMMA FORALL TW: 1 <= j AND j <= length(TW) IMPLIES tlast(pre(TW, j)) = nth(TW, j - 1)
-  pre_clf: LEMMA 1 <= j AND j <= length(TW) AND CLF(TW, ws) IMPLIES CLF(pre(TW, j), ws)
-
-  %% ---- the three statements ----------------------------------------------------------------
-  CBh(n): bool = FORALL TW, qs, Psi, S, q, a, b, xs:
-    length(TW) = n AND length(qs) = n AND conv?(S) AND S(q) AND S(a) AND S(b)
-    AND cons?(TW) AND invz?(car(TW), S, q, xs) AND CLF(TW, cons(q, xs))
-    IMPLIES (sem(qs, tlast(TW), Psi, cons(a, xs)) IFF sem(qs, tlast(TW), Psi, cons(b, xs)))
-
-  LCh(n): bool = FORALL TW, qs, Psi, vs0:
-    length(TW) = n AND length(qs) = n AND cons?(vs0) AND CLF(TW, vs0) AND cons?(TW)
-    IMPLIES EXISTS d: FORALL vs1: near?(vs1, vs0, d)
-      AND agree(msg(vs0), msg(vs1), wrs(car(TW), vs0)) AND CLF(TW, vs1)
-      IMPLIES (sem(qs, tlast(TW), Psi, vs1) IFF sem(qs, tlast(TW), Psi, vs0))
-
-  CTh(n): bool = FORALL TW, S, q, x, xs:
-    length(TW) = n AND conv?(S) AND S(q) AND S(x)
-    AND cons?(TW) AND invz?(car(TW), S, q, xs) AND CLF(TW, cons(q, xs))
-    IMPLIES CLF(TW, cons(x, xs))
-
-  %% the level-j condition carried from the sample to x
-  ct_level: LEMMA 1 <= j AND j < length(TW) AND CBh(j) AND conv?(S) AND S(q) AND S(x)
-    AND invz?(car(TW), S, q, xs) AND CLF(TW, cons(q, xs)) AND over?(j, cons(x, xs), p)
-    IMPLIES rdz?(nth(TW, j), nth(TW, j - 1), p)
-
-  ct_step: LEMMA n >= 1 AND (FORALL k: 1 <= k AND k < n IMPLIES CBh(k)) IMPLIES CTh(n)
-
-  cb_le: LEMMA LCh(n) AND CTh(n) AND length(TW) = n AND length(qs) = n AND conv?(S)
-    AND S(q) AND S(a) AND S(b) AND a <= b
-    AND cons?(TW) AND invz?(car(TW), S, q, xs) AND CLF(TW, cons(q, xs))
-    IMPLIES (sem(qs, tlast(TW), Psi, cons(a, xs)) IFF sem(qs, tlast(TW), Psi, cons(b, xs)))
-
-  cb_step: LEMMA LCh(n) AND CTh(n) IMPLIES CBh(n)
 END tclf

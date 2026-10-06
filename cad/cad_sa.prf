@@ -28,7 +28,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK
    (|col_cells_sa| SUBTYPE "length[nat](A)"
-    "below[length[list[list[mpoly]]](ctw(F, k))]" (31 80 31 89))))
+    "below[length[list[list[mpoly]]](ctw(F, k))]" (28 80 28 89))))
  (|col_cells_sa_TCC2| 0
   (|col_cells_sa_TCC2-0| "" 3999875064
    ("" (SKEEP*)
@@ -58,7 +58,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK
    (|col_cells_sa| SUBTYPE "length[nat](A)"
-    "below[length[list[list[mpoly]]](ctw(F, k))]" (34 55 34 64))))
+    "below[length[list[list[mpoly]]](ctw(F, k))]" (31 55 31 64))))
  (|col_cells_sa| 0
   (|col_cells_sa-0| "" 3999875107
    ("" (SKEEP)
@@ -154,68 +154,5 @@
      |real_props| NIL)
     (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|ccells?| CONST-DECL "bool" |col_line| NIL))
-   SHOSTAK))
- (|cad_cells_sa_TCC1| 0
-  (|cad_cells_sa_TCC1-0| "" 3999875064
-   ("" (SKEEP*) (("" (EXPAND "cad_of?" -1) (("" (FLATTEN) NIL NIL)) NIL)) NIL)
-   ((|cad_of?| CONST-DECL "bool" |cad_verified| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (TRUE CONST-DECL "bool" |booleans| NIL))
-   SHOSTAK
-   (|cad_cells_sa| SUBTYPE "qs" "(list_adt[bool].cons?)" (36 79 36 81))))
- (|cad_cells_sa| 0
-  (|cad_cells_sa-0| "" 3999875116
-   ("" (SKEEP)
-    (("" (EXPAND "cad_of?" -1)
-      (("" (FLATTEN)
-        (("" (INST -4 "s" "A")
-          (("" (ASSERT)
-            (("" (FLATTEN)
-              ((""
-                (LEMMA "fod_qfd"
-                 ("n" "1 + length(A)" "S"
-                  "rcell(u, length(cdr(qs)), F)(s, A)"))
-                (("" (ASSERT) NIL NIL)) NIL))
-              NIL))
-            NIL))
-          NIL))
-        NIL))
-      NIL))
-    NIL)
-   ((|cad_of?| CONST-DECL "bool" |cad_verified| NIL)
-    (|Sect| TYPE-DECL NIL |sect_inv| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
-    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
-    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
-    (>= CONST-DECL "bool" |reals| NIL)
-    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (+ CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
-    (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
-    (|cdr| ADT-ACCESSOR-DECL "[(cons?) -> list]" |list_adt| NIL)
-    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|length| DEF-DECL "nat" |list_props| NIL)
-    (|rcell| CONST-DECL "[list[real] -> bool]" |cad_run| NIL)
-    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
-    (|fod_qfd| FORMULA-DECL NIL |qelim_ok| NIL)
-    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
-    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK)))
 

@@ -1,27 +1,20 @@
 branch_prs: THEORY
 %----------------------------------------------------------------------------
-% The pseudo-remainder sequence as a branch tree (Phase 3).
+% The pseudo-remainder sequence at one valuation.
 %
-% prs(k, l1, l2) is the symbolic Sturm chain that follows the pair (l1, l2):
-% each step takes the pseudo-remainder of the two before it (sturm_step),
-% branches on the sign of its leading coefficient until the degree is known
-% (branch_norm), and repeats with the pair moved one along.  Because the step
-% itself is a branch tree, the chains of the branches have different lengths,
-% which is why the whole construction is a tree of chains and not a chain.
-% The recursion is bounded by a step count k: each step shortens the divisor,
-% so k = length(l2) + 1 is always enough, and the caller supplies it.
-%
-% rchain is the same recursion carried out at a single valuation ys, and
-% select_prs says the branch the signs at ys select carries exactly it.  All
-% the structural facts of the sequence are then facts about rchain: it ends
-% with the zero polynomial, every earlier element is a nonempty list whose
-% leading coefficient is nonzero at ys, the lengths strictly decrease, and
-% each element from the third on is the normalized step of the two before it.
+% rchain(k, l1, l2, ys) is the Sturm chain that follows the pair (l1, l2)
+% at the valuation ys: each step takes the pseudo-remainder of the two
+% before it (sturm_step), normalizes it at ys (branch_norm's snorm, select),
+% and repeats with the pair moved one along.  The recursion is bounded by a
+% step count k: each step shortens the divisor, so k = length(l2) + 1 is
+% always enough, and the caller supplies it.  The structural facts of the
+% sequence: it ends with the zero polynomial, every earlier element is a
+% nonempty list whose leading coefficient is nonzero at ys, the lengths
+% strictly decrease, and each element from the third on is the normalized
+% step of the two before it.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING sturm_step, branch_norm,
-            branch_map[list[mpoly], list[list[mpoly]]],
-            branch_map[list[list[mpoly]], list[list[mpoly]]]
+  IMPORTING sturm_step, branch_norm
 
   k, u: VAR nat
   l1, l2: VAR list[mpoly]
@@ -29,7 +22,6 @@ BEGIN
 
   %% small facts about lists used throughout
   not_cons_null: LEMMA NOT cons?(l2) IMPLIES l2 = null[mpoly]
-  len_one: LEMMA length((: null[mpoly] :)) = 1
   nth_one: LEMMA nth((: null[mpoly] :), 0) = null[mpoly]
 
   %% the element after the pair (l1, l2) at the valuation ys
@@ -39,17 +31,6 @@ BEGIN
   snext_lc: LEMMA cons?(l2) AND cons?(snext(l1, l2, ys)) IMPLIES
     meval(llast(snext(l1, l2, ys)))(ys) /= 0
 
-  %% the symbolic chain after (l1, l2): a tree whose leaves carry the list
-  %% l2, l3, ..., 0
-  prs(k, l1, l2): RECURSIVE btree[list[list[mpoly]]] =
-    IF cons?(l2) AND k > 0
-    THEN bbind(snorm(sstep(l1, l2)),
-               LAMBDA (l3: list[mpoly]):
-                 bmap(LAMBDA (cs: list[list[mpoly]]): cons(l2, cs), prs(k - 1, l2, l3)))
-    ELSE bleaf((: null[mpoly] :))
-    ENDIF
-  MEASURE k
-
   %% the same chain at one valuation
   rchain(k, l1, l2, ys): RECURSIVE list[list[mpoly]] =
     IF cons?(l2) AND k > 0
@@ -57,8 +38,6 @@ BEGIN
     ELSE (: null[mpoly] :)
     ENDIF
   MEASURE k
-
-  select_prs: THEOREM select(prs(k, l1, l2), ys) = rchain(k, l1, l2, ys)
 
   %% peeling one step off the chain
   rchain_base: LEMMA (NOT cons?(l2) OR k = 0) IMPLIES rchain(k, l1, l2, ys) = (: null[mpoly] :)

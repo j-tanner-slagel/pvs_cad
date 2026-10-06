@@ -1,6 +1,6 @@
 nsc_scale: THEORY
 %----------------------------------------------------------------------------
-% Sign-change counting is blind to positive rescaling (Stage C of item 1).
+% Sign-change counting is blind to positive rescaling.
 %
 % This is what licenses the whole approach to sh_count.  NASALib's Sturm
 % counts sign changes in compute_remainder_seq, whose entries come from

@@ -8,16 +8,21 @@ machine-specific paths (see its header for the variables it reads).
 | tool | what it does |
 |---|---|
 | `setup.sh` | one-time setup: the Python venv for pvs-cli; checks PVS, proveit and the NASALib libraries |
-| `env.sh` | sourced by the others: `CAD_ROOT`, `CAD_LIB_DIR`, `PVS_DIR`, `NASALIB`, `SCRATCH`, `PVS_PORT` |
-| `gate.sh <theory>...` | the verification gate: three fresh `proveit -f` runs and a traces run, in a scratch copy |
-| `outside.sh` | replays `tests/outside/use_pvs_cad.pvs`, which imports the library as `cad@pvs_cad` from another directory |
-| `msgcheck.sh` | checks what `(cad)` and the other commands say when they do not prove a formula (inputs: `cad/cad_msg_ex.pvs`) |
+| `env.sh` | sourced by the others: `CAD_ROOT`, `CAD_LIB_DIR` (its parent goes first on `PVS_LIBRARY_PATH`, so `cad@` finds it), `CAD_WORK_DIR` (where the pvs-cli tools work: `cad/`, or `cad/examples/`), `PVS_DIR`, `NASALIB`, `SCRATCH`, `PVS_PORT` |
+| `check.sh <theory or file>...` | proves what a change touches, once: the given theories and every theory that imports them, those of the library (`cad/top.pvs`) in one proveit session with traces and those of the examples (`cad/examples/top.pvs`) in another, in a scratch copy that keeps its compiled theories |
+| `affected.py <theory or file>...` | the lists `check.sh` proves: the given theories and their importers, in the library and in the examples |
+| `outside.sh` | replays the theories that import the library as `cad@...` from another directory: `tests/outside/use_pvs_cad.pvs` and `tests/bath/cad_bath.pvs` |
+| `msgcheck.sh` | checks what `(cad)` and the other commands say when they do not prove a formula (inputs: `tests/msg/cad_msg_ex.pvs`), on a pvs-cli server of its own in a scratch copy |
+| `replay.sh [--traces]` | the whole library (`cad/top.pvs`) and its examples (`cad/examples/top.pvs`) replayed with `proveit -a` in a scratch copy, with `proveit_check.sh`'s checks and `prflint.py` before and after (for a release) |
+| `prflint.py <dir> [--summary <top.summary>]` | checks the `.prf` files: one proof per formula, no `POSTPONE`; with a replay's summary, no stale entries |
+| `stats.py <replay copy>` | the numbers the documents quote (theories, files, lines, formulas, lemmas, TCCs, strategy lines), for the library and the examples, from a replay |
+| `proveit_check.sh` | sourced by `check.sh` and `replay.sh`: the checks of one proveit run |
 
 ## Proving through pvs-cli (`cli/`)
 
 | tool | what it does |
 |---|---|
-| `cli/srv.sh [theory]` | (re)starts the PVS server in `cad/` and typechecks the theory |
+| `cli/srv.sh [theory]` | (re)starts the PVS server in `$CAD_WORK_DIR` (`cad/`, or `CAD_WORK_DIR=cad/examples` for an example) and typechecks the theory; `--stop` stops it |
 | `cli/pv.sh <theory> <formula> <command>` | starts a proof and sends one command |
 | `cli/p.sh <command>`, `cli/ps.sh <command>` | send a command to the active proof (full, or compact sequent) |
 | `cli/sq.sh [command]` | sends a command (default `(skip)`) and prints the full sequent |
@@ -27,19 +32,10 @@ machine-specific paths (see its header for the variables it reads).
 | `cliprove.sh <file> <theory> <cmds>` | proves formulas one command each (lines `<formula> <command>`) |
 | `pvscli.sh`, `pvscli_wrap.py`, `pc.py` | NASALib's pvs-cli, wrapped for the repository's port and venv |
 
-## Batch runs and transcripts of `pvs -raw`
+## Maintenance
 
 | tool | what it does |
 |---|---|
-| `pvs_raw_timeout.sh <in> <out> <secs>` | a raw PVS session with a watchdog (macOS has no `timeout`) |
-| `multi.sh`, `prove_each.sh` | prove several formulas in raw sessions |
-| `cmds.py`, `seqs.py`, `showlab.py`, `openstates.py`, `effective.py` | read raw transcripts (split at the `Rule?` prompts): the commands, the sequents, a labelled formula, the open goals, the commands that had an effect |
-
-## Measuring and maintenance
-
-| tool | what it does |
-|---|---|
-| `prof.sh <theory> <formula> [secs] [det\|flat]`, `prof/*.lisp` | profiles the evaluator on the n-level decision (`decn_o`) |
 | `import_paths.py <dir>` | counts the import paths PVS 8.1's circularity check walks (see below) |
 | `redundant_imports.py <dir> [--apply]` | finds IMPORTING entries already imported through another |
 | `pvs-circular-deps.lisp`, `README-pvs-circular-deps.md` | a fix for PVS 8.1's slow circularity check on large directories |

@@ -1,7 +1,6 @@
 croots: THEORY
 %----------------------------------------------------------------------------
 % A complex polynomial is its leading coefficient times linear factors
-% (Phase 5).
 %
 % cfact: a proper polynomial of degree n is a(n) times the product of
 % (z - r(i)) over n roots, counted with multiplicity.  It is the fundamental

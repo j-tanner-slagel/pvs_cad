@@ -1,7 +1,6 @@
 rdet_nl: THEORY
 %----------------------------------------------------------------------------
-% ring_det's real determinant is NASALib's, and what that gives
-% (COLLINS_PLAN.md M-A).
+% ring_det's real determinant is NASALib's, and what that gives.
 %
 % rdet(n, R) is the first-row Laplace expansion of the n-corner of R;
 % NASALib's matrices@matrix_props det is the same expansion of a
@@ -17,7 +16,7 @@ rdet_nl: THEORY
 %                   the elimination matrix at the zero row)
 % where c is in the left kernel of R's n-corner when sum_a c(a) R(a, b) = 0
 % for every b < n.  These are the two halves of the subresultant theorem's
-% "psc_j = 0 iff a kernel vector exists" (COLLINS_PLAN.md 2.2).
+% "psc_j = 0 iff a kernel vector exists".
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING ring_det, matrices@matrix_inv

@@ -1,6 +1,6 @@
 col_line: THEORY
 %----------------------------------------------------------------------------
-% THE COLLINS CAD IN EVERY DIMENSION (COLLINS_PLAN.md, after M-K): the line,
+% THE COLLINS CAD IN EVERY DIMENSION: the line,
 % and every number of variables in one theorem.
 %
 % With one variable (k = 0) the run projects nothing: the line is cut at the

@@ -1,6 +1,6 @@
 cad_fold: THEORY
 %----------------------------------------------------------------------------
-% Deciding sentences from the CAD returned by cad_out (GAP_PLAN.md Tier 1C).
+% Deciding sentences from a CAD given by its records.
 % Executable.
 %
 % A sentence over F with quantifiers qs (outermost first) and a Boolean
@@ -8,8 +8,9 @@ cad_fold: THEORY
 % quantifier over the sectors, each inner one over the stack indices of the
 % next level, and Psi read on the recorded sign vector at the leaf.  dnr(a, L)
 % is the part of L in the cell of next index a, one level down; secr(s, L)
-% the part in sector s.  The CAD is computed once (cad_out) and decides
-% every such sentence with the same variables and polynomials (cad_fold_ok).
+% the part in sector s.  A CAD computed once (col_found's records) decides
+% every such sentence with the same variables and polynomials (cad_fold_ok,
+% col_found_ok).
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING cad_out

@@ -19,11 +19,11 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|lder| SUBTYPE "j - 1" "nat" (32 74 32 79))))
+   NIL (|lder| SUBTYPE "j - 1" "nat" (31 74 31 79))))
  (|lder_TCC2| 0
   (|lder_TCC2-1| NIL 3999789063 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
    (|lder| TERMINATION "lder(g, j - 1)" #A((3) BASE-CHAR . "NIL")
-    (32 66 32 80))))
+    (31 66 31 80))))
  (|lder_len| 0
   (|lder_len-2| "" 3999789092
    ("" (INDUCT "j")
@@ -304,7 +304,7 @@
     (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
-   NIL (|eval_deg| SUBTYPE "n - j" "nat" (44 72 44 77))))
+   NIL (|eval_deg| SUBTYPE "n - j" "nat" (43 72 43 77))))
  (|eval_deg| 0
   (|eval_deg-0| "" 3999789153
    ("" (SKEEP)

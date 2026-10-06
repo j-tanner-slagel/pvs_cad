@@ -1,6 +1,6 @@
 alg_sign: THEORY
 %----------------------------------------------------------------------------
-% The sign of a rational polynomial q at an algebraic number a (Phase 2).
+% The sign of a rational polynomial q at an algebraic number a.
 %
 % alg_sign(a, q) = sign of q(value(a)), computed as follows: if q vanishes at
 % value(a) (alg_zero) the sign is 0; if q is constant its sign is read off;
@@ -51,7 +51,6 @@ BEGIN
   sep_inv: LEMMA FORALL (pl0: Polylist): deg(pl0) > 0 AND deg(ql) > 0 IMPLIES
     FORALL a: alg?(a) AND a`p = pl0 AND NOT zero_at(a, ql) IMPLIES
       sep(a, ql)`p = a`p AND value(sep(a, ql)) = value(a) AND nroots(ql, sep(a, ql)`lb, sep(a, ql)`ub) = 0
-  sep_p: LEMMA alg?(a) AND deg(ql) > 0 AND NOT zero_at(a, ql) IMPLIES sep(a, ql)`p = a`p
   sep_value: LEMMA alg?(a) AND deg(ql) > 0 AND NOT zero_at(a, ql) IMPLIES value(sep(a, ql)) = value(a)
   sep_free: LEMMA alg?(a) AND deg(ql) > 0 AND NOT zero_at(a, ql) IMPLIES nroots(ql, sep(a, ql)`lb, sep(a, ql)`ub) = 0
 

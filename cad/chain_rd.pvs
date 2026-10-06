@@ -1,6 +1,6 @@
 chain_rd: THEORY
 %----------------------------------------------------------------------------
-% A Sturm chain and its reads in ONE pass (PERF_PLAN P1).
+% A Sturm chain and its reads in ONE pass.
 %
 % A chain-table entry (walk_od's mkce) needs the chain (schain) and the reads
 % its construction makes (i_rd).  Computed separately, i_rd builds the chain

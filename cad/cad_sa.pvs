@@ -11,14 +11,11 @@ cad_sa: THEORY
 %   col_cells_sa  every cell of the Collins CAD, at every level, in every
 %                 number of variables, and the graph of every root function
 %                 over a cell (col_line's col_cells)
-%   cad_cells_sa  every cell, at every level, of the n-level engine's CAD
-%                 (cad_verified's cad_of?)
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING qelim_ok, col_line, cad_verified
+  IMPORTING qelim_ok, col_line
 
-  u, k, i: VAR nat
-  qs: VAR list[bool]
+  k, i: VAR nat
   F: VAR list[list[mpoly]]
   s: VAR Sect
   A: VAR list[nat]
@@ -33,7 +30,4 @@ BEGIN
              (LAMBDA p: cons?(p) AND ccell(k, F)(s, A)(cdr(p))
                         AND car(p) = rt(nth(ctw(F, k), length(A)), cdr(p), i)))
 
-  cad_cells_sa: THEOREM cad_of?(u, qs, F) AND member(s, runsects(u, length(cdr(qs)), F))
-    AND length(A) <= length(cdr(qs))
-    IMPLIES qfd?(1 + length(A))(rcell(u, length(cdr(qs)), F)(s, A))
 END cad_sa

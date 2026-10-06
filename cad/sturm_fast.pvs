@@ -1,13 +1,13 @@
 sturm_fast: THEORY
 %----------------------------------------------------------------------------
-% A faster Sturm root count (PERF_PLAN R3): the same number as NASALib's
+% A faster Sturm root count: the same number as NASALib's
 % roots_closed_int(a, n, lo, hi, TRUE, TRUE, sl), with every element of the
 % chain evaluated ONCE, by Horner's rule.
 %
 % roots_closed_int evaluates the chain's elements through reals' polynomial
 % (a sigma of a(j) * x^j, each power computed again) inside
 % number_sign_changes, which asks for each element up to three times; with
-% the chains of bath_02's reads (degrees up to 102) that is most of an
+% chains of degree up to 102 (one three-variable benchmark) that is most of an
 % invariance check.  chvals lists the values at x once (hornz); rcf reads the
 % counts off it; rcf_eq says it is roots_closed_int.
 %----------------------------------------------------------------------------
@@ -18,7 +18,6 @@ BEGIN
   sl: VAR list[list[int]]
   x: VAR real
   i: VAR nat
-  c: VAR int
   a: VAR [nat -> int]
 
   %% Horner on an integer coefficient list, lowest coefficient first
@@ -41,7 +40,6 @@ BEGIN
     LET vs = map(LAMBDA (e: list[int]): hornz(e, x))(reverse(sl)) IN
     LAMBDA i: IF i < length(vs) THEN nth(vs, i) ELSE 0 ENDIF
   chvals_eq: LEMMA chvals(sl, x)(i) = hornz(chel(sl, i), x)
-  chvals_fun: LEMMA chvals(sl, x) = LAMBDA (i: nat): hornz(chel(sl, i), x)
 
   %% roots_closed_int's element j at x is hornz of chel
   j: VAR nat

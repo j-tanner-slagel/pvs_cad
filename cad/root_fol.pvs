@@ -1,7 +1,6 @@
 root_fol: THEORY
 %----------------------------------------------------------------------------
-% The stack index is first-order definable (GAP_PLAN.md Tier 1, the plan's
-% cad_spec).  The formulas are rcf_cad_def's.
+% The stack index is first-order definable.  The formulas are rcf_cad_def's.
 %
 % rootF_ok: rootF(G) holds at cons(v, q) iff v is a root over q (rootat?).
 % geF_ok: geF(G, i) holds at cons(u, q) iff at least i entries of the root

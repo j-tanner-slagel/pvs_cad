@@ -68,7 +68,7 @@
 \begin{document}
 \thispagestyle{empty}
 \begin{flushleft}
-{\sffamily\small\bfseries\color{moss}\MakeUppercase{pvs\_cad \quad·\quad PVS 8.1 \quad·\quad 3 October 2026}}\par\vspace{8pt}
+{\sffamily\small\bfseries\color{moss}\MakeUppercase{pvs\_cad \quad·\quad PVS 8.1 \quad·\quad 6 October 2026}}\par\vspace{8pt}
 {\fontsize{27}{33}\selectfont\bfseries Collins' projection, verified}\par\vspace{10pt}
 {\large\color{muted} The cylindrical algebraic decomposition of pvs\_cad, built from Collins' projection: the
 theorem that the projections form a CAD, the decision procedure and the quantifier elimination that read truth
@@ -161,10 +161,10 @@ col\_found\_decides & its records decide every sentence over $F$ in the same var
 fod\_qfd & a set is first-order definable exactly when it is quantifier-free definable (Tarski--Seidenberg)\\
 col\_cells\_sa & every cell at every level, and every root graph, is quantifier-free definable over $\mathbb{Q}$, hence semi-algebraic\\
 decc\_correct & the decision over the Collins tower, when certified, is the truth of the sentence\\
-decc\_complete & for at least two quantifiers some run is certified\\
+decc\_ev & with at least two quantifiers the run is certified for every large enough effort parameter\\
 projb\_delin & over a connected set where the members of the smaller bottom-step projection are nonzero, the lowest family is delineable\\
 decb\_cad\_run & the cells of \texttt{decide8}'s run, with the smaller bottom step, form a CAD adapted to its family, for every $F$ and $k\ge1$\\
-decb\_correct & \texttt{decide8}'s run, when certified, is the truth of the sentence; \code{decb\_complete}: some run is certified\\
+decb\_correct & \texttt{decide8}'s run, when certified, is the truth of the sentence; \code{decb\_ev}: it is certified for every large enough effort parameter\\
 decide8\_decides & \texttt{decide8} decides every closed prenex formula: its value is the truth (sound and complete)\\
 qe8\_complete & quantifier elimination by the Collins run: a quantifier-free equivalent of every prenex formula with at least one quantifier and $m \ge 1$ free variables\\
 qelim\_ok & \texttt{qelim} (with \texttt{qelim\_qf}): a quantifier-free equivalent of every first-order formula, quantifiers anywhere, any $m \ge 0$\\
@@ -178,19 +178,19 @@ bdet\_det & the determinant by fraction-free elimination (Bareiss, $O(n^3)$), wi
 inside the proof (proof by reflection), and the other evaluations the strategies use (normal forms, witness points,
 NASALib's interval enclosures); NASALib's saved proofs of the theorems the library imports (from
 \texttt{reals}, \texttt{Sturm}, \texttt{Tarski}, \texttt{structures}, \texttt{analysis}, \texttt{complex},
-\texttt{matrices}, \texttt{mult\_poly}, \texttt{interval\_arith}, \texttt{trig} and \texttt{lnexp}, and through them
+\texttt{matrices}, \texttt{interval\_arith}, \texttt{trig} and \texttt{lnexp}, and through them
 from other NASALib libraries such as \texttt{ints} and \texttt{power}), which were not replayed here; and the reading
 of the statements (\code{fsem}, \code{gsem}, \code{svec}, \code{delin\_cl?}, \code{cad\_over?} say what is
 intended). The procedures and the strategy code are not trusted; the procedures' correctness is the theorems.
 
-\textbf{Size.} The Collins work (the theories listed under ``Where it is'', with two example theories) is 76
-theories with 1,014 proved formulas (theorems, lemmas and type-correctness conditions) in 4,799 lines of PVS. The
-whole library has 375 theories and 5,628 proved formulas, all replayed by \texttt{proveit} from a clean copy
-(5 October 2026, 58 minutes).
+\textbf{Size.} The Collins work (the theories listed under ``Where it is'', with two example theories) is 75
+theories with 1,007 proved formulas (theorems, lemmas and type-correctness conditions) in 4,771 lines of PVS. The
+whole library has 210 theories and 3,175 proved formulas, replayed by \texttt{proveit} from a clean copy
+(6 October 2026, 41 minutes, with the examples, which have 14 theories and 457 formulas of their own).
 
 \section{Using it}
 
-{\raggedright In a theory, write \texttt{IMPORTING pvs\_cad} (\texttt{cad/pvs\_cad.pvs} imports
+{\raggedright In a theory, write \texttt{IMPORTING cad@pvs\_cad} (\texttt{cad/pvs\_cad.pvs} imports
 \texttt{cad\_decide8}, \texttt{qe8}, \texttt{gform\_ok}, \texttt{mpoly\_embed} and \texttt{cad\_endgame}).
 \cmdtag{(cad)} and \cmdtag{(cad-direct)} then decide a closed formula. A prenex one (one real per quantifier;
 grouped binders are decided through the nested form) is decided by \texttt{decide8}: the Collins run for two or
@@ -205,15 +205,13 @@ other shape, by \texttt{qe\_g} (\texttt{qe\_g\_ok}). \texttt{(cad)} also has sho
 and \texttt{(cad :cad-only? t)} skip: a witness search, which proves a goal whose quantifiers are all existential
 (or refutes a hypothesis whose quantifiers are all universal) by one point; with two or more quantifiers, a constant
 for one variable (existential in a goal, universal in a refuted hypothesis) that settles the matrix outright; and, with three or more, when the full decision
-does not answer within 10 s, one variable fixed to a constant and the smaller sentence decided. With
-\texttt{cad\_decide5} imported instead of \texttt{cad\_decide8}, the decision is the read-closure \texttt{decide5}
-(\texttt{decide7} under \texttt{:cad-only?}).\par}
+does not answer within 10 s, one variable fixed to a constant and the smaller sentence decided.\par}
 \begin{termbox}
 \begin{Verbatim}
 c8_l3_quad: LEMMA FORALL (c: real): EXISTS (x1: real): EXISTS (x2: real): EXISTS (x3: real):
   (x1^2 <= 1 AND x2^2 <= 1 AND x3^2 <= 1 AND x1 + x2 + x3 >= c) OR c > 3
 Rule? (cad-direct)
-Q.E.D.                      [about 5 s; the read-closure decision did not finish in 600 s]
+Q.E.D.                      [about 3 s; the read-closure decision of v1.0-full did not finish in 600 s]
 \end{Verbatim}
 \end{termbox}
 {\small\color{muted} \texttt{c8\_l3\_quad} is in \texttt{cad\_decide8\_ex}, which imports \texttt{cad\_decide8};
@@ -221,9 +219,10 @@ the transcript is abridged (the step's messages are left out).}
 
 \section{What it costs}
 
-\textbf{The decision alone} (\texttt{decc\_o}, the Collins run, against \texttt{decn\_o}, the read-closure run,
-both at $u = 0$; \code{(cad-mx)} measurements on 1 October 2026, wall clock on one machine; ``$>$'' marks a run
-stopped at that time):
+\textbf{The decision alone} (\texttt{decc\_o}, the Collins run, against \texttt{decn\_o}, the read-closure run of
+the full development, both at $u = 0$; measured there on 1 October 2026, wall clock on one machine; ``$>$'' marks a
+run stopped at that time). The read-closure engine is not part of this library (\texttt{HISTORY.md}); the comparison
+is why the Collins run replaced it:
 
 {\small
 \begin{longtable}{@{}>{\ttfamily}p{0.15\textwidth} c p{0.38\textwidth} r r@{}}
@@ -244,39 +243,39 @@ bath\_02\textrm{--}05, 07, 09, 10, 12 & 3--4 & the other Bath problems & $>$90 s
 \bottomrule
 \end{longtable}}
 
-\textbf{Every proof of the example theories}, replayed through \texttt{(cad)}, \texttt{(cad-direct)} or
-\texttt{(cad-qe)}, including the witness search and the reconstruction of the proof: as they are, importing
-\texttt{cad\_decide5} (\texttt{qe\_all} for \texttt{qe\_cad\_ex}), and with \texttt{cad\_decide8} (\texttt{qe8} for
-\texttt{qe\_cad\_ex}) added to their imports. Measured on 1 October 2026 with the strategies of that day, before
-the changes for formulas as people write them:
+\textbf{Every proof of the example theories}, in one \texttt{proveit} session that loads the library once and proves
+the 13 example theories and the Bath problems (\texttt{tests/bath}), with PVS's own time for each proof (6 October 2026, one M-series Mac), against the same
+proofs in the full development (\texttt{v1.0-full}, 5 October 2026), whose commands use the same Collins run. They
+include the witness search and the reconstruction of each proof:
 
 {\small
 \begin{longtable}{@{}>{\ttfamily}p{0.2\textwidth} r r r@{}}
 \toprule
-\textsf{\small\bfseries Theory} & \textsf{\small\bfseries proofs} & \textsf{\small\bfseries cad\_decide5 / qe\_all} & \textsf{\small\bfseries cad\_decide8 / qe8}\\
+\textsf{\small\bfseries Theory} & \textsf{\small\bfseries proofs} & \textsf{\small\bfseries v1.0-full} & \textsf{\small\bfseries this library}\\
 \midrule
-cad\_examples\textrm{, }cad\_examples2\textrm{--4} & 28 & 69.1 s & 90.2 s\\
-cad\_endgame\_ex & 18 & 31.0 s & 43.0 s\\
-cad\_star\_ex & 15 & 39.9 s & 49.5 s\\
-cad\_bath & 1 & 9.5 s & 10.2 s\\
-qe\_cad\_ex & 6 & 42.0 s & 51.1 s\\
+cad\_terms\_ex & 113 & 1,014.4 s & 657.6 s\\
+cad\_showcase & 63 & 221.1 s & 126.6 s\\
+cad\_forms\_ex & 99 & 117.9 s & 74.9 s\\
+qe8\_ex & 14 & 60.9 s & 32.9 s\\
+cad\_hard\_ex & 61 & 41.8 s & 35.7 s\\
+cad\_bath (\texttt{tests/bath}) & 15 & 40.7 s & 29.9 s\\
+cad\_star\_ex & 16 & 37.8 s & 19.7 s\\
+cad\_endgame\_ex & 20 & 29.4 s & 15.4 s\\
+cad\_examples3 & 10 & 21.6 s & 8.3 s\\
+cad\_examples2 & 14 & 20.0 s & 8.6 s\\
+cad\_decide8\_ex & 9 & 19.0 s & 9.6 s\\
+cad\_examples & 12 & 17.4 s & 8.0 s\\
+cad\_examples4 & 5 & 13.1 s & 5.1 s\\
+cad\_results\_ex & 15 & 5.1 s & 0.3 s\\
 \midrule
-all & 68 & 191.5 s, 68 proved & 244.0 s, 68 proved\\
+all & 466 & 1,660.1 s & 1,032.4 s\\
 \bottomrule
 \end{longtable}}
 
-In that run every proof went through either way, and again in a re-run after the strategy fixes of this release (68 of 68 with
-each import, 1 October 2026). The whole \texttt{(cad -1)} proof of \texttt{cad\_bath.bath\_08\_false} (Bath 08,
-``Random B, Gr\"obner form'', false) is one of them: 9.5\,s as it is and 10.2\,s with \texttt{cad\_decide8}. On these
-small examples, in that first run, a proof took 0.77 s longer on average with \texttt{cad\_decide8} or \texttt{qe8}
-imported: 0.1--1.3 s for a \texttt{(cad)} or \texttt{(cad-direct)} proof, 0.5--2.5 s for a \texttt{(cad-qe)} proof (in the
-re-run after the strategy fixes, 0.59 s on average: 166.7 s against 206.9 s for the 68 proofs). Part of that is
-the larger imported context, not the Collins run: a sentence with one quantifier runs the same decision,
-\texttt{decq2}, under either import, and the 16 one-quantifier proofs of \texttt{cad\_endgame\_ex} are 0.2--1.1 s
-slower (0.64 s on average). On some problems with several quantifiers the Collins run is faster by more than an
-order of magnitude (\texttt{k3\_lin}: 23 times; \texttt{bath\_01} and \texttt{l3\_quad}: more than 450 times, and
-the whole proof of \texttt{l3\_quad} through \texttt{(cad-direct)} takes about 5 s, against more than 600 s for the
-read-closure decision alone); on others it is slower (\texttt{e4\_above}: 2.1 s against 0.9 s).
+The library's proofs take 38\% less time than in the full development as a whole, and no proof is slower by more
+than 0.02\,s (one formula of \texttt{cad\_forms\_ex}, new since, is not counted). On the problems with several quantifiers in the first table the Collins run is faster
+than the read closure by more than an order of magnitude (\texttt{k3\_lin}: 23 times; \texttt{bath\_01} and
+\texttt{l3\_quad}: more than 450 times), and on others slower (\texttt{e4\_above}: 2.1 s against 0.9 s).
 
 
 \section{How it works}
@@ -299,9 +298,9 @@ projection is sign-invariant on the cells of the level below. \texttt{decide8} c
 smaller bottom step instead (\code{projb}: each member's leading coefficient and, for each member with its derivative and each pair of
 members, only the first psc that is not identically zero), which is
 enough where its members are nonzero (\code{projb\_delin}, \code{decb\_cad\_run}).
-\item \textbf{Truth values} come from the verified walk of the read-closure engine, over exact algebraic sample
-points: it passes the sections and bands of each level and folds the quantifiers. Its certificate only checks the answers of
-the sign oracle at the samples; delineability no longer depends on it.
+\item \textbf{Truth values} come from a verified walk over exact algebraic sample points (\code{walk\_def},
+\code{walk\_ok}): it passes the sections and bands of each level and folds the quantifiers. Its certificate only
+checks the answers of the sign oracle at the samples; delineability does not depend on it.
 \end{enumerate}
 
 \section{Limits}
@@ -312,18 +311,14 @@ projection has 11 polynomials and the second 569. Two remedies are in place: eve
 basis (square-free factors), and \texttt{decide8} cuts the line at the roots of the smaller bottom step; in a
 prototype count \texttt{bath\_04}'s bottom family drops from 569 polynomials to 35. The time then goes to the lifting,
 and \texttt{bath\_04}, \texttt{05} and \texttt{07} are still not decided in 300 s (3 October 2026). Not done: a
-smaller projection at every level (McCallum's~\cite{mccallum} or Brown's~\cite{brown}; \texttt{cad\_proj} defines a
-McCallum-shaped operator, not proved delineating; the read-closure engine starts from it, under its run-time
-certificate), Lazard's~\cite{lazard,mpp}, and equational constraints. Measured with
-\texttt{decide5} (\texttt{cad\_decide5}), September 2026: \texttt{(cad)} settles Bath 01, 03 and 04 by a model
-search, and Bath 02 --- and 05 and 07, refuted as hypotheses --- by fixing one variable to a constant and deciding
-the smaller sentence, after the full decision does not answer within its 10 s budget. With \texttt{cad\_decide8}
-imported (\texttt{IMPORTING pvs\_cad}, 1 October 2026) the same six are settled the same way: Bath 01, 03 and 04 in
-0.5--0.6\,s, Bath 02, 05 and 07 in about 12\,s each (whole proofs; the smaller sentences are decided by
-\texttt{decide8}).
+smaller projection at every level (McCallum's~\cite{mccallum} or Brown's~\cite{brown}), Lazard's~\cite{lazard,mpp},
+and equational constraints. The whole command does better than the decision alone: with \texttt{IMPORTING
+pvs\_cad} (1 October 2026), \texttt{(cad)} settles Bath 01, 03 and 04 by a model search, in 0.5--0.6\,s, and
+Bath 02 --- and 05 and 07, refuted as hypotheses --- by fixing one variable to a constant and deciding the smaller
+sentence by \texttt{decide8}, after the full decision does not answer within its 10 s budget, in about 12\,s each
+(whole proofs).
 \item \textbf{Universal sentences with many polynomials} (the Joukowsky problems \texttt{bath\_09}, \texttt{10}
-and \texttt{12}) get no help from a witness search, and their decision does not finish in 90 s with either
-engine.
+and \texttt{12}) get no help from a witness search, and their decision does not finish in 90 s.
 \item \textbf{Quantifier elimination with two or more free variables} first answers by sign conditions on the
 projection polynomials of the plain tower; when they do not tell the true cells from the false ones (two cells
 with the same signs and different truth values), \texttt{qe8} runs the Collins tower whose free families are

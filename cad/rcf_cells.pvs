@@ -1,16 +1,15 @@
 rcf_cells: THEORY
 %----------------------------------------------------------------------------
-% Every cell of the run's decomposition is first-order definable
-% (GAP_PLAN.md Tier 1, the plan's cad_spec).
+% The cells of a cylindrical decomposition are first-order definable.
 %
 % sectF_ok: sectF(s) defines the sector s of the line, through cmpF_ok
 % (x - value(b) has sign t iff some z with p(z) = 0 and lb <= z <= ub has
 % sign3(x - z) = t; the root of an algebraic number is unique in its CLOSED
 % interval, value_char).  cellF_ok: over a base set defined by phi, cellF
 % defines the tower's cell with stack indices A, for any A no longer than
-% the tower -- so the cells of every level are covered.  rcell_ok / rcell_fod:
-% every cell rcell(s, A) of the run is defined by cellF(runtw(s), sectF(s),
-% A); no certificate is needed, since the root lists exist at every point.
+% the tower -- so the cells of every level are covered; no certificate is
+% needed, since the root lists exist at every point.  col_run applies them
+% to the Collins run (col_cad_run).
 % graph_fod: over a definable cell where the i-th root exists, the graph of
 % the i-th root function is definable (it is the stack cell of index 2i+1,
 % sec_graph), so the section functions are definable too (BPR Def. 5.1).
@@ -18,8 +17,8 @@ rcf_cells: THEORY
 % "Definable" means by a first-order formula over the reals with rational
 % polynomial sign atoms; such sets are also definable without quantifiers
 % (qelim_ok's fod_qfd, the Tarski-Seidenberg theorem), so semi-algebraic,
-% indeed defined over Q; cad_sa states it for the cells (cad_cells_sa,
-% col_cells_sa).
+% indeed defined over Q; cad_sa states it for the cells of the Collins CAD
+% (col_cells_sa).
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING root_fol, alg_isign, cad_run
@@ -34,8 +33,8 @@ BEGIN
   C: VAR [list[real] -> bool]
   phi: VAR Fm
   A: VAR list[nat]
-  n, k, u, i: VAR nat
-  F, G: VAR list[list[mpoly]]
+  n, i: VAR nat
+  G: VAR list[list[mpoly]]
 
   %% ---- the sectors of the line --------------------------------------------------------------
   meval_pmc: LEMMA FORALL ql: cons?(ql) IMPLIES meval(mpol(pmc(ql)))(cons(x, ys)) = polylist(ql)(x)
@@ -48,15 +47,6 @@ BEGIN
     length(A) <= length(TW) AND (FORALL q: length(q) = n IMPLIES (C(q) IFF fsem(phi)(q)))
     AND length(p) = n + length(A)
     IMPLIES (tcell(TW, C, A)(p) IFF fsem(cellF(TW, phi, A))(p))
-
-  %% ---- EVERY CELL OF THE RUN IS FIRST-ORDER DEFINABLE ------------------------------------------
-  rcell_ok: THEOREM k >= 1 AND length(A) = k AND length(p) = k + 1
-    IMPLIES (rcell(u, k, F)(s, A)(p) IFF fsem(cellF(runtw(u, k, F)(s), sectF(s), A))(p))
-  rcell_fod: THEOREM k >= 1 AND length(A) = k IMPLIES fod?(k + 1)(rcell(u, k, F)(s, A))
-  %% the cells of every level: A no longer than the tower
-  rcell_ok_le: THEOREM k >= 1 AND length(A) <= k AND length(p) = 1 + length(A)
-    IMPLIES (rcell(u, k, F)(s, A)(p) IFF fsem(cellF(runtw(u, k, F)(s), sectF(s), A))(p))
-  rcell_fod_le: THEOREM k >= 1 AND length(A) <= k IMPLIES fod?(1 + length(A))(rcell(u, k, F)(s, A))
 
   %% ---- the section functions --------------------------------------------------------------------
   sec_graph: LEMMA (FORALL q: C(q) IMPLIES i < nroot(G, q)) IMPLIES

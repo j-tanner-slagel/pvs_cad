@@ -80,10 +80,10 @@
     (|posrat_div_posrat_is_posrat| APPLICATION-JUDGEMENT "posrat" |rationals|
      NIL)
     (|pi_bnds| FORMULA-DECL NIL |atan| |trig|)
-    (|pi_bound| NAME-JUDGEMENT "{r: posreal | pi_lb < r AND r < pi_ub}"
-     |atan_approx| |trig|)
     (|pi_bound| NAME-JUDGEMENT
      "{r: posreal | pi_lb_new <= r AND r <= pi_ub_new}" |pi_def| |trig|)
+    (|pi_bound| NAME-JUDGEMENT "{r: posreal | pi_lb < r AND r < pi_ub}"
+     |atan_approx| |trig|)
     (|minus_nzreal_is_nzreal| APPLICATION-JUDGEMENT "nzreal" |real_types| NIL))
    SHOSTAK))
  (|sin_bnd_pos_TCC1| 0
@@ -156,7 +156,7 @@
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
     (|rat_minus_rat_is_rat| APPLICATION-JUDGEMENT "rat" |rationals| NIL)
-    (|hat_02n| FORMULA-DECL NIL |power_series| |series|)
+    (|zero_hat| FORMULA-DECL NIL |exponent_props| |reals|)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|real_minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
@@ -303,7 +303,7 @@
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
     (|rat_minus_rat_is_rat| APPLICATION-JUDGEMENT "rat" |rationals| NIL)
-    (|hat_02n| FORMULA-DECL NIL |power_series| |series|)
+    (|zero_hat| FORMULA-DECL NIL |exponent_props| |reals|)
     (- CONST-DECL "[numfield -> numfield]" |number_fields| NIL)
     (|minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
     (|cos_neg| FORMULA-DECL NIL |sincos_def| |trig|)
@@ -549,7 +549,7 @@
     (NIL APPLICATION-JUDGEMENT "above(n)" |exp2| NIL)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    (|hat_02n| FORMULA-DECL NIL |power_series| |series|)
+    (|zero_hat| FORMULA-DECL NIL |exponent_props| |reals|)
     (|div_mult_pos_lt1| FORMULA-DECL NIL |real_props| NIL)
     (+ CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
     (< CONST-DECL "bool" |reals| NIL)
@@ -574,10 +574,10 @@
     (|posreal| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
     (|real_plus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
     (|expt| DEF-DECL "real" |exponentiation| NIL)
-    (|pi_bound| NAME-JUDGEMENT "{r: posreal | pi_lb < r AND r < pi_ub}"
-     |atan_approx| |trig|)
     (|pi_bound| NAME-JUDGEMENT
      "{r: posreal | pi_lb_new <= r AND r <= pi_ub_new}" |pi_def| |trig|)
+    (|pi_bound| NAME-JUDGEMENT "{r: posreal | pi_lb < r AND r < pi_ub}"
+     |atan_approx| |trig|)
     (|minus_nzreal_is_nzreal| APPLICATION-JUDGEMENT "nzreal" |real_types| NIL))
    SHOSTAK))
  (|atan_bnd_neg| 0
@@ -634,10 +634,10 @@
      |real_props| NIL)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    (|pi_bound| NAME-JUDGEMENT "{r: posreal | pi_lb < r AND r < pi_ub}"
-     |atan_approx| |trig|)
     (|pi_bound| NAME-JUDGEMENT
      "{r: posreal | pi_lb_new <= r AND r <= pi_ub_new}" |pi_def| |trig|)
+    (|pi_bound| NAME-JUDGEMENT "{r: posreal | pi_lb < r AND r < pi_ub}"
+     |atan_approx| |trig|)
     (|minus_nzreal_is_nzreal| APPLICATION-JUDGEMENT "nzreal" |real_types| NIL))
    SHOSTAK))
  (|sin_approx_5_TCC1| 0
@@ -1095,7 +1095,7 @@
     (|sin_0| FORMULA-DECL NIL |sincos_def| |trig|)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    (|hat_02n| FORMULA-DECL NIL |power_series| |series|)
+    (|zero_hat| FORMULA-DECL NIL |exponent_props| |reals|)
     (|real_plus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
     (|real_minus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
     (|real_div_nzreal_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)

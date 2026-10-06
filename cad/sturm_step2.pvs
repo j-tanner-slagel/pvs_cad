@@ -1,6 +1,6 @@
 sturm_step2: THEORY
 %----------------------------------------------------------------------------
-% The reduced chain step, by a sign function (Phase 6, performance).
+% The reduced chain step, by a sign function (for speed).
 %
 % The step of sturm_step multiplies the pseudo-remainder by -b^k, which
 % squares the coefficient growth along a chain. sstep2 divides the
@@ -41,12 +41,10 @@ BEGIN
   sstep2_rd(l1, (l2 | cons?(l2)), cc, e, sg): list[mpoly] = (: mnorm(cc), mnorm(llast(l2)) :)
 
   %% what the check gives
-  lexact_len: LEMMA FORALL q, r: lexact(d, q, r) IMPLIES length(q) = length(r)
   lexact_earr: LEMMA FORALL q, r, i: lexact(d, q, r) IMPLIES
     earr(q, ys)(i) * meval(d)(ys) = earr(r, ys)(i)
   ldivl_len: LEMMA length(ldivl(r, d)) = length(r)
 
-  sstep2_length: LEMMA cons?(l2) IMPLIES length(sstep2(l1, l2, cc, e, sg)) = length(prem(l1, l2))
   sstep2_prop: LEMMA cons?(l2) AND blc(l2, ys) /= 0 IMPLIES
     EXISTS (c: posreal): prop(sstep2(l1, l2, cc, e, msg(ys)), sstep(l1, l2), c, ys)
   sstep2_det: LEMMA cons?(l2) AND agree(sg1, sg2, sstep2_rd(l1, l2, cc, e, sg1)) IMPLIES

@@ -1,6 +1,6 @@
 chain_sturm: THEORY
 %----------------------------------------------------------------------------
-% The symbolic sequence is a Sturm sequence (Phase 3).
+% The symbolic sequence is a Sturm sequence.
 %
 % Sturm@sturm states its theorems about a triple (p, n, m): p(i) is a real
 % coefficient array, n(i) its degree, and m the last index, subject to
@@ -76,9 +76,6 @@ BEGIN
 
   %% the full chain: the polynomial, its derivative, then the sequence
   fchain(k, l0, ys): list[list[mpoly]] = cons(l0, rchain(k, l0, lderiv(l0), ys))
-  ftree(k, l0): btree[list[list[mpoly]]] =
-    bmap(LAMBDA (cs: list[list[mpoly]]): cons(l0, cs), prs(k, l0, lderiv(l0)))
-  select_ftree: LEMMA select(ftree(k, l0), ys) = fchain(k, l0, ys)
 
   %% the hypotheses under which the chain is a Sturm sequence: the polynomial
   %% is not constant in the eliminated variable, its leading coefficient does

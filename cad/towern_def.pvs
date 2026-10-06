@@ -1,136 +1,24 @@
 towern_def: THEORY
 %----------------------------------------------------------------------------
-% The decision at ANY number of quantifiers, executable part (FINISH_PLAN
-% stage S5e-1).  MEASURED FIRST; nothing here is proved yet.
+% Towers of families, executable part.
 %
 % Below the outermost variable there is a TOWER of families, outermost first,
 % the last one F itself:   TW = (F_2, ..., F_n = F).   One tower per outer
 % sector, shared by all the cells under it.  A level is a walk over car(TW)
 % through the oracle of the level above; its cells are rational separators
 % (sg_pt) and gaps holding a root (sg_sec); the level below runs at each cell
-% through the cell's oracle.  inner2 of tower_def is the case TW = (P, F).
-%
-% The tower is closed (tclos) under the intrinsic reads of each level's walk
-% at every cell of the level above it.  The closure is outside the trusted
-% argument: the certificate re-checks membership at every cell.
+% through the cell's oracle.  towern_od walks a tower on oracle descriptors;
+% zipapp merges two towers level by level.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING cad3_def
+  IMPORTING mpoly
 
   Tower: TYPE = list[list[list[mpoly]]]
 
-  sg: VAR SG
-  TW, TR, T1, T2: VAR Tower
-  P, F, Q: VAR list[list[mpoly]]
-  qs: VAR list[bool]
-  Y: VAR list[rat]
-  Psi: VAR [SV -> bool]
-  f: VAR [SG -> bool]
-  fr: VAR [SG -> Tower]
-  k, fuel: VAR nat
-  s: VAR Sect
-  ss: VAR list[Sect]
+  T1, T2: VAR Tower
 
-  %% ---- the value -----------------------------------------------------------------
-  %% an inner evaluator f at every cell of the walk over P
-  cellsf(f, P, sg, Y): RECURSIVE list[bool] =
-    IF null?(Y) THEN null[bool]
-    ELSE LET v1 = f(sg_pt(sg, car(Y))) IN
-      IF null?(cdr(Y)) THEN (: v1 :)
-      ELSE LET rest = cellsf(f, P, sg, cdr(Y)) IN
-        cons(v1, IF gap?(P, sg, car(Y), car(cdr(Y)))
-                   THEN cons(f(sg_sec(sg, P, car(Y), car(cdr(Y)))), rest)
-                 ELSE rest ENDIF)
-      ENDIF
-    ENDIF
-  MEASURE length(Y)
-
-  %% qs outermost first, one quantifier per family of the tower
-  innern(qs, TW, Psi, sg): RECURSIVE bool =
-    IF null?(TW) OR null?(qs) THEN FALSE
-    ELSIF null?(cdr(TW)) THEN qfold(car(qs), svs_w(car(TW), sg), Psi)
-    ELSE bfold(car(qs), cellsf(LAMBDA (s2: SG): innern(cdr(qs), cdr(TW), Psi, s2),
-                               car(TW), sg, seps(car(TW), sg)))
-    ENDIF
-  MEASURE length(TW)
-
-  %% ---- the closure of the tower -------------------------------------------------------
   zipapp(T1, T2): RECURSIVE Tower =
     IF null?(T1) THEN T2 ELSIF null?(T2) THEN T1
     ELSE cons(append(car(T1), car(T2)), zipapp(cdr(T1), cdr(T2))) ENDIF
   MEASURE length(T1)
-  zipadd(TW, TR): RECURSIVE Tower =
-    IF null?(TW) THEN null[list[list[mpoly]]] ELSIF null?(TR) THEN TW
-    ELSE cons(addnew(car(TW), car(TR)), zipadd(cdr(TW), cdr(TR))) ENDIF
-  MEASURE length(TW)
-  tsize(TW): RECURSIVE nat =
-    IF null?(TW) THEN 0 ELSE length(car(TW)) + tsize(cdr(TW)) ENDIF
-  MEASURE length(TW)
-
-  %% the reads of the levels below, merged over the cells of the walk over P
-  cellsr(fr, P, sg, Y): RECURSIVE Tower =
-    IF null?(Y) THEN null[list[list[mpoly]]]
-    ELSE LET r1 = fr(sg_pt(sg, car(Y))) IN
-      IF null?(cdr(Y)) THEN r1
-      ELSE LET rest = cellsr(fr, P, sg, cdr(Y)) IN
-        zipapp(r1, IF gap?(P, sg, car(Y), car(cdr(Y)))
-                     THEN zipapp(fr(sg_sec(sg, P, car(Y), car(cdr(Y)))), rest)
-                   ELSE rest ENDIF)
-      ENDIF
-    ENDIF
-  MEASURE length(Y)
-
-  %% what each family of TW is missing, aligned with TW
-  treads(TW, sg): RECURSIVE Tower =
-    IF null?(TW) OR null?(cdr(TW)) THEN null[list[list[mpoly]]]
-    ELSE LET P = car(TW), Y = seps(P, sg) IN
-      cons(yreads(car(cdr(TW)), sg, P, Y),
-           cellsr(LAMBDA (s2: SG): treads(cdr(TW), s2), P, sg, Y))
-    ENDIF
-  MEASURE length(TW)
-
-  tclos(fuel, TW, sg): RECURSIVE Tower =
-    IF fuel = 0 THEN TW
-    ELSE LET T2 = zipadd(TW, treads(TW, sg)) IN
-         IF tsize(T2) = tsize(TW) THEN TW ELSE tclos(fuel - 1, T2, sg) ENDIF
-    ENDIF
-  MEASURE fuel
-
-  %% the projections to start from: k families, the last one F
-  tw0(k, F): RECURSIVE Tower =
-    IF k <= 1 THEN (: F :)
-    ELSE LET T = tw0(k - 1, F) IN
-         IF null?(T) THEN (: F :) ELSE cons(proj(car(T)), T) ENDIF
-    ENDIF
-  MEASURE k
-
-  lvln(k, F, s): Tower = tclos(cfuel, tw0(k, F), asgS(s))
-  topf(TW): list[list[mpoly]] = IF null?(TW) THEN null[list[mpoly]] ELSE car(TW) ENDIF
-
-  %% ---- the outermost level ----------------------------------------------------------------
-  nbads(k, F, ss): RECURSIVE list[list[mpoly]] =
-    IF null?(ss) THEN null[list[mpoly]]
-    ELSIF at?(car(ss)) THEN nbads(k, F, cdr(ss))
-    ELSE append(badl(car(ss), ireads(topf(lvln(k, F, car(ss))), car(ss))), nbads(k, F, cdr(ss)))
-    ENDIF
-  MEASURE length(ss)
-
-  nclos(fuel, k, F, Q): RECURSIVE list[list[mpoly]] =
-    IF fuel = 0 THEN Q
-    ELSE LET B = nbads(k, F, sects(rts(Q))) IN
-         IF null?(B) THEN Q
-         ELSE LET Q2 = addnew(Q, B) IN
-              IF length(Q2) = length(Q) THEN Q ELSE nclos(fuel - 1, k, F, Q2) ENDIF
-         ENDIF
-    ENDIF
-  MEASURE fuel
-
-  %% qs OUTERMOST first, at least two quantifiers: a MEASUREMENT (no certificate yet)
-  decnm(qs, F, Psi): bool =
-    IF null?(qs) OR null?(cdr(qs)) THEN FALSE
-    ELSE LET k = length(cdr(qs)),
-             Q = nclos(cfuel, k, F, proj(topf(tw0(k, F)))),
-             ss = sects(rts(Q)) IN
-         qfoldS(car(qs), ss, LAMBDA s: innern(cdr(qs), lvln(k, F, s), Psi, asgS(s)))
-    ENDIF
 END towern_def

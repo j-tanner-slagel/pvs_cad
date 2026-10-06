@@ -16,7 +16,7 @@
     (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
     (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
-   SHOSTAK (|kids| SUBTYPE "Y" "(list_adt[real].cons?)" (37 38 37 39))))
+   SHOSTAK (|kids| SUBTYPE "Y" "(list_adt[real].cons?)" (39 38 39 39))))
  (|kids_TCC2| 0
   (|kids_TCC2-2| "" 3999727919 ("" (SUBTYPE-TCC) NIL NIL)
    ((|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
@@ -35,7 +35,7 @@
     (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK
-   (|kids| SUBTYPE "cdr[real](Y)" "(list_adt[real].cons?)" (39 42 39 48))))
+   (|kids| SUBTYPE "cdr[real](Y)" "(list_adt[real].cons?)" (41 42 41 48))))
  (|kids_TCC3| 0
   (|kids_TCC3-2| "" 3999727920 ("" (TERMINATION-TCC) NIL NIL)
    ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
@@ -50,7 +50,7 @@
     (|clen| CONST-DECL "nat" |sturm_sg| NIL)
     (|osent| CONST-DECL "Sign3" |walk_od| NIL)
     (|nthl| CONST-DECL "list[mpoly]" |chain_sturm| NIL)
-    (|bk| CONST-DECL "nat" |alg_bis| NIL)
+    (|bk| CONST-DECL "nat" |walk_def| NIL)
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
@@ -74,7 +74,7 @@
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
    SHOSTAK
    (|kids| TERMINATION "kids(P, od, tb, cdr[rat](Y), n + 1)"
-    #A((3) BASE-CHAR . "NIL") (40 74 40 104))))
+    #A((3) BASE-CHAR . "NIL") (42 74 42 104))))
  (|kids_TCC4| 0
   (|kids_TCC4-2| "" 3999727921 ("" (TERMINATION-TCC) NIL NIL)
    ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
@@ -89,7 +89,7 @@
     (|clen| CONST-DECL "nat" |sturm_sg| NIL)
     (|osent| CONST-DECL "Sign3" |walk_od| NIL)
     (|nthl| CONST-DECL "list[mpoly]" |chain_sturm| NIL)
-    (|bk| CONST-DECL "nat" |alg_bis| NIL)
+    (|bk| CONST-DECL "nat" |walk_def| NIL)
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
@@ -113,11 +113,11 @@
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
    SHOSTAK
    (|kids| TERMINATION "kids(P, od, tb, cdr[rat](Y), n)"
-    #A((3) BASE-CHAR . "NIL") (41 16 41 42))))
+    #A((3) BASE-CHAR . "NIL") (43 16 43 42))))
  (|lflat_TCC1| 0
   (|lflat_TCC1-0| "" 3999727861 ("" (SUBTYPE-TCC) NIL NIL) NIL SHOSTAK
    (|lflat| SUBTYPE "L" "(list_adt[list_adt[CRec].list].cons?)"
-    (51 48 51 49))))
+    (53 48 53 49))))
  (|lflat_TCC2| 0
   (|lflat_TCC2-0| "" 3999727862 ("" (TERMINATION-TCC) NIL NIL)
    ((|length| DEF-DECL "nat" |list_props| NIL)
@@ -128,17 +128,17 @@
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
    SHOSTAK
    (|lflat| TERMINATION "lflat(cdr[list[CRec]](L))" #A((3) BASE-CHAR . "NIL")
-    (51 52 51 65))))
+    (53 52 53 65))))
  (|ctree_TCC1| 0
   (|ctree_TCC1-0| "" 3999727862 ("" (SUBTYPE-TCC) NIL NIL)
    ((|feff| CONST-DECL "list[list[mpoly]]" |towern_od| NIL)) SHOSTAK
-   (|ctree| SUBTYPE "TB" "(list_adt[CT].cons?)" (58 32 58 34))))
+   (|ctree| SUBTYPE "TB" "(list_adt[CT].cons?)" (60 32 60 34))))
  (|ctree_TCC2| 0
   (|ctree_TCC2-0| "" 3999727863 ("" (SUBTYPE-TCC) NIL NIL)
    ((|feff| CONST-DECL "list[list[mpoly]]" |towern_od| NIL)) SHOSTAK
    (|ctree| SUBTYPE "TW"
     "(list_adt[list_adt[list_adt[mpoly_adt.mpoly].list].list].cons?)"
-    (57 60 57 62))))
+    (59 60 59 62))))
  (|ctree_TCC3| 0
   (|ctree_TCC3-0| "" 3999727864 ("" (TERMINATION-TCC) NIL NIL)
    ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
@@ -155,16 +155,16 @@
    SHOSTAK
    (|ctree| TERMINATION
     "ctree(u, cdr[list[list[mpoly]]](TW), cdr[CT](TB), k`2)"
-    #A((3) BASE-CHAR . "NIL") (57 47 57 78))))
+    #A((3) BASE-CHAR . "NIL") (59 47 59 78))))
  (|ctree_TCC4| 0
   (|ctree_TCC4-0| "" 3999727864 ("" (SUBTYPE-TCC) NIL NIL) NIL SHOSTAK
    (|ctree| SUBTYPE "TW"
     "(list_adt[list_adt[list_adt[mpoly_adt.mpoly].list].list].cons?)"
-    (56 26 56 28))))
+    (58 26 58 28))))
  (|olflat_TCC1| 0
   (|olflat_TCC1-0| "" 3999727865 ("" (SUBTYPE-TCC) NIL NIL) NIL SHOSTAK
    (|olflat| SUBTYPE "L" "(list_adt[list_adt[ORec].list].cons?)"
-    (71 48 71 49))))
+    (73 48 73 49))))
  (|olflat_TCC2| 0
   (|olflat_TCC2-0| "" 3999727865 ("" (TERMINATION-TCC) NIL NIL)
    ((|length| DEF-DECL "nat" |list_props| NIL)
@@ -175,15 +175,5 @@
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
    SHOSTAK
    (|olflat| TERMINATION "olflat(cdr[list[ORec]](L))" #A((3) BASE-CHAR . "NIL")
-    (71 52 71 66))))
- (|cad_out_TCC1| 0
-  (|cad_out_TCC1-0| "" 3999727866 ("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL)
-   ((|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
-     "(strict_total_order?[real])" |real_props| NIL)
-    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
-   SHOSTAK (|cad_out| SUBTYPE "k" "nat" (78 85 78 86)))))
+    (73 52 73 66)))))
 

@@ -1,6 +1,6 @@
 qe_fm_def: THEORY
 %----------------------------------------------------------------------------
-% Formulas for quantifier elimination (GAP_PLAN.md Tier 2).  Executable.
+% Formulas for quantifier elimination.  Executable.
 %
 % qf?: the formula has no quantifier.  ffalse, and the n-ary disjunction and
 % conjunction f_orl / f_andl of a list of formulas (ffalse / ftrue on the

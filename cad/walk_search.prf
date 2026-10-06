@@ -665,7 +665,7 @@
    ((|cnt_nneg| FORMULA-DECL NIL |sturm_sg| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
-    (|bprod| CONST-DECL "list[mpoly]" |alg_bis| NIL)
+    (|bprod| CONST-DECL "list[mpoly]" |walk_def| NIL)
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
     (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
@@ -679,7 +679,7 @@
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (>= CONST-DECL "bool" |reals| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|bk| CONST-DECL "nat" |alg_bis| NIL)
+    (|bk| CONST-DECL "nat" |walk_def| NIL)
     (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
@@ -969,12 +969,12 @@
     (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
     (SG TYPE-EQ-DECL NIL |sg_norm| NIL) (|list| TYPE-DECL NIL |list_adt| NIL)
     (|total| CONST-DECL "int" |sturm_sg| NIL)
-    (|bk| CONST-DECL "nat" |alg_bis| NIL)
+    (|bk| CONST-DECL "nat" |walk_def| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|msg| CONST-DECL "SG" |sg_norm| NIL)
-    (|bprod| CONST-DECL "list[mpoly]" |alg_bis| NIL)
+    (|bprod| CONST-DECL "list[mpoly]" |walk_def| NIL)
     (|cert?| CONST-DECL "bool" |walk_transfer| NIL)
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
@@ -1779,8 +1779,8 @@
     (|nzreal_exp| APPLICATION-JUDGEMENT "nzreal" |exponentiation| NIL)
     (|int_exp| APPLICATION-JUDGEMENT "int" |exponentiation| NIL)
     (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
-    (|bk| CONST-DECL "nat" |alg_bis| NIL)
-    (|bprod| CONST-DECL "list[mpoly]" |alg_bis| NIL)
+    (|bk| CONST-DECL "nat" |walk_def| NIL)
+    (|bprod| CONST-DECL "list[mpoly]" |walk_def| NIL)
     (|schain| CONST-DECL "list[list[mpoly]]" |sturm_sg| NIL)
     (|msg| CONST-DECL "SG" |sg_norm| NIL)
     (|sloc| CONST-DECL "nat" |sturm_sg| NIL)
@@ -1893,8 +1893,9 @@
     (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
     (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
     (|total| CONST-DECL "int" |sturm_sg| NIL)
-    (|bk| CONST-DECL "nat" |alg_bis| NIL) (|msg| CONST-DECL "SG" |sg_norm| NIL)
-    (|bprod| CONST-DECL "list[mpoly]" |alg_bis| NIL)
+    (|bk| CONST-DECL "nat" |walk_def| NIL)
+    (|msg| CONST-DECL "SG" |sg_norm| NIL)
+    (|bprod| CONST-DECL "list[mpoly]" |walk_def| NIL)
     (<= CONST-DECL "bool" |reals| NIL)
     (|max| CONST-DECL "{p: real | p >= m AND p >= n}" |real_defs| NIL)
     (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
@@ -2718,12 +2719,12 @@
     (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
     (SG TYPE-EQ-DECL NIL |sg_norm| NIL) (|list| TYPE-DECL NIL |list_adt| NIL)
     (|total| CONST-DECL "int" |sturm_sg| NIL)
-    (|bk| CONST-DECL "nat" |alg_bis| NIL)
+    (|bk| CONST-DECL "nat" |walk_def| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|msg| CONST-DECL "SG" |sg_norm| NIL)
-    (|bprod| CONST-DECL "list[mpoly]" |alg_bis| NIL)
+    (|bprod| CONST-DECL "list[mpoly]" |walk_def| NIL)
     (|sint_ok?| DEF-DECL "bool" |walk_search| NIL)
     (* CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
     (<= CONST-DECL "bool" |reals| NIL) (|cnt| CONST-DECL "int" |sturm_sg| NIL)
@@ -3055,8 +3056,9 @@
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
     (SG TYPE-EQ-DECL NIL |sg_norm| NIL) (|cnt| CONST-DECL "int" |sturm_sg| NIL)
-    (|bk| CONST-DECL "nat" |alg_bis| NIL) (|msg| CONST-DECL "SG" |sg_norm| NIL)
-    (|bprod| CONST-DECL "list[mpoly]" |alg_bis| NIL)
+    (|bk| CONST-DECL "nat" |walk_def| NIL)
+    (|msg| CONST-DECL "SG" |sg_norm| NIL)
+    (|bprod| CONST-DECL "list[mpoly]" |walk_def| NIL)
     (|sint_ok?| DEF-DECL "bool" |walk_search| NIL)
     (|NAT_induction| FORMULA-DECL NIL |naturalnumbers| NIL)
     (|cnt_two| FORMULA-DECL NIL |sturm_sg2| NIL)
@@ -3608,13 +3610,13 @@
      "(strict_total_order?[real])" |real_props| NIL)
     (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|left_nneg| FORMULA-DECL NIL |sturm_sg| NIL)
-    (|strip| DEF-DECL "list[mpoly]" |alg_bis| NIL)
+    (|strip| DEF-DECL "list[mpoly]" |walk_def| NIL)
     (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
     (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
     (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
     (>= CONST-DECL "bool" |reals| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|bk| CONST-DECL "nat" |alg_bis| NIL)
+    (|bk| CONST-DECL "nat" |walk_def| NIL)
     (|bprod_zero| FORMULA-DECL NIL |walk_ok| NIL)
     (|strip_eval| FORMULA-DECL NIL |walk_ok| NIL)
     (|mok?| CONST-DECL "bool" |walk_ok| NIL)
@@ -3708,7 +3710,7 @@
     (|meval| DEF-DECL "real" |mpoly_def| NIL)
     (|mpol?| ADT-RECOGNIZER-DECL "[mpoly -> boolean]" |mpoly_adt| NIL)
     (|mpol| ADT-CONSTRUCTOR-DECL "[list[mpoly] -> (mpol?)]" |mpoly_adt| NIL)
-    (|strip| DEF-DECL "list[mpoly]" |alg_bis| NIL)
+    (|strip| DEF-DECL "list[mpoly]" |walk_def| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
     (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
@@ -3725,7 +3727,7 @@
     (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
     (>= CONST-DECL "bool" |reals| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|bk| CONST-DECL "nat" |alg_bis| NIL)
+    (|bk| CONST-DECL "nat" |walk_def| NIL)
     (|strip_eval| FORMULA-DECL NIL |walk_ok| NIL)
     (|mok?| CONST-DECL "bool" |walk_ok| NIL)
     (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
@@ -3913,7 +3915,7 @@
      |real_props| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|length| DEF-DECL "nat" |list_props| NIL)
-    (|strip| DEF-DECL "list[mpoly]" |alg_bis| NIL)
+    (|strip| DEF-DECL "list[mpoly]" |walk_def| NIL)
     (|right_mem0| FORMULA-DECL NIL |walk_search| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
     (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
@@ -3947,7 +3949,7 @@
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
    SHOSTAK))
  (|P_bounded| 0
-  (|P_bounded-0| "" 3999594984
+  (|P_bounded-1| "" 4000267843
    ("" (SKEEP)
     (("" (COPY -1)
       (("" (EXPAND "cert?" -1)
@@ -4038,7 +4040,7 @@
                                                                           (ASSERT)
                                                                           (("1"
                                                                             (USE
-                                                                             "right_zero"
+                                                                             "right_zero_sg"
                                                                              :SUBST
                                                                              ("k"
                                                                               "bk(F)"
@@ -4050,7 +4052,7 @@
                                                                               "hi0"))
                                                                             (("1"
                                                                               (USE
-                                                                               "left_zero"
+                                                                               "left_zero_sg"
                                                                                :SUBST
                                                                                ("k"
                                                                                 "bk(F)"
@@ -4088,7 +4090,7 @@
                                                                                                 (GROUND)
                                                                                                 (("1"
                                                                                                   (USE
-                                                                                                   "right_zero"
+                                                                                                   "right_zero_sg"
                                                                                                    :SUBST
                                                                                                    ("k"
                                                                                                     "bk(F)"
@@ -4111,7 +4113,7 @@
                                                                                                           (GROUND)
                                                                                                           (("1"
                                                                                                             (USE
-                                                                                                             "right_zero"
+                                                                                                             "right_zero_sg"
                                                                                                              :SUBST
                                                                                                              ("k"
                                                                                                               "bk(F)"
@@ -4134,7 +4136,7 @@
                                                                                                                      -1)
                                                                                                                     (("1"
                                                                                                                       (LEMMA
-                                                                                                                       "right_zero")
+                                                                                                                       "right_zero_sg")
                                                                                                                       (("1"
                                                                                                                         (INST
                                                                                                                          -1
@@ -4224,7 +4226,7 @@
                                                                                                  "P")
                                                                                                 (("2"
                                                                                                   (LEMMA
-                                                                                                   "left_zero")
+                                                                                                   "left_zero_sg")
                                                                                                   (("2"
                                                                                                     (INST
                                                                                                      -1
@@ -4234,7 +4236,7 @@
                                                                                                      "ys")
                                                                                                     (("2"
                                                                                                       (LEMMA
-                                                                                                       "right_zero")
+                                                                                                       "right_zero_sg")
                                                                                                       (("2"
                                                                                                         (INST
                                                                                                          -1
@@ -4502,7 +4504,7 @@
     (|lcok?| CONST-DECL "bool" |sep_exist| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
-    (|bprod| CONST-DECL "list[mpoly]" |alg_bis| NIL)
+    (|bprod| CONST-DECL "list[mpoly]" |walk_def| NIL)
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
@@ -4523,7 +4525,7 @@
     (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
     (|left| CONST-DECL "int" |sturm_sg| NIL)
     (|msg| CONST-DECL "SG" |sg_norm| NIL)
-    (|left_zero| FORMULA-DECL NIL |sturm_sg| NIL)
+    (|left_zero_sg| FORMULA-DECL NIL |sturm_sg| NIL)
     (|abs| CONST-DECL "{n: nonneg_real | n >= m AND n >= -m}" |real_defs| NIL)
     (- CONST-DECL "[numfield -> numfield]" |number_fields| NIL)
     (|nonneg_real| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
@@ -4542,12 +4544,12 @@
      "(strict_total_order?[real])" |real_props| NIL)
     (|minus_rat_is_rat| APPLICATION-JUDGEMENT "rat" |rationals| NIL)
     (|rat_plus_rat_is_rat| APPLICATION-JUDGEMENT "rat" |rationals| NIL)
-    (|right_zero| FORMULA-DECL NIL |sturm_sg| NIL)
+    (|right_zero_sg| FORMULA-DECL NIL |sturm_sg| NIL)
     (|right| CONST-DECL "int" |sturm_sg| NIL)
     (|right_nneg| FORMULA-DECL NIL |sturm_sg| NIL)
     (|slc?| CONST-DECL "bool" |sturm_sg| NIL)
     (|member| DEF-DECL "bool" |list_props| NIL)
-    (|bk| CONST-DECL "nat" |alg_bis| NIL)
+    (|bk| CONST-DECL "nat" |walk_def| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (>= CONST-DECL "bool" |reals| NIL)
     (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
@@ -5126,7 +5128,7 @@
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
     (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|lives| DEF-DECL "list[list[mpoly]]" |alg_bis| NIL)
+    (|lives| DEF-DECL "list[list[mpoly]]" |walk_def| NIL)
     (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
@@ -5178,8 +5180,8 @@
     (|sint_mono| FORMULA-DECL NIL |walk_search| NIL)
     (|swide_mono| FORMULA-DECL NIL |walk_search| NIL)
     (|cnt_nneg| FORMULA-DECL NIL |sturm_sg| NIL)
-    (|bprod| CONST-DECL "list[mpoly]" |alg_bis| NIL)
-    (|bk| CONST-DECL "nat" |alg_bis| NIL)
+    (|bprod| CONST-DECL "list[mpoly]" |walk_def| NIL)
+    (|bk| CONST-DECL "nat" |walk_def| NIL)
     (|nzat_P_iff| FORMULA-DECL NIL |walk_count| NIL)
     (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
     (|swcond?| CONST-DECL "bool" |walk_search| NIL)

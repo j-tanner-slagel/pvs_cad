@@ -107,7 +107,7 @@
     (|Sect| TYPE-DECL NIL |sect_inv| NIL) (|Fm| TYPE-DECL NIL |rcf_fol| NIL))
    SHOSTAK))
  (|col_cad_line| 0
-  (|col_cad_line-0| "" 3999872918
+  (|col_cad_line-1| "" 4000267853
    ("" (SKEEP)
     (("" (EXPAND "ccells?")
       (("" (LEMMA "csects_0" ("F" "F"))
@@ -115,7 +115,7 @@
           (("" (HIDE -1)
             (("" (SPLIT 1)
               (("1" (SKEEP)
-                (("1" (LEMMA "len1" ("p" "p"))
+                (("1" (LEMMA "len1_run" ("p" "p"))
                   (("1" (ASSERT)
                     (("1" (LEMMA "sortu_incr" ("rs" "allroots(F)"))
                       (("1"
@@ -217,7 +217,7 @@
       NIL))
     NIL)
    ((|ccells?| CONST-DECL "bool" |col_line| NIL)
-    (|len1| FORMULA-DECL NIL |cad_run| NIL)
+    (|len1_run| FORMULA-DECL NIL |cad_run| NIL)
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
@@ -237,7 +237,7 @@
     (|sortu_incr| FORMULA-DECL NIL |cell1| NIL)
     (|ccell_0| FORMULA-DECL NIL |col_line| NIL)
     (|scell_mem| FORMULA-DECL NIL |cad_run| NIL)
-    (|rts| CONST-DECL "list[Alg]" |cad_lift| NIL)
+    (|rts| CONST-DECL "list[Alg]" |sect_inv| NIL)
     (|Sect| TYPE-DECL NIL |sect_inv| NIL)
     (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
     (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)

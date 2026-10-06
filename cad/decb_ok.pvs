@@ -1,6 +1,6 @@
 decb_ok: THEORY
 %----------------------------------------------------------------------------
-% decb_o is correct and complete (PROJ_PLAN.md P2).
+% decb_o is correct and complete.
 %
 % When nzb? holds for Q = cbotb(TW), each sector of rts(Q) that is not a root
 % has every member of Q nonzero at its rational sample, and Q is
@@ -61,5 +61,4 @@ BEGIN
   decb_correct: THEOREM decb_o(u, qs, F, Psi)`ok IMPLIES
     (decb_o(u, qs, F, Psi)`val IFF sem(qs, F, Psi, null[real]))
   decb_ev: THEOREM cons?(qs) AND cons?(cdr(qs)) IMPLIES ev?(LAMBDA u: decb_o(u, qs, F, Psi)`ok)
-  decb_complete: THEOREM cons?(qs) AND cons?(cdr(qs)) IMPLIES EXISTS u: decb_o(u, qs, F, Psi)`ok
 END decb_ok

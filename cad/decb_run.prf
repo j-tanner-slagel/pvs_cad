@@ -39,7 +39,7 @@
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
     (|cbotb| CONST-DECL "list[list[mpoly]]" |decb_def| NIL)
     (|Tower| TYPE-EQ-DECL NIL |towern_def| NIL)
-    (|rts| CONST-DECL "list[Alg]" |cad_lift| NIL)
+    (|rts| CONST-DECL "list[Alg]" |sect_inv| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|incr?| DEF-DECL "bool" |cell1| NIL)
     (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
@@ -116,7 +116,7 @@
    (|decb_cad_nz| SUBTYPE "length[nat](A)"
     "below[length[list[list[mpoly]]](ctw(F, k))]" (58 55 58 64))))
  (|decb_cad_nz| 0
-  (|decb_cad_nz-0| "" 4000031963
+  (|decb_cad_nz-1| "" 4000267855
    ("" (SKEEP)
     (("" (LEMMA "ctw_shape" ("k" "k" "F" "F"))
       (("" (ASSERT)
@@ -129,7 +129,7 @@
                     (("1" (LABEL "lp" -1)
                       (("1" (LEMMA "dropn_len" ("m" "k" "p" "p"))
                         (("1" (ASSERT)
-                          (("1" (LEMMA "len1" ("p" "dropn(k, p)"))
+                          (("1" (LEMMA "len1_run" ("p" "dropn(k, p)"))
                             (("1" (ASSERT)
                               (("1"
                                 (LEMMA "sortu_incr"
@@ -328,7 +328,7 @@
     (|scell| CONST-DECL "[list[real] -> bool]" |cad_run| NIL)
     (|Sect| TYPE-DECL NIL |sect_inv| NIL)
     (|csectsb| CONST-DECL "list[Sect]" |decb_run| NIL)
-    (|rts| CONST-DECL "list[Alg]" |cad_lift| NIL)
+    (|rts| CONST-DECL "list[Alg]" |sect_inv| NIL)
     (|ccell| CONST-DECL "[list[real] -> bool]" |col_run| NIL)
     (|tcell_cover| FORMULA-DECL NIL |cad_tower| NIL)
     (|scell_mem| FORMULA-DECL NIL |cad_run| NIL)
@@ -342,7 +342,7 @@
     (|Tower| TYPE-EQ-DECL NIL |towern_def| NIL)
     (|cbotb| CONST-DECL "list[list[mpoly]]" |decb_def| NIL)
     (|ctw| DEF-DECL "Tower" |col_tower_def| NIL)
-    (|len1| FORMULA-DECL NIL |cad_run| NIL)
+    (|len1_run| FORMULA-DECL NIL |cad_run| NIL)
     (|dropn| DEF-DECL "list[real]" |cad_tower| NIL)
     (|dropn_len| FORMULA-DECL NIL |cad_tower| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)

@@ -1,17 +1,16 @@
 walk_def: THEORY
 %----------------------------------------------------------------------------
-% The lifting as a WALK over rational separators, through a sign oracle
-% (FINISH_PLAN stage S2, executable part).
+% The lifting as a WALK over rational separators, through a sign oracle.
 %
-% alg_bis found this shape by measurement; here it is stated for an arbitrary
-% oracle sg, and split the way its correctness needs it split:
+% Stated for an arbitrary oracle sg, and split the way its correctness needs
+% it split:
 %
 %   walk(F, sg, Y)   reads a vector at every separator of Y and one more for
 %                    each gap in which some live member has a root; there a
 %                    member is zero exactly when cnt says it has a root in
 %                    that gap
 %   wok?(F, sg, Y)   everything the walk needs from Y, all decided through
-%                    sg, MEMBER BY MEMBER (2026-09-22, FINISH_PLAN 3g A+B: the
+%                    sg, MEMBER BY MEMBER (2026-09-22: the
 %                    chain of the product of the live members was the wall at
 %                    four variables, 504 s for a degree-21 product): the
 %                    separators increase and no live member vanishes at one,
@@ -23,9 +22,14 @@ walk_def: THEORY
 %   seps(F, sg)      a SEARCH for such a Y by widening and bisection.  It is
 %                    not part of the trusted argument: walk_ok proves the walk
 %                    correct for ANY Y that passes wok?, however it was found.
+%
+% The walk runs on the LIVE members of the family (lives: the members with
+% the main variable), their product stripped of structurally zero top
+% coefficients (bprod) and the bound bk on their Sturm chains; fib(F, ys) is
+% the fibre set, the sign vectors F realizes over ys.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING sturm_sg, alg_bis
+  IMPORTING sturm_sg, sector_rep
 
   sg: VAR SG
   F, G: VAR list[list[mpoly]]
@@ -45,6 +49,54 @@ BEGIN
   zero_at?(sg, g): RECURSIVE bool =
     IF null?(g) THEN TRUE ELSE sg(car(g)) = 0 AND zero_at?(sg, cdr(g)) ENDIF
   MEASURE length(g)
+
+  %% a member contributes nothing unless it actually has the main variable
+  live?(f): bool = length(f) > 1
+
+  %% The product must be taken over the LIVE members only.  A member with no
+  %% main variable contributes a constant to the fibre, but it also makes the
+  %% product vanish IDENTICALLY wherever that constant is zero -- and on
+  %% x^2 + y^2 - 2 the second member IS x^2 - 2, zero at exactly the sections.
+  %% Measured without this: the widening of the separator search ran out of
+  %% fuel at b = 2^24 with nothing between (: -16777216, 16777216 :).
+  lives(F): RECURSIVE list[list[mpoly]] =
+    IF null?(F) THEN null[list[mpoly]]
+    ELSIF live?(car(F)) THEN cons(car(F), lives(cdr(F)))
+    ELSE lives(cdr(F))
+    ENDIF
+  MEASURE length(F)
+
+  %% lmul pads: nn(l1, l2) is max(dg l1 + dg l2, dg(lmul(l1, l2))), and
+  %% measured, prodl of the one live member of x^2 + y^2 - 2 comes back as
+  %% (: x^2-2, 0, 1, 0 :) -- a STRUCTURAL trailing zero.  llast is then
+  %% mconst(0) and the leading-coefficient check refuses, correctly, because dg is 3 where the real
+  %% degree is 2.  Dropping structurally-zero trailing coefficients changes
+  %% no value at any valuation.
+  %% Structurally zero AFTER normalization.  With coefficients in one variable
+  %% the padding of lmul is mconst(0); one level up it is multiplied by an
+  %% mpol and comes back as mpol((: 0, ..., 0 :)), which the syntactic test
+  %% mconst?(u) AND mc(u) = 0 misses (measured on ex_three: bprod's llast was
+  %% such a term, slc? refused and wok? was FALSE).
+  zc?(u: mpoly): bool = mconst?(mnorm(u)) AND mc(mnorm(u)) = 0
+
+  strip(f): RECURSIVE list[mpoly] =
+    IF null?(f) THEN null[mpoly]
+    ELSIF zc?(llast(f)) THEN strip(lbut(f))
+    ELSE f
+    ENDIF
+  MEASURE length(f)
+
+  bprod(F): list[mpoly] = strip(prodl(lives(F)))
+
+  %% the chain fuel: at least as long as the product and every live member.
+  %% It was length(bprod(F)) + 2, which multiplies the whole family out at
+  %% every root count (4,668 products, 14 of 31 s in one sector's
+  %% tower).  Any bound serves: the certificates check slc?(bk(F), .., bprod(F))
+  %% and the members against it at run time.
+  lsumk(F): RECURSIVE nat = IF null?(F) THEN 0 ELSE length(car(F)) + lsumk(cdr(F)) ENDIF
+  MEASURE length(F)
+  bk(F): nat = lsumk(lives(F)) + 2
+
   %% the count of a live member in a gap
   mcnt(F, sg, g, lo, hi): int = cnt(bk(F), sg, strip(g), lo, hi)
   rootin?(F, sg, g, lo, hi): bool = length(strip(g)) >= 2 AND mcnt(F, sg, g, lo, hi) > 0
@@ -185,6 +237,10 @@ BEGIN
 
   %% THE LIFTING and its runtime check
   svs_w(F, sg): SVL = walk(F, sg, seps(F, sg))
-  wok_w(F, sg): bool = wok?(F, sg, seps(F, sg))
-  wok_w_def: LEMMA wok_w(F, sg) = wok?(F, sg, seps(F, sg))
+
+  z: VAR real
+  v: VAR SV
+  ys: VAR list[real]
+  %% the realizable sign vectors over the fibre above ys
+  fib(F, ys)(v): bool = EXISTS z: v = svec(F, cons(z, ys))
 END walk_def

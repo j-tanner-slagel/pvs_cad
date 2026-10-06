@@ -1,15 +1,16 @@
 towern_od: THEORY
 %----------------------------------------------------------------------------
-% The decision at ANY number of quantifiers on ORACLE DESCRIPTORS and chain
-% tables (FINISH_PLAN stage S5e-0/S5e-1), executable part.  MEASURED FIRST;
-% nothing here is proved yet.
+% Towers on ORACLE DESCRIPTORS and chain tables, executable part: the value
+% of the inner quantifiers at a
+% sector (innern_o, scval) and the certificate of a tower (okn_o), which the
+% Collins decisions (decc_def, decb_def) and the QE answer (qe_def) use.
 %
 % towern_def's tower with the oracle replaced by a descriptor:
 %   a separator y0 over od     opt(od, y0)   a rational point stays one
 %   a section (lo, hi] over od osec(od, ..)  over a rational point it is ONE
 %                                            algebraic coordinate: an Alg of
 %                                            the specialized member, signs by
-%                                            alg_sign2 (Phase 3, proved); the
+%                                            alg_sign2 (proved); the
 %                                            certificate is alg? (one root in
 %                                            the gap).  A rational root makes
 %                                            it a rational point (2026-09-30,
@@ -20,27 +21,26 @@ towern_od: THEORY
 % the chain's reads (walk_od).
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING walk_od, towern_def, rd_norm, qsec_rd, ztrunc, alg_rat_def
+  IMPORTING walk_od, towern_def, rd_norm, qsec_rd, ztrunc, alg_rat_def, cad_decide, sect_inv
 
   od, od2: VAR OD
   tb2: VAR CT
-  F, P, Q: VAR list[list[mpoly]]
+  F, P: VAR list[list[mpoly]]
   G: VAR list[list[mpoly]]
   f, g: VAR list[mpoly]
-  TW, TR, T0: VAR Tower
+  TW: VAR Tower
   TB: VAR list[CT]
   tb: VAR CT
   qs: VAR list[bool]
   Y: VAR list[rat]
   rys: VAR list[rat]
   lo, hi, y0: VAR rat
-  k, fuel: VAR nat
-  %% the escalation parameter (COMPLETENESS_PLAN C2): the separator searches
-  %% run with fuel sfuel2 + u, the closures with cfuel + u
+  k: VAR nat
+  %% the escalation parameter: the separator searches
+  %% run with fuel sfuel2 + u
   u: VAR nat
   Psi: VAR [SV -> bool]
   s: VAR Sect
-  ss: VAR list[Sect]
   R: VAR list[mpoly]
 
   %% ---- the section descriptor -----------------------------------------------------
@@ -57,7 +57,7 @@ BEGIN
   MEASURE length(G)
 
   %% a section over a rational point whose root is rational is a rational
-  %% point (alg_rat_def's ratx, QE_PLAN.md 12): its signs are evaluations
+  %% point (alg_rat_def's ratx): its signs are evaluations
   osec(od, P, lo, hi): OD =
     CASES od OF
       pt(rys): LET l0 = secp_n(P, rys, P, lo, hi),
@@ -256,70 +256,22 @@ BEGIN
     ENDIF
   MEASURE length(TW)
 
-  tclos_o(u, fuel, TW, od): RECURSIVE Tower =
-    IF fuel = 0 THEN TW
-    ELSE LET T2 = zipadd(TW, treads_o(u, TW, tables(u, TW, od), od)) IN
-         IF tsize(T2) = tsize(TW) THEN TW ELSE tclos_o(u, fuel - 1, T2, od) ENDIF
-    ENDIF
-  MEASURE fuel
-
   %% ---- the outermost level ---------------------------------------------------------------------
-  %% a root that is rational is a rational point (alg_rat_def's ratx,
-  %% QE_PLAN.md 12); otherwise the algebraic sample's isolating interval is
+  %% a root that is rational is a rational point (alg_rat_def's ratx);
+  %% otherwise the algebraic sample's isolating interval is
   %% refined 32 times first, so that alg_isign's interval enclosure decides
-  %% the signs there (PERF_PLAN P4)
+  %% the signs there
   odS(s): OD =
     IF at?(s) THEN LET x = ratx(sect_inv.pt(s)) IN
                    IF cons?(x`r) THEN pt((: car(x`r) :)) ELSE mix(null[rat], x`b, null[rat]) ENDIF
     ELSE pt((: sval(s) :)) ENDIF
-  %% the closed tower of a sector, from the initial tower T0 = tw0(k, F),
-  %% which the decision computes ONCE (PERF_PLAN P2: it was rebuilt for every
-  %% sector, a projection each time)
-  lvln_o(u, T0, s): Tower = tclos_o(u, cfuel + u, T0, odS(s))
-
-  %% the intrinsic reads of the top family's walk at the sector, for the outer closure
-  topreads(TW, od): list[mpoly] =
-    IF null?(TW) THEN null[mpoly]
-    ELSE dedup1(map(rd_norm)(wi_rd_t(car(TW), od, tblof(feff(car(TW), od), osg(od))))) ENDIF
-  nbads_o(u, T0, ss): RECURSIVE list[list[mpoly]] =
-    IF null?(ss) THEN null[list[mpoly]]
-    ELSIF at?(car(ss)) THEN nbads_o(u, T0, cdr(ss))
-    ELSE append(badl(car(ss), topreads(lvln_o(u, T0, car(ss)), odS(car(ss)))), nbads_o(u, T0, cdr(ss)))
-    ENDIF
-  MEASURE length(ss)
-  nclos_o(u, fuel, T0, Q): RECURSIVE list[list[mpoly]] =
-    IF fuel = 0 THEN Q
-    ELSE LET B = nbads_o(u, T0, sects(rts(Q))) IN
-         IF null?(B) THEN Q
-         ELSE LET Q2 = addnew(Q, B) IN
-              IF length(Q2) = length(Q) THEN Q ELSE nclos_o(u, fuel - 1, T0, Q2) ENDIF
-         ENDIF
-    ENDIF
-  MEASURE fuel
 
   %% a sector with its closed tower and tables, computed once and used by
-  %% both the certificate and the value (PERF_PLAN P5)
+  %% both the certificate and the value
   SC: TYPE = [# ssec: Sect, stw: Tower, stb: list[CT] #]
-  scof(u, T0, s): SC = LET TW = lvln_o(u, T0, s) IN (# ssec := s, stw := TW, stb := tables(u, TW, odS(s)) #)
 
   %% the certificate of one sector: the tower's certificate, and on an open
   %% sector the top family's reads invariant
-  scok?(u)(sc: SC): bool =
-    LET od = odS(sc`ssec) IN
-    okn_o(u, sc`stw, sc`stb, od) AND
-    (at?(sc`ssec) OR every(LAMBDA (c: mpoly): inv_chk(cpl(c), sc`ssec))(topreads(sc`stw, od)))
   %% the value of the inner quantifiers at the sector's sample
   scval(u, qs, Psi)(sc: SC): bool = innern_o(u, qs, sc`stw, sc`stb, Psi, odS(sc`ssec))
-
-  %% qs OUTERMOST first, at least two quantifiers
-  decn_o(u, qs, F, Psi): [# ok: bool, val: bool #] =
-    IF null?(qs) OR null?(cdr(qs)) THEN (# ok := FALSE, val := FALSE #)
-    ELSE LET k = length(cdr(qs)),
-             T0 = tw0(k, F),
-             Q = nclos_o(u, cfuel + u, T0, proj(topf(T0))),
-             ss = sects(rts(Q)),
-             cs = map(LAMBDA (s: Sect): scof(u, T0, s))(ss) IN
-         (# ok := gaps_ok(rts(Q)) AND every(scok?(u))(cs),
-            val := IF car(qs) THEN every(scval(u, cdr(qs), Psi))(cs) ELSE some(scval(u, cdr(qs), Psi))(cs) ENDIF #)
-    ENDIF
 END towern_od

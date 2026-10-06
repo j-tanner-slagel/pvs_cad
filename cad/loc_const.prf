@@ -1,30 +1,4 @@
 (|loc_const|
- (|upto_a| 0
-  (|upto_a-0| "" 3998957542 ("" (GRIND) NIL NIL)
-   ((|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|upto| CONST-DECL "setof[real]" |loc_const| NIL))
-   SHOSTAK))
- (|upto_bd| 0
-  (|upto_bd-0| "" 3998957543 ("" (GRIND) NIL NIL)
-   ((|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|upto| CONST-DECL "setof[real]" |loc_const| NIL))
-   SHOSTAK))
  (|upto_lub_TCC1| 0
   (|upto_lub_TCC1-0| "" 3998960520
    ("" (SKEEP)
@@ -64,7 +38,7 @@
     (|empty?| CONST-DECL "bool" |sets| NIL))
    SHOSTAK
    (|upto_lub| SUBTYPE "upto(P, a, b)" "(sets[real].nonempty?)"
-    (27 36 27 49))))
+    (24 36 24 49))))
  (|upto_lub| 0
   (|upto_lub-2| "" 3998957597
    ("" (SKEEP)
@@ -360,15 +334,15 @@
     (|abs| CONST-DECL "{n: nonneg_real | n >= m AND n >= -m}" |real_defs| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
-    (|setof| TYPE-EQ-DECL NIL |defined_types| NIL)
-    (|upto| CONST-DECL "setof[real]" |loc_const| NIL)
-    (P SKOLEM-CONST-DECL "[real -> bool]" |loc_const| NIL)
-    (|a| SKOLEM-CONST-DECL "real" |loc_const| NIL)
-    (|b| SKOLEM-CONST-DECL "real" |loc_const| NIL)
-    (|e| SKOLEM-CONST-DECL "posreal" |loc_const| NIL)
-    (|c| SKOLEM-CONST-DECL "real" |loc_const| NIL)
     (|m| SKOLEM-CONST-DECL "{p: real | p <= b AND p <= e / 2 + c}" |loc_const|
      NIL)
+    (|c| SKOLEM-CONST-DECL "real" |loc_const| NIL)
+    (|e| SKOLEM-CONST-DECL "posreal" |loc_const| NIL)
+    (|b| SKOLEM-CONST-DECL "real" |loc_const| NIL)
+    (|a| SKOLEM-CONST-DECL "real" |loc_const| NIL)
+    (P SKOLEM-CONST-DECL "[real -> bool]" |loc_const| NIL)
+    (|upto| CONST-DECL "setof[real]" |loc_const| NIL)
+    (|setof| TYPE-EQ-DECL NIL |defined_types| NIL)
     (< CONST-DECL "bool" |reals| NIL)
     (- CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
     (|least_upper_bound?| CONST-DECL "bool" |bounded_real_defs| NIL)

@@ -1,6 +1,6 @@
 fsplit_top: THEORY
 %----------------------------------------------------------------------------
-% Deciding over the checked basis of the input family (PROJ_PLAN.md P3).
+% Deciding over the checked basis of the input family.
 %
 % When a member u of F passes the check over B (u = c * product of b^e,
 % mpoly_cert's ucert_eval), the sign of u at a point is sign(c) times the
@@ -10,7 +10,7 @@ fsplit_top: THEORY
 % means the same as the one over fam(B) and spsi (sem_split).
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING fsplit_top_def, mpoly_cert, cad_decide, mpoly_arith
+  IMPORTING fsplit_top_def, mpoly_cert, cad_decide
 
   F: VAR list[list[mpoly]]
   B: VAR list[mpoly]

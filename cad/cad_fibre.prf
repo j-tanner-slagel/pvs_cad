@@ -64,7 +64,7 @@
     (|meval| DEF-DECL "real" |mpoly_def| NIL)
     (|mpol?| ADT-RECOGNIZER-DECL "[mpoly -> boolean]" |mpoly_adt| NIL)
     (|mpol| ADT-CONSTRUCTOR-DECL "[list[mpoly] -> (mpol?)]" |mpoly_adt| NIL)
-    (|bprod| CONST-DECL "list[mpoly]" |alg_bis| NIL)
+    (|bprod| CONST-DECL "list[mpoly]" |walk_def| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
     (|svec_insz| FORMULA-DECL NIL |zfam| NIL)
@@ -94,7 +94,7 @@
     (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
     (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
-   SHOSTAK (|nlt| SUBTYPE "L" "(list_adt[real].cons?)" (36 33 36 34))))
+   SHOSTAK (|nlt| SUBTYPE "L" "(list_adt[real].cons?)" (35 33 35 34))))
  (|nlt_TCC2| 0
   (|nlt_TCC2-0| "" 3999722693 ("" (TERMINATION-TCC) NIL NIL)
    ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
@@ -118,7 +118,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK
    (|nlt| TERMINATION "nlt(cdr[real](L), y)" #A((3) BASE-CHAR . "NIL")
-    (36 49 36 63))))
+    (35 49 35 63))))
  (|nlt_TCC3| 0
   (|nlt_TCC3-0| "" 3999722694 ("" (TERMINATION-TCC) NIL NIL)
    ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
@@ -142,7 +142,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK
    (|nlt| TERMINATION "nlt(cdr[real](L), y)" #A((3) BASE-CHAR . "NIL")
-    (36 69 36 83))))
+    (35 69 35 83))))
  (|len_cons_fibre| 0
   (|len_cons_fibre-0| "" 4000196605
    ("" (SKEEP) (("" (EXPAND "length" 1 1) (("" (PROPAX) NIL NIL)) NIL)) NIL)
@@ -622,7 +622,7 @@
     (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK
-   (|bmid| SUBTYPE "cdr[real](L)" "(list_adt[real].cons?)" (55 28 55 34))))
+   (|bmid| SUBTYPE "cdr[real](L)" "(list_adt[real].cons?)" (54 28 54 34))))
  (|bmid_TCC2| 0
   (|bmid_TCC2-0| "" 3999722695 ("" (TERMINATION-TCC) NIL NIL)
    ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
@@ -646,7 +646,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK
    (|bmid| TERMINATION "bmid(cdr[real](L))" #A((3) BASE-CHAR . "NIL")
-    (55 42 55 54))))
+    (54 42 54 54))))
  (|bmid_len| 0
   (|bmid_len-2| "" 4000196824
    ("" (INDUCT "L")
@@ -795,7 +795,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK
    (|bmid_idx| SUBTYPE "j" "below[length[real](bmid(cons[real](a, L)))]"
-    (63 37 63 38))))
+    (62 37 62 38))))
  (|bmid_idx| 0
   (|bmid_idx-2| "" 4000196822
    ("" (INDUCT "L")
@@ -978,7 +978,7 @@
     (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK
-   (|bpts_idx| SUBTYPE "j" "below[length[real](bpts(L))]" (65 28 65 29))))
+   (|bpts_idx| SUBTYPE "j" "below[length[real](bpts(L))]" (64 28 64 29))))
  (|bpts_idx| 0
   (|bpts_idx-5| "" 4000196825
    ("" (SKEEP)
@@ -1114,11 +1114,11 @@
     (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (SV TYPE-EQ-DECL NIL |sign_vec| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK
    (|nth_mapf| SUBTYPE "j" "below[length[SV](map[real, SV](f)(L))]"
-    (75 53 75 54))))
+    (74 53 74 54))))
  (|nth_mapf| 0
   (|nth_mapf-4| "" 4000196826
    ("" (INDUCT "L")
@@ -1180,7 +1180,7 @@
     (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (SV TYPE-EQ-DECL NIL |sign_vec| NIL)
     (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
     (>= CONST-DECL "bool" |reals| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
@@ -1191,8 +1191,8 @@
     (|nth| DEF-DECL "T" |list_props| NIL)
     (|below| TYPE-EQ-DECL NIL |nat_types| NIL))
    SHOSTAK))
- (|odd_even| 0
-  (|odd_even-0| "" 3999722702
+ (|odd_even_sidx| 0
+  (|odd_even_sidx-0| "" 4000267849
    ("" (SKEEP)
     (("" (CASE "n < i") (("1" (ASSERT) NIL NIL) ("2" (ASSERT) NIL NIL)) NIL))
     NIL)
@@ -1231,7 +1231,7 @@
     NIL)
    ((|rsvl| CONST-DECL "list[SV]" |cad_fibre| NIL)
     (|nroot| CONST-DECL "nat" |cad_roots| NIL)
-    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (SV TYPE-EQ-DECL NIL |sign_vec| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
@@ -1258,7 +1258,7 @@
     (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK
-   (|sidx_root| SUBTYPE "i" "below[length[SV](rsvl(G, p))]" (82 46 82 47))))
+   (|sidx_root| SUBTYPE "i" "below[length[SV](rsvl(G, p))]" (81 46 81 47))))
  (|sidx_root| 0
   (|sidx_root-0| "" 3999723191
    ("" (SKEEP)
@@ -1325,7 +1325,7 @@
     (>= CONST-DECL "bool" |reals| NIL)
     (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
     (|svat| CONST-DECL "SV" |cad_fibre| NIL)
-    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (SV TYPE-EQ-DECL NIL |sign_vec| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
@@ -1382,7 +1382,7 @@
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|nroot| CONST-DECL "nat" |cad_roots| NIL)
-    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (SV TYPE-EQ-DECL NIL |sign_vec| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
@@ -1406,7 +1406,7 @@
     (|map_length| FORMULA-DECL NIL |more_map_props| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK
-   (|sidx_band| SUBTYPE "i" "below[length[SV](bsvl(G, p))]" (85 46 85 47))))
+   (|sidx_band| SUBTYPE "i" "below[length[SV](bsvl(G, p))]" (84 46 84 47))))
  (|sidx_band| 0
   (|sidx_band-0| "" 3999723212
    ("" (SKEEP)
@@ -1572,7 +1572,7 @@
     (|nlt_le| FORMULA-DECL NIL |cad_fibre| NIL)
     (|bpts| CONST-DECL "list[real]" |cad_fibre| NIL)
     (|svat| CONST-DECL "SV" |cad_fibre| NIL)
-    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (SV TYPE-EQ-DECL NIL |sign_vec| NIL)
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|nth_mapf| FORMULA-DECL NIL |cad_fibre| NIL)
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)

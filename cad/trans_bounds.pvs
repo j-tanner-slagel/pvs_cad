@@ -1,7 +1,7 @@
 trans_bounds: THEORY
 %----------------------------------------------------------------------------
 % Polynomial bounds of transcendental functions on whole ranges, in the form
-% (cad) reads (NEXT_PLAN.md T5): no division but by numbers, and no condition
+% (cad) reads: no division but by numbers, and no condition
 % on the argument but a comparison (ln_bnd's x > 0), so that an instance
 % raises no TCC.  Each comes from NASALib's trig and lnexp lemmas; exp(x) > 0
 % is exp's type.  T5 adds them as facts about sin(t), cos(t), exp(t), ln(t)
@@ -12,7 +12,7 @@ trans_bounds: THEORY
 % higher degree.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING trig@sincos, trig@atan, trig@trig_approx, lnexp@ln_exp_ineq
+  IMPORTING trig@trig_approx, lnexp@ln_exp_ineq
 
   x: VAR real
 

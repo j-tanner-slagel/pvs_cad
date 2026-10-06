@@ -1,6 +1,6 @@
 od_exact: THEORY
 %----------------------------------------------------------------------------
-% Every oracle of a well-formed descriptor is exact (COMPLETENESS_PLAN C4).
+% Every oracle of a well-formed descriptor is exact.
 %
 % oddef's okqs_agree reads the executable's recursive certificate okqs as a
 % statement about the oracle: where it holds, osg(od) answers like the point

@@ -1,6 +1,6 @@
 cpoly_ord: THEORY
 %----------------------------------------------------------------------------
-% The order of a root (its multiplicity) (COLLINS_PLAN.md M-B2).
+% The order of a root (its multiplicity).
 %
 % ordp?(P, y, m): P = (z - y)^m Q with Q a polynomial and Q(y) /= 0.
 %   ord_ex      a polynomial of exact degree n has such an m <= n (with a

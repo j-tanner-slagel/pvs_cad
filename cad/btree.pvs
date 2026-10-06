@@ -1,5 +1,5 @@
 %----------------------------------------------------------------------------
-% Sign-condition branch trees (Phase 3).
+% Sign-condition branch trees.
 %
 % A btree[T] is the shape of a computation that is symbolic in the parameters:
 % at each node it branches on the sign of a multivariate polynomial in the

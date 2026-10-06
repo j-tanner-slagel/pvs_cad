@@ -1,7 +1,6 @@
 walk_rd: THEORY
 %----------------------------------------------------------------------------
-% What the walk READS, and that it reads nothing else (FINISH_PLAN stage S4,
-% step T2).
+% What the walk READS, and that it reads nothing else.
 %
 % The walk consults the parameters only through the oracle, and what it
 % consults is a simple function of the separators.  The reads come in two
@@ -137,7 +136,6 @@ BEGIN
     IMPLIES sent(sg2, g, y0) = sent(sg1, g, y0)
 
   %% ---- the per-member conditions are determined by the reads ------------------------
-  g2: VAR list[mpoly]
   rootin_det: LEMMA member(g, G) AND agree(sg1, sg2, mi_rd(F, sg1, G)) AND agree(sg1, sg2, me_rd(F, sg1, G, Y))
     AND member(lo, Y) AND member(hi, Y)
     IMPLIES (rootin?(F, sg2, g, lo, hi) IFF rootin?(F, sg1, g, lo, hi))
@@ -184,8 +182,6 @@ BEGIN
   wagree?(F, sg1, sg2, Y): bool =
     agree(sg1, sg2, wi_rd(F, sg1)) AND agree(sg1, sg2, we_rd(F, sg1, Y))
 
-  wa_pairs: LEMMA wagree?(F, sg1, sg2, Y) IMPLIES
-    agree(sg1, sg2, pairs_rd(sg1, F)) AND agree(sg1, sg2, pairse_rd(sg1, F, Y))
   gapok_det: LEMMA wagree?(F, sg1, sg2, Y) AND member(lo, Y) AND member(hi, Y)
     IMPLIES (gapok?(F, sg2, lo, hi) IFF gapok?(F, sg1, lo, hi))
   wa_mem: LEMMA wagree?(F, sg1, sg2, Y) IMPLIES

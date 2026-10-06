@@ -52,18 +52,6 @@
     (|length| DEF-DECL "nat" |list_props| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[rat](0)" |polylist| |Sturm|))
    SHOSTAK))
- (|lscal_null| 0
-  (|lscal_null-0| "" 3998511610
-   ("" (SKEEP)
-    (("" (EXPAND "lscal")
-      (("" (EXPAND "mmulx")
-        (("" (EXPAND "as_list") (("" (PROPAX) NIL NIL)) NIL)) NIL))
-      NIL))
-    NIL)
-   ((|lscal| CONST-DECL "list[mpoly]" |mpoly_pdiv| NIL)
-    (|as_list| CONST-DECL "list[mpoly]" |mpoly_def| NIL)
-    (|mmulx| DEF-DECL "mpoly" |mpoly_arith| NIL))
-   SHOSTAK))
  (|lscal_cons| 0
   (|lscal_cons-0| "" 3998511611
    ("" (SKEEP)
@@ -104,7 +92,7 @@
      "(strict_total_order?[real])" |real_props| NIL))
    SHOSTAK
    (|nth_lscal| SUBTYPE "i" "below[length[mpoly](lscal(h, l))]"
-    (35 78 35 79))))
+    (34 78 34 79))))
  (|nth_lscal| 0
   (|nth_lscal-4| "" 3998511818
    ("" (INDUCT "l")
@@ -465,7 +453,7 @@
      |real_props| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL))
-   SHOSTAK (|earr_shiftl| SUBTYPE "i - k" "nat" (43 65 43 70))))
+   SHOSTAK (|earr_shiftl| SUBTYPE "i - k" "nat" (42 65 42 70))))
  (|earr_shiftl| 0
   (|earr_shiftl-3| "" 3998511882
    ("" (INDUCT "k")
@@ -743,7 +731,7 @@
    SHOSTAK
    (|earr_pstep| SUBTYPE "l2"
     "{l2: list_adt[mpoly_adt.mpoly].list | booleans.AND(list_adt[mpoly_adt.mpoly].cons?(l2), reals.<=(list_props[mpoly_adt.mpoly].length(l2), list_props[mpoly_adt.mpoly].length(earr_ops.l1)))}"
-    (49 19 49 21))))
+    (48 19 48 21))))
  (|earr_pstep_TCC2| 0
   (|earr_pstep_TCC2-0| "" 3998511334 ("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL)
    ((|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
@@ -755,7 +743,7 @@
      "(strict_total_order?[real])" |real_props| NIL))
    SHOSTAK
    (|earr_pstep| SUBTYPE "i - (length[mpoly](l1) - length[mpoly](l2))" "nat"
-    (52 48 52 77))))
+    (51 48 51 77))))
  (|earr_pstep| 0
   (|earr_pstep-0| "" 3998512127
    ("" (SKEEP)
@@ -1153,7 +1141,7 @@
    SHOSTAK
    (|prop_pstep| SUBTYPE "m2"
     "{l2: list_adt[mpoly_adt.mpoly].list | booleans.AND(list_adt[mpoly_adt.mpoly].cons?(l2), reals.<=(list_props[mpoly_adt.mpoly].length(l2), list_props[mpoly_adt.mpoly].length(earr_ops.m1)))}"
-    (64 34 64 36))))
+    (63 34 63 36))))
  (|prop_pstep| 0
   (|prop_pstep-0| "" 3998512311
    ("" (SKEEP)
@@ -1357,7 +1345,7 @@
    SHOSTAK
    (|prop_prem| SUBTYPE "pk(l1, l2)"
     "{i: integers.int | booleans.OR(earr_ops.c2 /= 0, reals.>=(i, 0))}"
-    (71 47 71 57))))
+    (70 47 70 57))))
  (|prop_prem| 0
   (|prop_prem-3| "" 3998512890
    ("" (MEASURE-INDUCT+ "length(l1)" ("l1" "m1"))
@@ -1543,7 +1531,7 @@
    ((|listn_0| NAME-JUDGEMENT "listn[rat](0)" |polylist| |Sturm|)) SHOSTAK
    (|prop_sstep| SUBTYPE "(2 * pk(l1, l2))"
     "{i: integers.int | booleans.OR(earr_ops.c2 /= 0, reals.>=(i, 0))}"
-    (74 50 74 64))))
+    (73 50 73 64))))
  (|prop_sstep| 0
   (|prop_sstep-0| "" 3998513285
    ("" (SKEEP)
@@ -1942,7 +1930,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[rat](0)" |polylist| |Sturm|))
    SHOSTAK
    (|snorm_top| SUBTYPE "length[mpoly](select[list[mpoly]](snorm(l), ys)) - 1"
-    "nat" (78 16 78 48))))
+    "nat" (77 16 77 48))))
  (|snorm_top| 0
   (|snorm_top-0| "" 3998511617
    ("" (SKEEP)
@@ -2208,42 +2196,6 @@
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|snorm_earr| FORMULA-DECL NIL |snorm_arr| NIL)
-    (|listn_0| NAME-JUDGEMENT "listn[rat](0)" |polylist| |Sturm|))
-   SHOSTAK))
- (|prop_sign| 0
-  (|prop_sign-0| "" 3998513090
-   ("" (SKEEP)
-    (("" (USE "prop_lc" ("l1" "l1" "l2" "l2" "c" "c" "ys" "ys"))
-      (("" (ASSERT)
-        (("" (REPLACE -1)
-          (("" (USE "sign3_mult" ("x" "c" "y" "meval(llast(l2))(ys)"))
-            (("" (USE "sign3_eq_1" ("x" "c")) (("" (ASSERT) NIL NIL)) NIL))
-            NIL))
-          NIL))
-        NIL))
-      NIL))
-    NIL)
-   ((|prop_lc| FORMULA-DECL NIL |earr_ops| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|sign3_eq_1| FORMULA-DECL NIL |sign3| |reals|)
-    (|sign3_mult_clos| APPLICATION-JUDGEMENT "Sign3" |sign3| |reals|)
-    (|real_times_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
-    (|sign3_mult| FORMULA-DECL NIL |sign3| |reals|)
-    (|meval| DEF-DECL "real" |mpoly_def| NIL)
-    (|llast| DEF-DECL "mpoly" |mpoly_pdiv| NIL)
-    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
-     "(strict_total_order?[real])" |real_props| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[rat](0)" |polylist| |Sturm|))
    SHOSTAK))
  (|sign3_mult_earr_ops| 0

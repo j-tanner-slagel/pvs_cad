@@ -1,7 +1,6 @@
 cad_projn: THEORY
 %----------------------------------------------------------------------------
-% The executable N-reducta projection gives Collins' hypothesis
-% (COLLINS_PLAN.md M-G).
+% The executable N-reducta projection gives Collins' hypothesis.
 %
 % projn_ok: if every member of cad_projn_def's projn(G) has one sign on C,
 % then colh?(G, C) holds -- so (col_stack) G is delineable over C when C is
@@ -18,7 +17,7 @@ cad_projn: THEORY
 % (cinv_norm).
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING cad_projn_def, col_stack, det_fast, bareiss
+  IMPORTING cad_projn_def, col_stack, bareiss
 
   g, h: VAR list[mpoly]
   G: VAR list[list[mpoly]]

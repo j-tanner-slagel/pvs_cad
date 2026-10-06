@@ -1,7 +1,6 @@
 cpoly_alg: THEORY
 %----------------------------------------------------------------------------
-% Complex polynomials as functions with coefficient witnesses
-% (COLLINS_PLAN.md M-B).
+% Complex polynomials as functions with coefficient witnesses.
 %
 % cpol?(P, n): P is a polynomial function of degree at most n.
 % clead?(P, n, c): P has degree exactly n and leading coefficient c /= 0.

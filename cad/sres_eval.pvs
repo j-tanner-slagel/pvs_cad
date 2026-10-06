@@ -2,7 +2,7 @@ sres_eval: THEORY
 %----------------------------------------------------------------------------
 % subres' principal subresultant coefficients and subres2's subresultant
 % coefficients, evaluated at a point, are the determinants of sres_rows and
-% sres_gcd (COLLINS_PLAN.md M-C).
+% sres_gcd.
 %
 % At a valuation ys of the parameters, the entries of sresm(f, g, j) are the
 % real coefficients of f and g (sylvester's coef_at_earr), laid out as

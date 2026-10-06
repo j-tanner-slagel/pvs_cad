@@ -1,6 +1,6 @@
 poly_unique: THEORY
 %----------------------------------------------------------------------------
-% Uniqueness of polynomial division with remainder, over the reals (Phase 3).
+% Uniqueness of polynomial division with remainder, over the reals.
 %
 % NASALib's poly_divide computes a quotient and a remainder and proves the
 % defining equation and the degree bound, but not that they are the only pair
@@ -17,8 +17,6 @@ BEGIN
   i, j, k, m, n, p: VAR nat
   x, y, w: VAR real
   cc: VAR real
-
-  zerop(a, n): bool = FORALL x: polynomial(a, n)(x) = 0
 
   %% coefficients above the nominal degree do not matter
   trunc(a, n)(i): real = IF i <= n THEN a(i) ELSE 0 ENDIF
@@ -57,10 +55,6 @@ BEGIN
 
   %% uniqueness: any quotient and remainder with a small enough remainder agree
   %% with poly_divide's, as functions
-  divide_unique: THEOREM h(m) /= 0 AND k < m AND
-    (FORALL x: polynomial(g, n)(x) = polynomial(q, p)(x) * polynomial(h, m)(x) + polynomial(r, k)(x))
-    IMPLIES
-    polynomial(pr(g, n, h, m), prd(g, n, h, m))(w) = polynomial(r, k)(w)
   %% the same for a scaled dividend: the remainder of cc times g is cc times
   %% the remainder of g.  This is the form the pseudo-remainder needs, since
   %% pseudo-division multiplies the dividend by a power of the leading

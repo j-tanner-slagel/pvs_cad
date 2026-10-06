@@ -1,7 +1,7 @@
 rcf_cad_def: THEORY
 %----------------------------------------------------------------------------
-% The formulas that define the cells of the run's decomposition
-% (GAP_PLAN.md Tier 1, the plan's cad_spec).  Executable builders only; the
+% The formulas that define the cells of a cylindrical decomposition.
+% Executable builders only; the
 % proofs are in root_fol and rcf_cells.
 %
 % Points are lists, innermost coordinate first.  At cons(v, q):

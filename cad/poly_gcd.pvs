@@ -1,7 +1,7 @@
 poly_gcd: THEORY
 %----------------------------------------------------------------------------
-% The common roots of two rational polynomials are the roots of their gcd
-% (PERF_PLAN P6b), for a fast exact test "does q vanish at an algebraic
+% The common roots of two rational polynomials are the roots of their gcd,
+% for a fast exact test "does q vanish at an algebraic
 % number" (alg_zero's zero_at).
 %
 % pmod reduces a modulo b by steps a - (lc a / lc b) x^(deg a - deg b) b;

@@ -1,6 +1,6 @@
 mpoly_cert_def: THEORY
 %----------------------------------------------------------------------------
-% Checked factorizations, executable (PROJ_PLAN.md P3).
+% Checked factorizations, executable.
 %
 % fsplit(U) is mpoly_gcd_def's proposed basis B of U when every u in U is
 % c * (product of b^e over B), with e from mexp and c the constant cofactor,
@@ -9,7 +9,7 @@ mpoly_cert_def: THEORY
 % check alone.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING mpoly_gcd_def, mpoly_eqd
+  IMPORTING mpoly_gcd_def
 
   u: VAR mpoly
   U, B: VAR list[mpoly]

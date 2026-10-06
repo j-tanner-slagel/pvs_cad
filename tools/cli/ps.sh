@@ -1,6 +1,6 @@
 #!/bin/bash
 # ps.sh <command>: send command, show only the first line of each sequent formula of the final sequent
-. "$(dirname "$0")/../env.sh"; cd "$CAD_LIB_DIR"
+. "$(dirname "$0")/../env.sh"; cd "$CAD_WORK_DIR"
 "$CAD_PY" "$CAD_TOOLS/pc.py" -t 600 "$1" 2>&1 > $SCRATCH/last.out
 python3 - <<'PY'
 import re, os

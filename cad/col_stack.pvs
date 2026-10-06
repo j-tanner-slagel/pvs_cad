@@ -1,6 +1,6 @@
 col_stack: THEORY
 %----------------------------------------------------------------------------
-% DELINEABILITY FROM COLLINS' PROJECTION (COLLINS_PLAN.md M-F).
+% DELINEABILITY FROM COLLINS' PROJECTION.
 %
 % collins_stack: if C is connected and the N-reducta projection of G is
 % sign-invariant on C (col_def's colh?), then G is delineable (in the sign-invariant sense)
@@ -14,8 +14,8 @@ col_stack: THEORY
 % the proof uses, and which colh? gives (colh_kconst); cad_projb gets it for
 % the base cells of a smaller bottom-step projection.
 %
-% The proof is cad_stack's stack_const with col_loc's collins_loc for the
-% local picture: the stack is locally constant on C, so constant on the
+% The proof uses col_loc's collins_loc for the local picture: the stack is
+% locally constant on C, so constant on the
 % connected C (col_same); collins_loc at each point gives the continuity of
 % the roots (col_cont); the sign vector at a point is the entry of rsvl or
 % bsvl its stack index names (cad_fibre's sidx_root / sidx_band, the

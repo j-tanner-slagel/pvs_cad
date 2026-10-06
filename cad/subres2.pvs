@@ -1,25 +1,23 @@
 subres2: THEORY
 %----------------------------------------------------------------------------
-% The full subresultant polynomial, not just its leading coefficient
-% (Stage C of item 1).
+% The full subresultant polynomial, not just its leading coefficient.
 %
 % subres builds psc(f, g, j), the PRINCIPAL subresultant coefficient, as the
-% determinant of a matrix whose last column carries degree j.  Stage C needs
-% the whole subresultant Sres_j, because what Sturm counts is sign changes of
-% CHAIN ENTRIES, and an entry is a polynomial: its sign at -infinity and
+% determinant of a matrix whose last column carries degree j.  Root counting
+% by Sturm needs the whole subresultant Sres_j: it counts sign changes of
+% CHAIN ENTRIES, and an entry is a polynomial, whose sign at -infinity and
 % +infinity is its leading coefficient's sign times (-1)^degree.
 %
 % Sres_j is the same determinant with the last column ranging over degrees
-% 0..j, so one generalized matrix sresm2 covers both: sresm(f,g,j) is
-% sresm2(f,g,j,j), and psc is the j-th coefficient of Sres_j (psc_sres).
+% 0..j, so one generalized matrix sresm2 covers both (sresm(f,g,j) is
+% sresm2(f,g,j,j)); sresc(f, g, j, k) is the coefficient of x^k in Sres_j,
+% and evaluation commutes with it (sresc_eval).
 %
 % NASALib's Sturm uses compute_remainder_seq, a pseudo-remainder sequence over
 % integer coefficient arrays, NOT the subresultant chain.  Relating the two is
-% the classical subresultant/PRS correspondence and is the remaining content
-% of Stage C; in the NON-DEFECTIVE case (each step drops degree by exactly
-% one) the two coincide up to explicitly known factors, which is why
-% ITEM1_PLAN.md restricts to that case and has the decision check it at
-% runtime.
+% the classical subresultant/PRS correspondence, not proved here; in the
+% NON-DEFECTIVE case (each step drops degree by exactly one) the two coincide
+% up to explicitly known factors.
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING subres
@@ -28,7 +26,7 @@ BEGIN
   ys: VAR list[real]
 
   %% the j-th subresultant matrix with its last column at degree k
-  sresm2(f, g, (j: nat), (k: nat)): Mat =
+  sresm2(f, g, (j: nat), (k: nat)): MMat =
     LAMBDA (a, b: nat):
       LET p = dg(f), q = dg(g),
           side = p + q - 2 * j,
@@ -40,18 +38,6 @@ BEGIN
   %% its determinant: the coefficient of x^k in Sres_j
   sresc(f, g, (j: nat | 2 * j <= dg(f) + dg(g)), (k: nat)): mpoly =
     det(dg(f) + dg(g) - 2 * j, sresm2(f, g, j, k))
-
-  %% Sres_j itself, coefficients ascending from 0 to j
-  sres(f, g, (j: nat | 2 * j <= dg(f) + dg(g)), (k: nat)): RECURSIVE list[mpoly] =
-    IF k = 0 THEN (: sresc(f, g, j, 0) :)
-    ELSE append(sres(f, g, j, k - 1), (: sresc(f, g, j, k) :))
-    ENDIF
-  MEASURE k
-
-  %% the two agree where subres already defined psc
-  sresm2_sresm: LEMMA FORALL (j: nat): sresm2(f, g, j, j) = sresm(f, g, j)
-  psc_sres:     LEMMA FORALL (j: nat): 2 * j <= dg(f) + dg(g) IMPLIES
-    sresc(f, g, j, j) = psc(f, g, j)
 
   %% and evaluation commutes, as for psc
   sresc_eval: LEMMA FORALL (j: nat), (k: nat): 2 * j <= dg(f) + dg(g) IMPLIES

@@ -51,8 +51,8 @@
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
- (|cont_const| 0
-  (|cont_const-0| "" 3999725801
+ (|cont_const_slab| 0
+  (|cont_const_slab-0| "" 4000267846
    ("" (SKEEP)
     (("" (EXPAND "cont_on?")
       (("" (SKOLEM 1 "x")
@@ -85,7 +85,7 @@
     (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
     (|int_abs_is_nonneg| APPLICATION-JUDGEMENT "{j: nonneg_int | j >= i}"
      |real_defs| NIL)
-    (|abs_nat| FORMULA-DECL NIL |abs_lems| |reals|)
+    (|abs_0| FORMULA-DECL NIL |abs_lems| |reals|)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|cont_plus| 0

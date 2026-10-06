@@ -1,32 +1,21 @@
 sg_chain: THEORY
 %----------------------------------------------------------------------------
-% The Sturm chains and the Tarski query, by a sign function (Phase 6).
+% The Sturm chains by a sign function.
 %
-% rchain, tchain, tq and mts of Phase 3 are defined at a valuation ys and
-% normalize every chain element by the signs of its coefficients there
-% (select(snorm(l), ys)). Here the same functions take a sign function sg
-% instead: rchain_sg is the pseudo-remainder chain normalized by sg, tq_sg
-% the Tarski query count read off the leading signs sg assigns, mts_sg the
-% count of roots under sign conditions. Each agrees with the Phase 3 function
-% at msg(ys) (_at) and depends on sg only on the polynomials it reads (_rd,
-% _det), so it can be evaluated once per cell of the parameters.
+% rchain of branch_prs is defined at a valuation ys and normalizes every
+% chain element by the signs of its coefficients there (select(snorm(l),
+% ys)).  Here the same function takes a sign function sg instead: rchain_sg
+% is the pseudo-remainder chain normalized by sg, and tchain_sg the chain of
+% the Tarski query.  Each agrees with the valuation's at msg(ys) (_at) and
+% depends on sg only on the polynomials it reads (_rd, _det).
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING sg_norm, tarski_many
+  IMPORTING sg_norm, tarski_chain
 
   k: VAR nat
   l, l0, l1, l2, g: VAR list[mpoly]
-  cs: VAR list[list[mpoly]]
-  Q: VAR list[list[mpoly]]
   sg, sg1, sg2: VAR SG
   ys: VAR list[real]
-
-  %% products and the chain step
-  lmn_sg(l1, l2, sg): list[mpoly] = snorm_sg(lmul(l1, l2), sg)
-  lmn_rd(l1, l2, sg): list[mpoly] = snorm_rd(lmul(l1, l2), sg)
-  lmn_sg_at: LEMMA lmn_sg(l1, l2, msg(ys)) = lmn(l1, l2, ys)
-  lmn_det: LEMMA agree(sg1, sg2, lmn_rd(l1, l2, sg1)) IMPLIES
-    lmn_sg(l1, l2, sg2) = lmn_sg(l1, l2, sg1) AND lmn_rd(l1, l2, sg2) = lmn_rd(l1, l2, sg1)
 
   snext_sg(l1, (l2 | cons?(l2)), sg): list[mpoly] = snorm_sg(sstep(l1, l2), sg)
   snext_rd(l1, (l2 | cons?(l2)), sg): list[mpoly] = snorm_rd(sstep(l1, l2), sg)
@@ -60,44 +49,4 @@ BEGIN
   tchain_det: LEMMA agree(sg1, sg2, tchain_rd(k, l0, g, sg1)) IMPLIES
     tchain_sg(k, l0, g, sg2) = tchain_sg(k, l0, g, sg1) AND
     tchain_rd(k, l0, g, sg2) = tchain_rd(k, l0, g, sg1)
-
-  %% the leading signs of a chain
-  slof_sg(cs, sg): list[SL] = map(LAMBDA (l: list[mpoly]): (# slist := l, ssign := lcs(l, sg) #))(cs)
-  slof_rd(cs, sg): RECURSIVE list[mpoly] =
-    IF null?(cs) THEN null[mpoly]
-    ELSIF null?(car(cs)) THEN slof_rd(cdr(cs), sg)
-    ELSE cons(mnorm(llast(car(cs))), slof_rd(cdr(cs), sg))
-    ENDIF
-  MEASURE length(cs)
-  slof_sg_at: LEMMA FORALL cs: slof_sg(cs, msg(ys)) = slof(cs, ys)
-  slof_det: LEMMA FORALL cs: agree(sg1, sg2, slof_rd(cs, sg1)) IMPLIES
-    slof_sg(cs, sg2) = slof_sg(cs, sg1) AND slof_rd(cs, sg2) = slof_rd(cs, sg1)
-
-  %% the Tarski query
-  tq_sg(k, l0, g, sg): int = tqf(slof_sg(tchain_sg(k, l0, g, sg), sg))
-  tq_rd(k, l0, g, sg): list[mpoly] =
-    append(tchain_rd(k, l0, g, sg), slof_rd(tchain_sg(k, l0, g, sg), sg))
-  tq_sg_at: LEMMA tq_sg(k, l0, g, msg(ys)) = tq(k, l0, g, ys)
-  tq_det: LEMMA agree(sg1, sg2, tq_rd(k, l0, g, sg1)) IMPLIES
-    tq_sg(k, l0, g, sg2) = tq_sg(k, l0, g, sg1) AND tq_rd(k, l0, g, sg2) = tq_rd(k, l0, g, sg1)
-
-  %% roots under sign conditions
-  mts_sg(k, l0, Q, g, sg): RECURSIVE int =
-    IF null?(Q) THEN tq_sg(k, l0, g, sg)
-    ELSE mts_sg(k, l0, cdr(Q), lmn_sg(car(Q), g, sg), sg) +
-         mts_sg(k, l0, cdr(Q), lmn_sg(car(Q), lmn_sg(car(Q), g, sg), sg), sg)
-    ENDIF
-  MEASURE length(Q)
-  mts_rd(k, l0, Q, g, sg): RECURSIVE list[mpoly] =
-    IF null?(Q) THEN tq_rd(k, l0, g, sg)
-    ELSE append(lmn_rd(car(Q), g, sg),
-         append(mts_rd(k, l0, cdr(Q), lmn_sg(car(Q), g, sg), sg),
-         append(lmn_rd(car(Q), lmn_sg(car(Q), g, sg), sg),
-                mts_rd(k, l0, cdr(Q), lmn_sg(car(Q), lmn_sg(car(Q), g, sg), sg), sg))))
-    ENDIF
-  MEASURE length(Q)
-  mts_sg_at: LEMMA FORALL Q: FORALL g: mts_sg(k, l0, Q, g, msg(ys)) = mts(k, l0, Q, g, ys)
-  mts_det: LEMMA FORALL Q: FORALL g: agree(sg1, sg2, mts_rd(k, l0, Q, g, sg1)) IMPLIES
-    mts_sg(k, l0, Q, g, sg2) = mts_sg(k, l0, Q, g, sg1) AND
-    mts_rd(k, l0, Q, g, sg2) = mts_rd(k, l0, Q, g, sg1)
 END sg_chain

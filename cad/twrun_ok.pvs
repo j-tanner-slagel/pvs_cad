@@ -1,7 +1,7 @@
 twrun_ok: THEORY
 %----------------------------------------------------------------------------
-% The run over any tower that is a CAD over its sectors (COLLINS_PLAN.md
-% M-I): col_out_ok and qe2cc_ok's sector facts with the tower as a
+% The run over any tower that is a CAD over its sectors: col_out_ok and
+% qe2cc_ok's sector facts with the tower as a
 % parameter.
 %
 %   twok_ev      the certificate holds from some u on (decc_walk's okw_ev at
@@ -12,7 +12,7 @@ twrun_ok: THEORY
 %                on the top cells -- qe2_ok's secout_sem's hypotheses
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING twrun_def, col_out_ok, qe2_ok
+  IMPORTING twrun_def, col_out_ok, cad_fold_ok
 
   u: VAR nat
   TW: VAR Tower

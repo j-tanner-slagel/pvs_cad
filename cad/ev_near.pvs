@@ -1,8 +1,7 @@
 ev_near: THEORY
 %----------------------------------------------------------------------------
 % "Eventually near p1 in C" and "for every small eps": bookkeeping for the
-% finitely many conditions of the local Collins argument (COLLINS_PLAN.md
-% M-D, section 2.3).
+% finitely many conditions of the local Collins argument.
 %
 % ev?(C, p1, P): P holds at the points of C within some d of p1.  Closed
 % under weakening (ev_mono), conjunction (ev_and) and bounded universal

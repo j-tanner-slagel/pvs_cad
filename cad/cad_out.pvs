@@ -1,6 +1,7 @@
 cad_out: THEORY
 %----------------------------------------------------------------------------
-% The run's CAD as data (GAP_PLAN.md Tier 1C).  Executable.
+% A CAD as data: the records of a tower's cells.
+% Executable.
 %
 % At a descriptor od (a sample point, exact: rational, algebraic or built
 % from sections), the walk of a level passes separators Y; its cells are
@@ -11,15 +12,17 @@ cad_out: THEORY
 % record per path: the stack indices and the sample descriptor at the top.
 % A band that holds several separators gets a record for each (same indices,
 % different samples); every cell gets at least one.
-% cad_out does that for every sector of the run and records F's sign vector
-% at each sample, read by the descriptor's own sign oracle.
+% srecs does that for one sector and records F's sign vector at each
+% sample, read by the descriptor's own sign oracle; col_out runs it on every
+% sector of the Collins run.
 %
-% cad_out_ok proves that this is the CAD of cad_run: every record's sample
-% lies in the cell its sector and indices name, every nonempty cell has a
-% record, and the recorded sign vector is F's at the sample.
+% cad_out_ok proves the records of a certified tower right, and col_out_ok
+% that the Collins run's records are its CAD: every record's sample lies in
+% the cell its sector and indices name, every nonempty cell has a record,
+% and the recorded sign vector is F's at the sample.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING cad_run
+  IMPORTING cad_run, towern_od
 
   P, F: VAR list[list[mpoly]]
   TW: VAR Tower
@@ -28,7 +31,6 @@ BEGIN
   tb: VAR CT
   Y: VAR list[rat]
   n, u: VAR nat
-  qs: VAR list[bool]
   s: VAR Sect
 
   KD: TYPE = [nat, OD]
@@ -70,11 +72,4 @@ BEGIN
   olflat(L: list[list[ORec]]): RECURSIVE list[ORec] =
     IF null?(L) THEN null[ORec] ELSE append(car(L), olflat(cdr(L))) ENDIF
   MEASURE length(L)
-
-  %% the CAD of the run: k = number of quantifiers minus one
-  cad_out(u, qs, F): list[ORec] =
-    LET k = length(qs) - 1 IN
-    IF k < 1 THEN null[ORec]
-    ELSE olflat(map(LAMBDA (s: Sect): srecs(u, F, s, runtw(u, k, F)(s)))(runsects(u, k, F)))
-    ENDIF
 END cad_out

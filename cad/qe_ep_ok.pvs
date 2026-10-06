@@ -1,6 +1,6 @@
 qe_ep_ok: THEORY
 %----------------------------------------------------------------------------
-% The check of qe_ep_def always passes (QE_PLAN.md decision 2, epc_ok): every
+% The check of qe_ep_def always passes (epc_ok): every
 % real algebraic number gets a quantifier-free description, so quantifier
 % elimination for one free variable always returns a quantifier-free formula.
 %

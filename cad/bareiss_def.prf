@@ -1,11 +1,11 @@
 (|bareiss_def|
  (|hd0_TCC1| 0
   (|hd0_TCC1-0| "" 3999989356 ("" (SUBTYPE-TCC) NIL NIL) NIL SHOSTAK
-   (|hd0| SUBTYPE "r" "(list_adt[mpoly_adt.mpoly].cons?)" (32 49 32 50))))
+   (|hd0| SUBTYPE "r" "(list_adt[mpoly_adt.mpoly].cons?)" (31 49 31 50))))
  (|rw0_TCC1| 0
   (|rw0_TCC1-0| "" 3999989365 ("" (SUBTYPE-TCC) NIL NIL) NIL SHOSTAK
    (|rw0| SUBTYPE "B" "(list_adt[list_adt[mpoly_adt.mpoly].list].cons?)"
-    (35 55 35 56))))
+    (34 55 34 56))))
  (|bent_TCC1| 0
   (|bent_TCC1-0| "" 3999989365 ("" (SUBTYPE-TCC) NIL NIL)
    ((|one| CONST-DECL "mpoly" |mpoly_def| NIL)
@@ -14,7 +14,7 @@
     (|mmul| CONST-DECL "mpoly" |mpoly_arith| NIL)
     (NIL APPLICATION-JUDGEMENT "above(n)" |exp2| NIL))
    SHOSTAK
-   (|bent| SUBTYPE "s" "(list_adt[mpoly_adt.mpoly].cons?)" (49 44 49 45))))
+   (|bent| SUBTYPE "s" "(list_adt[mpoly_adt.mpoly].cons?)" (48 44 48 45))))
  (|bent_TCC2| 0
   (|bent_TCC2-0| "" 3999989366 ("" (TERMINATION-TCC) NIL NIL)
    ((|bdiv| CONST-DECL "[bool, mpoly]" |bareiss_def| NIL)
@@ -32,10 +32,10 @@
     (|length| DEF-DECL "nat" |list_props| NIL))
    SHOSTAK
    (|bent| TERMINATION "bent(p, a, s0, cdr[mpoly](r), cdr[mpoly](s))"
-    #A((3) BASE-CHAR . "NIL") (49 17 49 47))))
+    #A((3) BASE-CHAR . "NIL") (48 17 48 47))))
  (|bent_TCC3| 0
   (|bent_TCC3-0| "" 3999989366 ("" (SUBTYPE-TCC) NIL NIL) NIL SHOSTAK
-   (|bent| SUBTYPE "s" "(list_adt[mpoly_adt.mpoly].cons?)" (48 39 48 40))))
+   (|bent| SUBTYPE "s" "(list_adt[mpoly_adt.mpoly].cons?)" (47 39 47 40))))
  (|bblock_TCC1| 0
   (|bblock_TCC1-0| "" 3999989367 ("" (TERMINATION-TCC) NIL NIL)
    ((|tl0| CONST-DECL "list[mpoly]" |bareiss_def| NIL)
@@ -48,7 +48,7 @@
     (|length| DEF-DECL "nat" |list_props| NIL))
    SHOSTAK
    (|bblock| TERMINATION "bblock(p, r, cdr[list[mpoly]](B))"
-    #A((3) BASE-CHAR . "NIL") (58 17 58 37))))
+    #A((3) BASE-CHAR . "NIL") (57 17 57 37))))
  (|bpiv_TCC1| 0
   (|bpiv_TCC1-0| "" 3999989367 ("" (TERMINATION-TCC) NIL NIL)
    ((|bzero?| CONST-DECL "bool" |bareiss_def| NIL)
@@ -62,7 +62,7 @@
     (|length| DEF-DECL "nat" |list_props| NIL))
    SHOSTAK
    (|bpiv| TERMINATION "bpiv(cdr[list[mpoly]](B))" #A((3) BASE-CHAR . "NIL")
-    (69 58 69 70))))
+    (68 58 68 70))))
  (|radd_TCC1| 0
   (|radd_TCC1-0| "" 3999990110 ("" (TERMINATION-TCC) NIL NIL)
    ((|length| DEF-DECL "nat" |list_props| NIL)
@@ -72,7 +72,7 @@
      "(strict_total_order?[real])" |real_props| NIL))
    SHOSTAK
    (|radd| TERMINATION "radd(cdr[mpoly](r), cdr[mpoly](s))"
-    #A((3) BASE-CHAR . "NIL") (74 77 74 97))))
+    #A((3) BASE-CHAR . "NIL") (73 77 73 97))))
  (|bar_TCC1| 0
   (|bar_TCC1-2| "" 3999990110 ("" (SUBTYPE-TCC) NIL NIL)
    ((|real_lt_is_strict_total_order| NAME-JUDGEMENT
@@ -96,7 +96,7 @@
    SHOSTAK
    (|bar| SUBTYPE "k"
     "{k: naturalnumbers.nat | reals.<(k, list_props[list_adt[mpoly_adt.mpoly].list].length(bareiss_def.B))}"
-    (87 48 87 49))))
+    (86 48 86 49))))
  (|bar_TCC2| 0
   (|bar_TCC2-2| "" 3999990111 ("" (SUBTYPE-TCC) NIL NIL)
    ((|badd| CONST-DECL "list[list[mpoly]]" |bareiss_def| NIL)
@@ -117,7 +117,7 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   SHOSTAK (|bar| SUBTYPE "m - 1" "nat" (89 25 89 30))))
+   SHOSTAK (|bar| SUBTYPE "m - 1" "nat" (88 25 88 30))))
  (|bar_TCC3| 0
   (|bar_TCC3-2| "" 3999990111 ("" (TERMINATION-TCC) NIL NIL)
    ((|badd| CONST-DECL "list[list[mpoly]]" |bareiss_def| NIL)
@@ -126,7 +126,7 @@
     (|rw0| CONST-DECL "list[mpoly]" |bareiss_def| NIL))
    SHOSTAK
    (|bar| TERMINATION "bar(m - 1, hd0(rw0(C)), nb`2)" #A((3) BASE-CHAR . "NIL")
-    (89 21 89 50))))
+    (88 21 88 50))))
  (|mrowf_TCC1| 0
   (|mrowf_TCC1-0| "" 3999989372 ("" (SUBTYPE-TCC) NIL NIL)
    ((|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
@@ -148,7 +148,7 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   SHOSTAK (|mrowf| SUBTYPE "n - j" "naturalnumber" (98 25 98 30))))
+   SHOSTAK (|mrowf| SUBTYPE "n - j" "naturalnumber" (97 25 97 30))))
  (|mrowf_TCC2| 0
   (|mrowf_TCC2-0| "" 3999989372 ("" (TERMINATION-TCC) NIL NIL)
    ((|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
@@ -177,5 +177,5 @@
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
    SHOSTAK
    (|mrowf| TERMINATION "mrowf(M, i, j + 1, n)" #A((3) BASE-CHAR . "NIL")
-    (97 43 97 64)))))
+    (96 43 96 64)))))
 

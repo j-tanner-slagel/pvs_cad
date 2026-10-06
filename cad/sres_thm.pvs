@@ -1,7 +1,6 @@
 sres_thm: THEORY
 %----------------------------------------------------------------------------
-% THE SUBRESULTANT THEOREM, in the form Collins' projection needs
-% (COLLINS_PLAN.md M-C, 2.2).
+% THE SUBRESULTANT THEOREM, in the form Collins' projection needs.
 %
 % For real coefficient arrays A (degree p, A(p) /= 0) and B (degree q,
 % B(q) /= 0), with F = rp(A, p) and G = rp(B, q) as complex polynomials:

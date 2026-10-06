@@ -1,6 +1,6 @@
 mpoly_real: THEORY
 %----------------------------------------------------------------------------
-% From coefficient lists over mpoly to real coefficient arrays (Phase 3).
+% From coefficient lists over mpoly to real coefficient arrays.
 %
 % A polynomial in the eliminated variable is a list of mpoly coefficients in
 % the parameters. Once the parameters are given real values ys, each
@@ -12,7 +12,7 @@ mpoly_real: THEORY
 % against the library's theorems one valuation at a time.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING mpoly_pdiv, poly_unique
+  IMPORTING mpoly_pdiv, poly_unique, analysis@derivatives[real]
 
   l, l1, l2: VAR list[mpoly]
   ys: VAR list[real]
@@ -31,4 +31,8 @@ BEGIN
     polynomial(earr(l, ys), length(l) - 1)(x) = meval(mpol(l))(cons(x, ys))
   earr_eval_d: THEOREM i + 1 >= length(l) IMPLIES
     polynomial(earr(l, ys), i)(x) = meval(mpol(l))(cons(x, ys))
+
+  %% the polynomial as a function of the eliminated variable
+  pf(l, ys): [real -> real] = LAMBDA (x: real): meval(mpol(l))(cons(x, ys))
+  pf_cont: LEMMA continuous?(pf(l, ys))
 END mpoly_real

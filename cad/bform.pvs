@@ -1,6 +1,6 @@
 bform: THEORY
 %----------------------------------------------------------------------------
-% Boolean formulas over sign atoms (Phase 5).
+% Boolean formulas over sign atoms.
 %
 % An atom names a polynomial of the family by its index and asks for a
 % sign; the connectives are the usual ones. bfeval is the semantics at a

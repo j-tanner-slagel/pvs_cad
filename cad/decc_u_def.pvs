@@ -1,7 +1,7 @@
 decc_u_def: THEORY
 %----------------------------------------------------------------------------
 % The Collins decision with the escalation parameter raised until its
-% certificate holds (COLLINS_PLAN.md M-I), as decide_u_def's decn_u.
+% certificate holds.
 % Executable; it always stops because the certificate holds from some u on
 % (decc_ok's decc_ev, which gives the measure).
 %----------------------------------------------------------------------------

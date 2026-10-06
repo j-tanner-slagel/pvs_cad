@@ -1,19 +1,19 @@
 cad_conn: THEORY
 %----------------------------------------------------------------------------
-% Connected sets of points, and continuity on a set (GAP_PLAN.md Tier 1).
+% Connected sets of points, and continuity on a set.
 %
 % Points are lists of reals, innermost coordinate first, compared with the
 % sup-norm ball near? of mpar.  A set C is connected when every property
 % that is locally constant on C is constant on C.  For subsets of R^k this
 % is exactly topological connectedness, and it is the form the proofs use:
-% the stack over a cell is locally constant (cad_local), so on a connected
-% cell it is constant (cad_stack).
+% the stack over a cell is locally constant (col_loc), so on a connected
+% cell it is constant (col_stack).
 %
 % conn_line: an interval of the head coordinate, the rest fixed, is
 % connected (from loc_const, the real-line fact already in the library).
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING mpar, loc_const, walk_transfer
+  IMPORTING mpar, walk_transfer
 
   C: VAR [list[real] -> bool]
   Phi: VAR [list[real] -> bool]

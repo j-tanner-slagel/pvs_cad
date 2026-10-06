@@ -1,7 +1,6 @@
 cad_fibre: THEORY
 %----------------------------------------------------------------------------
-% One fibre: the stack index of a point and the sign vector it sees
-% (GAP_PLAN.md Tier 1).
+% One fibre: the stack index of a point and the sign vector it sees.
 %
 % Over p, with roots r_0 < ... < r_{m-1} (rtl), the fibre is cut into 2m+1
 % pieces: the band below r_0 (index 0), r_0 (index 1), the band between r_0
@@ -75,7 +74,7 @@ BEGIN
     length(map(f)(L)) = length(L) AND nth(map(f)(L), j) = f(nth(L, j))
 
   %% not both 2n + 1 and 2i: the index says whether y is a root
-  odd_even: LEMMA FORALL (n: nat): 2 * n + 1 /= 2 * i
+  odd_even_sidx: LEMMA FORALL (n: nat): 2 * n + 1 /= 2 * i
 
   sidx_root: LEMMA certz?(G, p) AND sidx(G, p, y) = 2 * i + 1 IMPLIES
     i < nroot(G, p) AND rt(G, p, i) = y AND length(rsvl(G, p)) = nroot(G, p)

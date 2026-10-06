@@ -1,7 +1,6 @@
 cad_fold_ok: THEORY
 %----------------------------------------------------------------------------
-% The CAD returned by cad_out decides every sentence over F
-% (GAP_PLAN.md Tier 1C).
+% A CAD given by sample records decides every sentence over F.
 %
 % afold_sem: over a CAD base (cad_over?), when the records lie in the cells
 % their addresses name and carry F's sign vector at their samples (recin?),
@@ -15,10 +14,10 @@ cad_fold_ok: THEORY
 % about the run: any cylindrical decomposition adapted to F (cad_over?),
 % given by sample records, decides every sentence over F.
 %
-% cad_decides: when decn_o's certificate holds, the CAD computed once by
-% cad_out decides every sentence with the same polynomials and the same
-% number of variables, whatever its quantifiers and its Boolean combination
-% of sign conditions.
+% col_found_ok applies it to the Collins run's records: the CAD computed once
+% decides every sentence with the same polynomials and the same number of
+% variables, whatever its quantifiers and its Boolean combination of sign
+% conditions (col_found_decides).
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING cad_fold, cad_out_ok
@@ -30,10 +29,10 @@ BEGIN
   r, r0: VAR ORec
   A: VAR list[nat]
   p, q, p1, p2: VAR list[real]
-  a, m, u: VAR nat
-  qs, qs2: VAR list[bool]
-  Psi, Psi2: VAR [SV -> bool]
-  x, y: VAR real
+  a, m: VAR nat
+  qs: VAR list[bool]
+  Psi: VAR [SV -> bool]
+  y: VAR real
   s: VAR Sect
   f: VAR [ORec -> bool]
   V: VAR [nat -> bool]
@@ -80,22 +79,4 @@ BEGIN
   afold_sem: LEMMA FORALL qs: FORALL TW, C, L, p: length(qs) = length(TW) AND cad_over?(TW, C)
     AND recin?(TW, C, F, L) AND reccov?(TW, C, L) AND fsinv?(TW, C, F) AND C(p)
     IMPLIES (afold(qs, Psi, L) IFF sem(qs, F, Psi, p))
-
-  %% ---- the run -----------------------------------------------------------------------------------
-  sector_of: LEMMA EXISTS s: member(s, runsects(u, m, F)) AND in?(s, x)
-  sector_recs: LEMMA decn_o(u, qs, F, Psi)`ok AND length(qs) >= 2 AND member(s, runsects(u, length(cdr(qs)), F))
-    IMPLIES cad_over?(runtw(u, length(cdr(qs)), F)(s), scell(s))
-      AND recin?(runtw(u, length(cdr(qs)), F)(s), scell(s), F, secr(s, cad_out(u, qs, F)))
-      AND reccov?(runtw(u, length(cdr(qs)), F)(s), scell(s), secr(s, cad_out(u, qs, F)))
-      AND fsinv?(runtw(u, length(cdr(qs)), F)(s), scell(s), F)
-      AND length(runtw(u, length(cdr(qs)), F)(s)) = length(cdr(qs))
-  sector_has: LEMMA decn_o(u, qs, F, Psi)`ok AND length(qs) >= 2 AND member(s, runsects(u, length(cdr(qs)), F))
-    IMPLIES EXISTS r: member(r, cad_out(u, qs, F)) AND r`rsec = s
-  sector_fold: LEMMA decn_o(u, qs, F, Psi)`ok AND length(qs) >= 2 AND length(qs2) = length(qs)
-    AND member(s, runsects(u, length(cdr(qs)), F)) AND in?(s, x)
-    IMPLIES (afold(cdr(qs2), Psi2, secr(s, cad_out(u, qs, F))) IFF sem(cdr(qs2), F, Psi2, (: x :)))
-
-  %% ---- ONE CAD DECIDES EVERY SENTENCE OVER F ------------------------------------------------------
-  cad_decides: THEOREM decn_o(u, qs, F, Psi)`ok AND length(qs) >= 2 AND length(qs2) = length(qs)
-    IMPLIES (cfold(qs2, Psi2, cad_out(u, qs, F)) IFF sem(qs2, F, Psi2, null[real]))
 END cad_fold_ok

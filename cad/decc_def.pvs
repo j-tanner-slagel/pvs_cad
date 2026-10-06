@@ -1,13 +1,13 @@
 decc_def: THEORY
 %----------------------------------------------------------------------------
-% The decision over the Collins tower, executable (COLLINS_PLAN.md M-I).
+% The decision over the Collins tower, executable.
 %
-% decc_o is towern_od's decn_o with the read closures removed: every sector
-% of the outermost line gets the same tower ctw(F, k) of Collins projections
-% (col_tower_def), and the line is cut at the roots of the projection of its
-% lowest family.  The value is computed by decn_o's own walk (scval over the
-% sector's tables); the certificate okw_o is decn_o's okn_o without the
-% closure condition (every level's walk passes at every cell of the tree).
+% decc_o decides on towern_od's descriptor walk, with no read closures:
+% every sector of the outermost line gets the same tower ctw(F, k) of
+% Collins projections (col_tower_def), and the line is cut at the roots of
+% the projection of its lowest family.  The value is the walk's (scval over
+% the sector's tables); the certificate okw_o is towern_od's okn_o without
+% the closure condition (every level's walk passes at every cell of the tree).
 % Delineability comes from collins_stack instead of the closure (col_tower's
 % ctw_cad).
 %----------------------------------------------------------------------------

@@ -1,26 +1,13 @@
 crit_pos: THEORY
 %----------------------------------------------------------------------------
-% A positive value at a critical point (Phase 3).
-%
-% Deciding EXISTS x: q(x, ys) > 0 needs one case that the root counting alone
-% does not reach: a polynomial of even degree with a negative leading
-% coefficient tends to minus infinity in both directions, so it may be
-% positive somewhere without being positive anywhere near infinity.  It is
-% positive somewhere exactly when it is positive at one of its critical
-% points: a positive value lies inside an interval whose endpoints are
-% negative, the maximum over that closed interval is attained, it is larger
-% than the positive value, so it is attained in the interior, and there the
-% derivative vanishes.
-%
-% This is the analytic ingredient the sign conditions need (extreme value
-% theorem and the vanishing of the derivative at an interior maximum, both
-% from NASALib's analysis library); everything else in the phase is
-% root counting.  It also turns the question into the one sign_tree already
-% decides, with the derivative as the polynomial and the polynomial itself as
-% the query.
+% The derivative of a polynomial function: the derivative of the
+% polynomial function of the eliminated variable is the polynomial of the
+% formal derivative (pf_deriv, pf_deriv_at), and it vanishes at an interior
+% maximum (deriv_max_pf, from NASALib's analysis library), which qe_ep_ok's
+% sign changes use.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING pos_dec, analysis@derivative_props[real]
+  IMPORTING earr_deriv, analysis@derivative_props[real]
 
   l: VAR list[mpoly]
   ys: VAR list[real]
@@ -38,36 +25,4 @@ BEGIN
   deriv_max_pf: LEMMA cons?(l) AND a < c AND c < b AND
     (FORALL (z: real): a < z AND z < b IMPLIES pf(l, ys)(z) <= pf(l, ys)(c))
     IMPLIES meval(mpol(lderiv(l)))(cons(c, ys)) = 0
-
-  %% the same with the non-strict interval the extreme value theorem gives
-  deriv_max_le: LEMMA cons?(l) AND a < c AND c < b AND
-    (FORALL (z: real): a <= z AND z <= b IMPLIES pf(l, ys)(z) <= pf(l, ys)(c))
-    IMPLIES meval(mpol(lderiv(l)))(cons(c, ys)) = 0
-
-  %% a positive value between two negative values gives a positive value at a
-  %% critical point: the maximum over the closed interval is attained, it is
-  %% positive, so it is attained in the interior
-  crit_between: LEMMA cons?(l) AND a < x AND x < b AND
-      pf(l, ys)(a) < 0 AND pf(l, ys)(b) < 0 AND pf(l, ys)(x) > 0
-    IMPLIES EXISTS (c: real): meval(mpol(lderiv(l)))(cons(c, ys)) = 0 AND
-                              meval(mpol(l))(cons(c, ys)) > 0
-
-  %% negative values arbitrarily far out: on the right whenever the leading
-  %% coefficient is negative, on the left when the degree is also even
-  far_neg_right: LEMMA cons?(l) AND meval(llast(l))(ys) < 0 IMPLIES
-    EXISTS (v: real): v > x AND pf(l, ys)(v) < 0
-  far_neg_left: LEMMA cons?(l) AND even?(dg(l)) AND meval(llast(l))(ys) < 0 IMPLIES
-    EXISTS (u: real): u < x AND pf(l, ys)(u) < 0
-
-  %% an odd degree with a negative leading coefficient is positive far to the left
-  big_pos_left: LEMMA cons?(l) AND NOT even?(dg(l)) AND meval(llast(l))(ys) < 0
-    IMPLIES EXISTS (u: real): pf(l, ys)(u) > 0
-
-  %% the reduction: a polynomial that tends to minus infinity in both
-  %% directions is positive somewhere exactly when it is positive at a
-  %% critical point
-  crit_exists: THEOREM cons?(l) AND even?(dg(l)) AND meval(llast(l))(ys) < 0 IMPLIES
-    ((EXISTS (x: real): meval(mpol(l))(cons(x, ys)) > 0) IFF
-     (EXISTS (x: real): meval(mpol(lderiv(l)))(cons(x, ys)) = 0 AND
-                        meval(mpol(l))(cons(x, ys)) > 0))
 END crit_pos

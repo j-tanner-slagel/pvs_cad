@@ -1,21 +1,4 @@
 (|alg_sortc|
- (|nrc_eq| 0
-  (|nrc_eq-0| "" 3999813677
-   ("" (SKEEP)
-    (("" (EXPAND "nrc")
-      (("" (EXPAND "nroots")
-        (("" (EXPAND "nroots_a")
-          (("" (EXPAND "chain") (("" (PROPAX) NIL NIL)) NIL)) NIL))
-        NIL))
-      NIL))
-    NIL)
-   ((|nrc| CONST-DECL "nat" |alg_sortc_def| NIL)
-    (|nroots_a| CONST-DECL "nat" |alg_count| NIL)
-    (|chain| CONST-DECL "(Eq_computed_remainder?(ipoly(pl), deg(pl)))"
-     |alg_count| NIL)
-    (|nroots| CONST-DECL "nat" |alg_count| NIL)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
-   SHOSTAK))
  (|refc_a| 0
   (|refc_a-2| "" 3999815967
    ("" (SKEEP)
@@ -297,7 +280,7 @@
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
    NIL
    (|gcd_eq| SUBTYPE "g" "{pl | reals.>(polylist.deg(alg_count.pl), 0)}"
-    (35 81 35 82))))
+    (34 81 34 82))))
  (|gcd_eq_TCC2| 0
   (|gcd_eq_TCC2-1| NIL 3999813798 ("" (SUBTYPE-TCC) NIL NIL)
    ((|polylist| CONST-DECL "real" |polylist| |Sturm|)
@@ -367,7 +350,7 @@
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
    NIL
    (|gcd_eq| SUBTYPE "hi" "{ub: rat | reals.<(alg_sortc.lo, ub)}"
-    (35 88 35 90))))
+    (34 88 34 90))))
  (|gcd_eq| 0
   (|gcd_eq-0| "" 3999813837
    ("" (SKEEP)

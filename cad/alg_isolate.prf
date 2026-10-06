@@ -887,50 +887,6 @@
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
- (|roots_h_closed| 0
-  (|roots_h_closed-1| NIL 3998004134
-   ("" (SKEEP)
-    (("" (APPLY-EXTENSIONALITY 2 :HIDE? T)
-      (("" (EXPAND "roots_h")
-        (("" (EXPAND "roots_in")
-          (("" (CASE "x!1 = lb")
-            (("1" (REPLACE -1) (("1" (ASSERT) NIL NIL)) NIL)
-             ("2" (IFF 2)
-              (("2" (PROP) (("1" (ASSERT) NIL NIL) ("2" (ASSERT) NIL NIL))
-                NIL))
-              NIL))
-            NIL))
-          NIL))
-        NIL))
-      NIL))
-    NIL)
-   ((|list| TYPE-DECL NIL |list_adt| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
-    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
-    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
-    (|set| TYPE-EQ-DECL NIL |sets| NIL)
-    (|roots_h| CONST-DECL "set[real]" |alg_isolate| NIL)
-    (|roots_in| CONST-DECL "set[real]" |alg_count| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
-     "(strict_total_order?[real])" |real_props| NIL)
-    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
-   SHOSTAK))
  (|roots_h_split| 0
   (|roots_h_split-1| NIL 3998003083
    ("" (SKEEP)
@@ -1294,7 +1250,7 @@
    NIL
    (|shrinkw| SUBTYPE "r + w2"
     "{ub: rat | reals.<((number_fields.-)(alg_isolate.r, alg_isolate.w2), ub)}"
-    (72 112 72 118))))
+    (71 112 71 118))))
  (|shrinkw_TCC2| 0
   (|shrinkw_TCC2-1| NIL 3998002976
    ("" (SKEEP)
@@ -1361,7 +1317,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    NIL
    (|shrinkw| WELL-FOUNDED "real_ord_ep(mrd(pl) / 2)" #A((3) BASE-CHAR . "NIL")
-    (74 19 74 43))))
+    (73 19 73 43))))
  (|shrinkw_TCC3| 0
   (|shrinkw_TCC3-1| NIL 3998002976
    ("" (SKEEP)
@@ -1485,7 +1441,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    NIL
    (|shrinkw| TERMINATION "shrinkw(pl, r, w / 2)" #A((3) BASE-CHAR . "NIL")
-    (73 48 73 69))))
+    (72 48 72 69))))
  (|shrink_TCC1| 0
   (|shrink_TCC1-1| NIL 3998002976
    ("" (SKEEP)
@@ -1540,7 +1496,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    NIL
    (|shrink| SUBTYPE "(# p := pl, lb := r - w2, ub := r + w2 #)" "Alg"
-    (76 34 76 75))))
+    (75 34 75 75))))
  (|shrink_value| 0
   (|shrink_value-1| NIL 3998003944
    ("" (SKEEP)
@@ -1692,7 +1648,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    NIL
    (|iso| WELL-FOUNDED "real_ord_ep(mrd(pl))" #A((3) BASE-CHAR . "NIL")
-    (86 25 86 45))))
+    (85 25 85 45))))
  (|iso_TCC2| 0
   (|iso_TCC2-1| NIL 3998002976 ("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL)
    ((|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
@@ -1700,7 +1656,7 @@
      |real_props| NIL)
     (|rat_minus_rat_is_rat| APPLICATION-JUDGEMENT "rat" |rationals| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
-   NIL (|iso| SUBTYPE "ub - lb" "posrat" (83 64 83 71))))
+   NIL (|iso| SUBTYPE "ub - lb" "posrat" (82 64 82 71))))
  (|iso_TCC3| 0
   (|iso_TCC3-1| NIL 3998002976
    ("" (SKEEP)
@@ -1764,7 +1720,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    NIL
    (|iso| SUBTYPE "(: (# p := pl, lb := lb, ub := ub #) :)" "list[Alg]"
-    (84 47 84 86))))
+    (83 47 83 86))))
  (|iso_TCC4| 0
   (|iso_TCC4-1| NIL 3998002976 ("" (SKEEP) (("" (ASSERT) NIL NIL)) NIL)
    ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
@@ -1776,7 +1732,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    NIL
    (|iso| SUBTYPE "(lb + ub) / 2" "{ub: rat | reals.<(alg_isolate.lb, ub)}"
-    (85 28 85 41))))
+    (84 28 84 41))))
  (|iso_TCC5| 0
   (|iso_TCC5-1| NIL 3998002976
    ("" (SKEEP)
@@ -1889,7 +1845,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    NIL
    (|iso| TERMINATION "iso(pl, lb, (lb + ub) / 2)" #A((3) BASE-CHAR . "NIL")
-    (85 16 85 42))))
+    (84 16 84 42))))
  (|iso_TCC6| 0
   (|iso_TCC6-1| NIL 3998002976
    ("" (SKEEP)
@@ -1943,7 +1899,7 @@
    NIL
    (|iso| SUBTYPE "ub"
     "{ub_1: rat | reals.<(number_fields./(((number_fields.+)(alg_isolate.lb, alg_isolate.ub)), 2), ub_1)}"
-    (85 67 85 69))))
+    (84 67 84 69))))
  (|iso_TCC7| 0
   (|iso_TCC7-1| NIL 3998002976
    ("" (SKEEP)
@@ -2056,7 +2012,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    NIL
    (|iso| TERMINATION "iso(pl, (lb + ub) / 2, ub)" #A((3) BASE-CHAR . "NIL")
-    (85 44 85 70))))
+    (84 44 84 70))))
  (|increasing_TCC1| 0
   (|increasing_TCC1-1| NIL 3998002976
    ("" (SKEEP) (("" (REPLACE -1) (("" (GRIND) NIL NIL)) NIL)) NIL)
@@ -2072,7 +2028,7 @@
      NIL))
    NIL
    (|increasing| TERMINATION "increasing(r)" #A((3) BASE-CHAR . "NIL")
-    (91 103 91 116))))
+    (90 103 90 116))))
  (|increasing_append| 0
   (|increasing_append-1| NIL 3998004510
    ("" (INDUCT "l")
@@ -2241,7 +2197,7 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|iso_case1| SUBTYPE "ub - lb" "posrat" (102 44 102 51))))
+   NIL (|iso_case1| SUBTYPE "ub - lb" "posrat" (101 44 101 51))))
  (|iso_case1| 0
   (|iso_case1-1| NIL 3998004391
    ("" (SKEEP)
@@ -2405,7 +2361,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    NIL
    (|iso_case2| SUBTYPE "(: (# p := pl, lb := lb, ub := ub #) :)" "list[Alg]"
-    (104 26 104 65))))
+    (103 26 103 65))))
  (|iso_case2| 0
   (|iso_case2-1| NIL 3998004518
    ("" (SKEEP)
@@ -3216,89 +3172,7 @@
    NIL
    (|roots| SUBTYPE "rbound(pl)"
     "{ub: rat | reals.<((number_fields.-)(alg_isolate.rbound(alg_isolate.pl)), ub)}"
-    (110 60 110 70))))
- (|roots_alg| 0
-  (|roots_alg-1| NIL 3998004666
-   ("" (SKEEP)
-    (("" (LEMMA "iso_spec")
-      (("" (INST -1 "-rbound(pl)" "pl" "rbound(pl)")
-        (("" (ASSERT)
-          (("" (EXPAND "iso_spec?")
-            (("" (FLATTEN)
-              (("" (INST -1 "a")
-                (("" (EXPAND "roots" -5)
-                  (("" (ASSERT)
-                    (("" (EXPAND "roots_h")
-                      (("" (FLATTEN) (("" (ASSERT) NIL NIL)) NIL)) NIL))
-                    NIL))
-                  NIL))
-                NIL))
-              NIL))
-            NIL))
-          NIL))
-        NIL))
-      NIL))
-    NIL)
-   ((|iso_spec| FORMULA-DECL NIL |alg_isolate| NIL)
-    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
-     "(strict_total_order?[real])" |real_props| NIL)
-    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
-     "(strict_total_order?[real])" |real_props| NIL)
-    (|roots| CONST-DECL "list[Alg]" |alg_isolate| NIL)
-    (|roots_h| CONST-DECL "set[real]" |alg_isolate| NIL)
-    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
-    (|alg?| CONST-DECL "bool" |alg_def| NIL)
-    (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
-    (|iso_spec?| CONST-DECL "bool" |alg_isolate| NIL)
-    (|minus_nzrat_is_nzrat| APPLICATION-JUDGEMENT "nzrat" |rationals| NIL)
-    (|rbound| CONST-DECL "posrat" |alg_isolate| NIL)
-    (|posrat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
-    (|nonneg_rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
-    (|deg| CONST-DECL "{d: below(length(pl)) |
-   (d > 0 IFF EXISTS (j: below(length(pl))): j > 0 AND nth(pl, j) /= 0) AND
-    (d > 0 IMPLIES
-      (FORALL (j: below(length(pl))): j > d IMPLIES nth(pl, j) = 0))
-     AND (d > 0 IMPLIES nth(pl, d) /= 0)}"
-     |polylist| |Sturm|)
-    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|nth| DEF-DECL "T" |list_props| NIL)
-    (|below| TYPE-EQ-DECL NIL |nat_types| NIL)
-    (/= CONST-DECL "boolean" |notequal| NIL)
-    (IFF CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|length| DEF-DECL "nat" |list_props| NIL)
-    (< CONST-DECL "bool" |reals| NIL)
-    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (>= CONST-DECL "bool" |reals| NIL)
-    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
-    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
-    (> CONST-DECL "bool" |reals| NIL)
-    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
-    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL)
-    (- CONST-DECL "[numfield -> numfield]" |number_fields| NIL)
-    (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
-    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
-    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
-   SHOSTAK))
+    (109 60 109 70))))
  (|roots_complete| 0
   (|roots_complete-1| NIL 3998004688
    ("" (SKEEP)
@@ -3391,73 +3265,6 @@
     (|nonneg_rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
     (- CONST-DECL "[numfield -> numfield]" |number_fields| NIL)
     (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
-   SHOSTAK))
- (|roots_increasing| 0
-  (|roots_increasing-1| NIL 3998004649
-   ("" (SKEEP)
-    (("" (LEMMA "iso_spec")
-      (("" (INST -1 "-rbound(pl)" "pl" "rbound(pl)")
-        (("" (ASSERT)
-          (("" (EXPAND "iso_spec?")
-            (("" (FLATTEN) (("" (EXPAND "roots") (("" (PROPAX) NIL NIL)) NIL))
-              NIL))
-            NIL))
-          NIL))
-        NIL))
-      NIL))
-    NIL)
-   ((|iso_spec| FORMULA-DECL NIL |alg_isolate| NIL)
-    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
-     "(strict_total_order?[real])" |real_props| NIL)
-    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
-     "(strict_total_order?[real])" |real_props| NIL)
-    (|roots| CONST-DECL "list[Alg]" |alg_isolate| NIL)
-    (|iso_spec?| CONST-DECL "bool" |alg_isolate| NIL)
-    (|minus_nzrat_is_nzrat| APPLICATION-JUDGEMENT "nzrat" |rationals| NIL)
-    (|rbound| CONST-DECL "posrat" |alg_isolate| NIL)
-    (|posrat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
-    (|nonneg_rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
-    (|deg| CONST-DECL "{d: below(length(pl)) |
-   (d > 0 IFF EXISTS (j: below(length(pl))): j > 0 AND nth(pl, j) /= 0) AND
-    (d > 0 IMPLIES
-      (FORALL (j: below(length(pl))): j > d IMPLIES nth(pl, j) = 0))
-     AND (d > 0 IMPLIES nth(pl, d) /= 0)}"
-     |polylist| |Sturm|)
-    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|nth| DEF-DECL "T" |list_props| NIL)
-    (|below| TYPE-EQ-DECL NIL |nat_types| NIL)
-    (/= CONST-DECL "boolean" |notequal| NIL)
-    (IFF CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|length| DEF-DECL "nat" |list_props| NIL)
-    (< CONST-DECL "bool" |reals| NIL)
-    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (>= CONST-DECL "bool" |reals| NIL)
-    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
-    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
-    (> CONST-DECL "bool" |reals| NIL)
-    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
-    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL)
-    (- CONST-DECL "[numfield -> numfield]" |number_fields| NIL)
-    (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
-    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
-    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK)))
 

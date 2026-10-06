@@ -1,9 +1,8 @@
 bareiss_def: THEORY
 %----------------------------------------------------------------------------
-% Determinants by fraction-free elimination (Bareiss), executable
-% (NEXT_PLAN.md P5).
+% Determinants by fraction-free elimination (Bareiss), executable.
 %
-% detf (P1) builds a table of 2^n minors (n 2^n products), out of reach from side 20
+% detf (det_fast_def) builds a table of 2^n minors (n 2^n products), out of reach from side 20
 % on: AM-GM in four variables needs side-23 determinants.  bdet eliminates
 % instead, in O(n^3) polynomial operations.  bar(m, p, B) works on the block
 % B, m rows of m entries whose previous pivot is p:
@@ -20,13 +19,13 @@ bareiss_def: THEORY
 % (bareiss: bdet_det); the checks decide only the speed.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING det_fast_def, mpoly_norm, mpoly_gcd_def, mpoly_eqd
+  IMPORTING det_fast_def, mpoly_gcd_def
 
   p, a, u, s0: VAR mpoly
   r, s: VAR list[mpoly]
   B: VAR list[list[mpoly]]
   n, m, i, k, j: VAR nat
-  M: VAR Mat
+  M: VAR MMat
 
   %% first entry and rest of a row, total
   hd0(r): mpoly = IF null?(r) THEN zero ELSE car(r) ENDIF

@@ -1,7 +1,7 @@
 ctwd_def: THEORY
 %----------------------------------------------------------------------------
-% The Collins tower with derivative-closed free levels (COLLINS_PLAN.md M-I,
-% for quantifier elimination with two or more free variables).  Executable.
+% The Collins tower with derivative-closed free levels, for quantifier
+% elimination with two or more free variables.  Executable.
 %
 % dch(g) is g with its successive formal derivatives in the main variable
 % (lderiv) down to a constant; dclf(G) puts them together for a family, so
@@ -43,4 +43,6 @@ BEGIN
     ELSE append(ctwd(dnf(F, k, d), k - 1, d), (: F :))
     ENDIF
   MEASURE k
+  %% every member of degree >= 1 has its formal derivative in G
+  dclx?(G): bool = every(LAMBDA (g: list[mpoly]): length(g) < 2 OR member(lderiv(g), G))(G)
 END ctwd_def

@@ -1,6 +1,6 @@
 mpoly_prod: THEORY
 %----------------------------------------------------------------------------
-% The product of two coefficient lists, as a real coefficient array (Phase 3).
+% The product of two coefficient lists, as a real coefficient array.
 %
 % Tarski queries are computed from a chain whose second element is the product
 % of a polynomial with the derivative of another, and Tarski@sturmtarski
@@ -12,7 +12,7 @@ mpoly_prod: THEORY
 % The proof does not compute the convolution.  Two arrays that denote the same
 % polynomial at a degree at least as large as both, and vanish above it, are
 % equal coefficient by coefficient (polynomial_eq_coeff); the product list
-% denotes the product polynomial because meval is a homomorphism (Phase 1),
+% denotes the product polynomial because meval is a homomorphism (mpoly_arith),
 % and NASALib's product array denotes it by polynomial_prod_def.
 %----------------------------------------------------------------------------
 BEGIN

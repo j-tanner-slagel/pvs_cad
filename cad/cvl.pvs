@@ -1,6 +1,6 @@
 cvl: THEORY
 %----------------------------------------------------------------------------
-% The cell value list of a level (FINISH_PLAN 3i, stage N5).
+% The cell value list of a level.
 %
 % Fix a point vs, the effective family G of a level there, separators Y whose
 % walk passes (wok?), and any truth function T of the level's variable.  The
@@ -13,17 +13,15 @@ cvl: THEORY
 %             cover puts every y either in such an interval or at the root
 %             of a gap
 %   bfold_cvl so the fold of the list is the quantifier over T
-%   cvl_eq    two lists at two points are equal when the gap flags and the
-%             values at the cells are
 % Nothing here knows about towers: the level below supplies T.
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING cover
 
   G: VAR list[list[mpoly]]
-  vs, vs0, vs1: VAR list[real]
+  vs: VAR list[real]
   Y: VAR list[rat]
-  T, T0, T1: VAR [real -> bool]
+  T: VAR [real -> bool]
   q, b0: VAR bool
   lo, hi, y0: VAR rat
   y, beta: VAR real
@@ -64,11 +62,4 @@ BEGIN
 
   bfold_cvl: THEOREM wok?(G, msg(vs), Y) AND rfc?(T, G, vs, Y) IMPLIES
     (bfold(q, cvl(T, G, vs, Y)) IFF IF q THEN (FORALL y: T(y)) ELSE (EXISTS y: T(y)) ENDIF)
-
-  cvl_eq: LEMMA FORALL Y:
-    (FORALL y0: member(y0, Y) IMPLIES (T1(y0) IFF T0(y0)))
-    AND (FORALL lo, hi: adj?(Y, lo, hi) IMPLIES (gap?(G, msg(vs1), lo, hi) IFF gap?(G, msg(vs0), lo, hi)))
-    AND (FORALL lo, hi: adj?(Y, lo, hi) AND gap?(G, msg(vs0), lo, hi) IMPLIES
-           (T1(secbeta(G, vs1, lo, hi)) IFF T0(secbeta(G, vs0, lo, hi))))
-    IMPLIES cvl(T1, G, vs1, Y) = cvl(T0, G, vs0, Y)
 END cvl

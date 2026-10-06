@@ -1,6 +1,6 @@
 pl_shift_def: THEORY
 %----------------------------------------------------------------------------
-% The Taylor shift of a rational polynomial (QE_PLAN.md 12).  Executable.
+% The Taylor shift of a rational polynomial.  Executable.
 %
 % pshift(pl, m) has at t the value pl has at m + t (pl_shift's pshift_sem):
 % cons(c, r) at m + t is c + (m + t) r(m + t), so the shift of cons(c, r) is

@@ -1,6 +1,6 @@
 col_out: THEORY
 %----------------------------------------------------------------------------
-% The Collins run's CAD as data (COLLINS_PLAN.md M-H).  Executable.
+% The Collins run's CAD as data.  Executable.
 %
 % cad_out's records for the Collins run: at every sector of the roots of
 % the outer family (the projection of the tower's lowest family, as in

@@ -108,7 +108,7 @@
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL))
-   SHOSTAK (|kd_mem| SUBTYPE "j" "below[length[mpoly](g)]" (38 61 38 62))))
+   SHOSTAK (|kd_mem| SUBTYPE "j" "below[length[mpoly](g)]" (37 61 37 62))))
  (|kd_mem| 0
   (|kd_mem-2| "" 3999851890
    ("" (INDUCT "n")
@@ -341,7 +341,7 @@
     (|list| TYPE-DECL NIL |list_adt| NIL))
    SHOSTAK))
  (|pscg_eq| 0
-  (|pscg_eq-3| "" 3999991826
+  (|pscg_eq-0| "" 4000267854
    ("" (SKEEP)
     (("" (EXPAND "pscg")
       (("" (EXPAND "psc")
@@ -361,9 +361,9 @@
     (+ CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
     (- CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
     (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
-    (|sresm| CONST-DECL "Mat" |subres| NIL)
+    (|sresm| CONST-DECL "MMat" |subres| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
-    (|Mat| TYPE-EQ-DECL NIL |ring_det| NIL)
+    (|MMat| TYPE-EQ-DECL NIL |ring_det| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (>= CONST-DECL "bool" |reals| NIL)
@@ -391,7 +391,7 @@
   (|pj1_mem_TCC1-0| "" 3999851824
    ("" (SKEEP) (("" (EXPAND "kept?") (("" (FLATTEN) NIL NIL)) NIL)) NIL)
    ((|kept?| CONST-DECL "bool" |col_def| NIL)) SHOSTAK
-   (|pj1_mem| SUBTYPE "k" "below[length[mpoly](g)]" (44 51 44 52))))
+   (|pj1_mem| SUBTYPE "k" "below[length[mpoly](g)]" (43 51 43 52))))
  (|pj1_mem| 0
   (|pj1_mem-3| "" 3999851999
    ("" (SKEEP)
@@ -492,7 +492,7 @@
    SHOSTAK
    (|pj2k_mem| SUBTYPE "j"
     "{j: naturalnumbers.nat | reals.<=(number_fields.*(2, j), (number_fields.+)(prem_arr.dg(earr_deriv.lderiv(col_def.rdc(cad_projn.g, cad_projn.k))), prem_arr.dg(col_def.rdc(cad_projn.g, cad_projn.k))))}"
-    (46 51 46 52))))
+    (45 51 45 52))))
  (|pj2k_mem| 0
   (|pj2k_mem-0| "" 3999852076
    ("" (INDUCT "K")
@@ -685,7 +685,7 @@
    SHOSTAK
    (|pj2_mem| SUBTYPE "j"
     "{j: naturalnumbers.nat | reals.<=(number_fields.*(2, j), (number_fields.+)(prem_arr.dg(earr_deriv.lderiv(col_def.rdc(cad_projn.g, cad_projn.k))), prem_arr.dg(col_def.rdc(cad_projn.g, cad_projn.k))))}"
-    (48 51 48 52))))
+    (47 51 47 52))))
  (|pj2_mem| 0
   (|pj2_mem-2| "" 3999852092
    ("" (SKEEP)
@@ -777,7 +777,7 @@
    SHOSTAK
    (|pj3k_mem| SUBTYPE "j"
     "{j: naturalnumbers.nat | reals.<=(number_fields.*(2, j), (number_fields.+)(prem_arr.dg(col_def.rdc(cad_projn.g, cad_projn.k1)), prem_arr.dg(col_def.rdc(cad_projn.h, cad_projn.k2))))}"
-    (50 75 50 76))))
+    (49 75 49 76))))
  (|pj3k_mem| 0
   (|pj3k_mem-0| "" 3999852116
    ("" (INDUCT "K2")
@@ -1014,7 +1014,7 @@
   (|pj3_mem_TCC1-0| "" 3999851826
    ("" (SKEEP) (("" (EXPAND "kept?") (("" (FLATTEN) NIL NIL)) NIL)) NIL)
    ((|kept?| CONST-DECL "bool" |col_def| NIL)) SHOSTAK
-   (|pj3_mem| SUBTYPE "k2" "below[length[mpoly](h)]" (54 94 54 96))))
+   (|pj3_mem| SUBTYPE "k2" "below[length[mpoly](h)]" (53 94 53 96))))
  (|pj3_mem_TCC2| 0
   (|pj3_mem_TCC2-0| "" 3999851827
    ("" (SKEEP)
@@ -1059,7 +1059,7 @@
    SHOSTAK
    (|pj3_mem| SUBTYPE "j"
     "{j: naturalnumbers.nat | reals.<=(number_fields.*(2, j), (number_fields.+)(prem_arr.dg(col_def.rdc(cad_projn.g, cad_projn.k1)), prem_arr.dg(col_def.rdc(cad_projn.h, cad_projn.k2))))}"
-    (55 75 55 76))))
+    (54 75 54 76))))
  (|pj3_mem| 0
   (|pj3_mem-0| "" 3999852144
    ("" (SKEEP)
@@ -1244,7 +1244,7 @@
      "(strict_total_order?[real])" |real_props| NIL)
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
    SHOSTAK
-   (|pjall_pair| SUBTYPE "i1" "below[length[list[mpoly]](G)]" (60 97 60 99))))
+   (|pjall_pair| SUBTYPE "i1" "below[length[list[mpoly]](G)]" (59 97 59 99))))
  (|pjall_pair| 0
   (|pjall_pair-0| "" 3999852260
    ("" (INDUCT "G")

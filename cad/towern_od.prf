@@ -138,7 +138,7 @@
     (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (SV TYPE-EQ-DECL NIL |sign_vec| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    NIL (|ins0| SUBTYPE "v" "(list_adt[real].cons?)" (161 18 161 19))))
  (|cellsf_o_TCC1| 0
@@ -297,11 +297,11 @@
     (|wok_t| CONST-DECL "bool" |walk_od| NIL)
     (|slc?| CONST-DECL "bool" |sturm_sg| NIL)
     (/= CONST-DECL "boolean" |notequal| NIL)
-    (|bk| CONST-DECL "nat" |alg_bis| NIL)
+    (|bk| CONST-DECL "nat" |walk_def| NIL)
     (|wr_t| CONST-DECL "list[mpoly]" |towern_od| NIL)
     (|we_rd_p| CONST-DECL "list[mpoly]" |towern_od| NIL)
     (|wi_rd_t| CONST-DECL "list[mpoly]" |towern_od| NIL)
-    (|bprod| CONST-DECL "list[mpoly]" |alg_bis| NIL)
+    (|bprod| CONST-DECL "list[mpoly]" |walk_def| NIL)
     (|feff| CONST-DECL "list[list[mpoly]]" |towern_od| NIL)
     (|exact?| CONST-DECL "bool" |towern_od| NIL)
     (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
@@ -449,101 +449,5 @@
    NIL
    (|treads_o| TERMINATION
     "treads_o(u, cdr[list[list[mpoly]]](TW), cdr[CT](TB), od2)"
-    #A((3) BASE-CHAR . "NIL") (254 105 254 139))))
- (|tclos_o_TCC1| 0
-  (|tclos_o_TCC1-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL)
-   ((|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
-    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
-    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
-    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
-    (>= CONST-DECL "bool" |reals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|tclos_o| SUBTYPE "fuel - 1" "nat" (262 58 262 66))))
- (|tclos_o_TCC2| 0
-  (|tclos_o_TCC2-1| NIL 3999478989 ("" (TERMINATION-TCC) NIL NIL)
-   ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
-    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
-   NIL
-   (|tclos_o| TERMINATION "tclos_o(u, fuel - 1, T2, od)"
-    #A((3) BASE-CHAR . "NIL") (262 47 262 75))))
- (|nbads_o_TCC1| 0
-  (|nbads_o_TCC1-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
-   (|nbads_o| SUBTYPE "ss" "(list_adt[sect_inv.Sect].cons?)" (286 18 286 20))))
- (|nbads_o_TCC2| 0
-  (|nbads_o_TCC2-1| NIL 3999478989 ("" (TERMINATION-TCC) NIL NIL)
-   ((|length| DEF-DECL "nat" |list_props| NIL)
-    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
-    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
-     "(strict_total_order?[real])" |real_props| NIL)
-    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
-   NIL
-   (|nbads_o| TERMINATION "nbads_o(u, T0, cdr[Sect](ss))"
-    #A((3) BASE-CHAR . "NIL") (286 28 286 51))))
- (|nbads_o_TCC3| 0
-  (|nbads_o_TCC3-1| NIL 3999478989 ("" (TERMINATION-TCC) NIL NIL)
-   ((|length| DEF-DECL "nat" |list_props| NIL)
-    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
-    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
-     "(strict_total_order?[real])" |real_props| NIL)
-    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
-   NIL
-   (|nbads_o| TERMINATION "nbads_o(u, T0, cdr[Sect](ss))"
-    #A((3) BASE-CHAR . "NIL") (287 79 287 102))))
- (|nclos_o_TCC1| 0
-  (|nclos_o_TCC1-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL)
-   ((|rts| CONST-DECL "list[Alg]" |cad_lift| NIL)
-    (|sortu| CONST-DECL "list[Alg]" |cell1| NIL)
-    (|sortsep| CONST-DECL "list[Alg]" |alg_sortc_def| NIL)
-    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
-    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
-    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
-    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
-    (>= CONST-DECL "bool" |reals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|nclos_o| SUBTYPE "fuel - 1" "nat" (295 63 295 71))))
- (|nclos_o_TCC2| 0
-  (|nclos_o_TCC2-1| NIL 3999478989 ("" (TERMINATION-TCC) NIL NIL)
-   ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
-    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
-    (|sects| CONST-DECL "list[Sect]" |sect_inv| NIL)
-    (|gsects| DEF-DECL "list[Sect]" |sect_inv| NIL)
-    (|rts| CONST-DECL "list[Alg]" |cad_lift| NIL)
-    (|sortu| CONST-DECL "list[Alg]" |cell1| NIL)
-    (|sortsep| CONST-DECL "list[Alg]" |alg_sortc_def| NIL))
-   NIL
-   (|nclos_o| TERMINATION "nclos_o(u, fuel - 1, T0, Q2)"
-    #A((3) BASE-CHAR . "NIL") (295 52 295 80))))
- (|decn_o_TCC1| 0
-  (|decn_o_TCC1-1| NIL 3999478989 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
-   (|decn_o| SUBTYPE "qs" "(list_adt[bool].cons?)" (316 30 316 32)))))
+    #A((3) BASE-CHAR . "NIL") (254 105 254 139)))))
 

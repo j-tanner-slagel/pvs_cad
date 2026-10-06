@@ -1,14 +1,14 @@
 alg_count: THEORY
 %----------------------------------------------------------------------------
 % Counting the real roots of a univariate polynomial in a closed rational
-% interval, on top of NASALib's Sturm library (Phase 2).
+% interval, on top of NASALib's Sturm library.
 %
 % The representation is Sturm's Polylist (rational coefficients, lowest
 % degree first), which is what mpoly_univ.partial_eval produces; the Sturm
 % procedures want an integer polynomial [nat -> int] with a precomputed
 % Sturm chain, so ipoly clears denominators (rat_poly_to_int) and chain
 % computes the chain. nroots(pl, lb, ub) is roots_closed_int of the Sturm
-% library and comes with the specification the rest of Phase 2 uses:
+% library and comes with the specification the other alg_* theories use:
 % nroots = 0 iff no root, nroots >= 1 iff some root, nroots = 1 iff exactly
 % one root in [lb, ub].
 %----------------------------------------------------------------------------
@@ -25,13 +25,11 @@ BEGIN
     LET a = rat_poly_to_int(list2array[rat](0)(pl), deg(pl)) IN
       LAMBDA (i: nat): IF i <= deg(pl) THEN a(i) ELSE 0 ENDIF
 
-  ipoly_beyond: LEMMA i > deg(pl) IMPLIES ipoly(pl)(i) = 0
   ipoly_scale: LEMMA EXISTS (cp: posrat): FORALL (j: upto(deg(pl))): ipoly(pl)(j) = cp * nth(pl, j)
   ipoly_lc: LEMMA deg(pl) > 0 IMPLIES ipoly(pl)(deg(pl)) /= 0
   ipoly_eval: LEMMA deg(pl) > 0 IMPLIES
     EXISTS (cp: posrat): polynomial(ipoly(pl), deg(pl))(x) = cp * polylist(pl)(x)
   ipoly_root: LEMMA deg(pl) > 0 IMPLIES (polynomial(ipoly(pl), deg(pl))(x) = 0 IFF polylist(pl)(x) = 0)
-  ipoly_wrap: LEMMA (LAMBDA (i: nat): IF i <= deg(pl) THEN ipoly(pl)(i) ELSE 0 ENDIF) = ipoly(pl)
 
   %% the integer-array level: any A: [nat -> int] with A(n) /= 0, n > 0
   A: VAR [nat -> int]

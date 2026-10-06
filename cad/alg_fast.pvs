@@ -1,6 +1,6 @@
 alg_fast: THEORY
 %----------------------------------------------------------------------------
-% Root isolation with the Sturm chain computed once (Phase 6, performance).
+% Root isolation with the Sturm chain computed once (for speed).
 %
 % iso of alg_isolate counts the roots of every bisection interval with
 % nroots_h, which recomputes the Sturm chain of the polynomial at each call;
@@ -18,7 +18,6 @@ BEGIN
   nroots_hc(pl | deg(pl) > 0, (ch: (Eq_computed_remainder?(ipoly(pl), deg(pl))) | ch = chain(pl)),
             lb, (ub | lb < ub)): nat =
     nrh(ipoly(pl), deg(pl), lb, ub, ch)
-  nroots_hc_h: LEMMA deg(pl) > 0 AND lb < ub IMPLIES nroots_hc(pl, chain(pl), lb, ub) = nroots_h(pl, lb, ub)
 
   isoc(pl | deg(pl) > 0, (ch: (Eq_computed_remainder?(ipoly(pl), deg(pl))) | ch = chain(pl)),
        lb, (ub | lb < ub)): RECURSIVE list[Alg] =

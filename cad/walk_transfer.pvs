@@ -1,32 +1,14 @@
 walk_transfer: THEORY
 %----------------------------------------------------------------------------
-% The transfer theorem (FINISH_PLAN stage S4, step T5): on a convex set of
-% parameters where the walk's INTRINSIC reads keep their signs, the set of
-% realizable sign vectors of the fibre does not vary.
+% Separators exist wherever the walk's certificate holds.
 %
-% This is delineability, certified at run time and proved without
-% subresultants.  [2026-09-29: more exactly, FIBRE-SET invariance, which is
-% weaker than classical delineability -- see cad_delin's header and
-% GAP_PLAN.md 1.3.]  The argument is local constancy plus connectedness:
-%
-%   at any point x0 of the set, separators Y exist that pass wok? and at
-%   which no chain entry vanishes                          (sep_exist)
-%   so the ENTRY reads are nonzero at x0 and keep their signs near x0
-%                                                           (sign_pers)
-%   the INTRINSIC reads keep their signs by hypothesis, so near x0 the
-%   oracle agrees with the oracle at x0 on everything the walk reads, the
-%   walk returns the same list and still passes wok?        (walk_det)
-%   and by walk_fib that list IS the fibre set, at x0 and at every nearby
-%   point.  A locally constant predicate on an interval is constant
-%                                                           (loc_const)
-%
-% Stated along ONE coordinate: the parameters are cons(x, xs) with xs held
-% fixed (S5a).  With xs = null this is the one-parameter theorem of S4; S5
-% uses it in the y-direction at a fixed x.
-%
-% The entry reads are never certified: no constant separator stays clear of
-% an unbounded or colliding root curve (measured -- FINISH_PLAN 3b).  They
-% do not need to be, because the separators may change from point to point.
+% cert?(F, sg): the members pass memok? and, when some member is live, the
+% live product's chain passes slc?.  At a point where it holds, the chains of
+% the live members and of their pair products (allch: mch, pch, pchs) have
+% nonzero leading coefficients, so sep_exist's avoidance finds separators
+% at which no chain entry vanishes, and those pass wok? (wok_exist: the
+% separator conditions member by member, gapok_all, leftok_all, rightok_all).
+% conv?(S): a convex set of reals.
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING sep_exist, walk_ok, loc_const
@@ -110,9 +92,6 @@ BEGIN
   allch_lcok: LEMMA cert?(F, msg(ys)) IMPLIES lcok?(allch(F, msg(ys)), ys)
   schain_hd: LEMMA member(f, schain(k, sg, f))
   mch_mem: LEMMA FORALL G: member(g, G) AND length(strip(g)) >= 2 IMPLIES member(strip(g), mch(F, sg, G))
-  pch_mem: LEMMA FORALL G: member(g2, G) AND length(strip(g2)) >= 2 IMPLIES member(pprod(g, g2), pch(sg, g, G))
-  pchs_mem: LEMMA FORALL G: member(g, G) AND member(g2, G) AND g /= g2 AND length(strip(g)) >= 2 AND length(strip(g2)) >= 2
-    IMPLIES member(pprod(g, g2), pchs(sg, G)) OR member(pprod(g2, g), pchs(sg, G))
   %% the product's chain is avoided where every member's is: its roots are theirs
   av_prod: LEMMA (null?(lives(F)) OR cons?(bprod(F))) AND av?(allch(F, msg(ys)), ys, y) IMPLIES P(F, ys)(y) /= 0
   slc_cons: LEMMA slc?(k, sg, f) IMPLIES cons?(f)
@@ -177,88 +156,7 @@ BEGIN
   wok_exist: THEOREM cert?(F, msg(ys)) IMPLIES
     EXISTS Y: wok?(F, msg(ys), Y) AND avall?(F, ys, Y)
 
-  %% ---- the entry reads: nonzero where the chains are avoided ---------------------
-  ent_nz: LEMMA FORALL cs: av?(cs, cons(x0, xs), y) IMPLIES nz?(ent_rd(cs, y), x0, xs)
-  ents_nz: LEMMA FORALL Y: (FORALL y: member(y, Y) IMPLIES av?(cs, cons(x0, xs), y))
-    IMPLIES nz?(ents_rd(cs, Y), x0, xs)
-
-  %% the member part of the entry reads, split by kind
-  me_nz(F, sg, G, Y): RECURSIVE list[mpoly] =
-    IF null?(G) THEN null[mpoly]
-    ELSE append(IF length(strip(car(G))) >= 2
-                  THEN append(e_rd(bk(F), sg, strip(car(G)), Y), ents_rd((: car(G) :), Y))
-                ELSE null[mpoly] ENDIF,
-                me_nz(F, sg, cdr(G), Y))
-    ENDIF
-  MEASURE length(G)
-  me_sh(G, Y): RECURSIVE list[mpoly] =
-    IF null?(G) THEN null[mpoly]
-    ELSE append(IF length(strip(car(G))) >= 2 THEN null[mpoly]
-                ELSE ents_rd((: car(G) :), Y) ENDIF,
-                me_sh(cdr(G), Y))
-    ENDIF
-  MEASURE length(G)
-
-  me_split: LEMMA FORALL G: agree(sg1, sg2, me_nz(F, sg, G, Y)) AND agree(sg1, sg2, me_sh(G, Y))
-    IMPLIES agree(sg1, sg2, me_rd(F, sg, G, Y))
-
-  own_av: LEMMA length(strip(g)) >= 2 AND av?((: strip(g) :), ys, z) IMPLIES av?((: g :), ys, z)
-  me_nz_nz: LEMMA FORALL G:
-    (FORALL y: member(y, Y) IMPLIES av?(mch(F, msg(cons(x0, xs)), G), cons(x0, xs), y))
-    IMPLIES nz?(me_nz(F, msg(cons(x0, xs)), G, Y), x0, xs)
-
-  mi_short: LEMMA FORALL G: member(g, G) AND length(strip(g)) = 1
-    IMPLIES member(car(strip(g)), mi_rd(F, sg, G))
-  short_ents: LEMMA length(strip(g)) < 2
-    AND (length(strip(g)) = 1 IMPLIES msg(cons(x, xs))(car(strip(g))) = msg(cons(x0, xs))(car(strip(g))))
-    IMPLIES FORALL Y: agree(msg(cons(x0, xs)), msg(cons(x, xs)), ents_rd((: g :), Y))
-  me_sh_agree: LEMMA FORALL G:
-    (FORALL g: member(g, G) AND length(strip(g)) = 1 IMPLIES
-       msg(cons(x, xs))(car(strip(g))) = msg(cons(x0, xs))(car(strip(g))))
-    IMPLIES agree(msg(cons(x0, xs)), msg(cons(x, xs)), me_sh(G, Y))
-
-  %% every entry read that continuity takes care of, and what is left over
-  wnz(F, sg, Y): list[mpoly] = append(me_nz(F, sg, F, Y), pairse_rd(sg, F, Y))
-  pe_nz: LEMMA FORALL G: (FORALL y: member(y, Y) IMPLIES av?(pch(msg(cons(x0, xs)), g, G), cons(x0, xs), y))
-    IMPLIES nz?(pe_rd(msg(cons(x0, xs)), g, G, Y), x0, xs)
-  pairse_nz: LEMMA FORALL G: (FORALL y: member(y, Y) IMPLIES av?(pchs(msg(cons(x0, xs)), G), cons(x0, xs), y))
-    IMPLIES nz?(pairse_rd(msg(cons(x0, xs)), G, Y), x0, xs)
-  wnz_nz: LEMMA avall?(F, cons(x0, xs), Y) IMPLIES nz?(wnz(F, msg(cons(x0, xs)), Y), x0, xs)
-  wnz_agree: LEMMA agree(sg1, sg2, wnz(F, sg, Y)) AND agree(sg1, sg2, me_sh(F, Y))
-    IMPLIES agree(sg1, sg2, we_rd(F, sg, Y))
-  short_inv: LEMMA agree(msg(cons(x0, xs)), msg(cons(x, xs)), wi_rd(F, msg(cons(x0, xs))))
-    IMPLIES agree(msg(cons(x0, xs)), msg(cons(x, xs)), me_sh(F, Y))
-
-  %% ---- the intrinsic reads ------------------------------------------------------------
-  mi_det: LEMMA FORALL G: agree(sg1, sg2, mi_rd(F, sg1, G)) IMPLIES mi_rd(F, sg2, G) = mi_rd(F, sg1, G)
-  pi_det: LEMMA FORALL G: agree(sg1, sg2, pi_rd(sg1, g, G)) IMPLIES pi_rd(sg2, g, G) = pi_rd(sg1, g, G)
-  pairs_det: LEMMA FORALL G: agree(sg1, sg2, pairs_rd(sg1, G)) IMPLIES pairs_rd(sg2, G) = pairs_rd(sg1, G)
-  wi_det: LEMMA agree(sg1, sg2, wi_rd(F, sg1)) IMPLIES wi_rd(F, sg2) = wi_rd(F, sg1)
-  nzm_det: LEMMA agree(sg1, sg2, mi_rd(F, sg1, F)) IMPLIES (nzm?(F, sg2) IFF nzm?(F, sg1))
-  cert_det: LEMMA agree(sg1, sg2, wi_rd(F, sg1)) IMPLIES (cert?(F, sg2) IFF cert?(F, sg1))
-
-  %% the hypothesis: the intrinsic reads at q keep their signs throughout S
-  inv?(F, S, q, xs): bool =
-    FORALL x: S(x) IMPLIES agree(msg(cons(q, xs)), msg(cons(x, xs)), wi_rd(F, msg(cons(q, xs))))
-
-  inv_pair: LEMMA inv?(F, S, q, xs) AND S(x) AND S(x0) IMPLIES
-    agree(msg(cons(x0, xs)), msg(cons(x, xs)), wi_rd(F, msg(cons(x0, xs))))
-  inv_cert: LEMMA inv?(F, S, q, xs) AND cert?(F, msg(cons(q, xs))) AND S(x0)
-    IMPLIES cert?(F, msg(cons(x0, xs)))
-
   %% ---- local constancy, then constancy ---------------------------------------------------
 
-  fib_local: THEOREM inv?(F, S, q, xs) AND cert?(F, msg(cons(q, xs))) AND S(x0) IMPLIES
-    EXISTS (d: posreal): FORALL x: S(x) AND abs(x - x0) < d IMPLIES
-      FORALL v: fib(F, cons(x, xs))(v) IFF fib(F, cons(x0, xs))(v)
-
   conv?(S): bool = FORALL a, b, z: S(a) AND S(b) AND a <= z AND z <= b IMPLIES S(z)
-
-  fib_const_le: LEMMA conv?(S) AND inv?(F, S, q, xs) AND cert?(F, msg(cons(q, xs)))
-    AND S(a) AND S(b) AND a <= b
-    IMPLIES (fib(F, cons(a, xs))(v) IFF fib(F, cons(b, xs))(v))
-
-  fib_const: THEOREM conv?(S) AND inv?(F, S, q, xs) AND cert?(F, msg(cons(q, xs)))
-    AND S(a) AND S(b)
-    IMPLIES (fib(F, cons(a, xs))(v) IFF fib(F, cons(b, xs))(v))
 END walk_transfer

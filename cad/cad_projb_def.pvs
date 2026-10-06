@@ -1,6 +1,6 @@
 cad_projb_def: THEORY
 %----------------------------------------------------------------------------
-% A smaller projection for the bottom step, executable (PROJ_PLAN.md P2).
+% A smaller projection for the bottom step, executable.
 %
 % For the family G one level above the line, keep for each member g only
 %   kt(g)            the degree of its top coefficient that does not
@@ -19,8 +19,7 @@ cad_projb_def: THEORY
 % projb is normalized, without constants and repetitions (cad_projn_def's
 % clean); pdownb(G) is the family it gives, split into mpoly_gcd_def's basis
 % (meant to be squarefree and pairwise coprime; neither is proved nor checked)
-% when the product check confirms the factorization (mpoly_cert_def's fsplit,
-% PROJ_PLAN.md P3).
+% when the product check confirms the factorization (mpoly_cert_def's fsplit).
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING col_tower_def

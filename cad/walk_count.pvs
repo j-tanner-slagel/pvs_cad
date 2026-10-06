@@ -1,7 +1,6 @@
 walk_count: THEORY
 %----------------------------------------------------------------------------
-% Counting facts for the completeness of the walk's search
-% (COMPLETENESS_PLAN C6, part 1).
+% Counting facts for the completeness of the walk's search.
 %
 % At an exact oracle msg(ys) the walk's bisection stops a gap when every
 % live member has at most one root there and any two members with a root

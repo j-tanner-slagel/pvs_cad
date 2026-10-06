@@ -1,6 +1,6 @@
 ring_det: THEORY
 %----------------------------------------------------------------------------
-% The determinant of a matrix of polynomials (Phase 4).
+% The determinant of a matrix of polynomials.
 %
 % A matrix is a function of two indices into mpoly; only the entries below
 % the size matter.  det is the Laplace expansion along the first row, a
@@ -20,16 +20,16 @@ ring_det: THEORY
 BEGIN
   IMPORTING mpoly_arith
 
-  Mat: TYPE = [nat, nat -> mpoly]
+  MMat: TYPE = [nat, nat -> mpoly]
   RMat: TYPE = [nat, nat -> real]
-  M: VAR Mat
+  M: VAR MMat
   R: VAR RMat
   n, i, j, a, b: VAR nat
   ys: VAR list[real]
   p: VAR mpoly
 
   %% the matrix with row i and column j removed
-  minor(M, i, j): Mat =
+  minor(M, i, j): MMat =
     LAMBDA (a, b: nat): M(IF a < i THEN a ELSE a + 1 ENDIF, IF b < j THEN b ELSE b + 1 ENDIF)
   rminor(R, i, j): RMat =
     LAMBDA (a, b: nat): R(IF a < i THEN a ELSE a + 1 ENDIF, IF b < j THEN b ELSE b + 1 ENDIF)
@@ -61,7 +61,7 @@ BEGIN
   ev_minor: LEMMA ev(minor(M, i, j), ys) = rminor(ev(M, ys), i, j)
   meval_msgn: LEMMA meval(msgn(j))(ys) = rsgn(j)
 
-  detl_eval: LEMMA FORALL (n, j: nat, M: Mat, ys: list[real]):
+  detl_eval: LEMMA FORALL (n, j: nat, M: MMat, ys: list[real]):
     meval(detl(n, M, j))(ys) = rdetl(n, ev(M, ys), j)
   det_eval: THEOREM meval(det(n, M))(ys) = rdet(n, ev(M, ys))
 END ring_det

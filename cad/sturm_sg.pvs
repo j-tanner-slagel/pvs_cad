@@ -1,22 +1,23 @@
 sturm_sg: THEORY
 %----------------------------------------------------------------------------
-% Sturm counting THROUGH A SIGN ORACLE (FINISH_PLAN stage S1).
+% Sturm counting THROUGH A SIGN ORACLE.
 %
-% alg_sturm counts the roots of f(., value(a)) for one algebraic coordinate.
-% Nothing in its argument is specific to that: fchain_sturm holds at ANY real
-% valuation ys, and rchain_sg_at says the chain built from the oracle msg(ys)
-% is the chain at ys.  So the same counts are stated here for an arbitrary
-% sg: SG and proved at sg = msg(ys), with ys of any length -- which is what
+% Sturm's theorem counts the roots of a polynomial at one valuation:
+% fchain_sturm holds at ANY real valuation ys, and rchain_sg_at says the chain
+% built from the oracle msg(ys) is the chain at ys.  So the counts are stated
+% here for an arbitrary sg: SG and proved at sg = msg(ys), with ys of any
+% length -- which is what
 % lets one lifting serve every level, and what makes the computation's
 % dependence on the parameters visible as a finite list of oracle reads.
 %
 % A chain entry is read at a rational y0 as sg(sub1(c, y0)), where sub1
 % substitutes the main variable INSIDE the mpoly ring (Horner over madd and
-% mscal).  That replaces alg_lift's mswap + partial_eval route and needs no
-% variable swap at all.
+% mscal), with no variable swap.  sign3_scale: a sign is a positive multiple
+% of the value, so counting the sign changes of signs counts those of the
+% values.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING alg_sturm
+  IMPORTING nsc_scale, sg_chain2
 
   sg: VAR SG
   ys: VAR list[real]
@@ -37,12 +38,12 @@ BEGIN
   %% THE REDUCED CHAIN (Collins): sg_chain2's rchain2_sg, each step divided
   %% by the previous leading coefficient to the degree-drop power, the
   %% division checked exact at run time.  At msg(ys) it is, entry by entry,
-  %% a POSITIVE multiple of Phase 3's fchain (schain_prop), and sign
+  %% a POSITIVE multiple of branch_prs's fchain (schain_prop), and sign
   %% variations, entry signs, leading signs and degrees do not see the
   %% factor -- that is all the counts below use.  Before 2026-09-22 this was
   %% the unreduced rchain_sg, equal to fchain, whose coefficients carry
   %% extraneous powers of leading coefficients; as the reads of the walk they
-  %% bloated the read closure at four variables (FINISH_PLAN 3f/3g).
+  %% bloated the read closure at four variables.
   schain(k, sg, f): list[list[mpoly]] = cons(f, rchain2_sg(k, f, lderiv(f), mconst(1), 0, sg))
   slc?(k, sg, f): bool = length(f) >= 2 AND sg(llast(f)) /= 0 AND length(f) <= k
   sign3_posmul: LEMMA FORALL (c: posreal, v: real): sign3(c * v) = sign3(v)
@@ -91,6 +92,10 @@ BEGIN
   schain_entry: LEMMA slc?(k, msg(ys), f) AND i < length(fchain(k, f, ys)) IMPLIES
     sent(msg(ys), nthl(schain(k, msg(ys), f), i), y0)
     = sign3(polynomial(carr(fchain(k, f, ys), ys)(i), cdeg(fchain(k, f, ys))(i))(y0))
+
+  %% every real is a POSITIVE multiple of its own sign, which is what lets
+  %% nsc_scale turn counting the signs into counting the values
+  sign3_scale: LEMMA FORALL (v: real): EXISTS (cp: posreal): sign3(v) = cp * v
 
   svar_nsc: LEMMA slc?(k, msg(ys), f) IMPLIES svar(k, msg(ys), f, y0) =
     number_sign_changes(LAMBDA (i: nat):
@@ -166,15 +171,10 @@ BEGIN
     IMPLIES left(k, msg(ys), f, y0) >= 0
   right_nneg: THEOREM slc?(k, msg(ys), f) AND meval(mpol(f))(cons(y1, ys)) /= 0
     IMPLIES right(k, msg(ys), f, y1) >= 0
-  left_zero: THEOREM slc?(k, msg(ys), f) AND meval(mpol(f))(cons(y0, ys)) /= 0
+  left_zero_sg: THEOREM slc?(k, msg(ys), f) AND meval(mpol(f))(cons(y0, ys)) /= 0
     AND left(k, msg(ys), f, y0) = 0
     IMPLIES FORALL (z: real): z <= y0 IMPLIES meval(mpol(f))(cons(z, ys)) /= 0
-  right_zero: THEOREM slc?(k, msg(ys), f) AND meval(mpol(f))(cons(y1, ys)) /= 0
+  right_zero_sg: THEOREM slc?(k, msg(ys), f) AND meval(mpol(f))(cons(y1, ys)) /= 0
     AND right(k, msg(ys), f, y1) = 0
     IMPLIES FORALL (z: real): z > y1 IMPLIES meval(mpol(f))(cons(z, ys)) /= 0
-
-  captures: THEOREM slc?(k, msg(ys), f) AND ends?(ys, f, y0, y1)
-    AND cnt(k, msg(ys), f, y0, y1) = total(k, msg(ys), f)
-    IMPLIES FORALL (z: real): meval(mpol(f))(cons(z, ys)) = 0
-      IMPLIES (y0 < z AND z <= y1)
 END sturm_sg

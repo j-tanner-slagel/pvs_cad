@@ -1,13 +1,13 @@
 walk_search: THEORY
 %----------------------------------------------------------------------------
 % The walk's search succeeds at every exact oracle, given enough fuel, and
-% more fuel changes nothing (COMPLETENESS_PLAN C6).
+% more fuel changes nothing.
 %
 % seps_n widens (swide), then bisects (sint, splitting at the first probe
 % spick finds where no live member vanishes).  Each search returns its
 % FIRST success, so once it succeeds within some fuel it returns the same
 % for every larger fuel (spick_mono, sint_mono, swide_mono).  At an exact
-% oracle with a certified family (C5) it does succeed:
+% oracle with a certified family it does succeed:
 %   swide  past every root of the product the widening condition holds
 %          (swide_exists: lo_exist/hi_exist, left_pos/right_pos);
 %   spick  the probes are distinct, so more than total(...) of them cannot

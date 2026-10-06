@@ -1,7 +1,7 @@
 mpoly_coefs: THEORY
 %----------------------------------------------------------------------------
 % Bridge between the recursive representation and NASALib's univariate
-% polynomials (Phase 1, used for the uniqueness of normal forms).
+% polynomials (used for the uniqueness of normal forms).
 %
 % For a coefficient list l and a valuation ys of the remaining variables,
 % coefs(l, ys) is the real coefficient sequence of the univariate polynomial

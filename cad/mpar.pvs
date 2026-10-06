@@ -1,23 +1,18 @@
 mpar: THEORY
 %----------------------------------------------------------------------------
 % Continuity in ALL coordinates, and persistence of finitely many signs, in
-% many parameters (FINISH_PLAN 3i, stage N1).
+% many parameters.
 %
 % near?(vs1, vs0, d): the two valuations have the same length and every
 % coordinate of vs1 is within d of the one of vs0.  meval is continuous for
 % this (mev_mcont, by induction on the term through prod_cont), so finitely
-% many polynomials each nonzero at vs0 -- or identically zero, the null entry
-% that ends a chain (pz?) -- keep their signs on a neighbourhood of vs0
-% (msg_mpers).  sign_pers (one coordinate) and joint_cont (two) are the
-% special cases the three-quantifier proof used; the n-level proof moves
-% every coordinate at once.
+% many polynomials each nonzero at vs0 keep their signs on a neighbourhood
+% of vs0.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING walk_same
+  IMPORTING mpoly_def, reals@abs_lems, reals@real_orders, structures@listn
 
-  u, h: VAR mpoly
-  t: VAR list[mpoly]
-  R: VAR list[mpoly]
+  u: VAR mpoly
   vs, vs0, vs1: VAR list[real]
   x, x0, a, b, a0, b0: VAR real
   d, d1, e: VAR posreal
@@ -43,11 +38,4 @@ BEGIN
 
   mev_mcont: THEOREM FORALL u: FORALL vs0: FORALL e: EXISTS d: FORALL vs1:
     near?(vs1, vs0, d) IMPLIES abs(meval(u)(vs1) - meval(u)(vs0)) < e
-
-  %% one polynomial nonzero at vs0, or identically zero
-  msg_mpers1: LEMMA meval(u)(vs0) /= 0 OR az?(u) IMPLIES
-    EXISTS d: FORALL vs1: near?(vs1, vs0, d) IMPLIES msg(vs1)(u) = msg(vs0)(u)
-
-  msg_mpers: THEOREM FORALL R: pz?(R, vs0) IMPLIES
-    EXISTS d: FORALL vs1: near?(vs1, vs0, d) IMPLIES agree(msg(vs1), msg(vs0), R)
 END mpar

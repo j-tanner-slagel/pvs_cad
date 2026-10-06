@@ -1,7 +1,6 @@
 cpoly_div: THEORY
 %----------------------------------------------------------------------------
-% Divisibility and common divisors of complex polynomials
-% (COLLINS_PLAN.md M-B).
+% Divisibility and common divisors of complex polynomials.
 %
 % cdvd?(H, P): P = H * Q for a polynomial Q.  ccd?(F, G, k): F and G have a
 % common monic divisor of degree k, written as a product of k linear factors

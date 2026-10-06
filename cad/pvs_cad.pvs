@@ -11,11 +11,9 @@ pvs_cad: THEORY
 % nzreal, and other real terms in a formula given to (cad), need gform_ok).
 % See cad_showcase.
 % It does not import every theorem of the library: col_line (col_cells),
-% col_found_ok (col_found_cad), cad_verified, cad_found_ok, cad_sa (the
-% cells quantifier-free definable), qe_all and complete_all are outside its
-% import closure -- import those.  The library's other strategies
-% need their own theories: (alg-roots) alg_strategy, (poly-sign) and
-% (poly-nosign) sgn_prune.
+% col_found_ok (col_found_cad), decb_run (decb_cad_run), cad_sa (the cells
+% quantifier-free definable) and qelim_ok are outside its import closure --
+% import those.
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING cad_decide8, qe8, gform_ok, mpoly_embed, cad_endgame

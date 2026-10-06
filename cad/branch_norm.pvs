@@ -1,6 +1,6 @@
 branch_norm: THEORY
 %----------------------------------------------------------------------------
-% Determining the degree symbolically (Phase 3).
+% Determining the degree symbolically.
 %
 % A polynomial in the eliminated variable x is a list of mpoly coefficients in
 % the parameters, lowest degree first; its value at a real point x and a real

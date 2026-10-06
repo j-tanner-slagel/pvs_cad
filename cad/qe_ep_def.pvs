@@ -1,7 +1,6 @@
 qe_ep_def: THEORY
 %----------------------------------------------------------------------------
-% Quantifier-free comparison with a real algebraic number (GAP_PLAN.md
-% Tier 2, QE_PLAN.md "EP").  Executable.
+% Quantifier-free comparison with a real algebraic number.  Executable.
 %
 % An algebraic number b (value(b), the one root of b`p in [b`lb, b`ub]) is
 % described by an EP record e, checked at run time by epok?(b)(e):

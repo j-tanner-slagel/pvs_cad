@@ -1,13 +1,13 @@
 cpoly_unique: THEORY
 %----------------------------------------------------------------------------
-% Complex polynomials: roots are few, coefficients are determined (Phase 5).
+% Complex polynomials: roots are few, coefficients are determined.
 %
 % NASALib's complex@fundamental_algebra gives the existence of a root and
 % one linear factor (polynomial_zero_factor) but nothing about how many roots
 % a polynomial has or whether its coefficients are determined by its values.
 % Both are needed to factor a polynomial into linear factors with its leading
-% coefficient in front, which is the form the root-continuity argument of
-% Phase 5 uses.  roots_bound: a polynomial of degree at most n that vanishes
+% coefficient in front, which is the form the root-continuity argument
+% (croot_near) uses.  roots_bound: a polynomial of degree at most n that vanishes
 % at n + 1 distinct points vanishes everywhere.  coefs_unique: a polynomial
 % that vanishes everywhere has zero coefficients up to its degree.
 % factor_lc: when p = (x - y) q with p of degree n, the leading coefficient of
@@ -25,9 +25,6 @@ BEGIN
     (FORALL (i, j: nat): i <= n AND j <= n AND i /= j IMPLIES r(i) /= r(j)) AND
     (FORALL (i: nat): i <= n IMPLIES cpolynomial(a, n)(r(i)) = real_(0))
     IMPLIES FORALL (z: complex): cpolynomial(a, n)(z) = real_(0)
-
-  %% distinct points, as many as one wants: the naturals
-  nat_points: LEMMA FORALL (i, j: nat): i /= j IMPLIES real_(i) /= real_(j)
 
   %% a polynomial that is the zero function has zero coefficients
   coefs_unique: THEOREM FORALL (n: nat): FORALL (a: sequence[complex]):

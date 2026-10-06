@@ -81,7 +81,7 @@
     (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
     (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (|rts| CONST-DECL "list[Alg]" |cad_lift| NIL)
+    (|rts| CONST-DECL "list[Alg]" |sect_inv| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|incr?| DEF-DECL "bool" |cell1| NIL)
     (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
@@ -267,7 +267,7 @@
    (|col_cad_run| SUBTYPE "length[nat](A)"
     "below[length[list[list[mpoly]]](ctw(F, k))]" (66 55 66 64))))
  (|col_cad_run| 0
-  (|col_cad_run-0| "" 3999860293
+  (|col_cad_run-1| "" 4000267852
    ("" (SKEEP)
     (("" (LEMMA "ctw_shape" ("k" "k" "F" "F"))
       (("" (ASSERT)
@@ -280,7 +280,7 @@
                     (("1" (LABEL "lp" -1)
                       (("1" (LEMMA "dropn_len" ("m" "k" "p" "p"))
                         (("1" (ASSERT)
-                          (("1" (LEMMA "len1" ("p" "dropn(k, p)"))
+                          (("1" (LEMMA "len1_run" ("p" "dropn(k, p)"))
                             (("1" (ASSERT)
                               (("1"
                                 (LEMMA "sortu_incr"
@@ -478,7 +478,7 @@
     (|scell| CONST-DECL "[list[real] -> bool]" |cad_run| NIL)
     (|Sect| TYPE-DECL NIL |sect_inv| NIL)
     (|csects| CONST-DECL "list[Sect]" |col_run| NIL)
-    (|rts| CONST-DECL "list[Alg]" |cad_lift| NIL)
+    (|rts| CONST-DECL "list[Alg]" |sect_inv| NIL)
     (|ccell| CONST-DECL "[list[real] -> bool]" |col_run| NIL)
     (|tcell_cover| FORMULA-DECL NIL |cad_tower| NIL)
     (|Tower| TYPE-EQ-DECL NIL |towern_def| NIL)
@@ -492,7 +492,7 @@
     (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
     (|allroots| DEF-DECL "list[Alg]" |cell1| NIL)
     (|pbot| DEF-DECL "list[list[mpoly]]" |col_tower_def| NIL)
-    (|len1| FORMULA-DECL NIL |cad_run| NIL)
+    (|len1_run| FORMULA-DECL NIL |cad_run| NIL)
     (|dropn| DEF-DECL "list[real]" |cad_tower| NIL)
     (|dropn_len| FORMULA-DECL NIL |cad_tower| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)

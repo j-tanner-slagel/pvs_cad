@@ -1,7 +1,6 @@
 col_towerb: THEORY
 %----------------------------------------------------------------------------
-% The Collins tower over a base cell where its lowest family is delineable
-% (PROJ_PLAN.md P2).
+% The Collins tower over a base cell where its lowest family is delineable.
 %
 % ptower_cad2: a chained tower whose lowest family is delineable (delin_cl?)
 % over a connected C is a CAD over C.  The cells of the lowest stack are

@@ -242,6 +242,39 @@
      NIL)
     (|length| DEF-DECL "nat" |list_props| NIL))
    SHOSTAK (|pl| SUBTYPE "torat(l)" "Polylist" (46 50 46 58))))
+ (|len_pos| 0
+  (|len_pos-0| "" 4000262700
+   ("" (INDUCT "l")
+    (("1" (SKOSIMP*) NIL NIL)
+     ("2" (SKOSIMP*) (("2" (EXPAND "length" 1) (("2" (ASSERT) NIL NIL)) NIL))
+      NIL))
+    NIL)
+   ((|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
+     NIL)
+    (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|length| DEF-DECL "nat" |list_props| NIL)
+    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
+    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
+    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
+    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL))
+   SHOSTAK))
  (|pl_eval| 0
   (|pl_eval-0| "" 3998422661
    ("" (SKOSIMP*)
@@ -366,7 +399,7 @@
      |real_props| NIL)
     (|min| CONST-DECL "{p: real | p <= m AND p <= n}" |real_defs| NIL)
     (|torat_length| FORMULA-DECL NIL |cell1| NIL)
-    (|len_pos| FORMULA-DECL NIL |far_sign| NIL)
+    (|len_pos| FORMULA-DECL NIL |cell1| NIL)
     (|list_inclusive| FORMULA-DECL NIL |list_adt| NIL)
     (|earr_eval| FORMULA-DECL NIL |mpoly_real| NIL)
     (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL))
@@ -438,7 +471,7 @@
  (|allroots_TCC1| 0
   (|allroots_TCC1-1| NIL 3998422373 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
    (|allroots| SUBTYPE "F" "(list_adt[list_adt[mpoly_adt.mpoly].list].cons?)"
-    (56 54 56 55))))
+    (60 54 60 55))))
  (|allroots_TCC2| 0
   (|allroots_TCC2-1| NIL 3998422373 ("" (TERMINATION-TCC) NIL NIL)
    ((|length| DEF-DECL "nat" |list_props| NIL)
@@ -449,144 +482,7 @@
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
    NIL
    (|allroots| TERMINATION "allroots(cdr[list[mpoly]](F))"
-    #A((3) BASE-CHAR . "NIL") (56 59 56 75))))
- (|allroots_sound| 0
-  (|allroots_sound-4| "" 3998506041
-   ("" (INDUCT "F")
-    (("1" (SKOSIMP*)
-      (("1" (EXPAND "allroots" -1)
-        (("1" (EXPAND "member" -1) (("1" (PROPAX) NIL NIL)) NIL)) NIL))
-      NIL)
-     ("2" (SKOSIMP*)
-      (("2" (EXPAND "allroots" -2 1)
-        (("2"
-          (LEMMA "member_append_fi"
-           ("i" "a!1" "l1" "rootsl(cons1_var!1)" "l2" "allroots(cons2_var!1)"))
-          (("2" (ASSERT)
-            (("2" (SPLIT -1)
-              (("1" (EXPAND "rootsl" -1)
-                (("1" (LIFT-IF -1)
-                  (("1" (ASSERT)
-                    (("1"
-                      (LEMMA "roots_alg" ("pl" "pl(cons1_var!1)" "a" "a!1"))
-                      (("1" (REWRITE "pl_eval" -1)
-                        (("1" (ASSERT)
-                          (("1" (INST 1 "cons1_var!1")
-                            (("1" (SPLIT -1)
-                              (("1" (ASSERT)
-                                (("1" (FLATTEN)
-                                  (("1" (ASSERT)
-                                    (("1" (CASE "deg(pl(cons1_var!1)) > 0")
-                                      (("1" (PROPAX) NIL NIL)
-                                       ("2" (ASSERT) NIL NIL))
-                                      NIL))
-                                    NIL))
-                                  NIL))
-                                NIL)
-                               ("2" (ASSERT) NIL NIL)
-                               ("3" (ASSERT)
-                                (("3"
-                                  (LEMMA "rootsc_roots"
-                                   ("pl" "pl(cons1_var!1)"))
-                                  (("3" (CASE "deg(pl(cons1_var!1)) > 0")
-                                    (("1" (ASSERT) NIL NIL)
-                                     ("2" (ASSERT) NIL NIL))
-                                    NIL))
-                                  NIL))
-                                NIL))
-                              NIL))
-                            NIL))
-                          NIL))
-                        NIL))
-                      NIL))
-                    NIL))
-                  NIL))
-                NIL)
-               ("2" (ASSERT)
-                (("2" (EXPAND "member" 1 1)
-                  (("2" (ASSERT)
-                    (("2" (INST -2 "a!1")
-                      (("2" (ASSERT)
-                        (("2" (SKOSIMP*)
-                          (("2" (INST 1 "f!1")
-                            (("2" (EXPAND "member" -1)
-                              (("2" (ASSERT)
-                                (("2" (EXPAND "member" -2)
-                                  (("2" (PROP) NIL NIL)) NIL))
-                                NIL))
-                              NIL))
-                            NIL))
-                          NIL))
-                        NIL))
-                      NIL))
-                    NIL))
-                  NIL))
-                NIL))
-              NIL))
-            NIL))
-          NIL))
-        NIL))
-      NIL))
-    NIL)
-   ((|rootsl| CONST-DECL "list[Alg]" |cell1| NIL)
-    (|member_append_fi| FORMULA-DECL NIL |more_list_props| |structures|)
-    (|roots_alg| FORMULA-DECL NIL |alg_isolate| NIL)
-    (|rootsc_roots| FORMULA-DECL NIL |alg_fast| NIL)
-    (|pl_eval| FORMULA-DECL NIL |cell1| NIL)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
-    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
-     "(strict_total_order?[real])" |real_props| NIL)
-    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
-    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL)
-    (|value| CONST-DECL "real" |alg_def| NIL)
-    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
-    (|mpol| ADT-CONSTRUCTOR-DECL "[list[mpoly] -> (mpol?)]" |mpoly_adt| NIL)
-    (|mpol?| ADT-RECOGNIZER-DECL "[mpoly -> boolean]" |mpoly_adt| NIL)
-    (|meval| DEF-DECL "real" |mpoly_def| NIL)
-    (|pl| CONST-DECL "Polylist" |cell1| NIL)
-    (|deg| CONST-DECL "{d: below(length(pl)) |
-   (d > 0 IFF EXISTS (j: below(length(pl))): j > 0 AND nth(pl, j) /= 0) AND
-    (d > 0 IMPLIES
-      (FORALL (j: below(length(pl))): j > d IMPLIES nth(pl, j) = 0))
-     AND (d > 0 IMPLIES nth(pl, d) /= 0)}"
-     |polylist| |Sturm|)
-    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (|nth| DEF-DECL "T" |list_props| NIL)
-    (|below| TYPE-EQ-DECL NIL |nat_types| NIL)
-    (/= CONST-DECL "boolean" |notequal| NIL)
-    (IFF CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|below| TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|length| DEF-DECL "nat" |list_props| NIL)
-    (< CONST-DECL "bool" |reals| NIL)
-    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (>= CONST-DECL "bool" |reals| NIL)
-    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
-    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
-    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
-    (> CONST-DECL "bool" |reals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|allroots| DEF-DECL "list[Alg]" |cell1| NIL)
-    (|member| DEF-DECL "bool" |list_props| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
-    (|alg?| CONST-DECL "bool" |alg_def| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
-    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
-    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   SHOSTAK))
+    #A((3) BASE-CHAR . "NIL") (60 59 60 75))))
  (|allroots_complete| 0
   (|allroots_complete-4| "" 3998506016
    ("" (INDUCT "F")
@@ -992,7 +888,7 @@
     (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
     (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|same_sign| FORMULA-DECL NIL |sector_rep| NIL)
-    (|pf| CONST-DECL "[real -> real]" |pos_dec| NIL)
+    (|pf| CONST-DECL "[real -> real]" |mpoly_real| NIL)
     (|real_gt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
@@ -1108,7 +1004,7 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|cmpf| SUBTYPE "fuel - 1" "nat" (81 14 81 22))))
+   NIL (|cmpf| SUBTYPE "fuel - 1" "nat" (83 14 83 22))))
  (|cmpf_TCC2| 0
   (|cmpf_TCC2-0| "" 3998682594
    ("" (SKEEP) (("" (USE "refine_alg") (("" (ASSERT) NIL NIL)) NIL)) NIL)
@@ -1123,7 +1019,7 @@
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
-   SHOSTAK (|cmpf| SUBTYPE "refine(a)" "Alg" (81 24 81 33))))
+   SHOSTAK (|cmpf| SUBTYPE "refine(a)" "Alg" (83 24 83 33))))
  (|cmpf_TCC3| 0
   (|cmpf_TCC3-0| "" 3998682595
    ("" (SKEEP) (("" (USE "refine_alg") (("" (ASSERT) NIL NIL)) NIL)) NIL)
@@ -1138,7 +1034,7 @@
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
-   SHOSTAK (|cmpf| SUBTYPE "refine(b)" "Alg" (81 35 81 44))))
+   SHOSTAK (|cmpf| SUBTYPE "refine(b)" "Alg" (83 35 83 44))))
  (|cmpf_TCC4| 0
   (|cmpf_TCC4-1| NIL 3998505437 ("" (TERMINATION-TCC) NIL NIL)
    ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
@@ -1147,7 +1043,7 @@
     (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
    NIL
    (|cmpf| TERMINATION "cmpf(fuel - 1, refine(a), refine(b))"
-    #A((3) BASE-CHAR . "NIL") (81 9 81 45))))
+    #A((3) BASE-CHAR . "NIL") (83 9 83 45))))
  (|cmpf_def| 0
   (|cmpf_def-0| "" 3998505970
    ("" (INDUCT "fuel")
@@ -1394,7 +1290,7 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|ins| SUBTYPE "rs" "(list_adt[Alg].cons?)" (99 21 99 23))))
+   NIL (|ins| SUBTYPE "rs" "(list_adt[Alg].cons?)" (101 21 101 23))))
  (|ins_TCC2| 0
   (|ins_TCC2-6| "" 3998682811
    ("" (SKEEP)
@@ -1415,7 +1311,7 @@
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
    SHOSTAK
    (|ins| TERMINATION "ins(a, cdr[Alg](rs))" #A((3) BASE-CHAR . "NIL")
-    (101 23 101 38))))
+    (103 23 103 38))))
  (|sortu0_TCC1| 0
   (|sortu0_TCC1-1| NIL 3999813987 ("" (SUBTYPE-TCC) NIL NIL)
    ((|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
@@ -1429,7 +1325,7 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|sortu0| SUBTYPE "rs" "(list_adt[Alg].cons?)" (109 45 109 47))))
+   NIL (|sortu0| SUBTYPE "rs" "(list_adt[Alg].cons?)" (110 45 110 47))))
  (|sortu0_TCC2| 0
   (|sortu0_TCC2-1| NIL 3999813987 ("" (TERMINATION-TCC) NIL NIL)
    ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
@@ -1455,7 +1351,7 @@
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
    NIL
    (|sortu0| TERMINATION "sortu0(cdr[Alg](rs))" #A((3) BASE-CHAR . "NIL")
-    (109 50 109 65))))
+    (110 50 110 65))))
  (|incr?_TCC1| 0
   (|incr?_TCC1-1| NIL 3998422373 ("" (SUBTYPE-TCC) NIL NIL)
    ((|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
@@ -1470,7 +1366,7 @@
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
    NIL
-   (|incr?| SUBTYPE "cdr[Alg](rs)" "(list_adt[Alg].cons?)" (114 36 114 43))))
+   (|incr?| SUBTYPE "cdr[Alg](rs)" "(list_adt[Alg].cons?)" (115 36 115 43))))
  (|mem_cons_a| 0
   (|mem_cons_a-0| "" 3998423454
    ("" (SKOSIMP*) (("" (EXPAND "member" 1 1) (("" (PROPAX) NIL NIL)) NIL)) NIL)
@@ -2109,7 +2005,7 @@
     (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
     (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
-   NIL (|incrv| SUBTYPE "vl" "(list_adt[real].cons?)" (133 30 133 32))))
+   NIL (|incrv| SUBTYPE "vl" "(list_adt[real].cons?)" (134 30 134 32))))
  (|incrv_TCC2| 0
   (|incrv_TCC2-1| NIL 3999818494 ("" (SUBTYPE-TCC) NIL NIL)
    ((|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
@@ -2126,7 +2022,7 @@
     (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    NIL
-   (|incrv| SUBTYPE "cdr[real](vl)" "(list_adt[real].cons?)" (133 64 133 71))))
+   (|incrv| SUBTYPE "cdr[real](vl)" "(list_adt[real].cons?)" (134 64 134 71))))
  (|incrv_TCC3| 0
   (|incrv_TCC3-1| NIL 3999818494 ("" (TERMINATION-TCC) NIL NIL)
    ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
@@ -2150,7 +2046,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    NIL
    (|incrv| TERMINATION "incrv(cdr[real](vl))" #A((3) BASE-CHAR . "NIL")
-    (133 77 133 91))))
+    (134 77 134 91))))
  (|incr_v| 0
   (|incr_v-0| "" 3999818522
    ("" (INDUCT "rs")
@@ -2670,7 +2566,7 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|gapf| SUBTYPE "fuel - 1" "nat" (150 14 150 22))))
+   NIL (|gapf| SUBTYPE "fuel - 1" "nat" (151 14 151 22))))
  (|gapf_TCC2| 0
   (|gapf_TCC2-0| "" 3998682597
    ("" (SKEEP) (("" (USE "refine_alg") (("" (ASSERT) NIL NIL)) NIL)) NIL)
@@ -2685,7 +2581,7 @@
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
-   SHOSTAK (|gapf| SUBTYPE "refine(a)" "Alg" (150 24 150 33))))
+   SHOSTAK (|gapf| SUBTYPE "refine(a)" "Alg" (151 24 151 33))))
  (|gapf_TCC3| 0
   (|gapf_TCC3-3| "" 3998682814
    ("" (SKEEP)
@@ -2703,7 +2599,7 @@
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL))
-   SHOSTAK (|gapf| SUBTYPE "refine(b)" "Alg" (150 35 150 44))))
+   SHOSTAK (|gapf| SUBTYPE "refine(b)" "Alg" (151 35 151 44))))
  (|gapf_TCC4| 0
   (|gapf_TCC4-1| NIL 3998424164 ("" (TERMINATION-TCC) NIL NIL)
    ((|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
@@ -2712,7 +2608,7 @@
     (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
    NIL
    (|gapf| TERMINATION "gapf(fuel - 1, refine(a), refine(b))"
-    #A((3) BASE-CHAR . "NIL") (150 9 150 45))))
+    #A((3) BASE-CHAR . "NIL") (151 9 151 45))))
  (|gapf_between| 0
   (|gapf_between-4| "" 3998424491
    ("" (INDUCT "fuel")
@@ -2859,7 +2755,7 @@
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL))
    SHOSTAK
    (|gapw| WELL-FOUNDED "real_ord_ep(dist(a, b))" #A((3) BASE-CHAR . "NIL")
-    (165 26 165 49))))
+    (166 26 166 49))))
  (|gapw_TCC2| 0
   (|gapw_TCC2-0| "" 3999557386
    ("" (SKEEP)
@@ -2880,7 +2776,7 @@
     (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
     (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
     (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL))
-   SHOSTAK (|gapw| SUBTYPE "refine(a)" "Alg" (164 14 164 23))))
+   SHOSTAK (|gapw| SUBTYPE "refine(a)" "Alg" (165 14 165 23))))
  (|gapw_TCC3| 0
   (|gapw_TCC3-0| "" 3999557387
    ("" (SKEEP)
@@ -2934,7 +2830,7 @@
    SHOSTAK
    (|gapw| SUBTYPE "refine(b)"
     "{b: Alg | (booleans.NOT)(alg_order.alg_eq(alg_def.refine(cell1.a), b))}"
-    (164 25 164 34))))
+    (165 25 165 34))))
  (|gapw_TCC4| 0
   (|gapw_TCC4-0| "" 3999557388
    ("" (SKEEP)
@@ -2958,7 +2854,7 @@
     (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL))
    SHOSTAK
    (|gapw| TERMINATION "gapw(refine(a), refine(b))" #A((3) BASE-CHAR . "NIL")
-    (164 9 164 35))))
+    (165 9 165 35))))
  (|gapw_inv_TCC1| 0
   (|gapw_inv_TCC1-0| "" 3999557412
    ("" (SKEEP)
@@ -2981,7 +2877,7 @@
    SHOSTAK
    (|gapw_inv| SUBTYPE "q`2"
     "{b: Alg | (booleans.NOT)(alg_order.alg_eq(cell1.q`1, b))}"
-    (168 62 168 65))))
+    (169 62 169 65))))
  (|gapw_inv| 0
   (|gapw_inv-0| "" 3999557542
    ("" (SKEEP)
@@ -3360,7 +3256,7 @@
     (|rat_alg_alg| FORMULA-DECL NIL |alg_def| NIL)
     (|rat_plus_rat_is_rat| APPLICATION-JUDGEMENT "rat" |rationals| NIL))
    SHOSTAK
-   (|gaps| SUBTYPE "rat_alg(car[Alg](rs)`ub + 1)" "Alg" (185 42 185 65))))
+   (|gaps| SUBTYPE "rat_alg(car[Alg](rs)`ub + 1)" "Alg" (186 42 186 65))))
  (|gaps_TCC2| 0
   (|gaps_TCC2-7| "" 3998682935
    ("" (SKEEP)
@@ -3408,7 +3304,7 @@
    SHOSTAK
    (|gaps| SUBTYPE
     "cons[alg](rat_alg(gap(car[Alg](rs), car[Alg](cdr[Alg](rs)))), gaps(cdr[Alg](rs)))"
-    "list[Alg]" (186 23 186 79))))
+    "list[Alg]" (187 23 187 79))))
  (|samples_TCC1| 0
   (|samples_TCC1-3| "" 3998682809
    ("" (USE "rat_alg_alg" ("r" "0")) (("" (ASSERT) NIL NIL)) NIL)
@@ -3421,7 +3317,7 @@
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
     (|rat_alg_alg| FORMULA-DECL NIL |alg_def| NIL))
-   SHOSTAK (|samples| SUBTYPE "rat_alg(0)" "Alg" (190 25 190 35))))
+   SHOSTAK (|samples| SUBTYPE "rat_alg(0)" "Alg" (191 25 191 35))))
  (|samples_TCC2| 0
   (|samples_TCC2-6| "" 3998682852
    ("" (SKEEP)
@@ -3440,7 +3336,7 @@
     (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
     (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
     (|every| ADT-DEF-DECL "boolean" |list_adt| NIL))
-   SHOSTAK (|samples| SUBTYPE "(: rat_alg(0) :)" "list[Alg]" (190 22 190 38))))
+   SHOSTAK (|samples| SUBTYPE "(: rat_alg(0) :)" "list[Alg]" (191 22 191 38))))
  (|samples_TCC3| 0
   (|samples_TCC3-5| "" 3998682853
    ("" (SKEEP) (("" (USE "rat_alg_alg" ("r" "car(rs)`lb - 1")) NIL NIL)) NIL)
@@ -3467,7 +3363,7 @@
     (|rat_alg_alg| FORMULA-DECL NIL |alg_def| NIL)
     (|rat_minus_rat_is_rat| APPLICATION-JUDGEMENT "rat" |rationals| NIL))
    SHOSTAK
-   (|samples| SUBTYPE "rat_alg(car[Alg](rs)`lb - 1)" "Alg" (190 49 190 72))))
+   (|samples| SUBTYPE "rat_alg(car[Alg](rs)`lb - 1)" "Alg" (191 49 191 72))))
  (|gaps_ok_incr| 0
   (|gaps_ok_incr-2| "" 3999557586
    ("" (INDUCT "rs")
@@ -3549,7 +3445,7 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|gaps_ok_nth| SUBTYPE "i" "below[length[Alg](rs)]" (200 18 200 19))))
+   NIL (|gaps_ok_nth| SUBTYPE "i" "below[length[Alg](rs)]" (201 18 201 19))))
  (|gaps_ok_nth| 0
   (|gaps_ok_nth-2| "" 3998424974
    ("" (INDUCT "rs")
@@ -3677,7 +3573,7 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|incr_nth| SUBTYPE "j" "below[length[Alg](rs)]" (205 18 205 19))))
+   NIL (|incr_nth| SUBTYPE "j" "below[length[Alg](rs)]" (206 18 206 19))))
  (|incr_nth| 0
   (|incr_nth-0| "" 3998425050
    ("" (INDUCT "rs")
@@ -3849,7 +3745,7 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|adj_between| SUBTYPE "i" "below[length[Alg](rs)]" (210 58 210 59))))
+   NIL (|adj_between| SUBTYPE "i" "below[length[Alg](rs)]" (211 58 211 59))))
  (|adj_between| 0
   (|adj_between-0| "" 3998425182
    ("" (INDUCT "rs")
@@ -4025,7 +3921,7 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|adj_norooot| SUBTYPE "i" "below[length[Alg](rs)]" (212 18 212 19))))
+   NIL (|adj_norooot| SUBTYPE "i" "below[length[Alg](rs)]" (213 18 213 19))))
  (|adj_norooot| 0
   (|adj_norooot-0| "" 3998425082
    ("" (SKEEP)
@@ -4134,7 +4030,7 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|gaps_nth| SUBTYPE "i" "below[length[Alg](rs)]" (214 31 214 32))))
+   NIL (|gaps_nth| SUBTYPE "i" "below[length[Alg](rs)]" (215 31 215 32))))
  (|gaps_nth| 0
   (|gaps_nth-2| "" 3998424993
    ("" (INDUCT "rs")
@@ -4332,7 +4228,7 @@
    NIL
    (|gaps_last| SUBTYPE "rs"
     "{l: list[Alg] | (booleans.NOT)(list_adt[Alg].null?(l))}"
-    (217 54 217 56))))
+    (218 54 218 56))))
  (|gaps_last| 0
   (|gaps_last-2| "" 3998425021
    ("" (INDUCT "rs")
@@ -4476,7 +4372,7 @@
    NIL
    (|incr_last| SUBTYPE "rs"
     "{l: list[Alg] | (booleans.NOT)(list_adt[Alg].null?(l))}"
-    (218 89 218 91))))
+    (219 89 219 91))))
  (|incr_last| 0
   (|incr_last-2| "" 3998424946
    ("" (INDUCT "rs")
@@ -4614,7 +4510,7 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|incr_first| SUBTYPE "rs" "(list_adt[Alg].cons?)" (219 77 219 79))))
+   NIL (|incr_first| SUBTYPE "rs" "(list_adt[Alg].cons?)" (220 77 220 79))))
  (|incr_first| 0
   (|incr_first-2| "" 3998424914
    ("" (INDUCT "rs")
@@ -4900,7 +4796,7 @@
    NIL
    (|above_last| SUBTYPE "rs"
     "{l: list[Alg] | (booleans.NOT)(list_adt[Alg].null?(l))}"
-    (232 59 232 61))))
+    (233 59 233 61))))
  (|above_last| 0
   (|above_last-0| "" 3998425320
    ("" (SKEEP)
@@ -4946,7 +4842,7 @@
    NIL
    (|last_mem| SUBTYPE "rs"
     "{l: list[Alg] | (booleans.NOT)(list_adt[Alg].null?(l))}"
-    (233 48 233 50))))
+    (234 48 234 50))))
  (|last_mem| 0
   (|last_mem-0| "" 3998425329
    ("" (SKEEP)
@@ -5079,6 +4975,35 @@
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|noroot_vals| FORMULA-DECL NIL |cell1| NIL)
     (|svec_same1| FORMULA-DECL NIL |cell1| NIL))
+   SHOSTAK))
+ (|svs1ok_complete| 0
+  (|svs1ok_complete-0| "" 4000262699
+   ("" (SKEEP)
+    (("" (EXPAND "svs1ok")
+      (("" (LEMMA "gaps_ok_incr")
+        (("" (INST -1 "sortu(allroots(F))")
+          (("" (LEMMA "sortu_incr")
+            (("" (INST -1 "allroots(F)") (("" (ASSERT) NIL NIL)) NIL)) NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|svs1ok| CONST-DECL "bool" |cell1| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
+    (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (|alg?| CONST-DECL "bool" |alg_def| NIL)
+    (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
+    (|sortu| CONST-DECL "list[Alg]" |cell1| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|allroots| DEF-DECL "list[Alg]" |cell1| NIL)
+    (|sortu_incr| FORMULA-DECL NIL |cell1| NIL)
+    (|gaps_ok_incr| FORMULA-DECL NIL |cell1| NIL))
    SHOSTAK))
  (|svs1_mem| 0
   (|svs1_mem-1| "" 4000196631
@@ -5318,7 +5243,7 @@
    NIL
    (|svs1_high| SUBTYPE "sortu(allroots(F))"
     "{l: list[Alg] | (booleans.NOT)(list_adt[Alg].null?(l))}"
-    (247 60 247 78))))
+    (251 60 251 78))))
  (|svs1_high| 0
   (|svs1_high-0| "" 3998425442
    ("" (SKEEP)
@@ -5446,7 +5371,7 @@
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
    NIL
    (|svs1_mid| SUBTYPE "i" "below[length[Alg](sortu(allroots(F)))]"
-    (250 34 250 35))))
+    (254 34 254 35))))
  (|svs1_mid| 0
   (|svs1_mid-0| "" 3998425499
    ("" (SKEEP)

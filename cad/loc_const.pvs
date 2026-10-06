@@ -1,7 +1,6 @@
 loc_const: THEORY
 %----------------------------------------------------------------------------
-% A predicate that is locally constant on a closed interval is constant on it
-% (FINISH_PLAN stage S4, step T4).
+% A predicate that is locally constant on a closed interval is constant on it.
 %
 % This is the connectedness of the real line, in the only form the transfer
 % theorem uses: if every point t of [a, b] has a neighbourhood on which P
@@ -19,9 +18,6 @@ BEGIN
   %% the points up to which P holds throughout
   upto(P, a, b): setof[real] =
     {t | a <= t AND t <= b AND FORALL u: a <= u AND u <= t IMPLIES P(u)}
-
-  upto_a: LEMMA a <= b AND P(a) IMPLIES upto(P, a, b)(a)
-  upto_bd: LEMMA upto(P, a, b)(t) IMPLIES t <= b
 
   upto_lub: LEMMA a <= b AND P(a) IMPLIES
     EXISTS c: least_upper_bound?(c, upto(P, a, b)) AND a <= c AND c <= b

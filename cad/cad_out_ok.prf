@@ -161,6 +161,100 @@
     (|kids| DEF-DECL "list[KD]" |cad_out| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
+ (|gap_lt| 0
+  (|gap_lt-0| "" 4000262712
+   ("" (SKEEP)
+    (("" (LEMMA "gap_root" ("F" "F" "ys" "ys" "lo" "lo" "hi" "hi"))
+      (("" (ASSERT)
+        (("" (EXPAND "gapf?" -1)
+          (("" (FLATTEN)
+            (("" (LEMMA "nzat_P" ("F" "F" "ys" "ys" "y0" "hi"))
+              (("" (ASSERT) NIL NIL)) NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|gap_root| FORMULA-DECL NIL |cad_roots| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|gapf?| CONST-DECL "bool" |walk_ok| NIL)
+    (|nzat_P| FORMULA-DECL NIL |walk_ok| NIL)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
+   SHOSTAK))
+ (|gr_nlt_hd| 0
+  (|gr_nlt_hd-0| "" 4000262712
+   ("" (SKEEP)
+    (("" (EXPAND "wsep?")
+      (("" (FLATTEN)
+        (("" (LEMMA "groots_ok" ("Y" "Y" "F" "F" "ys" "ys"))
+          (("" (ASSERT)
+            (("" (EXPAND "grok?")
+              (("" (FLATTEN)
+                (("" (LEMMA "nlt_zero" ("L" "groots(F, ys, Y)" "y" "car(Y)"))
+                  (("" (SPLIT -1)
+                    (("1" (PROPAX) NIL NIL)
+                     ("2" (SKEEP)
+                      (("2" (ASSERT)
+                        (("2" (INST -3 "w") (("2" (ASSERT) NIL NIL)) NIL))
+                        NIL))
+                      NIL))
+                    NIL))
+                  NIL))
+                NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|wsep?| CONST-DECL "bool" |cad_out_ok| NIL)
+    (|groots_ok| FORMULA-DECL NIL |cad_roots| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
+    (|grok?| CONST-DECL "bool" |cad_roots| NIL)
+    (|groots| DEF-DECL "list[real]" |cad_roots| NIL)
+    (|car| ADT-ACCESSOR-DECL "[(cons?) -> T]" |list_adt| NIL)
+    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
+    (|nlt_zero| FORMULA-DECL NIL |cad_fibre| NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
+   SHOSTAK))
  (|six_hd| 0
   (|six_hd-3| "" 3999728559
    ("" (SKEEP)
@@ -189,7 +283,7 @@
         NIL))
       NIL))
     NIL)
-   ((|gr_nlt_hd| FORMULA-DECL NIL |cad_gpar| NIL)
+   ((|gr_nlt_hd| FORMULA-DECL NIL |cad_out_ok| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
@@ -215,7 +309,7 @@
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|car| ADT-ACCESSOR-DECL "[(cons?) -> T]" |list_adt| NIL)
     (|grok?| CONST-DECL "bool" |cad_roots| NIL)
-    (|wsep?| CONST-DECL "bool" |cad_gpar| NIL)
+    (|wsep?| CONST-DECL "bool" |cad_out_ok| NIL)
     (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
      NIL)
     (|even_times_int_is_even| APPLICATION-JUDGEMENT "even_int" |integers| NIL)
@@ -311,7 +405,7 @@
     (|nlt| DEF-DECL "nat" |cad_fibre| NIL)
     (|grok?| CONST-DECL "bool" |cad_roots| NIL)
     (|groots_gap| FORMULA-DECL NIL |cad_roots| NIL)
-    (|gap_lt| FORMULA-DECL NIL |cad_gpar| NIL)
+    (|gap_lt| FORMULA-DECL NIL |cad_out_ok| NIL)
     (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
@@ -330,7 +424,7 @@
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|sepok_hd| FORMULA-DECL NIL |walk_ok| NIL)
     (|sepok?| DEF-DECL "bool" |walk_def| NIL)
-    (|wsep?| CONST-DECL "bool" |cad_gpar| NIL)
+    (|wsep?| CONST-DECL "bool" |cad_out_ok| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|six_gap| 0
@@ -391,7 +485,7 @@
     (|even_plus_even_is_even| APPLICATION-JUDGEMENT "even_int" |integers| NIL)
     (|member| DEF-DECL "bool" |list_props| NIL)
     (|groots_gap| FORMULA-DECL NIL |cad_roots| NIL)
-    (|gap_lt| FORMULA-DECL NIL |cad_gpar| NIL)
+    (|gap_lt| FORMULA-DECL NIL |cad_out_ok| NIL)
     (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
     (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
@@ -410,7 +504,7 @@
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|sepok_hd| FORMULA-DECL NIL |walk_ok| NIL)
     (|sepok?| DEF-DECL "bool" |walk_def| NIL)
-    (|wsep?| CONST-DECL "bool" |cad_gpar| NIL)
+    (|wsep?| CONST-DECL "bool" |cad_out_ok| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|six_nogap| 0
@@ -502,7 +596,7 @@
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|sepok_hd| FORMULA-DECL NIL |walk_ok| NIL)
     (|sepok?| DEF-DECL "bool" |walk_def| NIL)
-    (|wsep?| CONST-DECL "bool" |cad_gpar| NIL)
+    (|wsep?| CONST-DECL "bool" |cad_out_ok| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|lvh_cdr| 0
@@ -521,7 +615,7 @@
       NIL))
     NIL)
    ((|lvh?| CONST-DECL "bool" |cad_out_ok| NIL)
-    (|wsep?| CONST-DECL "bool" |cad_gpar| NIL)
+    (|wsep?| CONST-DECL "bool" |cad_out_ok| NIL)
     (|sepok?| DEF-DECL "bool" |walk_def| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
@@ -827,7 +921,7 @@
     (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    (|wsep?| CONST-DECL "bool" |cad_gpar| NIL)
+    (|wsep?| CONST-DECL "bool" |cad_out_ok| NIL)
     (|sepok?| DEF-DECL "bool" |walk_def| NIL)
     (|gapok?| CONST-DECL "bool" |walk_def| NIL)
     (|six_gap| FORMULA-DECL NIL |cad_out_ok| NIL)
@@ -1487,9 +1581,9 @@
     (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
      NIL)
     (|gap_t_eq| FORMULA-DECL NIL |walk_od| NIL)
-    (|lives| DEF-DECL "list[list[mpoly]]" |alg_bis| NIL)
+    (|lives| DEF-DECL "list[list[mpoly]]" |walk_def| NIL)
     (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|wsep?| CONST-DECL "bool" |cad_gpar| NIL)
+    (|wsep?| CONST-DECL "bool" |cad_out_ok| NIL)
     (KD TYPE-EQ-DECL NIL |cad_out| NIL)
     (|kids_idx| FORMULA-DECL NIL |cad_out_ok| NIL)
     (|six| CONST-DECL "nat" |cad_out_ok| NIL)
@@ -1805,977 +1899,6 @@
     (|map_mem| FORMULA-DECL NIL |map_member| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
- (|ctree_in| 0
-  (|ctree_in-0| "" 3999729088
-   ("" (INDUCT "TW")
-    (("1" (SKEEP) (("1" (ASSERT) NIL NIL)) NIL)
-     ("2" (SKOSIMP*)
-      (("2" (LABEL "ih" -1)
-        (("2" (LABEL "ok" -2)
-          (("2" (LABEL "wf" -3)
-            (("2" (LABEL "cd" -4)
-              (("2" (LABEL "mr" -5)
-                (("2" (COPY "ok")
-                  (("2" (EXPAND "okt?" -1)
-                    (("2" (FLATTEN)
-                      (("2" (LABEL "vt" -1)
-                        (("2" (LABEL "ln" -2)
-                          (("2" (LABEL "kn" -3)
-                            (("2" (EXPAND "length" "ln" 2)
-                              (("2" (CASE "cons?(TB!1)")
-                                (("1"
-                                  (LEMMA "ctree_mem"
-                                   ("TW" "cons(cons1_var!1, cons2_var!1)" "TB"
-                                    "TB!1" "u" "u!1" "od" "od!1" "r" "r!1"))
-                                  (("1" (ASSERT)
-                                    (("1" (SKOLEM -1 ("kd" "r1"))
-                                      (("1" (FLATTEN)
-                                        (("1" (LABEL "kk" -1)
-                                          (("1" (LABEL "rr" -2)
-                                            (("1" (LABEL "eq" -3)
-                                              (("1" (COPY "vt")
-                                                (("1" (EXPAND "vtb?" -1)
-                                                  (("1" (EXPAND "every" -1)
-                                                    (("1" (FLATTEN)
-                                                      (("1" (COPY "kn")
-                                                        (("1"
-                                                          (EXPAND "okn_o" -1)
-                                                          (("1" (FLATTEN)
-                                                            (("1"
-                                                              (LEMMA "kids_lvl"
-                                                               ("tb"
-                                                                "car(TB!1)"
-                                                                "od" "od!1" "u"
-                                                                "u!1" "G"
-                                                                "cons1_var!1"))
-                                                              (("1" (ASSERT)
-                                                                (("1" (FLATTEN)
-                                                                  (("1"
-                                                                    (INST -1
-                                                                     "kd")
-                                                                    (("1"
-                                                                      (ASSERT)
-                                                                      (("1"
-                                                                        (FLATTEN)
-                                                                        (("1"
-                                                                          (REPLACE
-                                                                           "eq"
-                                                                           1)
-                                                                          (("1"
-                                                                            (EXPAND
-                                                                             "addr"
-                                                                             1)
-                                                                            (("1"
-                                                                              (EXPAND
-                                                                               "tcell"
-                                                                               1
-                                                                               1)
-                                                                              (("1"
-                                                                                (ASSERT)
-                                                                                (("1"
-                                                                                  (CASE
-                                                                                      "null?(cons2_var!1)")
-                                                                                  (("1"
-                                                                                    (CASE-REPLACE
-                                                                                     "cons2_var!1 = null")
-                                                                                    (("1"
-                                                                                      (EXPAND
-                                                                                       "ctree"
-                                                                                       "rr")
-                                                                                      (("1"
-                                                                                        (EXPAND
-                                                                                         "member"
-                                                                                         "rr")
-                                                                                        (("1"
-                                                                                          (EXPAND
-                                                                                           "member"
-                                                                                           "rr")
-                                                                                          (("1"
-                                                                                            (ASSERT)
-                                                                                            (("1"
-                                                                                              (REPLACE
-                                                                                               "rr"
-                                                                                               1)
-                                                                                              (("1"
-                                                                                                (ASSERT)
-                                                                                                (("1"
-                                                                                                  (EXPAND
-                                                                                                   "tcell"
-                                                                                                   1)
-                                                                                                  (("1"
-                                                                                                    (EXPAND
-                                                                                                     "stk"
-                                                                                                     1)
-                                                                                                    (("1"
-                                                                                                      (PROPAX)
-                                                                                                      NIL
-                                                                                                      NIL))
-                                                                                                    NIL))
-                                                                                                  NIL))
-                                                                                                NIL))
-                                                                                              NIL))
-                                                                                            NIL))
-                                                                                          NIL))
-                                                                                        NIL))
-                                                                                      NIL)
-                                                                                     ("2"
-                                                                                      (EXPAND
-                                                                                       "ctree"
-                                                                                       "rr")
-                                                                                      (("2"
-                                                                                        (EXPAND
-                                                                                         "member"
-                                                                                         "rr")
-                                                                                        (("2"
-                                                                                          (EXPAND
-                                                                                           "member"
-                                                                                           "rr")
-                                                                                          (("2"
-                                                                                            (ASSERT)
-                                                                                            NIL
-                                                                                            NIL))
-                                                                                          NIL))
-                                                                                        NIL))
-                                                                                      NIL))
-                                                                                    NIL)
-                                                                                   ("2"
-                                                                                    (ASSERT)
-                                                                                    (("2"
-                                                                                      (FLATTEN)
-                                                                                      (("2"
-                                                                                        (LEMMA
-                                                                                         "every_kids"
-                                                                                         ("f"
-                                                                                          "LAMBDA (od2: OD): cellok_o(car(cons2_var!1), cons1_var!1, od2, car(cdr(TB!1))) AND okn_o(u!1, cons2_var!1, cdr(TB!1), od2)"
-                                                                                          "E"
-                                                                                          "feff(cons1_var!1, od!1)"
-                                                                                          "od"
-                                                                                          "od!1"
-                                                                                          "tb"
-                                                                                          "car(TB!1)"
-                                                                                          "Y"
-                                                                                          "seps_t(u!1, feff(cons1_var!1, od!1), od!1, car(TB!1))"
-                                                                                          "kd"
-                                                                                          "kd"))
-                                                                                        (("1"
-                                                                                          (ASSERT)
-                                                                                          (("1"
-                                                                                            (FLATTEN)
-                                                                                            (("1"
-                                                                                              (INST
-                                                                                               "ih"
-                                                                                               "u!1")
-                                                                                              (("1"
-                                                                                                (INST
-                                                                                                 "ih"
-                                                                                                 "cdr(TB!1)"
-                                                                                                 "kd`2"
-                                                                                                 "stk(cons1_var!1, C!1, kd`1)"
-                                                                                                 "r1")
-                                                                                                (("1"
-                                                                                                  (SPLIT
-                                                                                                   "ih")
-                                                                                                  (("1"
-                                                                                                    (FLATTEN)
-                                                                                                    (("1"
-                                                                                                      (LEMMA
-                                                                                                       "len_ad"
-                                                                                                       ("A"
-                                                                                                        "cons[nat](kd`1, r1`adr)"))
-                                                                                                      (("1"
-                                                                                                        (LEMMA
-                                                                                                         "len_tw"
-                                                                                                         ("TW"
-                                                                                                          "cons(cons1_var!1, cons2_var!1)"))
-                                                                                                        (("1"
-                                                                                                          (ASSERT)
-                                                                                                          NIL
-                                                                                                          NIL))
-                                                                                                        NIL))
-                                                                                                      NIL))
-                                                                                                    NIL)
-                                                                                                   ("2"
-                                                                                                    (EXPAND
-                                                                                                     "okt?"
-                                                                                                     1)
-                                                                                                    (("2"
-                                                                                                      (EXPAND
-                                                                                                       "vtb?"
-                                                                                                       1)
-                                                                                                      (("2"
-                                                                                                        (CASE
-                                                                                                            "length(TB!1) = 1 + length(cdr(TB!1))")
-                                                                                                        (("1"
-                                                                                                          (ASSERT)
-                                                                                                          NIL
-                                                                                                          NIL)
-                                                                                                         ("2"
-                                                                                                          (EXPAND
-                                                                                                           "length"
-                                                                                                           1
-                                                                                                           1)
-                                                                                                          (("2"
-                                                                                                            (PROPAX)
-                                                                                                            NIL
-                                                                                                            NIL))
-                                                                                                          NIL))
-                                                                                                        NIL))
-                                                                                                      NIL))
-                                                                                                    NIL)
-                                                                                                   ("3"
-                                                                                                    (PROPAX)
-                                                                                                    NIL
-                                                                                                    NIL)
-                                                                                                   ("4"
-                                                                                                    (EXPAND
-                                                                                                     "stk"
-                                                                                                     1)
-                                                                                                    (("4"
-                                                                                                      (PROPAX)
-                                                                                                      NIL
-                                                                                                      NIL))
-                                                                                                    NIL)
-                                                                                                   ("5"
-                                                                                                    (PROPAX)
-                                                                                                    NIL
-                                                                                                    NIL))
-                                                                                                  NIL))
-                                                                                                NIL))
-                                                                                              NIL))
-                                                                                            NIL))
-                                                                                          NIL)
-                                                                                         ("2"
-                                                                                          (PROPAX)
-                                                                                          NIL
-                                                                                          NIL))
-                                                                                        NIL))
-                                                                                      NIL))
-                                                                                    NIL))
-                                                                                  NIL))
-                                                                                NIL))
-                                                                              NIL))
-                                                                            NIL))
-                                                                          NIL))
-                                                                        NIL))
-                                                                      NIL))
-                                                                    NIL))
-                                                                  NIL))
-                                                                NIL))
-                                                              NIL))
-                                                            NIL))
-                                                          NIL))
-                                                        NIL))
-                                                      NIL))
-                                                    NIL))
-                                                  NIL))
-                                                NIL))
-                                              NIL))
-                                            NIL))
-                                          NIL))
-                                        NIL))
-                                      NIL))
-                                    NIL))
-                                  NIL)
-                                 ("2" (CASE "null?(TB!1)")
-                                  (("1" (CASE-REPLACE "TB!1 = null")
-                                    (("1" (EXPAND "length" "ln" 1)
-                                      (("1" (ASSERT) NIL NIL)) NIL)
-                                     ("2" (EXPAND "length" "ln" 1)
-                                      (("2" (ASSERT) NIL NIL)) NIL))
-                                    NIL)
-                                   ("2" (ASSERT) NIL NIL))
-                                  NIL))
-                                NIL))
-                              NIL))
-                            NIL))
-                          NIL))
-                        NIL))
-                      NIL))
-                    NIL))
-                  NIL))
-                NIL))
-              NIL))
-            NIL))
-          NIL))
-        NIL))
-      NIL))
-    NIL)
-   ((|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
-    (|ctree_mem| FORMULA-DECL NIL |cad_out_ok| NIL)
-    (|vtb?| CONST-DECL "bool" |innern_sem| NIL)
-    (|okn_o| DEF-DECL "bool" |towern_od| NIL)
-    (|car| ADT-ACCESSOR-DECL "[(cons?) -> T]" |list_adt| NIL)
-    (|kids_lvl| FORMULA-DECL NIL |cad_out_ok| NIL)
-    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|stk| CONST-DECL "bool" |cad_stkc| NIL)
-    (|length_singleton| FORMULA-DECL NIL |more_list_props| |structures|)
-    (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
-    (|len_ad| FORMULA-DECL NIL |cad_tower| NIL)
-    (|len_tw| FORMULA-DECL NIL |cad_tower| NIL)
-    (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
-    (+ CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
-    (|every_kids| FORMULA-DECL NIL |cad_out_ok| NIL)
-    (|feff| CONST-DECL "list[list[mpoly]]" |towern_od| NIL)
-    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
-    (|seps_t| CONST-DECL "list[rat]" |walk_od| NIL)
-    (|cellok_o| CONST-DECL "bool" |towern_od| NIL)
-    (|cdr| ADT-ACCESSOR-DECL "[(cons?) -> list]" |list_adt| NIL)
-    (|addr| CONST-DECL "CRec" |cad_out| NIL)
-    (KD TYPE-EQ-DECL NIL |cad_out| NIL)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
-    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
-    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
-    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL)
-    (|tcell| DEF-DECL "[list[real] -> bool]" |cad_tower| NIL)
-    (|length| DEF-DECL "nat" |list_props| NIL)
-    (|ctree| DEF-DECL "list[CRec]" |cad_out| NIL)
-    (|member| DEF-DECL "bool" |list_props| NIL)
-    (|den| DEF-DECL "list[real]" |oddef| NIL)
-    (|wf?| DEF-DECL "bool" |oddef| NIL)
-    (|okt?| CONST-DECL "bool" |cad_out_ok| NIL)
-    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|CRec| TYPE-EQ-DECL NIL |cad_out| NIL)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (OD TYPE-DECL NIL |walk_od| NIL) (CT TYPE-EQ-DECL NIL |walk_od| NIL)
-    (CE TYPE-EQ-DECL NIL |walk_od| NIL)
-    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
-    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (>= CONST-DECL "bool" |reals| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
-    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
-    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (|Tower| TYPE-EQ-DECL NIL |towern_def| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   SHOSTAK))
- (|ctree_cover| 0
-  (|ctree_cover-2| "" 3999729432
-   ("" (INDUCT "TW")
-    (("1" (SKEEP) (("1" (ASSERT) NIL NIL)) NIL)
-     ("2" (SKOSIMP*)
-      (("2" (LABEL "ih" -1)
-        (("2" (LABEL "ok" -2)
-          (("2" (LABEL "wf" -3)
-            (("2" (LABEL "cd" -4)
-              (("2" (LABEL "co" -5)
-                (("2" (LABEL "la" -6)
-                  (("2" (LABEL "ex" -7)
-                    (("2" (COPY "ok")
-                      (("2" (EXPAND "okt?" -1)
-                        (("2" (FLATTEN)
-                          (("2" (LABEL "vt" -1)
-                            (("2" (LABEL "ln" -2)
-                              (("2" (LABEL "kn" -3)
-                                (("2" (EXPAND "length" "ln" 2)
-                                  (("2"
-                                    (LEMMA "len_tw"
-                                     ("TW" "cons(cons1_var!1, cons2_var!1)"))
-                                    (("2" (ASSERT)
-                                      (("2" (CASE "cons?(A!1) AND cons?(TB!1)")
-                                        (("1" (FLATTEN)
-                                          (("1" (LEMMA "len_ad" ("A" "A!1"))
-                                            (("1" (ASSERT)
-                                              (("1" (EXPAND "tcell" "ex")
-                                                (("1" (ASSERT)
-                                                  (("1"
-                                                    (LEMMA "tcell_base"
-                                                     ("TW" "cons2_var!1" "C"
-                                                      "stk(cons1_var!1, C!1, car(A!1))"
-                                                      "A" "cdr(A!1)" "p"
-                                                      "q!1"))
-                                                    (("1" (ASSERT)
-                                                      (("1" (EXPAND "stk" -1)
-                                                        (("1" (FLATTEN)
-                                                          (("1" (COPY "co")
-                                                            (("1"
-                                                              (EXPAND
-                                                               "cad_over?" -1)
-                                                              (("1" (FLATTEN)
-                                                                (("1"
-                                                                  (EXPAND
-                                                                   "delin_cl?"
-                                                                   -1)
-                                                                  (("1"
-                                                                    (FLATTEN)
-                                                                    (("1"
-                                                                      (INST-CP
-                                                                       -1
-                                                                       "cdr(dropn(length(cons2_var!1), q!1))")
-                                                                      (("1"
-                                                                        (INST
-                                                                         -3
-                                                                         "cdr(dropn(length(cons2_var!1), q!1))"
-                                                                         "den(od!1)")
-                                                                        (("1"
-                                                                          (ASSERT)
-                                                                          (("1"
-                                                                            (LEMMA
-                                                                             "sidx_le"
-                                                                             ("G"
-                                                                              "cons1_var!1"
-                                                                              "q"
-                                                                              "cdr(dropn(length(cons2_var!1), q!1))"
-                                                                              "y"
-                                                                              "car(dropn(length(cons2_var!1), q!1))"))
-                                                                            (("1"
-                                                                              (ASSERT)
-                                                                              (("1"
-                                                                                (LABEL
-                                                                                 "bd"
-                                                                                 -1)
-                                                                                (("1"
-                                                                                  (LABEL
-                                                                                   "nr"
-                                                                                   -4)
-                                                                                  (("1"
-                                                                                    (LABEL
-                                                                                     "sx"
-                                                                                     -10)
-                                                                                    (("1"
-                                                                                      (LABEL
-                                                                                       "lad"
-                                                                                       -11)
-                                                                                      (("1"
-                                                                                        (HIDE
-                                                                                         -2
-                                                                                         -3
-                                                                                         -5
-                                                                                         -6
-                                                                                         -8)
-                                                                                        (("1"
-                                                                                          (COPY
-                                                                                           "vt")
-                                                                                          (("1"
-                                                                                            (EXPAND
-                                                                                             "vtb?"
-                                                                                             -1)
-                                                                                            (("1"
-                                                                                              (EXPAND
-                                                                                               "every"
-                                                                                               -1)
-                                                                                              (("1"
-                                                                                                (FLATTEN)
-                                                                                                (("1"
-                                                                                                  (COPY
-                                                                                                   "kn")
-                                                                                                  (("1"
-                                                                                                    (EXPAND
-                                                                                                     "okn_o"
-                                                                                                     -1)
-                                                                                                    (("1"
-                                                                                                      (FLATTEN)
-                                                                                                      (("1"
-                                                                                                        (LEMMA
-                                                                                                         "kids_lvl"
-                                                                                                         ("tb"
-                                                                                                          "car(TB!1)"
-                                                                                                          "od"
-                                                                                                          "od!1"
-                                                                                                          "u"
-                                                                                                          "u!1"
-                                                                                                          "G"
-                                                                                                          "cons1_var!1"))
-                                                                                                        (("1"
-                                                                                                          (ASSERT)
-                                                                                                          (("1"
-                                                                                                            (FLATTEN)
-                                                                                                            (("1"
-                                                                                                              (INST
-                                                                                                               -2
-                                                                                                               "car(A!1)")
-                                                                                                              (("1"
-                                                                                                                (ASSERT)
-                                                                                                                (("1"
-                                                                                                                  (SKOLEM
-                                                                                                                   -2
-                                                                                                                   "kd")
-                                                                                                                  (("1"
-                                                                                                                    (FLATTEN)
-                                                                                                                    (("1"
-                                                                                                                      (ASSERT)
-                                                                                                                      (("1"
-                                                                                                                        (INST
-                                                                                                                         -1
-                                                                                                                         "kd")
-                                                                                                                        (("1"
-                                                                                                                          (ASSERT)
-                                                                                                                          (("1"
-                                                                                                                            (FLATTEN)
-                                                                                                                            (("1"
-                                                                                                                              (LABEL
-                                                                                                                               "kw"
-                                                                                                                               -1)
-                                                                                                                              (("1"
-                                                                                                                                (LABEL
-                                                                                                                                 "kc"
-                                                                                                                                 -2)
-                                                                                                                                (("1"
-                                                                                                                                  (LABEL
-                                                                                                                                   "kcd"
-                                                                                                                                   -3)
-                                                                                                                                  (("1"
-                                                                                                                                    (LABEL
-                                                                                                                                     "ksx"
-                                                                                                                                     -4)
-                                                                                                                                    (("1"
-                                                                                                                                      (LABEL
-                                                                                                                                       "k1"
-                                                                                                                                       -6)
-                                                                                                                                      (("1"
-                                                                                                                                        (LEMMA
-                                                                                                                                         "list_cons_eta[nat]"
-                                                                                                                                         ("cons?_var"
-                                                                                                                                          "A!1"))
-                                                                                                                                        (("1"
-                                                                                                                                          (LABEL
-                                                                                                                                           "aeta"
-                                                                                                                                           -1)
-                                                                                                                                          (("1"
-                                                                                                                                            (CASE
-                                                                                                                                                "stk(cons1_var!1, C!1, car(A!1))(den(kd`2))")
-                                                                                                                                            (("1"
-                                                                                                                                              (LABEL
-                                                                                                                                               "ks"
-                                                                                                                                               -1)
-                                                                                                                                              (("1"
-                                                                                                                                                (CASE
-                                                                                                                                                    "null?(cons2_var!1)")
-                                                                                                                                                (("1"
-                                                                                                                                                  (CASE-REPLACE
-                                                                                                                                                   "cons2_var!1 = null")
-                                                                                                                                                  (("1"
-                                                                                                                                                    (ASSERT)
-                                                                                                                                                    (("1"
-                                                                                                                                                      (INST
-                                                                                                                                                       1
-                                                                                                                                                       "addr(kd`1)((# adr := null[nat], sod := kd`2 #))")
-                                                                                                                                                      (("1"
-                                                                                                                                                        (SPLIT
-                                                                                                                                                         1)
-                                                                                                                                                        (("1"
-                                                                                                                                                          (CASE
-                                                                                                                                                              "member((# adr := null[nat], sod := kd`2 #), ctree(u!1, null[list[list[mpoly]]], cdr(TB!1), kd`2))")
-                                                                                                                                                          (("1"
-                                                                                                                                                            (LEMMA
-                                                                                                                                                             "ctree_intro"
-                                                                                                                                                             ("TW"
-                                                                                                                                                              "cons(cons1_var!1, null[list[list[mpoly]]])"
-                                                                                                                                                              "TB"
-                                                                                                                                                              "TB!1"
-                                                                                                                                                              "od"
-                                                                                                                                                              "od!1"
-                                                                                                                                                              "u"
-                                                                                                                                                              "u!1"
-                                                                                                                                                              "kd"
-                                                                                                                                                              "kd"
-                                                                                                                                                              "r"
-                                                                                                                                                              "(# adr := null[nat], sod := kd`2 #)"))
-                                                                                                                                                            (("1"
-                                                                                                                                                              (ASSERT)
-                                                                                                                                                              NIL
-                                                                                                                                                              NIL))
-                                                                                                                                                            NIL)
-                                                                                                                                                           ("2"
-                                                                                                                                                            (EXPAND
-                                                                                                                                                             "ctree"
-                                                                                                                                                             1)
-                                                                                                                                                            (("2"
-                                                                                                                                                              (EXPAND
-                                                                                                                                                               "member"
-                                                                                                                                                               1)
-                                                                                                                                                              (("2"
-                                                                                                                                                                (PROPAX)
-                                                                                                                                                                NIL
-                                                                                                                                                                NIL))
-                                                                                                                                                              NIL))
-                                                                                                                                                            NIL))
-                                                                                                                                                          NIL)
-                                                                                                                                                         ("2"
-                                                                                                                                                          (EXPAND
-                                                                                                                                                           "addr"
-                                                                                                                                                           1)
-                                                                                                                                                          (("2"
-                                                                                                                                                            (ASSERT)
-                                                                                                                                                            (("2"
-                                                                                                                                                              (CASE
-                                                                                                                                                                  "cdr(A!1) = null")
-                                                                                                                                                              (("1"
-                                                                                                                                                                (REPLACE
-                                                                                                                                                                 -1
-                                                                                                                                                                 "aeta")
-                                                                                                                                                                (("1"
-                                                                                                                                                                  (REPLACE
-                                                                                                                                                                   "k1"
-                                                                                                                                                                   1)
-                                                                                                                                                                  (("1"
-                                                                                                                                                                    (PROPAX)
-                                                                                                                                                                    NIL
-                                                                                                                                                                    NIL))
-                                                                                                                                                                  NIL))
-                                                                                                                                                                NIL)
-                                                                                                                                                               ("2"
-                                                                                                                                                                (LABEL
-                                                                                                                                                                 "lad"
-                                                                                                                                                                 -20)
-                                                                                                                                                                (("2"
-                                                                                                                                                                  (EXPAND
-                                                                                                                                                                   "length"
-                                                                                                                                                                   "lad"
-                                                                                                                                                                   2)
-                                                                                                                                                                  (("2"
-                                                                                                                                                                    (ASSERT)
-                                                                                                                                                                    NIL
-                                                                                                                                                                    NIL))
-                                                                                                                                                                  NIL))
-                                                                                                                                                                NIL))
-                                                                                                                                                              NIL))
-                                                                                                                                                            NIL))
-                                                                                                                                                          NIL))
-                                                                                                                                                        NIL))
-                                                                                                                                                      NIL))
-                                                                                                                                                    NIL)
-                                                                                                                                                   ("2"
-                                                                                                                                                    (ASSERT)
-                                                                                                                                                    NIL
-                                                                                                                                                    NIL))
-                                                                                                                                                  NIL)
-                                                                                                                                                 ("2"
-                                                                                                                                                  (SPLIT
-                                                                                                                                                   -10)
-                                                                                                                                                  (("1"
-                                                                                                                                                    (PROPAX)
-                                                                                                                                                    NIL
-                                                                                                                                                    NIL)
-                                                                                                                                                   ("2"
-                                                                                                                                                    (FLATTEN)
-                                                                                                                                                    (("2"
-                                                                                                                                                      (LEMMA
-                                                                                                                                                       "every_kids"
-                                                                                                                                                       ("f"
-                                                                                                                                                        "LAMBDA (od2: OD): cellok_o(car(cons2_var!1), cons1_var!1, od2, car(cdr(TB!1))) AND okn_o(u!1, cons2_var!1, cdr(TB!1), od2)"
-                                                                                                                                                        "E"
-                                                                                                                                                        "feff(cons1_var!1, od!1)"
-                                                                                                                                                        "od"
-                                                                                                                                                        "od!1"
-                                                                                                                                                        "tb"
-                                                                                                                                                        "car(TB!1)"
-                                                                                                                                                        "Y"
-                                                                                                                                                        "seps_t(u!1, feff(cons1_var!1, od!1), od!1, car(TB!1))"
-                                                                                                                                                        "kd"
-                                                                                                                                                        "kd"))
-                                                                                                                                                      (("1"
-                                                                                                                                                        (ASSERT)
-                                                                                                                                                        (("1"
-                                                                                                                                                          (FLATTEN)
-                                                                                                                                                          (("1"
-                                                                                                                                                            (INST
-                                                                                                                                                             "ih"
-                                                                                                                                                             "u!1")
-                                                                                                                                                            (("1"
-                                                                                                                                                              (INST
-                                                                                                                                                               "ih"
-                                                                                                                                                               "cdr(TB!1)"
-                                                                                                                                                               "kd`2"
-                                                                                                                                                               "stk(cons1_var!1, C!1, car(A!1))"
-                                                                                                                                                               "cdr(A!1)")
-                                                                                                                                                              (("1"
-                                                                                                                                                                (EXPAND
-                                                                                                                                                                 "okt?"
-                                                                                                                                                                 "ih")
-                                                                                                                                                                (("1"
-                                                                                                                                                                  (EXPAND
-                                                                                                                                                                   "vtb?"
-                                                                                                                                                                   "ih")
-                                                                                                                                                                  (("1"
-                                                                                                                                                                    (EXPAND
-                                                                                                                                                                     "length"
-                                                                                                                                                                     "ln"
-                                                                                                                                                                     1)
-                                                                                                                                                                    (("1"
-                                                                                                                                                                      (ASSERT)
-                                                                                                                                                                      (("1"
-                                                                                                                                                                        (SPLIT
-                                                                                                                                                                         "ih")
-                                                                                                                                                                        (("1"
-                                                                                                                                                                          (SKOLEM
-                                                                                                                                                                           -1
-                                                                                                                                                                           "r1")
-                                                                                                                                                                          (("1"
-                                                                                                                                                                            (FLATTEN)
-                                                                                                                                                                            (("1"
-                                                                                                                                                                              (LEMMA
-                                                                                                                                                                               "ctree_intro"
-                                                                                                                                                                               ("TW"
-                                                                                                                                                                                "cons(cons1_var!1, cons2_var!1)"
-                                                                                                                                                                                "TB"
-                                                                                                                                                                                "TB!1"
-                                                                                                                                                                                "od"
-                                                                                                                                                                                "od!1"
-                                                                                                                                                                                "u"
-                                                                                                                                                                                "u!1"
-                                                                                                                                                                                "kd"
-                                                                                                                                                                                "kd"
-                                                                                                                                                                                "r"
-                                                                                                                                                                                "r1"))
-                                                                                                                                                                              (("1"
-                                                                                                                                                                                (ASSERT)
-                                                                                                                                                                                (("1"
-                                                                                                                                                                                  (ASSERT)
-                                                                                                                                                                                  (("1"
-                                                                                                                                                                                    (INST
-                                                                                                                                                                                     2
-                                                                                                                                                                                     "addr(kd`1)(r1)")
-                                                                                                                                                                                    (("1"
-                                                                                                                                                                                      (ASSERT)
-                                                                                                                                                                                      (("1"
-                                                                                                                                                                                        (EXPAND
-                                                                                                                                                                                         "addr"
-                                                                                                                                                                                         2)
-                                                                                                                                                                                        (("1"
-                                                                                                                                                                                          (ASSERT)
-                                                                                                                                                                                          (("1"
-                                                                                                                                                                                            (REPLACE
-                                                                                                                                                                                             "k1"
-                                                                                                                                                                                             2)
-                                                                                                                                                                                            (("1"
-                                                                                                                                                                                              (REPLACE
-                                                                                                                                                                                               -3
-                                                                                                                                                                                               2)
-                                                                                                                                                                                              (("1"
-                                                                                                                                                                                                (PROPAX)
-                                                                                                                                                                                                NIL
-                                                                                                                                                                                                NIL))
-                                                                                                                                                                                              NIL))
-                                                                                                                                                                                            NIL))
-                                                                                                                                                                                          NIL))
-                                                                                                                                                                                        NIL))
-                                                                                                                                                                                      NIL))
-                                                                                                                                                                                    NIL))
-                                                                                                                                                                                  NIL))
-                                                                                                                                                                                NIL))
-                                                                                                                                                                              NIL))
-                                                                                                                                                                            NIL))
-                                                                                                                                                                          NIL)
-                                                                                                                                                                         ("2"
-                                                                                                                                                                          (INST
-                                                                                                                                                                           -18
-                                                                                                                                                                           "car(A!1)")
-                                                                                                                                                                          (("2"
-                                                                                                                                                                            (FLATTEN)
-                                                                                                                                                                            NIL
-                                                                                                                                                                            NIL))
-                                                                                                                                                                          NIL)
-                                                                                                                                                                         ("3"
-                                                                                                                                                                          (INST
-                                                                                                                                                                           1
-                                                                                                                                                                           "q!1")
-                                                                                                                                                                          NIL
-                                                                                                                                                                          NIL))
-                                                                                                                                                                        NIL))
-                                                                                                                                                                      NIL))
-                                                                                                                                                                    NIL))
-                                                                                                                                                                  NIL))
-                                                                                                                                                                NIL))
-                                                                                                                                                              NIL))
-                                                                                                                                                            NIL))
-                                                                                                                                                          NIL))
-                                                                                                                                                        NIL)
-                                                                                                                                                       ("2"
-                                                                                                                                                        (PROPAX)
-                                                                                                                                                        NIL
-                                                                                                                                                        NIL)
-                                                                                                                                                       ("3"
-                                                                                                                                                        (ASSERT)
-                                                                                                                                                        NIL
-                                                                                                                                                        NIL))
-                                                                                                                                                      NIL))
-                                                                                                                                                    NIL))
-                                                                                                                                                  NIL))
-                                                                                                                                                NIL))
-                                                                                                                                              NIL)
-                                                                                                                                             ("2"
-                                                                                                                                              (EXPAND
-                                                                                                                                               "stk"
-                                                                                                                                               1)
-                                                                                                                                              (("2"
-                                                                                                                                                (REPLACE
-                                                                                                                                                 "kcd"
-                                                                                                                                                 1)
-                                                                                                                                                (("2"
-                                                                                                                                                  (ASSERT)
-                                                                                                                                                  NIL
-                                                                                                                                                  NIL))
-                                                                                                                                                NIL))
-                                                                                                                                              NIL))
-                                                                                                                                            NIL))
-                                                                                                                                          NIL))
-                                                                                                                                        NIL))
-                                                                                                                                      NIL))
-                                                                                                                                    NIL))
-                                                                                                                                  NIL))
-                                                                                                                                NIL))
-                                                                                                                              NIL))
-                                                                                                                            NIL))
-                                                                                                                          NIL))
-                                                                                                                        NIL))
-                                                                                                                      NIL))
-                                                                                                                    NIL))
-                                                                                                                  NIL))
-                                                                                                                NIL))
-                                                                                                              NIL))
-                                                                                                            NIL))
-                                                                                                          NIL))
-                                                                                                        NIL))
-                                                                                                      NIL))
-                                                                                                    NIL))
-                                                                                                  NIL))
-                                                                                                NIL))
-                                                                                              NIL))
-                                                                                            NIL))
-                                                                                          NIL))
-                                                                                        NIL))
-                                                                                      NIL))
-                                                                                    NIL))
-                                                                                  NIL))
-                                                                                NIL))
-                                                                              NIL))
-                                                                            NIL))
-                                                                          NIL))
-                                                                        NIL))
-                                                                      NIL))
-                                                                    NIL))
-                                                                  NIL))
-                                                                NIL))
-                                                              NIL))
-                                                            NIL))
-                                                          NIL))
-                                                        NIL))
-                                                      NIL))
-                                                    NIL))
-                                                  NIL))
-                                                NIL))
-                                              NIL))
-                                            NIL))
-                                          NIL)
-                                         ("2" (SPLIT 1)
-                                          (("1" (EXPAND "length" "la" 1)
-                                            (("1" (ASSERT) NIL NIL)) NIL)
-                                           ("2" (EXPAND "length" "ln" 1)
-                                            (("2" (ASSERT) NIL NIL)) NIL))
-                                          NIL))
-                                        NIL))
-                                      NIL))
-                                    NIL))
-                                  NIL))
-                                NIL))
-                              NIL))
-                            NIL))
-                          NIL))
-                        NIL))
-                      NIL))
-                    NIL))
-                  NIL))
-                NIL))
-              NIL))
-            NIL))
-          NIL))
-        NIL))
-      NIL))
-    NIL)
-   ((|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
-    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
-    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
-    (|delin_cl?| CONST-DECL "bool" |cad_stack| NIL)
-    (|dropn| DEF-DECL "list[real]" |cad_tower| NIL)
-    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|even_times_int_is_even| APPLICATION-JUDGEMENT "even_int" |integers| NIL)
-    (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
-     NIL)
-    (|cellok_o| CONST-DECL "bool" |towern_od| NIL)
-    (|seps_t| CONST-DECL "list[rat]" |walk_od| NIL)
-    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
-    (|feff| CONST-DECL "list[list[mpoly]]" |towern_od| NIL)
-    (|every_kids| FORMULA-DECL NIL |cad_out_ok| NIL)
-    (|null| ADT-CONSTRUCTOR-DECL "(null?)" |list_adt| NIL)
-    (|addr| CONST-DECL "CRec" |cad_out| NIL)
-    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
-    (|ctree_intro| FORMULA-DECL NIL |cad_out_ok| NIL)
-    (|length_singleton| FORMULA-DECL NIL |more_list_props| |structures|)
-    (|null?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|list_cons_eta| FORMULA-DECL NIL |list_adt| NIL)
-    (KD TYPE-EQ-DECL NIL |cad_out| NIL)
-    (|kids_lvl| FORMULA-DECL NIL |cad_out_ok| NIL)
-    (|okn_o| DEF-DECL "bool" |towern_od| NIL)
-    (|vtb?| CONST-DECL "bool" |innern_sem| NIL)
-    (|sidx_le| FORMULA-DECL NIL |cad_stkc| NIL)
-    (|tcell_base| FORMULA-DECL NIL |cad_tower| NIL)
-    (|stk| CONST-DECL "bool" |cad_stkc| NIL)
-    (|car| ADT-ACCESSOR-DECL "[(cons?) -> T]" |list_adt| NIL)
-    (|cdr| ADT-ACCESSOR-DECL "[(cons?) -> list]" |list_adt| NIL)
-    (|len_ad| FORMULA-DECL NIL |cad_tower| NIL)
-    (|len_tw| FORMULA-DECL NIL |cad_tower| NIL)
-    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
-    (|list_induction| FORMULA-DECL NIL |list_adt| NIL)
-    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL)
-    (|ctree| DEF-DECL "list[CRec]" |cad_out| NIL)
-    (|member| DEF-DECL "bool" |list_props| NIL)
-    (|CRec| TYPE-EQ-DECL NIL |cad_out| NIL)
-    (|tcell| DEF-DECL "[list[real] -> bool]" |cad_tower| NIL)
-    (|length| DEF-DECL "nat" |list_props| NIL)
-    (|cad_over?| DEF-DECL "bool" |cad_tower| NIL)
-    (|den| DEF-DECL "list[real]" |oddef| NIL)
-    (|wf?| DEF-DECL "bool" |oddef| NIL)
-    (|okt?| CONST-DECL "bool" |cad_out_ok| NIL)
-    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (OD TYPE-DECL NIL |walk_od| NIL) (CT TYPE-EQ-DECL NIL |walk_od| NIL)
-    (CE TYPE-EQ-DECL NIL |walk_od| NIL)
-    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
-    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (>= CONST-DECL "bool" |reals| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
-    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
-    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (|Tower| TYPE-EQ-DECL NIL |towern_def| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   SHOSTAK))
  (|osv_ok| 0
   (|osv_ok-5| "" 3999728183
    ("" (SKEEP)
@@ -2828,7 +1951,7 @@
     (>= CONST-DECL "bool" |reals| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL) (|Sect| TYPE-DECL NIL |sect_inv| NIL)
-    (OD TYPE-DECL NIL |walk_od| NIL) (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (OD TYPE-DECL NIL |walk_od| NIL) (SV TYPE-EQ-DECL NIL |sign_vec| NIL)
     (|ORec| TYPE-EQ-DECL NIL |cad_out| NIL)
     (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|append| DEF-DECL "list[T]" |list_props| NIL)
@@ -2915,472 +2038,11 @@
     (>= CONST-DECL "bool" |reals| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL) (|Sect| TYPE-DECL NIL |sect_inv| NIL)
-    (OD TYPE-DECL NIL |walk_od| NIL) (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
+    (OD TYPE-DECL NIL |walk_od| NIL) (SV TYPE-EQ-DECL NIL |sign_vec| NIL)
     (|ORec| TYPE-EQ-DECL NIL |cad_out| NIL)
     (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|olflat| DEF-DECL "list[ORec]" |cad_out| NIL)
     (|member| DEF-DECL "bool" |list_props| NIL)
     (IFF CONST-DECL "[bool, bool -> bool]" |booleans| NIL))
-   SHOSTAK))
- (|cad_out_mem_TCC1| 0
-  (|cad_out_mem_TCC1-2| "" 3999730788
-   ("" (SKEEP) (("" (LEMMA "len2" ("qs" "qs")) (("" (ASSERT) NIL NIL)) NIL))
-    NIL)
-   ((|list| TYPE-DECL NIL |list_adt| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|len2| FORMULA-DECL NIL |cad_run| NIL)
-    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
-   SHOSTAK
-   (|cad_out_mem| SUBTYPE "qs" "(list_adt[bool].cons?)" (127 53 127 55))))
- (|cad_out_mem| 0
-  (|cad_out_mem-2| "" 4000196831
-   ("" (SKEEP)
-    (("" (LEMMA "len2" ("qs" "qs"))
-      (("" (ASSERT)
-        (("" (FLATTEN)
-          (("" (EXPAND "cad_out" 1)
-            (("" (CASE-REPLACE "length(qs) - 1 = length(cdr(qs))")
-              (("1" (CASE "length(qs) = 1 + length(cdr(qs))")
-                (("1" (ASSERT)
-                  (("1" (REWRITE "olflat_mem" 1)
-                    (("1" (SPLIT 1)
-                      (("1" (FLATTEN)
-                        (("1" (SKOLEM -1 "l")
-                          (("1" (FLATTEN)
-                            (("1"
-                              (LEMMA "map_mem_inv_map_member[Sect, list[ORec]]"
-                               ("g"
-                                "LAMBDA (s: Sect): srecs(u, F, s, runtw(u, length(cdr(qs)), F)(s))"
-                                "l" "runsects(u, length(cdr(qs)), F)" "v" "l"))
-                              (("1" (ASSERT)
-                                (("1" (SKOLEM -1 "s")
-                                  (("1" (FLATTEN)
-                                    (("1" (REPLACE -2 -4)
-                                      (("1" (EXPAND "srecs" -4)
-                                        (("1"
-                                          (LEMMA
-                                           "map_mem_inv_map_member[CRec, ORec]"
-                                           ("g"
-                                            "LAMBDA (r: CRec): (# rsec := s, radr := r`adr, rsod := r`sod, rsv := osv_of(F, r`sod) #)"
-                                            "l"
-                                            "ctree(u, runtw(u, length(cdr(qs)), F)(s), tables(u, runtw(u, length(cdr(qs)), F)(s), odS(s)), odS(s))"
-                                            "v" "o"))
-                                          (("1" (ASSERT)
-                                            (("1" (SKOLEM -1 "r")
-                                              (("1" (FLATTEN)
-                                                (("1" (INST 1 "s" "r")
-                                                  (("1" (ASSERT) NIL NIL))
-                                                  NIL))
-                                                NIL))
-                                              NIL))
-                                            NIL))
-                                          NIL))
-                                        NIL))
-                                      NIL))
-                                    NIL))
-                                  NIL))
-                                NIL))
-                              NIL))
-                            NIL))
-                          NIL))
-                        NIL)
-                       ("2" (FLATTEN)
-                        (("2" (SKOLEM -1 ("s" "r"))
-                          (("2" (FLATTEN)
-                            (("2"
-                              (INST 1
-                               "srecs(u, F, s, runtw(u, length(cdr(qs)), F)(s))")
-                              (("2"
-                                (LEMMA "map_mem[Sect, list[ORec]]"
-                                 ("g"
-                                  "LAMBDA (s: Sect): srecs(u, F, s, runtw(u, length(cdr(qs)), F)(s))"
-                                  "l" "runsects(u, length(cdr(qs)), F)" "a"
-                                  "s"))
-                                (("2" (ASSERT)
-                                  (("2" (EXPAND "srecs" 1)
-                                    (("2"
-                                      (LEMMA "map_mem[CRec, ORec]"
-                                       ("g"
-                                        "LAMBDA (r: CRec): (# rsec := s, radr := r`adr, rsod := r`sod, rsv := osv_of(F, r`sod) #)"
-                                        "l"
-                                        "ctree(u, runtw(u, length(cdr(qs)), F)(s), tables(u, runtw(u, length(cdr(qs)), F)(s), odS(s)), odS(s))"
-                                        "a" "r"))
-                                      (("2" (ASSERT) NIL NIL)) NIL))
-                                    NIL))
-                                  NIL))
-                                NIL))
-                              NIL))
-                            NIL))
-                          NIL))
-                        NIL))
-                      NIL))
-                    NIL))
-                  NIL)
-                 ("2" (EXPAND "length" 1 1) (("2" (ASSERT) NIL NIL)) NIL))
-                NIL)
-               ("2" (CASE "length(qs) = 1 + length(cdr(qs))")
-                (("1" (ASSERT) NIL NIL)
-                 ("2" (EXPAND "length" 1 1) (("2" (ASSERT) NIL NIL)) NIL))
-                NIL))
-              NIL))
-            NIL))
-          NIL))
-        NIL))
-      NIL))
-    NIL)
-   ((|list| TYPE-DECL NIL |list_adt| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|len2| FORMULA-DECL NIL |cad_run| NIL)
-    (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
-    (- CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
-    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
-    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
-    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (>= CONST-DECL "bool" |reals| NIL)
-    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|length| DEF-DECL "nat" |list_props| NIL)
-    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|cdr| ADT-ACCESSOR-DECL "[(cons?) -> list]" |list_adt| NIL)
-    (|nnint_plus_posint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
-    (|map_mem_inv_map_member| FORMULA-DECL NIL |map_member| NIL)
-    (|CRec| TYPE-EQ-DECL NIL |cad_out| NIL)
-    (|odS| CONST-DECL "OD" |towern_od| NIL)
-    (|tables| DEF-DECL "list[CT]" |towern_od| NIL)
-    (|ctree| DEF-DECL "list[CRec]" |cad_out| NIL)
-    (CT TYPE-EQ-DECL NIL |walk_od| NIL) (CE TYPE-EQ-DECL NIL |walk_od| NIL)
-    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
-    (|osv_of| CONST-DECL "SV" |cad_out| NIL)
-    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
-    (|map_mem| FORMULA-DECL NIL |map_member| NIL)
-    (|olflat_mem| FORMULA-DECL NIL |cad_out_ok| NIL)
-    (|Sect| TYPE-DECL NIL |sect_inv| NIL) (OD TYPE-DECL NIL |walk_od| NIL)
-    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
-    (|ORec| TYPE-EQ-DECL NIL |cad_out| NIL)
-    (|map| ADT-DEF-DECL "list[T1]" |list_adt_map| NIL)
-    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
-    (|Tower| TYPE-EQ-DECL NIL |towern_def| NIL)
-    (|srecs| CONST-DECL "list[ORec]" |cad_out| NIL)
-    (|runtw| CONST-DECL "Tower" |cad_run| NIL)
-    (|runsects| CONST-DECL "list[Sect]" |cad_run| NIL)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
-    (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
-     NIL)
-    (+ CONST-DECL "[numfield, numfield -> numfield]" |number_fields| NIL)
-    (|cad_out| CONST-DECL "list[ORec]" |cad_out| NIL)
-    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
-   SHOSTAK))
- (|sector_okt| 0
-  (|sector_okt-0| "" 3999729769
-   ("" (SKEEP)
-    (("" (LEMMA "run_ok" ("u" "u" "qs" "qs" "F" "F" "Psi" "Psi" "s" "s"))
-      (("" (ASSERT)
-        (("" (FLATTEN)
-          (("" (EXPAND "scok?" -2)
-            (("" (EXPAND "scof" -2)
-              (("" (FLATTEN)
-                (("" (SPLIT 1)
-                  (("1" (EXPAND "okt?" 1)
-                    (("1" (EXPAND "runtw" 1)
-                      (("1"
-                        (LEMMA "tables_vtb"
-                         ("u" "u" "TW" "lvln_o(u, tw0(length(cdr(qs)), F), s)"
-                          "od" "odS(s)"))
-                        (("1"
-                          (LEMMA "tables_len"
-                           ("u" "u" "TW"
-                            "lvln_o(u, tw0(length(cdr(qs)), F), s)" "od"
-                            "odS(s)"))
-                          (("1" (ASSERT) NIL NIL)) NIL))
-                        NIL))
-                      NIL))
-                    NIL)
-                   ("2" (REWRITE "odS_den")
-                    (("2" (REWRITE "scell_mem") NIL NIL)) NIL))
-                  NIL))
-                NIL))
-              NIL))
-            NIL))
-          NIL))
-        NIL))
-      NIL))
-    NIL)
-   ((|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (>= CONST-DECL "bool" |reals| NIL)
-    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (|Sect| TYPE-DECL NIL |sect_inv| NIL) (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
-    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
-    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
-    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL)
-    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
-    (|run_ok| FORMULA-DECL NIL |cad_run| NIL)
-    (|scof| CONST-DECL "SC" |towern_od| NIL)
-    (|runtw| CONST-DECL "Tower" |cad_run| NIL)
-    (|tables_len| FORMULA-DECL NIL |clos_ok| NIL)
-    (|tables_vtb| FORMULA-DECL NIL |decn_ok| NIL)
-    (|Tower| TYPE-EQ-DECL NIL |towern_def| NIL)
-    (|lvln_o| CONST-DECL "Tower" |towern_od| NIL)
-    (|tw0| DEF-DECL "Tower" |towern_def| NIL)
-    (|length| DEF-DECL "nat" |list_props| NIL)
-    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|cdr| ADT-ACCESSOR-DECL "[(cons?) -> list]" |list_adt| NIL)
-    (OD TYPE-DECL NIL |walk_od| NIL) (|odS| CONST-DECL "OD" |towern_od| NIL)
-    (|okt?| CONST-DECL "bool" |cad_out_ok| NIL)
-    (|sample| CONST-DECL "Alg" |sect_inv| NIL)
-    (|value| CONST-DECL "real" |alg_def| NIL)
-    (|Alg| TYPE-EQ-DECL NIL |alg_def| NIL)
-    (|alg?| CONST-DECL "bool" |alg_def| NIL)
-    (|alg| TYPE-EQ-DECL NIL |alg_def| NIL)
-    (|Polylist| TYPE-EQ-DECL NIL |polylist| |Sturm|)
-    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
-    (|cons| ADT-CONSTRUCTOR-DECL "[[T, list] -> (cons?)]" |list_adt| NIL)
-    (|scell_mem| FORMULA-DECL NIL |cad_run| NIL)
-    (|odS_den| FORMULA-DECL NIL |decn_ok| NIL)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
-    (|scok?| CONST-DECL "bool" |towern_od| NIL)
-    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
-   SHOSTAK))
- (|cad_out_ok| 0
-  (|cad_out_ok-0| "" 3999729824
-   ("" (SKEEP)
-    (("" (LABEL "dk" -1)
-      (("" (LABEL "lq" -2)
-        (("" (LEMMA "len2" ("qs" "qs"))
-          (("" (ASSERT)
-            (("" (FLATTEN)
-              (("" (SPLIT 1)
-                (("1" (SKOLEM 1 "o")
-                  (("1" (FLATTEN)
-                    (("1" (ASSERT)
-                      (("1" (LEMMA "cad_out_mem")
-                        (("1" (INST -1 "F" "o" "qs" "u")
-                          (("1" (ASSERT)
-                            (("1" (SKOLEM -1 ("s" "r"))
-                              (("1" (FLATTEN)
-                                (("1" (REPLACE -3 1)
-                                  (("1" (ASSERT)
-                                    (("1"
-                                      (LEMMA "sector_okt"
-                                       ("u" "u" "qs" "qs" "F" "F" "Psi" "Psi"
-                                        "s" "s"))
-                                      (("1" (ASSERT)
-                                        (("1" (FLATTEN)
-                                          (("1"
-                                            (LEMMA "run_shape"
-                                             ("u" "u" "k" "length(cdr(qs))" "F"
-                                              "F" "s" "s"))
-                                            (("1" (ASSERT)
-                                              (("1" (FLATTEN)
-                                                (("1"
-                                                  (LEMMA "ctree_in"
-                                                   ("u" "u" "TW"
-                                                    "runtw(u, length(cdr(qs)), F)(s)"
-                                                    "TB"
-                                                    "tables(u, runtw(u, length(cdr(qs)), F)(s), odS(s))"
-                                                    "od" "odS(s)" "C"
-                                                    "scell(s)" "r" "r"))
-                                                  (("1"
-                                                    (LEMMA "odS_wf" ("s" "s"))
-                                                    (("1" (ASSERT)
-                                                      (("1" (FLATTEN)
-                                                        (("1"
-                                                          (LEMMA "osv_ok"
-                                                           ("F" "F" "od"
-                                                            "r`sod"))
-                                                          (("1" (ASSERT)
-                                                            (("1"
-                                                              (EXPAND "rcell"
-                                                                      1)
-                                                              (("1" (PROPAX)
-                                                                NIL NIL))
-                                                              NIL))
-                                                            NIL))
-                                                          NIL))
-                                                        NIL))
-                                                      NIL))
-                                                    NIL))
-                                                  NIL))
-                                                NIL))
-                                              NIL))
-                                            NIL))
-                                          NIL))
-                                        NIL))
-                                      NIL))
-                                    NIL))
-                                  NIL))
-                                NIL))
-                              NIL))
-                            NIL))
-                          NIL))
-                        NIL))
-                      NIL))
-                    NIL))
-                  NIL)
-                 ("2" (SKOLEM 1 ("s" "A"))
-                  (("2" (FLATTEN)
-                    (("2" (SKOLEM -3 "q")
-                      (("2" (EXPAND "rcell" -3)
-                        (("2" (LABEL "rq" -3)
-                          (("2"
-                            (LEMMA "sector_okt"
-                             ("u" "u" "qs" "qs" "F" "F" "Psi" "Psi" "s" "s"))
-                            (("2" (ASSERT)
-                              (("2" (FLATTEN)
-                                (("2"
-                                  (LEMMA "sector_cad"
-                                   ("u" "u" "qs" "qs" "F" "F" "Psi" "Psi" "s"
-                                    "s"))
-                                  (("2" (ASSERT)
-                                    (("2"
-                                      (LEMMA "run_shape"
-                                       ("u" "u" "k" "length(cdr(qs))" "F" "F"
-                                        "s" "s"))
-                                      (("2" (ASSERT)
-                                        (("2" (FLATTEN)
-                                          (("2" (LEMMA "odS_wf" ("s" "s"))
-                                            (("2"
-                                              (LEMMA "ctree_cover"
-                                               ("u" "u" "TW"
-                                                "runtw(u, length(cdr(qs)), F)(s)"
-                                                "TB"
-                                                "tables(u, runtw(u, length(cdr(qs)), F)(s), odS(s))"
-                                                "od" "odS(s)" "C" "scell(s)"
-                                                "A" "A"))
-                                              (("2" (ASSERT)
-                                                (("2" (SPLIT -1)
-                                                  (("1" (SKOLEM -1 "r")
-                                                    (("1" (FLATTEN)
-                                                      (("1"
-                                                        (INST 1
-                                                         "(# rsec := s, radr := r`adr, rsod := r`sod, rsv := osv_of(F, r`sod) #)")
-                                                        (("1"
-                                                          (LEMMA "cad_out_mem")
-                                                          (("1"
-                                                            (INST -1 "F"
-                                                             "(# rsec := s, radr := r`adr, rsod := r`sod, rsv := osv_of(F, r`sod) #)"
-                                                             "qs" "u")
-                                                            (("1" (ASSERT)
-                                                              (("1" (ASSERT)
-                                                                (("1"
-                                                                  (INST 1 "s"
-                                                                   "r")
-                                                                  (("1"
-                                                                    (ASSERT)
-                                                                    NIL NIL))
-                                                                  NIL))
-                                                                NIL))
-                                                              NIL))
-                                                            NIL))
-                                                          NIL))
-                                                        NIL))
-                                                      NIL))
-                                                    NIL)
-                                                   ("2" (INST 1 "q") NIL NIL))
-                                                  NIL))
-                                                NIL))
-                                              NIL))
-                                            NIL))
-                                          NIL))
-                                        NIL))
-                                      NIL))
-                                    NIL))
-                                  NIL))
-                                NIL))
-                              NIL))
-                            NIL))
-                          NIL))
-                        NIL))
-                      NIL))
-                    NIL))
-                  NIL))
-                NIL))
-              NIL))
-            NIL))
-          NIL))
-        NIL))
-      NIL))
-    NIL)
-   ((|list| TYPE-DECL NIL |list_adt| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|len2| FORMULA-DECL NIL |cad_run| NIL)
-    (|sector_cad| FORMULA-DECL NIL |cad_run| NIL)
-    (|ctree_cover| FORMULA-DECL NIL |cad_out_ok| NIL)
-    (|osv_of| CONST-DECL "SV" |cad_out| NIL)
-    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
-    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
-    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
-    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (>= CONST-DECL "bool" |reals| NIL)
-    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|Sect| TYPE-DECL NIL |sect_inv| NIL) (OD TYPE-DECL NIL |walk_od| NIL)
-    (SV TYPE-EQ-DECL NIL |rsc_tree| NIL)
-    (|ORec| TYPE-EQ-DECL NIL |cad_out| NIL)
-    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (|sector_okt| FORMULA-DECL NIL |cad_out_ok| NIL)
-    (|ctree_in| FORMULA-DECL NIL |cad_out_ok| NIL)
-    (|Tower| TYPE-EQ-DECL NIL |towern_def| NIL)
-    (|runtw| CONST-DECL "Tower" |cad_run| NIL)
-    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
-    (CE TYPE-EQ-DECL NIL |walk_od| NIL) (CT TYPE-EQ-DECL NIL |walk_od| NIL)
-    (|tables| DEF-DECL "list[CT]" |towern_od| NIL)
-    (|odS| CONST-DECL "OD" |towern_od| NIL)
-    (|scell| CONST-DECL "[list[real] -> bool]" |cad_run| NIL)
-    (|CRec| TYPE-EQ-DECL NIL |cad_out| NIL)
-    (|osv_ok| FORMULA-DECL NIL |cad_out_ok| NIL)
-    (|rcell| CONST-DECL "[list[real] -> bool]" |cad_run| NIL)
-    (|odS_wf| FORMULA-DECL NIL |decn_ok| NIL)
-    (|run_shape| FORMULA-DECL NIL |cad_run| NIL)
-    (|length| DEF-DECL "nat" |list_props| NIL)
-    (|cons?| ADT-RECOGNIZER-DECL "[list -> boolean]" |list_adt| NIL)
-    (|cdr| ADT-ACCESSOR-DECL "[(cons?) -> list]" |list_adt| NIL)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
-    (|cad_out_mem| FORMULA-DECL NIL |cad_out_ok| NIL)
-    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
    SHOSTAK)))
 

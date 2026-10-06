@@ -1,6 +1,6 @@
 mpoly_cert: THEORY
 %----------------------------------------------------------------------------
-% Checked factorizations are correct (PROJ_PLAN.md P3).
+% Checked factorizations are correct.
 %
 % mpoly_cert_def's fsplit(U) is a proposed basis B of U, used only when every
 % u in U passes the check u = c * (product of b^e over B) by normal forms

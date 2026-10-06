@@ -1,12 +1,12 @@
 earr_deriv: THEORY
 %----------------------------------------------------------------------------
-% The formal derivative of a coefficient list, as a real coefficient array
-% (Phase 3).
+% The formal derivative of a coefficient list, as a real coefficient
+% array.
 %
 % The second element of a Sturm sequence is the derivative of the first, and
 % Sturm@sturm asks for that as an equality of coefficient arrays, not only of
 % the polynomials they denote.  lderiv is the derivative of a list of mpoly
-% coefficients in the main variable (Phase 1's deriv_list applied to the tail
+% coefficients in the main variable (mpoly_univ's deriv_list applied to the tail
 % of the list) and earr_deriv says the array it denotes at a valuation is
 % exactly NASALib's poly_deriv of the array of the original list.  The two
 % degree facts are what the first steps of the sequence need: the derivative
@@ -23,7 +23,7 @@ BEGIN
 
   lderiv(l): list[mpoly] = IF null?(l) THEN null[mpoly] ELSE deriv_list(cdr(l), 1) ENDIF
 
-  nth_cdr: LEMMA cons?(l) AND i + 1 < length(l) IMPLIES nth(cdr(l), i) = nth(l, i + 1)
+  nth_cdr_earr: LEMMA cons?(l) AND i + 1 < length(l) IMPLIES nth(cdr(l), i) = nth(l, i + 1)
   lderiv_length: LEMMA length(lderiv(l)) = IF null?(l) THEN 0 ELSE length(l) - 1 ENDIF
   earr_deriv_at: LEMMA earr(lderiv(l), ys)(i) = poly_deriv(earr(l, ys))(i)
   earr_deriv: THEOREM earr(lderiv(l), ys) = poly_deriv(earr(l, ys))

@@ -1,6 +1,6 @@
 mpoly_dom: THEORY
 %----------------------------------------------------------------------------
-% No zero divisors among polynomials (NEXT_PLAN.md P5): when p is not the zero
+% No zero divisors among polynomials: when p is not the zero
 % function and p * q is, q is (cancel).  bareiss needs it to cancel a pivot,
 % a polynomial that is not zero but may vanish at some points.
 %
@@ -14,20 +14,18 @@ mpoly_dom: THEORY
 % coefficient is; then so is q (zfun_mpol).
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING mpoly_unique, mpoly_coefs, mpoly_arith
+  IMPORTING mpoly_unique
 
-  p, q, c, h: VAR mpoly
+  p, q: VAR mpoly
   l, l1, l2: VAR list[mpoly]
   xs, ys: VAR list[real]
   a, b: VAR sequence[real]
   n, m, i, j, k: VAR nat
   x: VAR real
-  r: VAR rat
 
   %% the zero function
   zfun?(p): bool = FORALL xs: meval(p)(xs) = 0
 
-  zfun_mconst: LEMMA zfun?(mconst(r)) IFF r = 0
   zfun_eq: LEMMA zfun?(p) IFF eq_fun?(p, zero)
   zfun_mnorm: LEMMA zfun?(p) IFF mnorm(p) = zero
 

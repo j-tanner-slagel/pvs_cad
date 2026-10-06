@@ -1,6 +1,6 @@
 mpoly_unique: THEORY
 %----------------------------------------------------------------------------
-% Uniqueness of normal forms (Phase 1): two normal terms that denote the same
+% Uniqueness of normal forms: two normal terms that denote the same
 % function are the same term.  Together with meval_mnorm and mnorm_normal
 % this says mnorm(p) = mnorm(q) IFF p and q denote the same function, i.e.
 % the mpoly-eq strategy is complete as well as sound.

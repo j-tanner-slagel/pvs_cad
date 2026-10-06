@@ -1,6 +1,6 @@
 cad_projn_def: THEORY
 %----------------------------------------------------------------------------
-% Collins' N-reducta projection, executable (COLLINS_PLAN.md M-G).
+% Collins' N-reducta projection, executable.
 %
 % For a family G (members are coefficient lists in the main variable):
 %   kd(g, length(g))  the degrees of the reducta Collins keeps, from the top
@@ -19,7 +19,7 @@ cad_projn_def: THEORY
 % colh?, hence (col_stack) delineability of G over a connected set.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING col_def, mpoly_norm, mpoly_eqd, det_fast_def, bareiss_def
+  IMPORTING col_def, bareiss_def
 
   g, h: VAR list[mpoly]
   G: VAR list[list[mpoly]]
@@ -94,7 +94,7 @@ BEGIN
 
   %% membership by mpoly_eqd's meq: the ground evaluator cannot run the
   %% prelude's member on mpolys ("Equality unknown between types NULL and
-  %% CONS"), as for cad_lift's memb1
+  %% CONS"), as for mpoly_eqd's memb1
   pmem(u, V): RECURSIVE bool =
     IF null?(V) THEN FALSE ELSIF meq(car(V), u) THEN TRUE ELSE pmem(u, cdr(V)) ENDIF
   MEASURE length(V)

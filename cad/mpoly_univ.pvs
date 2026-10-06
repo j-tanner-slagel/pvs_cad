@@ -1,6 +1,6 @@
 mpoly_univ: THEORY
 %----------------------------------------------------------------------------
-% The univariate view in the main variable (Phase 1): coefficients, leading
+% The univariate view in the main variable: coefficients, leading
 % coefficient, derivative, and partial evaluation to a Sturm Polylist.
 %
 % coef(p, i) is the coefficient of x^i where x is the main variable (a term of
@@ -17,12 +17,12 @@ BEGIN
   IMPORTING mpoly_coefs, Sturm@polylist, structures@array2list[rat],
             analysis@polynomial_deriv, analysis@deriv_domain, structures@more_list_props[mpoly]
 
-  p, q, h: VAR mpoly
+  p, h: VAR mpoly
   l, t: VAR list[mpoly]
   xs, ys: VAR list[real]
   rs: VAR list[rat]
   x: VAR real
-  i, k, n: VAR nat
+  i, k: VAR nat
   c: VAR rat
 
   %% coefficients of the main variable
@@ -33,10 +33,7 @@ BEGIN
       mpol(l): IF i < length(l) THEN nth(l, i) ELSE zero ENDIF
     ENDCASES
 
-  lc(p): mpoly = coef(p, deg(p))
-
   coef_beyond: LEMMA i > deg(p) IMPLIES coef(p, i) = zero
-  coef_mpol: LEMMA mpol?(p) AND i < length(coeffs(p)) IMPLIES coef(p, i) = nth(coeffs(p), i)
 
   % the coefficient function of p at the tail valuation ys
   cf(p, ys): sequence[real] = LAMBDA (i: nat): meval(coef(p, i))(ys)

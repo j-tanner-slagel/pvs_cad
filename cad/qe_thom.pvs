@@ -1,7 +1,6 @@
 qe_thom: THEORY
 %----------------------------------------------------------------------------
-% On one fiber, a derivative-closed family separates the stack cells
-% (QE_PLAN.md section 11, 2C).
+% On one fiber, a derivative-closed family separates the stack cells.
 %
 % dcl?(G): G contains the formal derivative lderiv(g) of each of its members
 % g with a main variable, so also every lder(g, j), j < length(g).  Over a
@@ -17,7 +16,7 @@ qe_thom: THEORY
 % (fiber_noroot), and y1, y2 have the same stack index (fiber_sidx).
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING thom_lemma, earr_deriv, cad_stkc
+  IMPORTING thom_lemma, cad_stkc
 
   G: VAR list[list[mpoly]]
   g, h: VAR list[mpoly]

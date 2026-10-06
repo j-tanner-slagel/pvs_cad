@@ -1,7 +1,7 @@
 col_pair: THEORY
 %----------------------------------------------------------------------------
-% The complex picture near a point of C (COLLINS_PLAN.md M-E, section 2.3,
-% items 1-3): the hypotheses of col_real hold for the members of G, between
+% The complex picture near a point of C: the hypotheses of col_real hold for
+% the members of G, between
 % p1 and every point of C near p1.
 %
 % FF(G, p1, p)(i) is member i over p as a complex polynomial, with the degree
@@ -11,7 +11,8 @@ col_pair: THEORY
 %   ff_up / ff_lo  its roots move continuously (croot_lsc's rp_near / rp_lsc,
 %                  with the coefficients eventually close, ca_close)
 %   ff_one         one root per disc (croot_disc's disc_one; as many distinct
-%                  roots over p as over p1 by dist_same, from col_psc1)
+%                  roots over p as over p1, from the equal common-divisor
+%                  degrees kdist?, kc_kdist)
 %   ff_sh          common roots persist: with kappa the degree of the common
 %                  divisors (the same over p as over p1, ff_pat), the common
 %                  roots are the roots of S_kappa (sres_roots) when kappa is
@@ -23,7 +24,7 @@ col_pair: THEORY
 %                  apart
 % ff_hyp collects them: col_real's hyp? holds eventually near p1 in C.
 %
-% 2026-10-02 (PROJ_PLAN.md P2): the lemmas take kconst?(G, C) -- the
+% 2026-10-02: the lemmas take kconst?(G, C) -- the
 % effective degrees are constant on C, and so are the degrees of the common
 % divisors of each member with its derivative (kdist?) and of each pair --
 % instead of colh?(G, C), which is the only thing they used of it

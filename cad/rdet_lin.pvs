@@ -1,6 +1,6 @@
 rdet_lin: THEORY
 %----------------------------------------------------------------------------
-% The determinant is linear in each column (COLLINS_PLAN.md M-A).
+% The determinant is linear in each column.
 %
 % setcol(R, j, v) is R with column j replaced by v.  rdet_col_lin: by
 % induction on the size, through the first-row expansion: the term of
@@ -10,7 +10,7 @@ rdet_lin: THEORY
 % rdet_col_sum: the determinant with column j set to v is the combination of
 % the ones with the unit columns ecol(i), weighted by v(i).  With rdet_nl's
 % rdet_cols_eq this is what turns the subresultant's last column into a
-% polynomial combination of its rows (COLLINS_PLAN.md 2.1, item 3).
+% polynomial combination of its rows.
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING rdet_nl

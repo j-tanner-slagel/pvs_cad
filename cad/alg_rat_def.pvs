@@ -1,7 +1,6 @@
 alg_rat_def: THEORY
 %----------------------------------------------------------------------------
-% A rational value for an algebraic number, when it has one (QE_PLAN.md 12,
-% fix 1).  Executable.
+% A rational value for an algebraic number, when it has one.  Executable.
 %
 % ratx(a) returns r = (: q :) when it finds a rational q that is a root of
 % a`p in [a`lb, a`ub] -- then q = value(a), since a isolates one root

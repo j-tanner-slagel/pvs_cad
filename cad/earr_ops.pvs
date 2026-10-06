@@ -1,7 +1,7 @@
 earr_ops: THEORY
 %----------------------------------------------------------------------------
 % Coefficient arrays of the list operations, and proportional lists
-% (Phase 6, performance).
+% (for speed).
 %
 % earr(l, ys) is the coefficient array of the list l at the valuation ys
 % (mpoly_real). This theory computes it through the operations of
@@ -10,8 +10,7 @@ earr_ops: THEORY
 % the ratio c at ys. Proportionality passes through the pseudo-remainder
 % (prop_prem, with the ratio c1 * c2^pk), through the Sturm step of
 % sturm_step (prop_sstep, ratio c1 * c2^(2 pk)) and, for c > 0, through
-% normalization at ys (prop_snorm), and it preserves the leading sign
-% (prop_sign). This is what lets a chain built with a different step be
+% normalization at ys (prop_snorm). This is what lets a chain built with a different step be
 % compared with the chain of branch_prs element by element (sg_chain2).
 %----------------------------------------------------------------------------
 BEGIN
@@ -30,7 +29,6 @@ BEGIN
   earr_cons: LEMMA earr(cons(a, l), ys)(i) = IF i = 0 THEN meval(a)(ys) ELSE earr(l, ys)(i - 1) ENDIF
 
   %% the list operations, one element at a time
-  lscal_null: LEMMA lscal(h, null[mpoly]) = null[mpoly]
   lscal_cons: LEMMA lscal(h, cons(a, l)) = cons(mmul(h, a), lscal(h, l))
   nth_lscal: LEMMA FORALL l: FORALL i: i < length(l) IMPLIES nth(lscal(h, l), i) = mmul(h, nth(l, i))
   earr_madd: LEMMA FORALL l1: FORALL l2, i:
@@ -79,7 +77,5 @@ BEGIN
   snorm_above: LEMMA i >= length(select(snorm(l), ys)) IMPLIES earr(l, ys)(i) = 0
   prop_snorm: LEMMA c > 0 AND prop(l1, l2, c, ys) IMPLIES
     prop(select(snorm(l1), ys), select(snorm(l2), ys), c, ys)
-  prop_sign: LEMMA c > 0 AND prop(l1, l2, c, ys) IMPLIES
-    sign3(meval(llast(l1))(ys)) = sign3(meval(llast(l2))(ys))
   sign3_mult_earr_ops: LEMMA FORALL (x, y: real): sign3(x * y) = sign3(x) * sign3(y)
 END earr_ops

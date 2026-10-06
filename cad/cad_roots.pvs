@@ -1,6 +1,6 @@
 cad_roots: THEORY
 %----------------------------------------------------------------------------
-% The roots of a family over a point, as a sorted list (GAP_PLAN.md Tier 1).
+% The roots of a family over a point, as a sorted list.
 %
 % rootat?(G, p)(y): some member of G that is not identically zero on the
 % fibre over p vanishes at y.  This is the classical zero set of the product
@@ -15,7 +15,7 @@ cad_roots: THEORY
 % separators (rtl_groots).
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING mwalk, cvl
+  IMPORTING zfam, cvl
 
   G, F: VAR list[list[mpoly]]
   g: VAR list[mpoly]

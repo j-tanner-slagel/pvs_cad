@@ -1,8 +1,7 @@
 rcf_fol: THEORY
 %----------------------------------------------------------------------------
-% First-order formulas over the reals with polynomial sign atoms (GAP_PLAN.md
-% Tier 1, the plan's cad_spec: semi-algebraicity as first-order
-% definability).
+% First-order formulas over the reals with polynomial sign atoms, for
+% semi-algebraicity in the sense of first-order definability.
 %
 % Variables are positions in the point list, the head the innermost (as in
 % meval and sem): fex(b) holds at pt iff b holds at cons(x, pt) for some x.

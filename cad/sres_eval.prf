@@ -1,6 +1,6 @@
 (|sres_eval|
  (|sresm_corner| 0
-  (|sresm_corner-0| "" 3999837750
+  (|sresm_corner-1| "" 4000267833
    ("" (SKEEP)
     (("" (EXPAND "ev")
       (("" (EXPAND "sresm")
@@ -62,7 +62,7 @@
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|coef_at_earr| FORMULA-DECL NIL |sylvester| NIL)
-    (|sresm| CONST-DECL "Mat" |subres| NIL)
+    (|sresm| CONST-DECL "MMat" |subres| NIL)
     (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
      NIL)
     (|even_times_int_is_even| APPLICATION-JUDGEMENT "even_int" |integers| NIL)
@@ -87,7 +87,7 @@
      |real_props| NIL))
    SHOSTAK (|psc_ev| SUBTYPE "dg(f) + dg(g) - 2 * j" "nat" (27 35 27 56))))
  (|psc_ev| 0
-  (|psc_ev-0| "" 3999837755
+  (|psc_ev-1| "" 4000267834
    ("" (SKEEP)
     (("" (REWRITE "psc_eval")
       (("" (REWRITE "rdet_ext")
@@ -130,9 +130,9 @@
     (|dg| CONST-DECL "nat" |prem_arr| NIL)
     (|earr| CONST-DECL "real" |mpoly_real| NIL)
     (|sylj| CONST-DECL "RMat" |sres_rows| NIL)
-    (|sresm| CONST-DECL "Mat" |subres| NIL)
+    (|sresm| CONST-DECL "MMat" |subres| NIL)
     (|ev| CONST-DECL "RMat" |ring_det| NIL)
-    (|Mat| TYPE-EQ-DECL NIL |ring_det| NIL)
+    (|MMat| TYPE-EQ-DECL NIL |ring_det| NIL)
     (|RMat| TYPE-EQ-DECL NIL |ring_det| NIL)
     (|rdet_ext| FORMULA-DECL NIL |rdet_nl| NIL)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
@@ -158,7 +158,7 @@
    SHOSTAK
    (|sresm2_corner| SUBTYPE "dg(f) + dg(g) - 2 * j - 1" "nat" (31 62 31 87))))
  (|sresm2_corner| 0
-  (|sresm2_corner-0| "" 3999837756
+  (|sresm2_corner-1| "" 4000267835
    ("" (SKEEP)
     (("" (EXPAND "ev")
       (("" (EXPAND "sresm2")
@@ -230,7 +230,7 @@
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|coef_at_earr| FORMULA-DECL NIL |sylvester| NIL)
     (|scol| CONST-DECL "real" |sres_gcd| NIL)
-    (|sresm2| CONST-DECL "Mat" |subres2| NIL)
+    (|sresm2| CONST-DECL "MMat" |subres2| NIL)
     (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
      NIL)
     (|even_times_int_is_even| APPLICATION-JUDGEMENT "even_int" |integers| NIL)
@@ -257,7 +257,7 @@
     "{j: naturalnumbers.nat | reals.<=(number_fields.*(2, j), (number_fields.+)(prem_arr.dg(sres_eval.f), prem_arr.dg(sres_eval.g)))}"
     (35 22 35 23))))
  (|sresc_ev| 0
-  (|sresc_ev-0| "" 3999837761
+  (|sresc_ev-1| "" 4000267836
    ("" (SKEEP)
     (("" (REWRITE "sresc_eval")
       (("" (EXPAND "sresv")
@@ -310,9 +310,9 @@
     (|earr| CONST-DECL "real" |mpoly_real| NIL)
     (|sylj| CONST-DECL "RMat" |sres_rows| NIL)
     (|setcol| CONST-DECL "RMat" |rdet_lin| NIL)
-    (|sresm2| CONST-DECL "Mat" |subres2| NIL)
+    (|sresm2| CONST-DECL "MMat" |subres2| NIL)
     (|ev| CONST-DECL "RMat" |ring_det| NIL)
-    (|Mat| TYPE-EQ-DECL NIL |ring_det| NIL)
+    (|MMat| TYPE-EQ-DECL NIL |ring_det| NIL)
     (|RMat| TYPE-EQ-DECL NIL |ring_det| NIL)
     (|rdet_ext| FORMULA-DECL NIL |rdet_nl| NIL)
     (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"

@@ -1,7 +1,7 @@
 mpoly_embed: THEORY
 %----------------------------------------------------------------------------
 % Evaluation of the deep embedding, its translation into the recursive
-% representation, and the reflection theorem peval_pnorm (Phase 1).
+% representation, and the reflection theorem peval_pnorm.
 %
 % The strategy mpoly-eq proves e1<xs> = e2<xs> for polynomial expressions by
 % (1) rewriting each side into peval(E)(xs) with the peval_* lemmas,

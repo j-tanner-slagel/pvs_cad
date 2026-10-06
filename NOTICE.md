@@ -7,12 +7,12 @@ pvs_cad requires PVS and NASALib, which are not included here. The pvs-cli tools
 (`tools/pvscli.sh`, `tools/pvscli_wrap.py`) run NASALib's own `pvs-scripts/pvs-cli/pvs-cli.py`
 (https://github.com/nasa/pvslib), which is part of NASALib and is not included here either.
 
-- **Bath CAD example bank.** `cad/bench_pdec.pvs`, `cad/bench_n.pvs`, `cad/bench_c.pvs` and
-  `cad/cad_bath.pvs` contain problems of the Bath CAD example bank translated into PVS:
+- **Bath CAD example bank.** `tests/bath/cad_bath.pvs` contains problems of the Bath CAD example bank
+  translated into PVS:
   D. J. Wilson, R. J. Bradford and J. H. Davenport, "A repository for CAD examples", ACM
   Communications in Computer Algebra 46(3/4):67–69, 2012; dataset maintained by D. Wilson, University of
   Bath Research Data Archive, version 4 (2013), doi 10.15125/BATH-00069, licensed CC BY-SA 4.0.
-  These four files, with their `.prf` proof files, are distributed under CC BY-SA 4.0
+  This file, with its `.prf` proof file, is distributed under CC BY-SA 4.0
   (https://creativecommons.org/licenses/by-sa/4.0/).
 - **PVS.** `tools/pvs-circular-deps.lisp` is derived from `src/context.lisp` of PVS
   (https://github.com/SRI-CSL/PVS), Copyright (c) SRI International, BSD 3-Clause License; the

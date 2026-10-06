@@ -6,7 +6,7 @@
     (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
     (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
-   SHOSTAK (|detl| SUBTYPE "n - j" "nat" (44 33 44 38))))
+   SHOSTAK (|detl| SUBTYPE "n - j" "nat" (48 33 48 38))))
  (|detl_TCC2| 0
   (|detl_TCC2-0| "" 3998381571 ("" (SKEEP) (("" (APPLY (GRIND)) NIL NIL)) NIL)
    ((|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
@@ -14,13 +14,13 @@
     (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
     (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
-   SHOSTAK (|detl| SUBTYPE "z`1 - z`3" "nat" (44 33 44 38))))
+   SHOSTAK (|detl| SUBTYPE "z`1 - z`3" "nat" (48 33 48 38))))
  (|detl_TCC3| 0
   (|detl_TCC3-0| "" 3998381571 ("" (SKEEP) (("" (APPLY (GRIND)) NIL NIL)) NIL)
    ((|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
     (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
-   SHOSTAK (|detl| SUBTYPE "n - 1" "nat" (42 48 42 53))))
+   SHOSTAK (|detl| SUBTYPE "n - 1" "nat" (46 48 46 53))))
  (|detl_TCC4| 0
   (|detl_TCC4-0| "" 3998381572 ("" (SKEEP) (("" (APPLY (GRIND)) NIL NIL)) NIL)
    ((< DEF-DECL "bool" |ordinals| NIL) (|lex2| CONST-DECL "ordinal" |lex2| NIL)
@@ -31,7 +31,7 @@
      |real_props| NIL))
    SHOSTAK
    (|detl| TERMINATION "detl(n - 1, minor(M, 0, j), 0)"
-    #A((3) BASE-CHAR . "NIL") (42 43 42 73))))
+    #A((3) BASE-CHAR . "NIL") (46 43 46 73))))
  (|detl_TCC5| 0
   (|detl_TCC5-0| "" 3998381606 ("" (SKEEP) (("" (APPLY (GRIND)) NIL NIL)) NIL)
    ((< DEF-DECL "bool" |ordinals| NIL) (|lex2| CONST-DECL "ordinal" |lex2| NIL)
@@ -47,7 +47,7 @@
     (NIL APPLICATION-JUDGEMENT "above(n)" |exp2| NIL))
    SHOSTAK
    (|detl| TERMINATION "detl(n, M, j + 1)" #A((3) BASE-CHAR . "NIL")
-    (42 76 42 93))))
+    (46 76 46 93))))
  (|rdetl_TCC1| 0
   (|rdetl_TCC1-0| "" 3998381573 ("" (SKEEP) (("" (APPLY (GRIND)) NIL NIL)) NIL)
    ((|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
@@ -55,9 +55,9 @@
     (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
     (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
-   SHOSTAK (|rdetl| SUBTYPE "z`1 - z`3" "nat" (52 33 52 38))))
+   SHOSTAK (|rdetl| SUBTYPE "z`1 - z`3" "nat" (56 33 56 38))))
  (|ev_minor| 0
-  (|ev_minor-0| "" 3998381574
+  (|ev_minor-1| "" 4000267825
    ("" (SKEEP)
     (("" (EXPAND "ev")
       (("" (EXPAND "minor")
@@ -66,7 +66,7 @@
     NIL)
    ((|ev| CONST-DECL "RMat" |ring_det| NIL)
     (|rminor| CONST-DECL "RMat" |ring_det| NIL)
-    (|minor| CONST-DECL "Mat" |ring_det| NIL))
+    (|minor| CONST-DECL "MMat" |ring_det| NIL))
    SHOSTAK))
  (|meval_msgn| 0
   (|meval_msgn-0| "" 3998381575
@@ -100,7 +100,7 @@
     (|rsgn| CONST-DECL "real" |ring_det| NIL))
    SHOSTAK))
  (|detl_eval| 0
-  (|detl_eval-3| "" 3998381790
+  (|detl_eval-0| "" 4000267826
    (""
     (MEASURE-INDUCT+ "n * (n + 1) + (IF j <= n THEN n - j ELSE 0 ENDIF)"
      ("n" "j"))
@@ -153,28 +153,28 @@
     NIL)
    ((|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    (|meval_madd| FORMULA-DECL NIL |mpoly_arith| NIL)
-    (|mmul| CONST-DECL "mpoly" |mpoly_arith| NIL)
-    (|msgn| CONST-DECL "mpoly" |ring_det| NIL)
-    (|minor| CONST-DECL "Mat" |ring_det| NIL)
     (|nnint_times_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
      NIL)
     (|even_times_int_is_even| APPLICATION-JUDGEMENT "even_int" |integers| NIL)
+    (|minor| CONST-DECL "MMat" |ring_det| NIL)
+    (|msgn| CONST-DECL "mpoly" |ring_det| NIL)
+    (|mmul| CONST-DECL "mpoly" |mpoly_arith| NIL)
+    (|meval_madd| FORMULA-DECL NIL |mpoly_arith| NIL)
     (|ev_minor| FORMULA-DECL NIL |ring_det| NIL)
-    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
-     "(strict_total_order?[real])" |real_props| NIL)
-    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
-     NIL)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
+    (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
+     NIL)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
     (|meval_msgn| FORMULA-DECL NIL |ring_det| NIL)
     (|meval_mmul| FORMULA-DECL NIL |mpoly_arith| NIL)
-    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
     (|posint_plus_nnint_is_posint| APPLICATION-JUDGEMENT "posint" |integers|
      NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
     (|real_plus_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
-    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
     (|meval_mconst| FORMULA-DECL NIL |mpoly_def| NIL)
+    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
     (|real_times_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
     (|pred| TYPE-EQ-DECL NIL |defined_types| NIL)
     (|well_founded?| CONST-DECL "bool" |orders| NIL)
@@ -205,18 +205,18 @@
     (|measure_induction| FORMULA-DECL NIL |measure_induction| NIL)
     (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
     (|wf_nat| FORMULA-DECL NIL |naturalnumbers| NIL)
-    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
-    (|Mat| TYPE-EQ-DECL NIL |ring_det| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (|meval| DEF-DECL "real" |mpoly_def| NIL)
-    (|detl| DEF-DECL "mpoly" |ring_det| NIL)
-    (|RMat| TYPE-EQ-DECL NIL |ring_det| NIL)
-    (|rdetl| DEF-DECL "real" |ring_det| NIL)
     (|ev| CONST-DECL "RMat" |ring_det| NIL)
+    (|rdetl| DEF-DECL "real" |ring_det| NIL)
+    (|RMat| TYPE-EQ-DECL NIL |ring_det| NIL)
+    (|detl| DEF-DECL "mpoly" |ring_det| NIL)
+    (|meval| DEF-DECL "real" |mpoly_def| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
+    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
+    (|list| TYPE-DECL NIL |list_adt| NIL)
+    (|MMat| TYPE-EQ-DECL NIL |ring_det| NIL)
+    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
    SHOSTAK))
@@ -246,7 +246,7 @@
     (>= CONST-DECL "bool" |reals| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
-    (|Mat| TYPE-EQ-DECL NIL |ring_det| NIL)
+    (|MMat| TYPE-EQ-DECL NIL |ring_det| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)

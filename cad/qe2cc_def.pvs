@@ -1,9 +1,9 @@
 qe2cc_def: THEORY
 %----------------------------------------------------------------------------
-% Quantifier elimination for m >= 2 free variables over the Collins tower
-% (COLLINS_PLAN.md M-I).  Executable.
+% Quantifier elimination for m >= 2 free variables over the Collins tower.
+% Executable.
 %
-% qe2_def's qe2_c on the Collins run: every sector s of the outer line
+% qe2_def's answer on the Collins run: every sector s of the outer line
 % carries the same tower ctw(F, k) (k = m - 1 + #bound), the records of
 % cad_outc in s give the free cells and their values, and secout writes the
 % answer on s (sign conditions on the free levels' polynomials when they

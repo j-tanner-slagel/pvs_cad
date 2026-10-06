@@ -847,7 +847,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
  (|sec_cont| 0
-  (|sec_cont-0| "" 3999726266
+  (|sec_cont-1| "" 4000267847
    ("" (SKEEP)
     (("" (LABEL "dl" -1)
       (("" (LABEL "cx" -2)
@@ -866,7 +866,7 @@
                               (LEMMA "cont_eq"
                                ("g" "LAMBDA (q: list[real]): 0" "h" "sec(G, a)"
                                 "C" "C"))
-                              (("1" (LEMMA "cont_const" ("c" "0" "C" "C"))
+                              (("1" (LEMMA "cont_const_slab" ("c" "0" "C" "C"))
                                 (("1" (ASSERT) NIL NIL)) NIL))
                               NIL)
                              ("2" (SKOLEM 1 "q1")
@@ -972,23 +972,13 @@
                                         "c" "1" "C" "C"))
                                       (("2" (ASSERT) NIL NIL)) NIL))
                                     NIL)
-                                   ("2" (INST "ct" "hf(a) - 1")
-                                    (("1"
-                                      (LEMMA "cont_plus"
-                                       ("r"
-                                        "LAMBDA (p: list[real]): rt(G, p, hf(a) - 1)"
-                                        "c" "1" "C" "C"))
-                                      (("1" (ASSERT) NIL NIL)
-                                       ("2" (ASSERT) NIL NIL))
-                                      NIL)
-                                     ("2"
-                                      (LEMMA "cont_plus"
-                                       ("r"
-                                        "LAMBDA (p: list[real]): rt(G, p, hf(a) - 1)"
-                                        "c" "1" "C" "C"))
-                                      (("1" (ASSERT) NIL NIL)
-                                       ("2" (ASSERT) NIL NIL))
-                                      NIL))
+                                   ("2"
+                                    (LEMMA "cont_plus"
+                                     ("r"
+                                      "LAMBDA (p: list[real]): rt(G, p, hf(a) - 1)"
+                                      "c" "1" "C" "C"))
+                                    (("1" (ASSERT) NIL NIL)
+                                     ("2" (ASSERT) NIL NIL))
                                     NIL))
                                   NIL)
                                  ("2" (SKOLEM 1 "q1")
@@ -1050,20 +1040,8 @@
                                         "C" "C"))
                                       (("2" (ASSERT) NIL NIL)) NIL))
                                     NIL)
-                                   ("2" (INST-CP "ct" "hf(a) - 1")
-                                    (("1" (INST "ct" "hf(a)")
-                                      (("1"
-                                        (LEMMA "cont_mid"
-                                         ("r1"
-                                          "LAMBDA (p: list[real]): rt(G, p, hf(a) - 1)"
-                                          "r2"
-                                          "LAMBDA (p: list[real]): rt(G, p, hf(a))"
-                                          "C" "C"))
-                                        (("1" (ASSERT) NIL NIL)
-                                         ("2" (ASSERT) NIL NIL))
-                                        NIL))
-                                      NIL)
-                                     ("2"
+                                   ("2" (INST "ct" "hf(a)")
+                                    (("2"
                                       (LEMMA "cont_mid"
                                        ("r1"
                                         "LAMBDA (p: list[real]): rt(G, p, hf(a) - 1)"
@@ -1170,7 +1148,7 @@
     (|rt| CONST-DECL "real" |cad_roots| NIL)
     (|rl?| CONST-DECL "bool" |cad_roots| NIL)
     (|cont_eq| FORMULA-DECL NIL |cad_stkc| NIL)
-    (|cont_const| FORMULA-DECL NIL |cad_slab| NIL)
+    (|cont_const_slab| FORMULA-DECL NIL |cad_slab| NIL)
     (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|sec| CONST-DECL "real" |cad_stkc| NIL)
     (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)

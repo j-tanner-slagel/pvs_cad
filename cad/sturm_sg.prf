@@ -1,7 +1,7 @@
 (|sturm_sg|
  (|sub1_TCC1| 0
   (|sub1_TCC1-1| NIL 3998949171 ("" (SUBTYPE-TCC) NIL NIL) NIL NIL
-   (|sub1| SUBTYPE "c" "(list_adt[mpoly_adt.mpoly].cons?)" (30 18 30 19))))
+   (|sub1| SUBTYPE "c" "(list_adt[mpoly_adt.mpoly].cons?)" (31 18 31 19))))
  (|sub1_TCC2| 0
   (|sub1_TCC2-1| NIL 3998949171 ("" (TERMINATION-TCC) NIL NIL)
    ((|length| DEF-DECL "nat" |list_props| NIL)
@@ -12,7 +12,7 @@
     (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|))
    NIL
    (|sub1| TERMINATION "sub1(cdr[mpoly](c), y0)" #A((3) BASE-CHAR . "NIL")
-    (30 32 30 48))))
+    (31 32 31 48))))
  (|sub1_eval| 0
   (|sub1_eval-0| "" 3998949200
    ("" (INDUCT "c")
@@ -609,14 +609,14 @@
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
    NIL
    (|slen| SUBTYPE "length[list[mpoly]](schain(k, sg, f)) - 2" "nat"
-    (66 42 66 70))))
+    (67 42 67 70))))
  (|clen_TCC1| 0
   (|clen_TCC1-1| NIL 3999030300 ("" (SUBTYPE-TCC) NIL NIL)
    ((|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
     (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
-   NIL (|clen| SUBTYPE "length[list[mpoly]](ch) - 2" "nat" (77 42 77 56))))
+   NIL (|clen| SUBTYPE "length[list[mpoly]](ch) - 2" "nat" (78 42 78 56))))
  (|svar_def| 0
   (|svar_def-0| "" 3999030307
    ("" (SKEEP)
@@ -807,6 +807,69 @@
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
+ (|sign3_scale| 0
+  (|sign3_scale-0| "" 4000262710
+   ("" (SKEEP)
+    (("" (CASE "v = 0")
+      (("1" (INST 1 "1") (("1" (EXPAND "sign3") (("1" (ASSERT) NIL NIL)) NIL))
+        NIL)
+       ("2" (CASE "v > 0")
+        (("1" (INST 2 "1/v")
+          (("1" (EXPAND "sign3") (("1" (ASSERT) NIL NIL)) NIL)
+           ("2" (ASSERT) (("2" (FIELD) NIL NIL)) NIL) ("3" (ASSERT) NIL NIL))
+          NIL)
+         ("2" (EXPAND "sign3")
+          (("2" (ASSERT)
+            (("2" (INST 3 "-1/v") (("1" (FIELD) NIL NIL) ("2" (FIELD) NIL NIL))
+              NIL))
+            NIL))
+          NIL))
+        NIL))
+      NIL))
+    NIL)
+   ((|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
+    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
+    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
+    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
+    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
+    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
+    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
+    (|sign3| CONST-DECL "Sign3" |sign3| |reals|)
+    (|real_times_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
+    (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
+    (|posreal| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (> CONST-DECL "bool" |reals| NIL)
+    (|nonneg_real| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
+    (>= CONST-DECL "bool" |reals| NIL)
+    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
+    (|div_mult_neg_ge1| FORMULA-DECL NIL |real_props| NIL)
+    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
+    (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
+    (|nznum| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
+    (/ CONST-DECL "[numfield, nznum -> numfield]" |number_fields| NIL)
+    (/= CONST-DECL "boolean" |notequal| NIL)
+    (|v| SKOLEM-CONST-DECL "real" |sturm_sg| NIL)
+    (|nzreal_div_nzreal_is_nzreal| APPLICATION-JUDGEMENT "nzreal" |real_types|
+     NIL)
+    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|pos_div_gt| FORMULA-DECL NIL |real_props| NIL)
+    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
+     |real_props| NIL)
+    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
+    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
+     "(strict_total_order?[real])" |real_props| NIL)
+    (|div_mult_pos_ge1| FORMULA-DECL NIL |real_props| NIL)
+    (|zero_times1| FORMULA-DECL NIL |real_props| NIL)
+    (|bijective?| CONST-DECL "bool" |functions| NIL)
+    (|id| CONST-DECL "(bijective?[T, T])" |identity| NIL)
+    (TRUE CONST-DECL "bool" |booleans| NIL))
+   SHOSTAK))
  (|svar_nsc_TCC1| 0
   (|svar_nsc_TCC1-0| "" 3998949808
    ("" (SKEEP)
@@ -846,7 +909,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK
    (|svar_nsc| SUBTYPE "length[list[mpoly]](fchain(k, f, ys)) - 2" "nat"
-    (98 6 98 34))))
+    (103 6 103 34))))
  (|svar_nsc| 0
   (|svar_nsc-1| "" 3999115950
    ("" (SKEEP)
@@ -954,7 +1017,7 @@
      "(strict_total_order?[real])" |real_props| NIL)
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|schain_entry| FORMULA-DECL NIL |sturm_sg| NIL)
-    (|sign3_scale| FORMULA-DECL NIL |alg_sturm| NIL)
+    (|sign3_scale| FORMULA-DECL NIL |sturm_sg| NIL)
     (|nsc_scale| FORMULA-DECL NIL |nsc_scale| NIL)
     (|svarf| CONST-DECL "[nat -> real]" |sturm_sg| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
@@ -2129,7 +2192,7 @@
     (> CONST-DECL "bool" |reals| NIL)
     (|nonneg_real| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
     (|real_times_real_is_real| APPLICATION-JUDGEMENT "real" |reals| NIL)
-    (|sign3_scale| FORMULA-DECL NIL |alg_sturm| NIL)
+    (|sign3_scale| FORMULA-DECL NIL |sturm_sg| NIL)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
     (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
@@ -2302,7 +2365,7 @@
     (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
     (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
-    (|sign3_scale| FORMULA-DECL NIL |alg_sturm| NIL)
+    (|sign3_scale| FORMULA-DECL NIL |sturm_sg| NIL)
     (|nonneg_real| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
     (> CONST-DECL "bool" |reals| NIL)
     (|posreal| NONEMPTY-TYPE-EQ-DECL NIL |real_types| NIL)
@@ -2735,8 +2798,8 @@
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
- (|left_zero| 0
-  (|left_zero-0| "" 3998949410
+ (|left_zero_sg| 0
+  (|left_zero_sg-0| "" 4000267838
    ("" (SKEEP)
     (("" (LEMMA "slc_fok")
       (("" (INST -1 "f" "k" "ys")
@@ -2966,8 +3029,8 @@
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    SHOSTAK))
- (|right_zero| 0
-  (|right_zero-0| "" 3998949423
+ (|right_zero_sg| 0
+  (|right_zero_sg-0| "" 4000267839
    ("" (SKEEP)
     (("" (LEMMA "slc_fok")
       (("" (INST -1 "f" "k" "ys")
@@ -3176,93 +3239,6 @@
     (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (>= CONST-DECL "bool" |reals| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
-    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
-    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL)
-    (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
-   SHOSTAK))
- (|captures| 0
-  (|captures-0| "" 3998949424
-   ("" (SKEEP)
-    (("" (EXPAND "ends?")
-      (("" (FLATTEN)
-        (("" (LEMMA "split")
-          (("" (INST -1 "f" "k" "msg(ys)" "y0" "y1")
-            (("" (LEMMA "left_nneg")
-              (("" (INST -1 "f" "k" "y0" "ys")
-                (("" (ASSERT)
-                  (("" (LEMMA "right_nneg")
-                    (("" (INST -1 "f" "k" "y1" "ys")
-                      (("" (ASSERT)
-                        (("" (LEMMA "left_zero")
-                          (("" (INST -1 "f" "k" "y0" "ys")
-                            (("" (ASSERT)
-                              (("" (LEMMA "right_zero")
-                                (("" (INST -1 "f" "k" "y1" "ys")
-                                  (("" (ASSERT)
-                                    (("" (SKEEP)
-                                      (("" (INST -1 "z")
-                                        (("" (INST -2 "z")
-                                          (("" (ASSERT) NIL NIL)) NIL))
-                                        NIL))
-                                      NIL))
-                                    NIL))
-                                  NIL))
-                                NIL))
-                              NIL))
-                            NIL))
-                          NIL))
-                        NIL))
-                      NIL))
-                    NIL))
-                  NIL))
-                NIL))
-              NIL))
-            NIL))
-          NIL))
-        NIL))
-      NIL))
-    NIL)
-   ((|ends?| CONST-DECL "bool" |sturm_sg| NIL)
-    (|split| FORMULA-DECL NIL |sturm_sg| NIL)
-    (|left_nneg| FORMULA-DECL NIL |sturm_sg| NIL)
-    (|int_plus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
-    (|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|real_lt_is_strict_total_order| NAME-JUDGEMENT
-     "(strict_total_order?[real])" |real_props| NIL)
-    (|left_zero| FORMULA-DECL NIL |sturm_sg| NIL)
-    (|real_le_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|le_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|real_gt_is_strict_total_order| NAME-JUDGEMENT
-     "(strict_total_order?[real])" |real_props| NIL)
-    (|gt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|right_zero| FORMULA-DECL NIL |sturm_sg| NIL)
-    (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
-     |real_props| NIL)
-    (|ge_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
-    (|right_nneg| FORMULA-DECL NIL |sturm_sg| NIL)
-    (|rat| NONEMPTY-TYPE-EQ-DECL NIL |rationals| NIL)
-    (|msg| CONST-DECL "SG" |sg_norm| NIL)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (SG TYPE-EQ-DECL NIL |sg_norm| NIL)
-    (|Sign3| TYPE-EQ-DECL NIL |sign3| |reals|)
-    (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (OR CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (>= CONST-DECL "bool" |reals| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)

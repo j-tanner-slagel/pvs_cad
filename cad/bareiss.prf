@@ -584,7 +584,7 @@
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
    SHOSTAK (|blk?| SUBTYPE "i" "below[length[list[mpoly]](B)]" (70 78 70 79))))
  (|bm_bmat| 0
-  (|bm_bmat-0| "" 3999990452
+  (|bm_bmat-1| "" 4000267826
    ("" (SKEEP)
     (("" (APPLY-EXTENSIONALITY :HIDE? T)
       (("" (EXPAND "ev")
@@ -594,13 +594,13 @@
       NIL))
     NIL)
    ((|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
-    (|Mat| TYPE-EQ-DECL NIL |ring_det| NIL)
+    (|MMat| TYPE-EQ-DECL NIL |ring_det| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
     (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
     (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (|ev| CONST-DECL "RMat" |ring_det| NIL)
-    (|bmat| CONST-DECL "Mat" |bareiss| NIL)
+    (|bmat| CONST-DECL "MMat" |bareiss| NIL)
     (|bm| CONST-DECL "RMat" |bareiss| NIL)
     (|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
@@ -2878,7 +2878,7 @@
     "{i: integers.int | booleans.OR(mpoly_def.meval(bareiss.p)(bareiss.ys) /= 0, reals.>=(i, 0))}"
     (145 56 145 61))))
  (|step_inv| 0
-  (|step_inv-0| "" 3999991290
+  (|step_inv-1| "" 4000267827
    ("" (SKEEP)
     (("" (LABEL "hnz" -2)
       (("" (LABEL "hok" -3)
@@ -2995,9 +2995,9 @@
         NIL))
       NIL))
     NIL)
-   ((|bmat| CONST-DECL "Mat" |bareiss| NIL)
+   ((|bmat| CONST-DECL "MMat" |bareiss| NIL)
     (|det| CONST-DECL "mpoly" |ring_det| NIL)
-    (|Mat| TYPE-EQ-DECL NIL |ring_det| NIL)
+    (|MMat| TYPE-EQ-DECL NIL |ring_det| NIL)
     (|mpow| DEF-DECL "mpoly" |mpoly_arith| NIL)
     (|mmul| CONST-DECL "mpoly" |mpoly_arith| NIL)
     (|msub| CONST-DECL "mpoly" |mpoly_arith| NIL)
@@ -3395,7 +3395,7 @@
     (|length| DEF-DECL "nat" |list_props| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (|Mat| TYPE-EQ-DECL NIL |ring_det| NIL)
+    (|MMat| TYPE-EQ-DECL NIL |ring_det| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
    SHOSTAK))
@@ -3417,7 +3417,7 @@
     (>= CONST-DECL "bool" |reals| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
-    (|Mat| TYPE-EQ-DECL NIL |ring_det| NIL)
+    (|MMat| TYPE-EQ-DECL NIL |ring_det| NIL)
     (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
      NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
@@ -3482,7 +3482,7 @@
     (>= CONST-DECL "bool" |reals| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
-    (|Mat| TYPE-EQ-DECL NIL |ring_det| NIL)
+    (|MMat| TYPE-EQ-DECL NIL |ring_det| NIL)
     (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (< CONST-DECL "bool" |reals| NIL)
     (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
@@ -3560,7 +3560,7 @@
     (|length| DEF-DECL "nat" |list_props| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
     (= CONST-DECL "[T, T -> boolean]" |equalities| NIL)
-    (|Mat| TYPE-EQ-DECL NIL |ring_det| NIL)
+    (|MMat| TYPE-EQ-DECL NIL |ring_det| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL))
    SHOSTAK))
@@ -3582,7 +3582,7 @@
     (>= CONST-DECL "bool" |reals| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
-    (|Mat| TYPE-EQ-DECL NIL |ring_det| NIL)
+    (|MMat| TYPE-EQ-DECL NIL |ring_det| NIL)
     (|nnint_plus_nnint_is_nnint| APPLICATION-JUDGEMENT "nonneg_int" |integers|
      NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
@@ -3647,7 +3647,7 @@
     (>= CONST-DECL "bool" |reals| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
-    (|Mat| TYPE-EQ-DECL NIL |ring_det| NIL)
+    (|MMat| TYPE-EQ-DECL NIL |ring_det| NIL)
     (IMPLIES CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
     (< CONST-DECL "bool" |reals| NIL)
     (|numfield| NONEMPTY-TYPE-EQ-DECL NIL |number_fields| NIL)
@@ -3683,7 +3683,7 @@
      NIL)
     (|mrowsf_nth| FORMULA-DECL NIL |bareiss| NIL)
     (|mrowf_len| FORMULA-DECL NIL |bareiss| NIL)
-    (|Mat| TYPE-EQ-DECL NIL |ring_det| NIL)
+    (|MMat| TYPE-EQ-DECL NIL |ring_det| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (>= CONST-DECL "bool" |reals| NIL)
@@ -3727,7 +3727,7 @@
     (>= CONST-DECL "bool" |reals| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
-    (|Mat| TYPE-EQ-DECL NIL |ring_det| NIL)
+    (|MMat| TYPE-EQ-DECL NIL |ring_det| NIL)
     (|minus_nzint_is_nzint| APPLICATION-JUDGEMENT "nzint" |integers| NIL)
     (|real_lt_is_strict_total_order| NAME-JUDGEMENT
      "(strict_total_order?[real])" |real_props| NIL)
@@ -3848,7 +3848,7 @@
     (|detl| DEF-DECL "mpoly" |ring_det| NIL)
     (|mpoly| TYPE-DECL NIL |mpoly_adt| NIL)
     (|list| TYPE-DECL NIL |list_adt| NIL)
-    (|Mat| TYPE-EQ-DECL NIL |ring_det| NIL)
+    (|MMat| TYPE-EQ-DECL NIL |ring_det| NIL)
     (|mrowsf| DEF-DECL "list[list[mpoly]]" |bareiss_def| NIL)
     (|real_ge_is_total_order| NAME-JUDGEMENT "(total_order?[real])"
      |real_props| NIL)
@@ -3898,7 +3898,7 @@
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (>= CONST-DECL "bool" |reals| NIL)
     (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|Mat| TYPE-EQ-DECL NIL |ring_det| NIL)
+    (|MMat| TYPE-EQ-DECL NIL |ring_det| NIL)
     (|bdet| CONST-DECL "mpoly" |bareiss_def| NIL)
     (|det| CONST-DECL "mpoly" |ring_det| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[rat](0)" |polylist| |Sturm|)

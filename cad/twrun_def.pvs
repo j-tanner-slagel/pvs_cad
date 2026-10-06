@@ -1,6 +1,6 @@
 twrun_def: THEORY
 %----------------------------------------------------------------------------
-% The Collins-style run over a given tower (COLLINS_PLAN.md M-I).
+% The Collins-style run over a given tower.
 % Executable.
 %
 % decc_def's certificate and col_out's records for an arbitrary tower TW

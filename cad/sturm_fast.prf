@@ -18,7 +18,7 @@
     (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
     (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
-   NIL (|hornz| SUBTYPE "l" "(list_adt[real].cons?)" (25 60 25 61))))
+   NIL (|hornz| SUBTYPE "l" "(list_adt[real].cons?)" (24 60 24 61))))
  (|hornz_TCC2| 0
   (|hornz_TCC2-1| NIL 3999516688 ("" (TERMINATION-TCC) NIL NIL)
    ((|lt_realorder| NAME-JUDGEMENT "RealOrder" |real_orders| |reals|)
@@ -46,7 +46,7 @@
     (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|))
    NIL
    (|hornz| TERMINATION "hornz(cdr[int](l), x)" #A((3) BASE-CHAR . "NIL")
-    (25 69 25 85))))
+    (24 69 24 85))))
  (|hornz_poly_TCC1| 0
   (|hornz_poly_TCC1-1| NIL 3999516688 ("" (SUBTYPE-TCC) NIL NIL)
    ((|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
@@ -81,7 +81,7 @@
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
    NIL
-   (|hornz_poly| SUBTYPE "max(length[int](l) - 1, 0)" "nat" (27 78 27 99))))
+   (|hornz_poly| SUBTYPE "max(length[int](l) - 1, 0)" "nat" (26 78 26 99))))
  (|hornz_poly| 0
   (|hornz_poly-0| "" 3999516786
    ("" (INDUCT "l")
@@ -330,11 +330,11 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|hornA| SUBTYPE "nn - 1" "nat" (32 73 32 79))))
+   NIL (|hornA| SUBTYPE "nn - 1" "nat" (31 73 31 79))))
  (|hornA_TCC2| 0
   (|hornA_TCC2-1| NIL 3999517907 ("" (TERMINATION-TCC) NIL NIL) NIL NIL
    (|hornA| TERMINATION "hornA(LAMBDA (i: nat): a(i + 1), nn - 1, x)"
-    #A((3) BASE-CHAR . "NIL") (32 40 32 83))))
+    #A((3) BASE-CHAR . "NIL") (31 40 31 83))))
  (|hornA_poly| 0
   (|hornA_poly-0| "" 3999517916
    ("" (INDUCT "nn")
@@ -426,7 +426,7 @@
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
    NIL
    (|chel| SUBTYPE "length[list[int]](sl) - 1 - i"
-    "below[length[list[int]](sl)]" (37 58 37 76))))
+    "below[length[list[int]](sl)]" (36 58 36 76))))
  (|chvals_eq| 0
   (|chvals_eq-2| "" 3999516819
    ("" (SKEEP)
@@ -486,35 +486,6 @@
     (|length_reverse| FORMULA-DECL NIL |list_props| NIL)
     (|chel| CONST-DECL "list[int]" |sturm_fast| NIL))
    SHOSTAK))
- (|chvals_fun| 0
-  (|chvals_fun-0| "" 3999516843
-   ("" (SKEEP)
-    (("" (APPLY-EXTENSIONALITY 1 :HIDE? T) (("" (REWRITE "chvals_eq") NIL NIL))
-      NIL))
-    NIL)
-   ((|number| NONEMPTY-TYPE-DECL NIL |numbers| NIL)
-    (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL)
-    (|number_field_pred| CONST-DECL "[number -> boolean]" |number_fields| NIL)
-    (|number_field| NONEMPTY-TYPE-FROM-DECL NIL |number_fields| NIL)
-    (|real_pred| CONST-DECL "[number_field -> boolean]" |reals| NIL)
-    (|real| NONEMPTY-TYPE-FROM-DECL NIL |reals| NIL)
-    (|rational_pred| CONST-DECL "[real -> boolean]" |rationals| NIL)
-    (|rational| NONEMPTY-TYPE-FROM-DECL NIL |rationals| NIL)
-    (|integer_pred| CONST-DECL "[rational -> boolean]" |integers| NIL)
-    (|int| NONEMPTY-TYPE-EQ-DECL NIL |integers| NIL)
-    (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
-    (>= CONST-DECL "bool" |reals| NIL)
-    (|nat| NONEMPTY-TYPE-EQ-DECL NIL |naturalnumbers| NIL)
-    (|chel| CONST-DECL "list[int]" |sturm_fast| NIL)
-    (|hornz| DEF-DECL "real" |sturm_fast| NIL)
-    (|chvals| CONST-DECL "[nat -> real]" |sturm_fast| NIL)
-    (AND CONST-DECL "[bool, bool -> bool]" |booleans| NIL)
-    (|every| ADT-DEF-DECL "boolean" |list_adt| NIL)
-    (PRED TYPE-EQ-DECL NIL |defined_types| NIL)
-    (|list| TYPE-DECL NIL |list_adt| NIL)
-    (|listn_0| NAME-JUDGEMENT "listn[int](0)" |gcd_coeff| |Sturm|)
-    (|chvals_eq| FORMULA-DECL NIL |sturm_fast| NIL))
-   SHOSTAK))
  (|pn_hornz_TCC1| 0
   (|pn_hornz_TCC1-1| NIL 3999516842 ("" (SUBTYPE-TCC) NIL NIL)
    ((|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
@@ -553,7 +524,7 @@
    NIL
    (|pn_hornz| SUBTYPE
     "max(length[int](nth[list[int]](sl, length[list[int]](sl) - 1 - j)) - 1, 0)"
-    "nat" (50 52 50 99))))
+    "nat" (48 52 48 99))))
  (|pn_hornz| 0
   (|pn_hornz-0| "" 3999516848
    ("" (SKEEP)
@@ -775,7 +746,7 @@
    NIL
    (|rcf| SUBTYPE "TRUE"
     "{nzb: booleans.bool | booleans.IFF(nzb, EXISTS (i: naturalnumbers.upto(sturm_fast.n)): sturm_fast.a(i) /= 0)}"
-    (71 89 71 93))))
+    (69 89 69 93))))
  (|rcf_TCC2| 0
   (|rcf_TCC2-1| NIL 3999516688 ("" (SUBTYPE-TCC) NIL NIL)
    ((|posreal_div_posreal_is_posreal| APPLICATION-JUDGEMENT "posreal"
@@ -839,7 +810,7 @@
    NIL
    (|rcf| SUBTYPE "TRUE"
     "{nzb: booleans.bool | booleans.IFF(nzb, EXISTS (i: naturalnumbers.upto(sturm_fast.n)): sturm_fast.a(i) /= 0)}"
-    (72 90 72 94))))
+    (70 90 70 94))))
  (|rcf_TCC3| 0
   (|rcf_TCC3-1| NIL 3999516688 ("" (SUBTYPE-TCC) NIL NIL)
    ((|posreal_div_posreal_is_posreal| APPLICATION-JUDGEMENT "posreal"
@@ -897,7 +868,7 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|rcf| SUBTYPE "length[list[int]](sl) - 2" "nat" (73 44 73 58))))
+   NIL (|rcf| SUBTYPE "length[list[int]](sl) - 2" "nat" (71 44 71 58))))
  (|rcf_eq| 0
   (|rcf_eq-0| "" 3999516990
    ("" (SKEEP)

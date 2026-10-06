@@ -1,7 +1,6 @@
 gform_ok: THEORY
 %----------------------------------------------------------------------------
-% The decision of formulas of any shape is correct and always answers
-% (FORMS_PLAN.md F1).
+% The decision of formulas of any shape is correct and always answers.
 %
 %   g2f_ok       fsem(g2f(g)) is gsem(g): the translation into rcf_fol keeps
 %                the meaning (sign3 of the difference for the comparisons,
@@ -14,7 +13,7 @@ gform_ok: THEORY
 %                coordinates exactly when g does
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING gform_def, qelim_ok, cad_endgame
+  IMPORTING gform_def, qelim_ok
 
   g: VAR Gm
   phi: VAR Fm

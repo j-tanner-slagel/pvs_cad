@@ -1,7 +1,7 @@
 alg_zero: THEORY
 %----------------------------------------------------------------------------
 % Deciding whether a rational polynomial q vanishes at an algebraic number
-% a = (p, [lb, ub]) (Phase 2).
+% a = (p, [lb, ub]).
 %
 % A common root of p and q in [lb, ub] is a root of p there, hence value(a);
 % and x is a common root iff p(x)^2 + q(x)^2 = 0. So q(value(a)) = 0 iff the
@@ -12,7 +12,7 @@ alg_zero: THEORY
 % coefficients, which is what the counter needs.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING reals@sq, poly_gcd
+  IMPORTING poly_gcd
 
   P, Q: VAR [nat -> int]
   n, m, i, k: VAR nat
@@ -47,8 +47,8 @@ BEGIN
   %% the decision.  The common roots of p and q are the roots of their gcd
   %% (poly_gcd), so q vanishes at value(a) iff the gcd has a root in
   %% [lb, ub]: Euclid on the two polynomials, where the sum of squares builds
-  %% a Sturm chain of twice the larger degree (PERF_PLAN P6b; bath_02, 0.31 s
-  %% per test).  The sum of squares stays as the fallback if Euclid runs out
+  %% a Sturm chain of twice the larger degree (0.31 s per test on one
+  %% three-variable benchmark).  The sum of squares stays as the fallback if Euclid runs out
   %% of fuel.
   zero_sos(a: Alg, ql): bool = nroots_a(sos(a`p, ql), sosdeg(a`p, ql), a`lb, a`ub) >= 1
   zero_sos_def: THEOREM alg?(a) IMPLIES (zero_sos(a, ql) IFF polylist(ql)(value(a)) = 0)

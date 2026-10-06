@@ -1,8 +1,8 @@
 qe1c_ok: THEORY
 %----------------------------------------------------------------------------
 % Collins quantifier elimination for one free variable is correct,
-% quantifier-free and always answers (COLLINS_PLAN.md M-I), as qe1_ok and
-% qe1_full for the read-closure run.
+% quantifier-free and always answers, from the answer
+% layer of qe1_ok and qe1_full.
 %
 %   qe1cc_correct  a certified answer is quantifier-free and equivalent:
 %                  qfsem(out)((: x :)) IFF sem(qb, F, Psi, (: x :))
@@ -17,7 +17,7 @@ qe1c_ok: THEORY
 % The certificate is decc_o's, so it holds from some u on.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING qe1c_def, qe1_ok, qe1_full, decc_ok
+  IMPORTING qe1c_def, qe1_full
 
   u: VAR nat
   qb, os: VAR list[bool]
@@ -26,8 +26,6 @@ BEGIN
   phi: VAR BF
   x: VAR real
   e: VAR QEnt
-
-  qe1cc_ok_eq: LEMMA cons?(qb) IMPLIES qe1cc_o(u, qb, F, Psi)`ok = decc_o(u, cons(TRUE, qb), F, Psi)`ok
 
   %% ---- the entries ------------------------------------------------------------------------------
   qe1cc_ent: LEMMA cons?(qb) AND gaps_ok(rts(pbot(F, length(qb))))

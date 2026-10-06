@@ -1,20 +1,15 @@
 thom_enc: THEORY
 %----------------------------------------------------------------------------
-% Thom encodings of the roots of a rational polynomial (Phase 2).
-%
-% thom(p, a) is the list of signs of p^(d), ..., p'' , p' at value(a)
-% (d = deg p), each computed by alg_sign, so it is executable. pderiv and
-% nderiv are the formal derivatives on Polylists; nderiv_eval relates them
-% to thom_lemma's dk on the coefficient sequence, and thom_distinct transfers
-% Thom's lemma: two roots of p with the same encoding are the same root.
-% So a root of p is determined by its encoding, which is what makes Thom
-% encodings a representation of real algebraic numbers.
+% Formal derivatives of a rational polynomial: pderiv and nderiv
+% on Polylists and their coefficient arrays (arr); nderiv_eval relates them
+% to thom_lemma's dk on the coefficient sequence.  QE's comparison with a
+% real algebraic number (qe_ep_def) uses them.
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING alg_sign, thom_lemma
 
   pl: VAR Polylist
-  a, b: VAR Alg
+  a: VAR Alg
   x: VAR real
   i, j, k: VAR nat
 
@@ -25,7 +20,6 @@ BEGIN
   arr_beyond: LEMMA i >= length(pl) IMPLIES arr(pl)(i) = 0
   arr_above_deg: LEMMA i > deg(pl) IMPLIES arr(pl)(i) = 0
   arr_lc_thom_enc: LEMMA deg(pl) > 0 IMPLIES arr(pl)(deg(pl)) /= 0
-  polylist_arr: LEMMA deg(pl) > 0 IMPLIES polylist(pl)(x) = polynomial(arr(pl), deg(pl))(x)
   polylist_arr_any: LEMMA polylist(pl)(x) = polynomial(arr(pl), length(pl) - 1)(x)
 
   %% the formal derivative
@@ -43,20 +37,4 @@ BEGIN
   extend_poly_eval: LEMMA FORALL (c: [nat -> real], n, m: nat):
     (FORALL (i: posnat): c(n + i) = 0) IMPLIES polynomial(c, n)(x) = polynomial(c, n + m)(x)
   nderiv_eval: LEMMA k <= deg(pl) IMPLIES polylist(nderiv(pl, k))(x) = polynomial(dk(arr(pl), k), deg(pl) - k)(x)
-
-  %% the encoding
-  thom_list(pl, a, k): RECURSIVE list[Sign3] =
-    IF k = 0 THEN null ELSE cons(alg_sign(a, nderiv(pl, k)), thom_list(pl, a, k - 1)) ENDIF
-  MEASURE k
-  thom(pl | deg(pl) > 0, a): list[Sign3] = thom_list(pl, a, deg(pl))
-  thom_list_length: LEMMA length(thom_list(pl, a, k)) = k
-  thom_list_nth: LEMMA 1 <= j AND j <= k IMPLIES nth(thom_list(pl, a, k), k - j) = alg_sign(a, nderiv(pl, j))
-  thom_nth: LEMMA deg(pl) > 0 AND 1 <= j AND j <= deg(pl) IMPLIES
-    nth(thom(pl, a), deg(pl) - j) = sign3(polynomial(dk(arr(pl), j), deg(pl) - j)(value(a)))
-
-  %% Thom's lemma for the encoding
-  thom_encoding_distinct: THEOREM deg(pl) > 0 AND polylist(pl)(value(a)) = 0 AND polylist(pl)(value(b)) = 0 AND
-    thom(pl, a) = thom(pl, b) IMPLIES value(a) = value(b)
-  %% in particular for two algebraic numbers defined by p
-  thom_same_p: COROLLARY a`p = pl AND b`p = pl AND deg(pl) > 0 AND thom(pl, a) = thom(pl, b) IMPLIES value(a) = value(b)
 END thom_enc

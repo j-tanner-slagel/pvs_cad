@@ -1,15 +1,11 @@
 qe1_full: THEORY
 %----------------------------------------------------------------------------
-% Quantifier elimination for one free variable, complete (GAP_PLAN.md
-% Tier 2, stage 1 with QE_PLAN.md decision 2).
+% Quantifier elimination for one free variable: the answer is always
+% quantifier-free.
 %
 % With epc_ok every sector description sectX is quantifier-free (qf_sectX),
-% so qe1's answer always is (qe1_isqf; qe1_sm_isqf for the merged answer),
-% and qe1_complete: for every prenex
-% formula Q1 x1 ... Qn xn: phi (n >= 1, phi a Boolean combination of sign
-% conditions on polynomials F in the xi and one more variable x), qe1
-% computes a quantifier-free formula in x that holds exactly where the
-% formula does.
+% so qe1_s's and qe1_sm's answers always are (qe1_sJ_isqf, qe1_sm_isqf);
+% qe1c_ok and qe2cd_ok use this for the Collins QE.
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING qe1_ok, qe_ep_ok
@@ -17,20 +13,12 @@ BEGIN
   s: VAR Sect
   b: VAR Alg
   t: VAR int
-  Q, F: VAR list[list[mpoly]]
+  Q: VAR list[list[mpoly]]
   es: VAR list[QEnt]
   J: VAR list[nat]
-  os: VAR list[bool]
-  phi: VAR BF
-  x: VAR real
 
   qf_cmpX: LEMMA qf?(cmpX(b, t))
   qf_sectX: LEMMA qf?(sectX(s))
   qe1_sJ_isqf: LEMMA qe1_sJ(Q, es, J)`qf
   qe1_sm_isqf: LEMMA qe1_sm(Q, es)`qf
-  qe1_isqf: THEOREM cons?(os) IMPLIES qe1(os, F, phi)`qf
-
-  qe1_complete: THEOREM cons?(os) IMPLIES
-    qf?(qe1(os, F, phi)`out) AND
-    (qfsem(qe1(os, F, phi)`out)((: x :)) IFF fsem(os, F, phi, (: x :)))
 END qe1_full

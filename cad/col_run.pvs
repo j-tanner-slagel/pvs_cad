@@ -1,7 +1,7 @@
 col_run: THEORY
 %----------------------------------------------------------------------------
 % The Collins run decomposes R^(k+1) into a CAD adapted to F, with no
-% certificate (COLLINS_PLAN.md M-H).
+% certificate.
 %
 % The line of the outermost variable is cut into the sectors of the roots
 % of pbot(F, k), the k-th Collins projection of F (csects), and every sector
@@ -20,8 +20,8 @@ col_run: THEORY
 %       and bands of the root functions;
 %   (4) the graph of every root function over a cell is definable;
 %   (5) every polynomial of F has one sign on every cell of R^(k+1).
-% Unlike the read-closure run (cad_run), nothing depends on u or on a
-% certificate: delineability is Collins' theorem through col_tower's
+% Nothing depends on u or on a certificate: delineability is Collins'
+% theorem through col_tower's
 % ctw_cad, and the outer family is sign-invariant on its sectors (col_sem's
 % sinv_sect) because the gaps of sorted roots always pass (gaps_ok_incr).
 %----------------------------------------------------------------------------

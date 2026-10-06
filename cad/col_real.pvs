@@ -1,7 +1,7 @@
 col_real: THEORY
 %----------------------------------------------------------------------------
-% The real roots over a nearby point, from the complex picture (COLLINS_PLAN.md
-% M-E, section 2.3, item 4).  Abstract: members i < m (those with lv(i)),
+% The real roots over a nearby point, from the complex picture.  Abstract:
+% members i < m (those with lv(i)),
 % complex polynomial functions F1(i) over p1 and Fp(i) over p, and eps with
 %   cnj?   conjugates of roots are roots (real coefficients), over p1 and p
 %   up?    every root over p is within eps of a root of the same member over p1

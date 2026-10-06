@@ -1,6 +1,6 @@
 thom_lemma: THEORY
 %----------------------------------------------------------------------------
-% Thom's lemma for real polynomials (Phase 2), at the level of coefficient
+% Thom's lemma for real polynomials, at the level of coefficient
 % sequences a: [nat -> real] of degree n (a(n) /= 0).
 %
 % dk(a, k) is the k-th formal derivative (poly_deriv iterated); its degree
@@ -12,8 +12,6 @@ thom_lemma: THEORY
 % with NASALib's strict monotonicity lemmas (a polynomial whose derivative
 % keeps a sign on an interval is strictly monotone there) and the fact that
 % a nonzero polynomial cannot vanish on an interval (root separation).
-% Consequence thom_distinct (Prop. 2.28): two roots of p at which all the
-% derivatives p', ..., p^(n) have the same signs are equal.
 %----------------------------------------------------------------------------
 BEGIN
   IMPORTING reals@more_polynomial_props, reals@sign3
@@ -69,12 +67,4 @@ BEGIN
 
   %% the sign condition realized at a point
   sc_at(a, n, x)(j): Sign3 = IF j <= n THEN sign3(polynomial(dk(a, j), n - j)(x)) ELSE 0 ENDIF
-
-  sat_from_signs: LEMMA (FORALL j: 1 <= j AND j <= n IMPLIES sign3(polynomial(dk(a, j), n - j)(x)) = sign3(polynomial(dk(a, j), n - j)(y)))
-    IMPLIES sat(a, n, sc_at(a, n, x), 1)(x) AND sat(a, n, sc_at(a, n, x), 1)(y)
-
-  %% two roots with the same Thom encoding are equal
-  thom_distinct: THEOREM n > 0 AND a(n) /= 0 AND polynomial(a, n)(x) = 0 AND polynomial(a, n)(y) = 0 AND
-    (FORALL j: 1 <= j AND j <= n IMPLIES sign3(polynomial(dk(a, j), n - j)(x)) = sign3(polynomial(dk(a, j), n - j)(y)))
-    IMPLIES x = y
 END thom_lemma

@@ -362,7 +362,7 @@
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
    NIL
-   (|pball_pair| SUBTYPE "i1" "below[length[list[mpoly]](G)]" (44 97 44 99))))
+   (|pball_pair| SUBTYPE "i1" "below[length[list[mpoly]](G)]" (43 97 43 99))))
  (|pball_pair| 0
   (|pball_pair-0| "" 3999943533
    ("" (INDUCT "G")
@@ -557,7 +557,7 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|ktop_props| SUBTYPE "ktop(g, n)" "nat" (50 63 50 73))))
+   NIL (|ktop_props| SUBTYPE "ktop(g, n)" "nat" (49 63 49 73))))
  (|ktop_props| 0
   (|ktop_props-0| "" 3999943602
    ("" (INDUCT "n")
@@ -1301,7 +1301,7 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|pscg1_ev| SUBTYPE "k + (k - 1) - 2 * j" "nat" (81 11 81 30))))
+   NIL (|pscg1_ev| SUBTYPE "k + (k - 1) - 2 * j" "nat" (80 11 80 30))))
  (|pscg1_ev_TCC2| 0
   (|pscg1_ev_TCC2-1| NIL 3999943923 ("" (SUBTYPE-TCC) NIL NIL)
    ((|int_minus_int_is_int| APPLICATION-JUDGEMENT "int" |integers| NIL)
@@ -1331,7 +1331,7 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|pscg1_ev| SUBTYPE "k - 1" "nat" (81 92 81 97))))
+   NIL (|pscg1_ev| SUBTYPE "k - 1" "nat" (80 92 80 97))))
  (|pscg1_ev| 0
   (|pscg1_ev-2| "" 3999991973
    ("" (SKEEP)
@@ -1436,7 +1436,7 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|pscg2_ev| SUBTYPE "k1 + k2 - 2 * j" "nat" (84 11 84 26))))
+   NIL (|pscg2_ev| SUBTYPE "k1 + k2 - 2 * j" "nat" (83 11 83 26))))
  (|pscg2_ev| 0
   (|pscg2_ev-2| "" 3999991974
    ("" (SKEEP)
@@ -1664,7 +1664,7 @@
     (NOT CONST-DECL "[bool -> bool]" |booleans| NIL)
     (|bool| NONEMPTY-TYPE-EQ-DECL NIL |booleans| NIL)
     (|boolean| NONEMPTY-TYPE-DECL NIL |booleans| NIL))
-   NIL (|ccd1_iff| SUBTYPE "k - 1" "nat" (94 88 94 93))))
+   NIL (|ccd1_iff| SUBTYPE "k - 1" "nat" (93 88 93 93))))
  (|ccd1_iff| 0
   (|ccd1_iff-0| "" 3999944031
    ("" (SKEEP)

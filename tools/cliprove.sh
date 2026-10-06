@@ -6,6 +6,7 @@
 # OPEN proof is abandoned (--quit-all-proofs) with its first open sequent
 # written to $SCRATCH/<theory>_<formula>.seq so the batch can continue.
 . "$(dirname "$0")/env.sh"
+cd "$CAD_WORK_DIR" || exit 1
 CLI="$CAD_TOOLS/pvscli.sh"
 FILE=$1; T=$2; CMDS=$3
 grep -v '^\s*#' "$CMDS" | grep -v '^\s*$' | while IFS= read -r line; do

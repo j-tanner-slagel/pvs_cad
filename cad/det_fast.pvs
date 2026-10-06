@@ -1,6 +1,6 @@
 det_fast: THEORY
 %----------------------------------------------------------------------------
-% detf is the determinant (COLLINS_PLAN.md M-J).
+% detf is the determinant.
 %
 %   detf_det   detf(n, M) = det(n, M), as mpolys (the same expression)
 %
@@ -14,7 +14,7 @@ det_fast: THEORY
 % looks up is in the table below (dtab_ok, by induction on m).  The whole
 % matrix is the set dcols(0, n) of all its columns.
 %
-% The trie (2026-10-02, PROJ_PLAN.md P1): inserting into a trie and then looking
+% The trie (2026-10-02): inserting into a trie and then looking
 % up behaves like an association list (tlook_tins), the bits of increasing
 % column sets in range are injective (dbits_inj), so the trie of a table
 % answers what dlook answers (tlook_tbuild), dtabt is dtab (dtabt_dtab), and
@@ -24,7 +24,7 @@ BEGIN
   IMPORTING det_fast_def, map_member[list[nat], list[nat]], structures@list2set_props[list[nat]]
 
   n, m, r, a, b, c, j, x: VAR nat
-  M, M1, M2: VAR Mat
+  M, M1, M2: VAR MMat
   S, S1, S2: VAR list[nat]
   T: VAR list[DEnt]
 
@@ -63,7 +63,7 @@ BEGIN
   dcols_sub: LEMMA FORALL (k: nat): FORALL lo, n: n - lo <= k AND lo <= n IMPLIES member(dcols(lo, n), dsubs(lo, n, n - lo))
 
   %% ---- the submatrices -----------------------------------------------------------------------
-  smat(M, r, S): Mat = LAMBDA (a, b: nat): M(r + a, IF b < length(S) THEN nth(S, b) ELSE 0 ENDIF)
+  smat(M, r, S): MMat = LAMBDA (a, b: nat): M(r + a, IF b < length(S) THEN nth(S, b) ELSE 0 ENDIF)
 
   minor_smat: LEMMA b < length(S) AND j < length(S) - 1 AND c < length(S) - 1 IMPLIES
     minor(smat(M, r, S), 0, b)(j, c) = smat(M, r + 1, drem(S, b))(j, c)

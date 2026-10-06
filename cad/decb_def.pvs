@@ -1,7 +1,6 @@
 decb_def: THEORY
 %----------------------------------------------------------------------------
-% The Collins decision with the smaller bottom-step projection, executable
-% (PROJ_PLAN.md P2).
+% The Collins decision with the smaller bottom-step projection, executable.
 %
 % decb_o is decc_o with the line cut at the roots of cbotb(TW) =
 % pdownb(car(TW)) (cad_projb_def's projb) instead of Collins' projection of

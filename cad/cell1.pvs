@@ -1,22 +1,22 @@
 cell1: THEORY
 %----------------------------------------------------------------------------
-% The bottom level by root isolation (Phase 6).
+% The bottom level by root isolation.
 %
 % A family of univariate polynomials (coefficient lists of constants) is
 % decomposed by the real roots of its members, isolated as algebraic numbers
-% of Phase 2 (roots of alg_isolate), sorted without repetition (sortu, by
+% (roots of alg_isolate), sorted without repetition (sortu, by
 % alg_cmp), with a rational sample strictly between consecutive roots (gap,
 % by refining the isolating intervals until they separate) and one beyond
 % each end. svs1 lists the sign vectors of the family at these samples,
 % read with alg_sign; every real point has the vector of one of them
 % (svs1_sound: a root is one of the isolated roots, a non-root lies between
 % consecutive roots or beyond all of them and the vector is constant there,
-% by svec_same of sector_rep), and every listed vector is realized
+% by same_sign of sector_rep), and every listed vector is realized
 % (svs1_complete). This replaces the univariate Tarski trees at level 1,
 % whose product polynomial would have the degree of the whole family.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING alg_order, alg_fast, alg_sortc, sector_rep, far_sign, structures@more_list_props[Alg]
+  IMPORTING alg_fast, alg_sortc, sector_rep, structures@more_list_props[Alg]
 
   l, f: VAR list[mpoly]
   F: VAR list[list[mpoly]]
@@ -44,6 +44,10 @@ BEGIN
   torat_length: LEMMA length(torat(l)) = length(l)
   torat_nth: LEMMA FORALL l: i < length(l) IMPLIES nth(torat(l), i) = cval(nth(l, i))
   pl(l): Polylist = IF null?(l) THEN (: 0 :) ELSE torat(l) ENDIF
+
+  %% the negated list
+  len_pos: LEMMA cons?(l) IMPLIES length(l) >= 1
+
   pl_eval: LEMMA polylist(pl(l))(x) = meval(mpol(l))((: x :))
 
   %% the sign vector at an algebraic number
@@ -55,8 +59,6 @@ BEGIN
   allroots(F): RECURSIVE list[Alg] =
     IF null?(F) THEN null[Alg] ELSE append(rootsl(car(F)), allroots(cdr(F))) ENDIF
   MEASURE length(F)
-  allroots_sound: LEMMA FORALL F: member(a, allroots(F)) IMPLIES
-    EXISTS f: member(f, F) AND deg(pl(f)) > 0 AND meval(mpol(f))((: value(a) :)) = 0
   allroots_complete: LEMMA FORALL F: member(f, F) AND deg(pl(f)) > 0 AND meval(mpol(f))((: x :)) = 0 IMPLIES
     EXISTS a: member(a, allroots(F)) AND value(a) = x
 
@@ -89,8 +91,8 @@ BEGIN
   alt_def: LEMMA alt(a, b) IFF value(a) < value(b)
 
   %% length at THIS list type does not reduce for assert on its own
-  %% (mpoly_univ's length_cdr is typed for list[mpoly], sg_svs's len_cdr_LL
-  %% for list[list[mpoly]]), and ins's termination TCC needs it at list[Alg]
+  %% (mpoly_univ's length_cdr is typed for list[mpoly]), and ins's
+  %% termination TCC needs it at list[Alg]
   len_cdr_alg: LEMMA cons?(rs) IMPLIES length(rs) = 1 + length(cdr(rs))
 
   %% sorting without repetition
@@ -103,8 +105,7 @@ BEGIN
   MEASURE length(rs)
   %% the specification: insertion sort by cmpf; sortu evaluates alg_sortc_def's
   %% sortsep, the same sort with each Sturm chain computed once (sortf_eq),
-  %% with every two neighbours then separated (sepall: the same values, sortu_vl;
-  %% QE_PLAN.md 12, fix 3)
+  %% with every two neighbours then separated (sepall: the same values, sortu_vl)
   sortu0(rs): RECURSIVE list[Alg] =
     IF null?(rs) THEN null[Alg] ELSE ins(car(rs), sortu0(cdr(rs))) ENDIF
   MEASURE length(rs)
@@ -154,7 +155,7 @@ BEGIN
   gapf_between: LEMMA FORALL fuel: FORALL a, b: gapf(fuel, a, b)`ok AND value(a) < value(b) IMPLIES
     value(a) < gapf(fuel, a, b)`r AND gapf(fuel, a, b)`r < value(b)
 
-  %% the total refinement (COMPLETENESS_PLAN C3): for distinct values, bisect
+  %% the total refinement: for distinct values, bisect
   %% both intervals until they are disjoint, as alg_order's sepr, and take a
   %% point of the gap.  It terminates because the widths halve while the
   %% values keep their positive distance (sepr_step)
@@ -239,6 +240,9 @@ BEGIN
   %% the decomposition
   svs1(F): list[list[Sign3]] = map(LAMBDA (a: Alg): vec1(F, a))(samples(sortu(allroots(F))))
   svs1ok(F): bool = gaps_ok(sortu(allroots(F)))
+
+  svs1ok_complete: LEMMA svs1ok(F)
+
   svs1_mem: LEMMA member(a, samples(sortu(allroots(F)))) AND svec(F, (: x :)) = svec(F, (: value(a) :))
     IMPLIES member(svec(F, (: x :)), svs1(F))
   svs1_root: LEMMA vals(sortu(allroots(F)))(x) IMPLIES member(svec(F, (: x :)), svs1(F))

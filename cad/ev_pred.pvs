@@ -1,6 +1,6 @@
 ev_pred: THEORY
 %----------------------------------------------------------------------------
-% "Eventually" over the escalation parameter u (COMPLETENESS_PLAN C8):
+% "Eventually" over the escalation parameter u:
 % ev?(p) -- p holds for every large enough u.  Closed under conjunction and
 % under weakening; ev_nat adds finite lists and eventually constant maps.
 %----------------------------------------------------------------------------

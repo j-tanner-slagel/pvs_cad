@@ -1,7 +1,7 @@
 odreads: THEORY
 %----------------------------------------------------------------------------
-% The executable's read lists contain the trusted walk's (FINISH_PLAN 3h,
-% S5e-2 (a); restated 2026-09-27 for the truncated effective family).
+% The executable's read lists contain the trusted walk's (restated
+% 2026-09-27 for the truncated effective family).
 %
 % towern_od reads through the chain table (ird_t).  Its intrinsic reads are
 % every coefficient of every member (crd, for the closure) and walk_rd's
@@ -32,7 +32,6 @@ BEGIN
   %% the table returns the construction reads themselves
   ird_t_eq: LEMMA FORALL tb: valid?(tb) IMPLIES ird_t(k, sg, f, tb) = i_rd(k, sg, f)
 
-  mem_cons_odreads: LEMMA member(g, cons(f, G)) IFF (g = f OR member(g, G))
   %% the effective family, member by member
   feff_null: LEMMA feff(null[list[mpoly]], od) = null[list[mpoly]]
   feff_cons: LEMMA feff(cons(g, G), od) =
@@ -43,8 +42,6 @@ BEGIN
   pi_rd_t_eq: LEMMA FORALL G: valid?(tb) IMPLIES pi_rd_t(od, g, G, tb) = pi_rd(osg(od), g, G)
   pairs_rd_t_eq: LEMMA FORALL G: valid?(tb) IMPLIES pairs_rd_t(od, G, tb) = pairs_rd(osg(od), G)
   wi_rd_t_eq: THEOREM valid?(tb) IMPLIES wi_rd_t(F, od, tb) = append(crd(F), wi_rd(feff(F, od), osg(od)))
-  wi_sub: THEOREM valid?(tb) AND member(u, wi_rd(feff(F, od), osg(od)))
-    IMPLIES member(u, wi_rd_t(F, od, tb))
   wi_agree: THEOREM valid?(tb) AND agree(sg1, sg2, wi_rd_t(F, od, tb))
     IMPLIES agree(sg1, sg2, wi_rd(feff(F, od), osg(od)))
   crd_wi: LEMMA member(u, crd(F)) IMPLIES member(u, wi_rd_t(F, od, tb))
@@ -55,8 +52,6 @@ BEGIN
   pe_rd_t_eq: LEMMA FORALL G: valid?(tb) IMPLIES pe_rd_t(od, g, G, Y, tb) = pe_rd(osg(od), g, G, Y)
   pairse_rd_t_eq: LEMMA FORALL G: valid?(tb) IMPLIES pairse_rd_t(od, G, Y, tb) = pairse_rd(osg(od), G, Y)
   we_rd_p_eq: THEOREM valid?(tb) IMPLIES we_rd_p(P, od, Y, tb) = we_rd(P, osg(od), Y)
-  we_sub: THEOREM valid?(tb) AND member(u, we_rd(feff(F, od), osg(od), Y))
-    IMPLIES member(u, we_rd_t(F, od, Y, tb))
   we_agree: THEOREM valid?(tb) AND agree(sg1, sg2, we_rd_t(F, od, Y, tb))
     IMPLIES agree(sg1, sg2, we_rd(feff(F, od), osg(od), Y))
 END odreads

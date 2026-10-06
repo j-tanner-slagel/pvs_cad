@@ -1,11 +1,7 @@
 sect_svec: THEORY
 %----------------------------------------------------------------------------
-% A sector carries one sign vector of the family that defined it (Phase 6,
-% first half of delin_projc).
-%
-% delin_projc -- every sector of projc(F) satisfies delin?(F, -) -- splits in
-% two.  This file is the half that is about the SECTOR DECOMPOSITION and not
-% about delineability at all:
+% A sector carries one sign vector of the family that defined it.
+% This is about the SECTOR DECOMPOSITION and not about delineability:
 %
 %   on a sector of sects(rts(P)), every member of P keeps its sign,
 %   so svec(P, (: x :)) = svec(P, (: y :)) for x, y in the same sector.
@@ -67,7 +63,7 @@ BEGIN
   %% and the family's sign vector is constant along a sector.  The second
   %% point is RATIONAL because cell1's svec_between is stated that way, and
   %% that is exactly the shape the decision needs: it compares an arbitrary
-  %% point of a sector against the sector's rational sample rsv(s).  Two
+  %% point of a sector against the sector's rational sample.  Two
   %% arbitrary points follow by going through the sample twice.
   sect_svec: LEMMA incr?(sortu(allroots(P)))
     AND member(s, sects(sortu(allroots(P)))) AND in?(s, x) AND in?(s, r)

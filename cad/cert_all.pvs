@@ -1,7 +1,6 @@
 cert_all: THEORY
 %----------------------------------------------------------------------------
-% The walk's leading-coefficient certificate holds at every point
-% (COMPLETENESS_PLAN C5).
+% The walk's leading-coefficient certificate holds at every point.
 %
 % Before it counts anything, the walk of a cell asks two things of its
 % family P = zf(F, ws) (walk_transfer's cert?): every member with a main

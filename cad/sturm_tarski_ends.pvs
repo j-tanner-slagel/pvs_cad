@@ -1,7 +1,6 @@
 sturm_tarski_ends: THEORY
 %----------------------------------------------------------------------------
-% The Tarski query with only the first polynomial nonzero at the ends
-% (COMPLETENESS_PLAN C4).
+% The Tarski query with only the first polynomial nonzero at the ends.
 %
 % NASALib's sturm_tarski (Tarski@sturmtarski) asks every entry of the
 % constructed Sturm sequence of p0 and p0' g to be nonzero at both ends x

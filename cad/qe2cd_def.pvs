@@ -1,7 +1,7 @@
 qe2cd_def: THEORY
 %----------------------------------------------------------------------------
 % Quantifier elimination for m >= 2 free variables over the Collins tower
-% with derivative-closed free levels (COLLINS_PLAN.md M-I).  Executable.
+% with derivative-closed free levels.  Executable.
 %
 % qe2cc_def's qe2cc_c on ctwd(F, k, m - 1) (ctwd_def): the m - 1 free
 % families of the tower are closed under the derivative, so by Thom's lemma
@@ -11,7 +11,7 @@ qe2cd_def: THEORY
 % (twrun_ok's twok_ev).
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING qe2_def, twrun_ok, ctwd
+  IMPORTING twrun_ok, ctwd
 
   u, N: VAR nat
   m: VAR posnat

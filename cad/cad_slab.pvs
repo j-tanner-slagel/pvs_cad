@@ -1,6 +1,6 @@
 cad_slab: THEORY
 %----------------------------------------------------------------------------
-% Slabs over a connected set are connected (GAP_PLAN.md Tier 1B).
+% Slabs over a connected set are connected.
 %
 % A slab over C is a set of points cons(y, q) with q in C and y in a slice
 % S(q) of the real line.  If C is connected, every slice is an interval
@@ -31,7 +31,7 @@ BEGIN
   lcon_sub: LEMMA (FORALL p: C1(p) IMPLIES C2(p)) AND lcon?(Phi, C2) IMPLIES lcon?(Phi, C1)
 
   %% continuity of sections built from continuous ones
-  cont_const: LEMMA cont_on?(LAMBDA q: c, C)
+  cont_const_slab: LEMMA cont_on?(LAMBDA q: c, C)
   cont_plus: LEMMA cont_on?(r, C) IMPLIES cont_on?(LAMBDA q: r(q) + c, C)
   cont_mid: LEMMA cont_on?(r1, C) AND cont_on?(r2, C) IMPLIES cont_on?(LAMBDA q: (r1(q) + r2(q)) / 2, C)
 

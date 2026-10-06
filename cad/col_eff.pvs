@@ -1,7 +1,7 @@
 col_eff: THEORY
 %----------------------------------------------------------------------------
 % The effective reductum of a member over a set where the projection is
-% sign-invariant (COLLINS_PLAN.md M-E, section 2.3).
+% sign-invariant.
 %
 % edeg(g, p) is the degree of g over the point p: the largest k with a
 % nonzero coefficient value earr(g, p)(k), or -1 when g vanishes identically
@@ -19,7 +19,7 @@ col_eff: THEORY
 % on C their zero patterns are those at any one point (col_psc1, col_psc2).
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING col_def, sres_eval, croot_lsc, prem_arr, cad_roots
+  IMPORTING col_def, sres_eval, croot_lsc, cad_roots
 
   g, f, h: VAR list[mpoly]
   G: VAR list[list[mpoly]]

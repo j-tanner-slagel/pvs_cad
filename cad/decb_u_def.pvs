@@ -1,8 +1,7 @@
 decb_u_def: THEORY
 %----------------------------------------------------------------------------
 % The Collins decision with the escalation parameter raised until its
-% certificate holds (COLLINS_PLAN.md M-I; decb_o: the smaller bottom-step
-% projection, PROJ_PLAN.md P2), as decide_u_def's decn_u.
+% certificate holds (decb_o: the smaller bottom-step projection).
 % Executable; it always stops because the certificate holds from some u on
 % (decb_ok's decb_ev, which gives the measure).
 %----------------------------------------------------------------------------

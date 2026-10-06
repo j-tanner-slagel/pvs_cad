@@ -1,6 +1,6 @@
 qe_mrg_def: THEORY
 %----------------------------------------------------------------------------
-% Merged answers in one free variable (QE_PLAN.md 12, fix 2).  Executable.
+% Merged answers in one free variable.  Executable.
 %
 % The sectors of a sorted root list come in order: below r0, at r0,
 % (r0, r1), at r1, ..., above r(n-1).  A run of consecutive sectors is one

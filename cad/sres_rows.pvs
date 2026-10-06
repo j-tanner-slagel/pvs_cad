@@ -1,7 +1,6 @@
 sres_rows: THEORY
 %----------------------------------------------------------------------------
-% The rows of a subresultant matrix are shifted coefficient lists
-% (COLLINS_PLAN.md M-C).
+% The rows of a subresultant matrix are shifted coefficient lists.
 %
 % For real coefficient arrays A (degree p) and B (degree q), sylj(A, p, B, q, j)
 % is subres' sresm(f, g, j) at a point: q - j rows carrying z^(q-j-1-a) A(z),
@@ -21,7 +20,7 @@ BEGIN
 
   A, B: VAR [nat -> real]
   p, q, j, a, b, k, i, m, s, n: VAR nat
-  c, e, F, G: VAR [nat -> complex]
+  c, F, G: VAR [nat -> complex]
   cr: VAR [nat -> real]
   R: VAR RMat
   z, x: VAR complex
@@ -35,7 +34,6 @@ BEGIN
   csum_eq: LEMMA FORALL m: (FORALL i: i < m IMPLIES F(i) = G(i)) IMPLIES csum(m, F) = csum(m, G)
   csum_zero: LEMMA FORALL m: (FORALL i: i < m IMPLIES F(i) = real_(0)) IMPLIES csum(m, F) = real_(0)
   csum_add: LEMMA FORALL m: csum(m, LAMBDA i: F(i) + G(i)) = csum(m, F) + csum(m, G)
-  csum_scal: LEMMA FORALL m: csum(m, LAMBDA i: x * F(i)) = x * csum(m, F)
   csum_Re: LEMMA FORALL m: Re(csum(m, F)) = sigma(0, m - 1, LAMBDA i: Re(F(i)))
   csum_Im: LEMMA FORALL m: Im(csum(m, F)) = sigma(0, m - 1, LAMBDA i: Im(F(i)))
 

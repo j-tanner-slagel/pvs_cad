@@ -1,5 +1,5 @@
 %----------------------------------------------------------------------------
-% Deep embedding of polynomial expressions (Phase 1): the syntax the
+% Deep embedding of polynomial expressions: the syntax the
 % mpoly-eq strategy builds from a PVS real expression.  Variables are
 % positional indices into the valuation list (1 = head).
 %----------------------------------------------------------------------------

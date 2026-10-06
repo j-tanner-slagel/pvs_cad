@@ -1,6 +1,6 @@
 decc_walk: THEORY
 %----------------------------------------------------------------------------
-% The walk over a Collins tower reads the truth (COLLINS_PLAN.md M-I).
+% The walk over a Collins tower reads the truth.
 %
 %   innern_cad   over a base cell C on which the tower is a CAD (cad_over?),
 %                with valid tables, a well formed descriptor whose point lies
@@ -8,7 +8,7 @@ decc_walk: THEORY
 %                  innern_o(u, qs, TW, TB, Psi, od) IFF sem(qs, tlast(TW), Psi, den(od))
 %   okw_ev       the certificate holds for every large enough u
 %
-% By induction on the tower, as innern_sem's claim A but without the closure.
+% By induction on the tower.
 % The bottom level is innern_base (on one family okw_o is okn_o, okw_one).
 % Above it the cell list of the walk is the cell value list of the point
 % (cellsf_cvl): a separator's descriptor denotes cons(y0, den(od)), which
@@ -20,7 +20,7 @@ decc_walk: THEORY
 % so tower_ev's lvall? gives it eventually (lvall_okw).
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING decc_def, col_sem, innern_sem, tower_ev
+  IMPORTING decc_def, col_sem, tower_ev
 
   TW, TW1: VAR Tower
   TB: VAR list[CT]

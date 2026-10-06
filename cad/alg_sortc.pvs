@@ -1,8 +1,7 @@
 alg_sortc: THEORY
 %----------------------------------------------------------------------------
-% alg_sortc_def's comparison is right (QE_PLAN.md 12, fix 3).
+% alg_sortc_def's comparison is right.
 %
-%   nrc_eq     the count with the given chain is nroots
 %   refc_a     refc bisects as refine does; refc_value keeps the value
 %   com_root   two algebraic numbers are equal iff their polynomials have a
 %              common root in the common part of the intervals
@@ -21,7 +20,6 @@ BEGIN
   pl: VAR Polylist
   lb, ub, lo, hi: VAR rat
 
-  nrc_eq: LEMMA deg(pl) > 0 AND lb < ub IMPLIES nrc(pl, chain(pl), lb, ub) = nroots(pl, lb, ub)
   refc_a: LEMMA refc(c)`a = refine(c`a)
   refc_value: LEMMA value(refc(c)`a) = value(c`a)
 

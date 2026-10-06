@@ -1,9 +1,9 @@
 qe1c_def: THEORY
 %----------------------------------------------------------------------------
-% Quantifier elimination for one free variable over the Collins tower
-% (COLLINS_PLAN.md M-I).  Executable.
+% Quantifier elimination for one free variable over the Collins tower.
+% Executable.
 %
-% qe_def's qe1 on the Collins run: every sector of the roots of the outer
+% qe_def's answer on the Collins run: every sector of the roots of the outer
 % family Q (the projection of the tower ctw(F, k)'s lowest family, as in
 % decc_o) gives an entry -- the sector, the walk's value of the inner
 % quantifiers at its sample, Q's sign vector there -- and qe1_sm turns the

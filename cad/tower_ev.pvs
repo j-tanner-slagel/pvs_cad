@@ -1,22 +1,21 @@
 tower_ev: THEORY
 %----------------------------------------------------------------------------
 % A tower's walks pass at every cell for every large u, and what a closure
-% round reads stops changing (COMPLETENESS_PLAN C8, part 2).
+% round reads stops changing.
 %
-% okn_o is the walk half lvall? (lvok_o at every cell of every level) and
-% the closure half clk? of clos_ok (okn_split).  By induction on the tower,
+% lvall? is lvok_o at every cell of every level.  By induction on the tower,
 % for tables that are valid and eventually constant (the tables are the
 % leftmost path's, shared by all the cells of a level): from some u on the
-% top walk passes and its separators and so its cells are fixed (lev_ok,
-% cells_valid), every cell is well formed (cells_wf), and below each of the
+% top walk passes and its separators and so its cells are fixed (lev_ok),
+% every cell is well formed (cells_wf), and below each of the
 % finitely many cells the same holds (ev_list), so lvall? eventually holds
 % and treads_o is eventually constant (tower_ev; cellsr_cong).  The tables
 % of a tower are themselves eventually constant (tables_evc).
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING lev_ev, ev_nat[OD], ev_nat[Tower], ev_nat[list[CT]]
+  IMPORTING lev_ev, innern_sem, ev_nat[OD], ev_nat[Tower], ev_nat[list[CT]]
 
-  u, N: VAR nat
+  u: VAR nat
   TW: VAR Tower
   TB: VAR list[CT]
   TBf: VAR [nat -> list[CT]]
@@ -33,8 +32,6 @@ BEGIN
              IMPLIES lvall?(u, cdr(TW), cdr(TB), od2))))
     ENDIF
   MEASURE length(TW)
-  okn_split: LEMMA FORALL TW: FORALL TB, od: lvall?(u, TW, TB, od) AND clk?(u, TW, TB, od)
-    IMPLIES okn_o(u, TW, TB, od)
 
   %% tables that are valid, of the tower's length, and eventually constant
   goodtb?(TW, TBf): bool = evc?(TBf) AND FORALL u: vtb?(TBf(u)) AND length(TBf(u)) = length(TW)
@@ -45,5 +42,8 @@ BEGIN
     ev?(LAMBDA u: lvall?(u, TW, TBf(u), od)) AND evc?(LAMBDA u: treads_o(u, TW, TBf(u), od))
 
   tables_evc: LEMMA FORALL TW: FORALL od: wf?(od) IMPLIES evc?(LAMBDA u: tables(u, TW, od))
+
+  tables_vtb: LEMMA FORALL TW: FORALL od: vtb?(tables(u, TW, od))
+
   tables_good: LEMMA wf?(od) IMPLIES goodtb?(TW, LAMBDA u: tables(u, TW, od))
 END tower_ev

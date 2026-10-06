@@ -1,7 +1,6 @@
 tower_ok: THEORY
 %----------------------------------------------------------------------------
-% The bounded Tarski query through a sign oracle IS the sign at the section
-% (FINISH_PLAN stage S5b).
+% The bounded Tarski query through a sign oracle IS the sign at the section.
 %
 % tq_b(k, sg, l0, g, lo, hi) counts sign changes of the Tarski chain of l0 and
 % g at the two ends of a gap, reading every entry through sg.  At sg = msg(ys)

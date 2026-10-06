@@ -1,6 +1,6 @@
 snorm_arr: THEORY
 %----------------------------------------------------------------------------
-% Normalizing a coefficient list leaves its array alone (Phase 3).
+% Normalizing a coefficient list leaves its array alone.
 %
 % snorm drops trailing coefficients that vanish at the valuation, so the list
 % it selects denotes not only the same polynomial (snorm_eval) but the same

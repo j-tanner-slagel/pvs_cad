@@ -1,6 +1,6 @@
 sep_exist: THEORY
 %----------------------------------------------------------------------------
-% Separators exist at EVERY point (FINISH_PLAN stage S4, step T3).
+% Separators exist at EVERY point.
 %
 % The decision finds separators at a sector's sample by search, and checks
 % them.  The transfer theorem needs them at every other point of the sector
@@ -25,7 +25,7 @@ sep_exist: THEORY
 % not constant on an interval and is continuous.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING sturm_sg2, walk_rd, sign_pers
+  IMPORTING sturm_sg2, walk_rd
 
   ys: VAR list[real]
   f, e: VAR list[mpoly]
@@ -48,6 +48,12 @@ BEGIN
   %% ---- a rational that avoids finitely many polynomials ---------------------
   nonroot: LEMMA cons?(e) AND meval(llast(e))(ys) /= 0 AND a < b IMPLIES
     EXISTS (c: real): a < c AND c < b AND meval(mpol(e))(cons(c, ys)) /= 0
+
+  %% a continuous function nonzero at x0 keeps its sign near x0
+  fr: VAR [real -> real]
+  x0: VAR real
+  cont_sign: LEMMA continuous?(fr) AND fr(x0) /= 0 IMPLIES
+    EXISTS (d: posreal): FORALL z: abs(z - x0) < d IMPLIES sign3(fr(z)) = sign3(fr(x0))
 
   nz_interval: LEMMA cons?(e) AND meval(llast(e))(ys) /= 0 AND a < b IMPLIES
     EXISTS (a1, b1: real): a <= a1 AND a1 < b1 AND b1 <= b AND

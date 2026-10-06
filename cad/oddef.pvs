@@ -1,7 +1,6 @@
 oddef: THEORY
 %----------------------------------------------------------------------------
-% What a descriptor denotes, and when its oracle is right (FINISH_PLAN 3i,
-% stage N7).
+% What a descriptor denotes, and when its oracle is right.
 %
 %   den(od)     the point: a rational point and a mix are exact; a separator
 %               y0 over od is (y0, den(od)); a section over od is the section

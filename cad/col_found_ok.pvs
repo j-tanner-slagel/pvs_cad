@@ -12,7 +12,6 @@ col_found_ok: THEORY
 %   col_found_cad      cfound? for col_found's records, for every nonempty
 %                      prefix qs: no search-effort hypothesis, one variable
 %                      included (the sectors of the line, lrecs_found)
-%   col_found_ccad     for two or more variables, ccad_of? at the u found
 %   cfound_decides     records with cfound? decide every sentence over F in
 %                      the same variables (cad_fold_ok's afold_sem on every
 %                      sector)
@@ -57,8 +56,6 @@ BEGIN
 
   %% ---- THE COLLINS CAD, FOUND, IN EVERY DIMENSION ---------------------------------------------------
   col_found_cad: THEOREM cons?(qs) IMPLIES cfound?(qs, F, col_found(qs, F)`frecs)
-  col_found_ccad: THEOREM length(qs) >= 2 IMPLIES
-    ccad_of?(col_found(qs, F)`fu, qs, F) AND col_found(qs, F)`frecs = cad_outc(col_found(qs, F)`fu, qs, F)
 
   %% ---- the records decide every sentence -----------------------------------------------------------
   cf_sector_of: LEMMA EXISTS s: member(s, csects(k, F)) AND in?(s, x)

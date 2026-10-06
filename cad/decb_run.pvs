@@ -1,7 +1,7 @@
 decb_run: THEORY
 %----------------------------------------------------------------------------
 % decide8's run decomposes R^(k+1) into a CAD adapted to its family, with no
-% certificate: col_run's col_cad_run for decb_o (PROJ_PLAN.md P2).
+% certificate: col_run's col_cad_run for decb_o.
 %
 % decb_o cuts the line of the outermost variable at the roots of the smaller
 % bottom-step projection Q = cbotb(ctw(F, k)) when nzb?(Q) holds, and at the

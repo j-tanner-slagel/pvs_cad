@@ -1,6 +1,6 @@
 col_def: THEORY
 %----------------------------------------------------------------------------
-% Collins' projection hypothesis (COLLINS_PLAN.md M-E, section 2.3).
+% Collins' projection hypothesis.
 %
 % A member g of a family is a list of mpoly coefficients in the main
 % variable.  rdc(g, k) is its reductum of degree k (the first k + 1
@@ -17,7 +17,7 @@ col_def: THEORY
 % polynomial the member is over a point.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING subres, earr_deriv, sign_vec
+  IMPORTING subres, sign_vec
 
   g: VAR list[mpoly]
   G: VAR list[list[mpoly]]

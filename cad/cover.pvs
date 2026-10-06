@@ -1,10 +1,8 @@
 cover: THEORY
 %----------------------------------------------------------------------------
-% The cells of a level cover the line (FINISH_PLAN stage S5d, used by claim B).
+% The cells of a level cover the line.
 %
-% level_ok proves this inside cv_gap/cv_all for the truth value of the inner
-% sentence.  Claim B needs it for other quantities, so here it is on its own:
-% with separators Y that pass wok? for the family P at ys, every real y either
+% With separators Y that pass wok? for the family P at ys, every real y either
 %
 %   sees a separator y0 of Y with no root of P's product between them, or
 %   is THE root of a gap of Y that holds one  (lvl?, which carries gapf?)
@@ -12,7 +10,7 @@ cover: THEORY
 % adj?(Y, lo, hi) says lo, hi are consecutive in Y.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING level_ok
+  IMPORTING cell_ok, walk_rd
 
   ys: VAR list[real]
   P: VAR list[list[mpoly]]
@@ -24,6 +22,18 @@ BEGIN
     cons?(Y) AND cons?(cdr(Y)) AND
     ((car(Y) = lo AND car(cdr(Y)) = hi) OR adj?(cdr(Y), lo, hi))
   MEASURE length(Y)
+
+  q: VAR bool
+  b0: VAR bool
+  bs: VAR list[bool]
+  a: VAR real
+  b: VAR real
+  z: VAR real
+  rootfree?(P, ys, a, b): bool =
+    FORALL z: min(a, b) <= z AND z <= max(a, b) IMPLIES P(P, ys)(z) /= 0
+
+  bfold_mem: LEMMA FORALL bs: bfold(q, bs) IFF
+    IF q THEN (FORALL b0: member(b0, bs) IMPLIES b0) ELSE (EXISTS b0: member(b0, bs) AND b0) ENDIF
 
   %% what a y sees
   atsep?(P, ys, Y, y): bool =
@@ -44,11 +54,4 @@ BEGIN
     IMPLIES atsep?(P, ys, Y, y) OR atsec?(P, ys, Y, y)
 
   cover: THEOREM wok?(P, msg(ys), Y) IMPLIES atsep?(P, ys, Y, y) OR atsec?(P, ys, Y, y)
-
-  %% the certificate at what a y sees
-  F: VAR list[list[mpoly]]
-  cellok_mem: LEMMA FORALL Y: cellok?(F, P, msg(ys), Y) AND member(y0, Y)
-    IMPLIES ptok?(F, msg(ys), P, y0)
-  cellok_adj: LEMMA FORALL Y: cellok?(F, P, msg(ys), Y) AND adj?(Y, lo, hi)
-    AND gap?(P, msg(ys), lo, hi) IMPLIES secok?(F, msg(ys), P, lo, hi)
 END cover

@@ -1,7 +1,7 @@
 gform_def: THEORY
 %----------------------------------------------------------------------------
 % First-order formulas over the reals with PVS's own connectives, and their
-% decision (FORMS_PLAN.md F1).  Executable.
+% decision.  Executable.
 %
 % Gm mirrors how formulas are written in PVS: TRUE, FALSE, the six
 % comparisons of two polynomials, NOT, AND, OR, IMPLIES, IFF, FORALL and

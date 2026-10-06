@@ -1,8 +1,8 @@
 col_out_ok: THEORY
 %----------------------------------------------------------------------------
-% The Collins run's records are its CAD (COLLINS_PLAN.md M-H), as
-% cad_out_ok for the read-closure run, with the walk's certificate okw_o in
-% place of okn_o.
+% The Collins run's records are its CAD, from
+% cad_out_ok's lemmas on one level (kids_lvl) under the walk's certificate
+% okw_o.
 %
 %   ctree_inw     every record of a certified tree has a well formed sample
 %                 in the cell its stack indices name

@@ -1,6 +1,6 @@
 cad_stkc: THEORY
 %----------------------------------------------------------------------------
-% The cells of a stack are connected (GAP_PLAN.md Tier 1B).
+% The cells of a stack are connected.
 %
 % stk(G, C, a) is the cell of stack index a over C: the points cons(y, q)
 % with q in C and sidx(G, q, y) = a.  Index 2i+1 is the graph of the i-th

@@ -1,7 +1,7 @@
 walk_od: THEORY
 %----------------------------------------------------------------------------
-% The walk through an ORACLE DESCRIPTOR and a CHAIN TABLE (FINISH_PLAN stage
-% S5e-0).  Nothing trusted changes: every function here is proved equal to
+% The walk through an ORACLE DESCRIPTOR and a CHAIN TABLE.  Nothing trusted
+% changes: every function here is proved equal to
 % its walk_def / sturm_sg original at the oracle the descriptor denotes,
 % for any table that is VALID (built from real chains at some oracle).
 %
@@ -43,7 +43,7 @@ BEGIN
   %%   mix(rs, a, ys)    the point rs ++ (value(a)) ++ ys: rationals above ONE
   %%                     algebraic coordinate above rationals; the sign of c
   %%                     there is alg_isign on c with rs substituted and ys
-  %%                     evaluated (partial_eval): Phase 3, no chain built
+  %%                     evaluated (partial_eval), no chain built
   %%   sec(od, P, lo, hi) the section of P in (lo, hi] over od, through the
   %%                     tower query sg_sec (a point with two algebraic
   %%                     coordinates)
@@ -91,7 +91,6 @@ BEGIN
       mix(rs, a, rys): mix(cons(y0, rs), a, rys)
       ELSE sp(od, y0)
     ENDCASES
-  opt_ok: LEMMA osg(opt(od, y0)) = sg_pt(osg(od), y0)
 
   %% ---- the chain table --------------------------------------------------------------
   CE: TYPE = [# f: list[mpoly], k: nat, ch: list[list[mpoly]], rd: list[mpoly], sgs: list[Sign3] #]
@@ -107,12 +106,9 @@ BEGIN
   MEASURE length(R)
   agrees_agree: LEMMA FORALL (sg1, sg2: SG): FORALL R: agrees?(sg2, R, sgl(sg1, R)) IMPLIES agree(sg1, sg2, R)
 
-  %% the chain and its reads in one pass (chain_rd, PERF_PLAN P1); mkce_eq is
-  %% the definition this had before
+  %% the chain and its reads in one pass (chain_rd)
   mkce(k, sg, f): CE =
     LET c = schain_rd(k, sg, f) IN (# f := f, k := k, ch := c`ch, rd := c`rd, sgs := sgl(sg, c`rd) #)
-  mkce_eq: LEMMA mkce(k, sg, f) =
-    (# f := f, k := k, ch := schain(k, sg, f), rd := i_rd(k, sg, f), sgs := sgl(sg, i_rd(k, sg, f)) #)
   valid?(tbl): bool = FORALL e: member(e, tbl) IMPLIES EXISTS sg: e = mkce(e`k, sg, e`f)
   valid_null: LEMMA valid?(null[CE])
   valid_cons: LEMMA valid?(cons(mkce(k, sg, f), tbl)) IFF valid?(tbl)
@@ -272,8 +268,8 @@ BEGIN
     ELSE swide_t(F, od, 2 * b, n - 1, tbl)
     ENDIF
   MEASURE n
-  %% the fuel is sfuel2 + u: u is the escalation parameter of the decision
-  %% (COMPLETENESS_PLAN C2); at u = 0 this is the search of walk_def's seps
+  %% the fuel is sfuel2 + u: u is the escalation parameter of the decision;
+  %% at u = 0 this is the search of walk_def's seps
   u: VAR nat
   seps_t(u, F, od, tbl): list[rat] =
     IF null?(lives(F)) THEN (: 0 :)
@@ -289,7 +285,5 @@ BEGIN
 
   %% THE LIFTING and its check, through descriptor and table
   svs_t(u, F, od, tbl): SVL = walk_t(F, od, seps_t(u, F, od, tbl), tbl)
-  wok_wt(u, F, od, tbl): bool = wok_t(F, od, seps_t(u, F, od, tbl), tbl)
   svs_t_eq: THEOREM valid?(tbl) IMPLIES svs_t(u, F, od, tbl) = walk(F, osg(od), seps_n(F, osg(od), sfuel2 + u))
-  wok_wt_eq: THEOREM valid?(tbl) IMPLIES wok_wt(u, F, od, tbl) = wok?(F, osg(od), seps_n(F, osg(od), sfuel2 + u))
 END walk_od

@@ -1,40 +1,29 @@
 cad_decide: THEORY
 %----------------------------------------------------------------------------
-% The cylindrical decision procedure (Phase 5).
+% The meaning of a prenex sentence.
 %
-% A closed prenex formula: a quantifier list qs (innermost first, TRUE for
-% FORALL), a family F of polynomials in the innermost variable with
-% coefficients in the outer ones, and a truth function Psi on the sign
-% vectors of F (from a Boolean matrix through bform). decq peels the
-% innermost quantifier: the tree svs(F) lists, at every point of the outer
-% variables, the sign vectors F realizes, and its condition polynomials
-% polys(svs(F)) are the family of the level below; the truth function of
-% that level folds the quantifier over the vectors the tree lists at a leaf
-% selected by the lower sign vector (sel_by). At the bottom no variable is
-% left and the vector of the constants is read directly.
-%
-% decq_correct: decq agrees with the semantics sem, the quantifiers read
-% outermost first, by induction on the prefix with svs_sound/svs_complete
-% at each level and sel_by_sel to replace a valuation by its sign vector.
+% A closed prenex formula: a quantifier list qs (TRUE for FORALL), a family F
+% of polynomials in the innermost variable with coefficients in the outer
+% ones, and a truth function Psi on the sign vectors of F.  sem(os, F, Psi,
+% ys) reads the quantifiers outermost first, the values assigned so far in
+% ys; fsem is the same for a Boolean formula phi over sign atoms (bform),
+% and fsem_sem relates them.  qfold folds one quantifier over a list of
+% sign vectors.
 %----------------------------------------------------------------------------
 BEGIN
-  IMPORTING svs_tree, tree_sel[list[list[Sign3]]], bform
+  IMPORTING bform
 
   F: VAR list[list[mpoly]]
-  qs, os, r: VAR list[bool]
+  os, r: VAR list[bool]
   q: VAR bool
-  ys, xs: VAR list[real]
+  ys: VAR list[real]
   x: VAR real
   Psi: VAR [SV -> bool]
   vs: VAR SVL
-  tau, v: VAR SV
-  t: VAR btree[SVL]
+  v: VAR SV
   phi: VAR BF
 
   %% list facts
-  c: VAR mpoly
-  cl: VAR list[mpoly]
-  mem_map: LEMMA FORALL cl: member(c, cl) IMPLIES member(as_list(c), map(as_list)(cl))
   every_mem: LEMMA FORALL vs: every(Psi)(vs) AND member(v, vs) IMPLIES Psi(v)
   every_all: LEMMA FORALL vs: (FORALL v: member(v, vs) IMPLIES Psi(v)) IMPLIES every(Psi)(vs)
   w: VAR SV
@@ -42,20 +31,7 @@ BEGIN
   some_mem: LEMMA FORALL vs: some(Psi)(vs) IMPLIES EXISTS v: member(v, vs) AND Psi(v)
   some_intro: LEMMA FORALL vs: member(v, vs) AND Psi(v) IMPLIES some(Psi)(vs)
 
-  %% the family of the level below: the tree's conditions as coefficient lists
-  polys(t): list[list[mpoly]] = map(as_list)(tconds(t))
-  polys_sub: LEMMA sub(t, polys(t))
-
   qfold(q, vs, Psi): bool = IF q THEN every(Psi)(vs) ELSE some(Psi)(vs) ENDIF
-
-  decq(qs, F, Psi): RECURSIVE bool =
-    CASES qs OF
-      null: Psi(svec(F, null)),
-      cons(q, r):
-        LET T = svs(sfuel(F), F, null[branch_tree[bool].SignCond]), G = polys(T) IN
-        decq(r, G, LAMBDA (tau: SV): qfold(q, sel_by(T, G, tau), Psi))
-    ENDCASES
-  MEASURE length(qs)
 
   %% the semantics, quantifiers outermost first, the values assigned so far in ys
   sem(os, F, Psi, ys): RECURSIVE bool =
@@ -71,23 +47,7 @@ BEGIN
     IF q THEN FORALL x: sem(r, F, Psi, cons(x, ys))
     ELSE EXISTS x: sem(r, F, Psi, cons(x, ys)) ENDIF
 
-  %% one level: the fold over the listed vectors is the quantifier
-  qfold_svs: LEMMA qfold(q, select(svs(sfuel(F), F, null[branch_tree[bool].SignCond]), ys), Psi) IFF
-    (IF q THEN FORALL x: Psi(svec(F, cons(x, ys))) ELSE EXISTS x: Psi(svec(F, cons(x, ys))) ENDIF)
-
-  %% peeling the innermost quantifier
-  sem_peel: LEMMA FORALL os: FORALL ys:
-    sem(os, polys(svs(sfuel(F), F, null[branch_tree[bool].SignCond])),
-        LAMBDA tau: qfold(q, sel_by(svs(sfuel(F), F, null[branch_tree[bool].SignCond]),
-                                    polys(svs(sfuel(F), F, null[branch_tree[bool].SignCond])), tau), Psi),
-        ys)
-    IFF sem(append(os, (: q :)), F, Psi, ys)
-
-  decq_correct: THEOREM FORALL qs: FORALL F, Psi:
-    decq(qs, F, Psi) IFF sem(reverse(qs), F, Psi, null)
-
   %% the formula version
-  decide(qs, F, phi): bool = decq(qs, F, LAMBDA v: bfsv(phi, v))
   fsem(os, F, phi, ys): RECURSIVE bool =
     CASES os OF
       null: bfeval(phi, F, ys),
@@ -96,8 +56,4 @@ BEGIN
     ENDCASES
   MEASURE length(os)
   fsem_sem: LEMMA FORALL os: FORALL ys: fsem(os, F, phi, ys) IFF sem(os, F, LAMBDA v: bfsv(phi, v), ys)
-
-  decide_correct: THEOREM decide(qs, F, phi) IFF fsem(reverse(qs), F, phi, null)
-  %% the same with the prefix given outermost first, for the strategy
-  decide_correct_os: THEOREM decide(reverse(os), F, phi) IFF fsem(os, F, phi, null)
 END cad_decide

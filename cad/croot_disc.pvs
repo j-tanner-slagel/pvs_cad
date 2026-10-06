@@ -1,7 +1,6 @@
 croot_disc: THEORY
 %----------------------------------------------------------------------------
-% One root per disc: the pigeonhole step of the local Collins argument
-% (COLLINS_PLAN.md M-D, section 2.3).
+% One root per disc: the pigeonhole step of the local Collins argument.
 %
 % sep?(L, eps): distinct members of L are at least 2 eps apart, so a point
 % is within eps of at most one of them (sep_one).  covers?(Lz, A, eps): every
@@ -14,7 +13,7 @@ croot_disc: THEORY
 %              eps: removing one of them would leave a cover that is too
 %              short
 % With L1 the distinct roots of a polynomial at p1 and L2 those at a nearby p
-% (as many, by croot_lsc's dist_same; covering, by rp_lsc), every disc around
+% (col_pair shows there are as many, and rp_lsc that they cover), every disc around
 % a root at p1 holds exactly one root at p.
 %----------------------------------------------------------------------------
 BEGIN

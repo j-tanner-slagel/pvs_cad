@@ -1,7 +1,6 @@
 mpoly_def: THEORY
 %----------------------------------------------------------------------------
 % Recursive multivariate polynomials: definitions and evaluation.
-% (Phase 1 of CAD_PLAN.md, design decision D1.)
 %
 % A term of the datatype mpoly (mpoly.pvs) is either a rational constant
 % mconst(c) or mpol(l), a polynomial in its main variable whose coefficient
