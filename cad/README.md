@@ -192,12 +192,6 @@ Everything in this library, the specifications and every proof, was generated wi
 models (Claude Fable 5.1, Claude Opus 5 and Claude Opus 5.5) through Claude Code, directed by
 J. Tanner Slagel. PVS checks every step of every proof.
 
-## License
-
-To the extent possible under law, J. Tanner Slagel has waived all copyright and related rights
-to these PVS specifications and proofs
-([CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/)).
-
 # Contributors
 * J. Tanner Slagel
 

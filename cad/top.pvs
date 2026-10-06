@@ -7,9 +7,7 @@
 % @author J. Tanner Slagel
 % @poc J. Tanner Slagel, https://github.com/j-tanner-slagel/pvs_cad
 % @date October 2026
-% @copyleft CC0 1.0: to the extent possible under law, the author has waived
-%   all copyright and related rights to these PVS specifications and proofs
-%   (https://creativecommons.org/publicdomain/zero/1.0/)
+% @copyleft CC0 1.0 (public domain)
 top: THEORY
 %----------------------------------------------------------------------------
 % Imports every theory of the library; each is described below, grouped by
